@@ -1,0 +1,15 @@
+config.nswag
+obj/
+bin/
+.vscode/
+.vs/
+.run/
+.idea/
+.git/
+
+**/bin/*
+**/obj/*
+**/appsettings.json
+**/appsettings.Development.json
+
+# Test test
