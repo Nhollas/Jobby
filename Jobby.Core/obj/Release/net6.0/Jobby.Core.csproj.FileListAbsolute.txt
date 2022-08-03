@@ -1,0 +1,12 @@
+C:\Users\Nhollas\Documents\GitHub\Jobby\Jobby.Core\bin\Release\net6.0\Jobby.Core.deps.json
+C:\Users\Nhollas\Documents\GitHub\Jobby\Jobby.Core\bin\Release\net6.0\Jobby.Core.dll
+C:\Users\Nhollas\Documents\GitHub\Jobby\Jobby.Core\bin\Release\net6.0\Jobby.Core.pdb
+C:\Users\Nhollas\Documents\GitHub\Jobby\Jobby.Core\obj\Release\net6.0\Jobby.Core.csproj.AssemblyReference.cache
+C:\Users\Nhollas\Documents\GitHub\Jobby\Jobby.Core\obj\Release\net6.0\Jobby.Core.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Nhollas\Documents\GitHub\Jobby\Jobby.Core\obj\Release\net6.0\Jobby.Core.AssemblyInfoInputs.cache
+C:\Users\Nhollas\Documents\GitHub\Jobby\Jobby.Core\obj\Release\net6.0\Jobby.Core.AssemblyInfo.cs
+C:\Users\Nhollas\Documents\GitHub\Jobby\Jobby.Core\obj\Release\net6.0\Jobby.Core.csproj.CoreCompileInputs.cache
+C:\Users\Nhollas\Documents\GitHub\Jobby\Jobby.Core\obj\Release\net6.0\Jobby.Core.dll
+C:\Users\Nhollas\Documents\GitHub\Jobby\Jobby.Core\obj\Release\net6.0\refint\Jobby.Core.dll
+C:\Users\Nhollas\Documents\GitHub\Jobby\Jobby.Core\obj\Release\net6.0\Jobby.Core.pdb
+C:\Users\Nhollas\Documents\GitHub\Jobby\Jobby.Core\obj\Release\net6.0\ref\Jobby.Core.dll

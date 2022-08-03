@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "VquFCL0piqay7MeqpnnmZjJToWpxuW9JTngEhhfriYg=",
+  "Source": "Jobby.Api",
+  "BasePath": "_content/Jobby.Api",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

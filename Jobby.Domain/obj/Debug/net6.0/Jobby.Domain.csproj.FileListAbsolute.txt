@@ -1,0 +1,15 @@
+C:\Users\Nhollas\Documents\GitHub\Jobby\Jobby.Domain\bin\Debug\net6.0\Jobby.Domain.deps.json
+C:\Users\Nhollas\Documents\GitHub\Jobby\Jobby.Domain\bin\Debug\net6.0\Jobby.Domain.dll
+C:\Users\Nhollas\Documents\GitHub\Jobby\Jobby.Domain\bin\Debug\net6.0\Jobby.Domain.pdb
+C:\Users\Nhollas\Documents\GitHub\Jobby\Jobby.Domain\bin\Debug\net6.0\Jobby.Core.dll
+C:\Users\Nhollas\Documents\GitHub\Jobby\Jobby.Domain\bin\Debug\net6.0\Jobby.Core.pdb
+C:\Users\Nhollas\Documents\GitHub\Jobby\Jobby.Domain\obj\Debug\net6.0\Jobby.Domain.csproj.AssemblyReference.cache
+C:\Users\Nhollas\Documents\GitHub\Jobby\Jobby.Domain\obj\Debug\net6.0\Jobby.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Nhollas\Documents\GitHub\Jobby\Jobby.Domain\obj\Debug\net6.0\Jobby.Domain.AssemblyInfoInputs.cache
+C:\Users\Nhollas\Documents\GitHub\Jobby\Jobby.Domain\obj\Debug\net6.0\Jobby.Domain.AssemblyInfo.cs
+C:\Users\Nhollas\Documents\GitHub\Jobby\Jobby.Domain\obj\Debug\net6.0\Jobby.Domain.csproj.CoreCompileInputs.cache
+C:\Users\Nhollas\Documents\GitHub\Jobby\Jobby.Domain\obj\Debug\net6.0\Jobby.Domain.csproj.CopyComplete
+C:\Users\Nhollas\Documents\GitHub\Jobby\Jobby.Domain\obj\Debug\net6.0\Jobby.Domain.dll
+C:\Users\Nhollas\Documents\GitHub\Jobby\Jobby.Domain\obj\Debug\net6.0\refint\Jobby.Domain.dll
+C:\Users\Nhollas\Documents\GitHub\Jobby\Jobby.Domain\obj\Debug\net6.0\Jobby.Domain.pdb
+C:\Users\Nhollas\Documents\GitHub\Jobby\Jobby.Domain\obj\Debug\net6.0\ref\Jobby.Domain.dll
