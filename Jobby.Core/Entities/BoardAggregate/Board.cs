@@ -5,23 +5,19 @@ namespace Jobby.Core.Entities.BoardAggregate;
 
 public class Board : BaseEntity, IAggregateRoot
 {
-    public string Name { get; private set; }
-    public string Owner { get; private set; }
-    public DateTimeOffset CreatedDate { get; private set; } = DateTimeOffset.Now;
-    public DateTimeOffset UpdatedDate { get; private set; } = DateTimeOffset.Now;
-
-    private readonly List<JobList> _jobsList = new();
-    public IReadOnlyCollection<JobList> JobList => _jobsList.AsReadOnly();
+    public string Name { get; set; }
+    public string OwnerId { get; private set; }
+    public ICollection<JobList> JobList { get; set; }
 
     private Board()
     {
         // required by EF
     }
 
-    public Board(string name, string owner,  List<JobList> jobsList)
+    public Board(string name, string ownerId,  List<JobList> jobsList)
     {
         Name = name;
-        Owner = owner;
-        _jobsList = jobsList;
+        OwnerId = ownerId;
+        JobList = jobsList;
     }
 }

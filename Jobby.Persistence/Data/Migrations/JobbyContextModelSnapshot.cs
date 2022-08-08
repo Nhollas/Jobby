@@ -34,7 +34,7 @@ namespace Jobby.Persistence.Data.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Owner")
+                    b.Property<string>("OwnerId")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTimeOffset>("UpdatedDate")
@@ -95,6 +95,44 @@ namespace Jobby.Persistence.Data.Migrations
                     b.ToTable("JobLists");
                 });
 
+            modelBuilder.Entity("Jobby.Core.Entities.ContactAggregate.Contact", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("BoardId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Companies")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Emails")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FirstName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("JobIds")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("JobTitle")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OwnerId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Phones")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Contacts");
+                });
+
             modelBuilder.Entity("Jobby.Core.Entities.BoardAggregate.Job", b =>
                 {
                     b.HasOne("Jobby.Core.Entities.BoardAggregate.JobList", null)
@@ -107,6 +145,36 @@ namespace Jobby.Persistence.Data.Migrations
                     b.HasOne("Jobby.Core.Entities.BoardAggregate.Board", null)
                         .WithMany("JobList")
                         .HasForeignKey("BoardId");
+                });
+
+            modelBuilder.Entity("Jobby.Core.Entities.ContactAggregate.Contact", b =>
+                {
+                    b.OwnsOne("Jobby.Core.Entities.ContactAggregate.Social", "Social", b1 =>
+                        {
+                            b1.Property<Guid>("ContactId")
+                                .HasColumnType("uniqueidentifier");
+
+                            b1.Property<string>("FacebookUri")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("GithubUri")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("LinkedInUri")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.Property<string>("TwitterUri")
+                                .HasColumnType("nvarchar(max)");
+
+                            b1.HasKey("ContactId");
+
+                            b1.ToTable("Contacts");
+
+                            b1.WithOwner()
+                                .HasForeignKey("ContactId");
+                        });
+
+                    b.Navigation("Social");
                 });
 
             modelBuilder.Entity("Jobby.Core.Entities.BoardAggregate.Board", b =>

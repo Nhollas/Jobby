@@ -6,9 +6,7 @@ public class JobList : BaseEntity
 {
     public string Name { get; private set; }
     public int Count { get; private set; }
-
-    private readonly List<Job> _jobs = new();
-    public IReadOnlyCollection<Job> Jobs => _jobs.AsReadOnly();
+    public ICollection<Job> Jobs { get; set; }
 
     private JobList()
     {
@@ -18,6 +16,6 @@ public class JobList : BaseEntity
     public JobList(string listName)
     {
         Name = listName;
-        Count = _jobs.Count;
+        Count = Jobs.Count;
     }
 }
