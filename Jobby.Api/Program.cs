@@ -1,9 +1,11 @@
+using Jobby.Api.Errors;
 using Jobby.Core;
 using Jobby.Core.Entities.Common;
 using Jobby.Persistence;
 using Jobby.Persistence.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
@@ -18,15 +20,17 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
         .AddEntityFrameworkStores<JobbyIdentityContext>()
         .AddDefaultTokenProviders();
 
+builder.Services.AddTransient<ProblemDetailsFactory, JobbyProblemDetailsFactory>();
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo 
-    { 
-        Title = "Jobby API", 
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Jobby API",
         Version = "V1"
     });
 
@@ -76,6 +80,7 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -84,6 +89,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+
+app.UseExceptionHandler("/error");
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();

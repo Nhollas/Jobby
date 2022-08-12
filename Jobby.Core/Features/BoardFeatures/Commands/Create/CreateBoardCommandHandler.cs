@@ -1,4 +1,4 @@
-﻿using Jobby.Core.Entities.BoardAggregate;
+﻿using Jobby.Core.Entities;
 using Jobby.Core.Interfaces;
 using MediatR;
 

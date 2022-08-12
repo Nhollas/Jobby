@@ -1,5 +1,4 @@
-﻿using Jobby.Core.Dtos;
-using MediatR;
+﻿using MediatR;
 
 namespace Jobby.Core.Features.BoardFeatures.Commands.Create;
 

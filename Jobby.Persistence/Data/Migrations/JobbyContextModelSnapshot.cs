@@ -17,19 +17,70 @@ namespace Jobby.Persistence.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.7")
+                .HasAnnotation("ProductVersion", "6.0.8")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("Jobby.Core.Entities.BoardAggregate.Board", b =>
+            modelBuilder.Entity("Jobby.Core.Entities.Activity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTimeOffset>("CreatedDate")
-                        .HasColumnType("datetimeoffset");
+                    b.Property<Guid>("BoardFk")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Category")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("Completed")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("JobFk")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("LastUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OwnerId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BoardFk");
+
+                    b.HasIndex("JobFk");
+
+                    b.ToTable("Activities");
+                });
+
+            modelBuilder.Entity("Jobby.Core.Entities.Board", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("LastUpdated")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
@@ -37,75 +88,25 @@ namespace Jobby.Persistence.Data.Migrations
                     b.Property<string>("OwnerId")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTimeOffset>("UpdatedDate")
-                        .HasColumnType("datetimeoffset");
-
                     b.HasKey("Id");
 
                     b.ToTable("Boards");
                 });
 
-            modelBuilder.Entity("Jobby.Core.Entities.BoardAggregate.Job", b =>
+            modelBuilder.Entity("Jobby.Core.Entities.Contact", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("BoardName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Company")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid?>("JobListId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("ListName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Title")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("JobListId");
-
-                    b.ToTable("Jobs");
-                });
-
-            modelBuilder.Entity("Jobby.Core.Entities.BoardAggregate.JobList", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("BoardId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Count")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BoardId");
-
-                    b.ToTable("JobLists");
-                });
-
-            modelBuilder.Entity("Jobby.Core.Entities.ContactAggregate.Contact", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("BoardId")
+                    b.Property<Guid>("BoardFk")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Companies")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Emails")
                         .HasColumnType("nvarchar(max)");
@@ -113,14 +114,14 @@ namespace Jobby.Persistence.Data.Migrations
                     b.Property<string>("FirstName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("JobIds")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("JobTitle")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("LastName")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("LastUpdated")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("OwnerId")
                         .HasColumnType("nvarchar(max)");
@@ -130,26 +131,132 @@ namespace Jobby.Persistence.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("BoardFk");
+
                     b.ToTable("Contacts");
                 });
 
-            modelBuilder.Entity("Jobby.Core.Entities.BoardAggregate.Job", b =>
+            modelBuilder.Entity("Jobby.Core.Entities.Job", b =>
                 {
-                    b.HasOne("Jobby.Core.Entities.BoardAggregate.JobList", null)
-                        .WithMany("Jobs")
-                        .HasForeignKey("JobListId");
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("City")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Company")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("Deadline")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("HexColour")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("JobListFk")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("LastUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Notes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OwnerId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PostUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Salary")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("JobListFk");
+
+                    b.ToTable("Jobs");
                 });
 
-            modelBuilder.Entity("Jobby.Core.Entities.BoardAggregate.JobList", b =>
+            modelBuilder.Entity("Jobby.Core.Entities.JobContact", b =>
                 {
-                    b.HasOne("Jobby.Core.Entities.BoardAggregate.Board", null)
-                        .WithMany("JobList")
-                        .HasForeignKey("BoardId");
+                    b.Property<Guid>("ContactFk")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("JobFk")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ContactFk", "JobFk");
+
+                    b.HasIndex("JobFk");
+
+                    b.ToTable("JobContacts");
                 });
 
-            modelBuilder.Entity("Jobby.Core.Entities.ContactAggregate.Contact", b =>
+            modelBuilder.Entity("Jobby.Core.Entities.JobList", b =>
                 {
-                    b.OwnsOne("Jobby.Core.Entities.ContactAggregate.Social", "Social", b1 =>
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("BoardFk")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("Count")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("LastUpdated")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BoardFk");
+
+                    b.ToTable("JobLists");
+                });
+
+            modelBuilder.Entity("Jobby.Core.Entities.Activity", b =>
+                {
+                    b.HasOne("Jobby.Core.Entities.Board", "Board")
+                        .WithMany("Activities")
+                        .HasForeignKey("BoardFk")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Jobby.Core.Entities.Job", "Job")
+                        .WithMany("Activities")
+                        .HasForeignKey("JobFk");
+
+                    b.Navigation("Board");
+
+                    b.Navigation("Job");
+                });
+
+            modelBuilder.Entity("Jobby.Core.Entities.Contact", b =>
+                {
+                    b.HasOne("Jobby.Core.Entities.Board", "Board")
+                        .WithMany("Contacts")
+                        .HasForeignKey("BoardFk")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsOne("Jobby.Core.Entities.Social", "Social", b1 =>
                         {
                             b1.Property<Guid>("ContactId")
                                 .HasColumnType("uniqueidentifier");
@@ -174,15 +281,74 @@ namespace Jobby.Persistence.Data.Migrations
                                 .HasForeignKey("ContactId");
                         });
 
+                    b.Navigation("Board");
+
                     b.Navigation("Social");
                 });
 
-            modelBuilder.Entity("Jobby.Core.Entities.BoardAggregate.Board", b =>
+            modelBuilder.Entity("Jobby.Core.Entities.Job", b =>
                 {
+                    b.HasOne("Jobby.Core.Entities.JobList", "JobList")
+                        .WithMany("Jobs")
+                        .HasForeignKey("JobListFk")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("JobList");
                 });
 
-            modelBuilder.Entity("Jobby.Core.Entities.BoardAggregate.JobList", b =>
+            modelBuilder.Entity("Jobby.Core.Entities.JobContact", b =>
+                {
+                    b.HasOne("Jobby.Core.Entities.Contact", "Contact")
+                        .WithMany("JobContacts")
+                        .HasForeignKey("ContactFk")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Jobby.Core.Entities.Job", "Job")
+                        .WithMany("JobContacts")
+                        .HasForeignKey("JobFk")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Contact");
+
+                    b.Navigation("Job");
+                });
+
+            modelBuilder.Entity("Jobby.Core.Entities.JobList", b =>
+                {
+                    b.HasOne("Jobby.Core.Entities.Board", "Board")
+                        .WithMany("JobList")
+                        .HasForeignKey("BoardFk")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Board");
+                });
+
+            modelBuilder.Entity("Jobby.Core.Entities.Board", b =>
+                {
+                    b.Navigation("Activities");
+
+                    b.Navigation("Contacts");
+
+                    b.Navigation("JobList");
+                });
+
+            modelBuilder.Entity("Jobby.Core.Entities.Contact", b =>
+                {
+                    b.Navigation("JobContacts");
+                });
+
+            modelBuilder.Entity("Jobby.Core.Entities.Job", b =>
+                {
+                    b.Navigation("Activities");
+
+                    b.Navigation("JobContacts");
+                });
+
+            modelBuilder.Entity("Jobby.Core.Entities.JobList", b =>
                 {
                     b.Navigation("Jobs");
                 });

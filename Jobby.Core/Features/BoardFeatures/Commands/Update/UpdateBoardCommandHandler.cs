@@ -1,4 +1,4 @@
-﻿using Jobby.Core.Entities.BoardAggregate;
+﻿using Jobby.Core.Entities;
 using Jobby.Core.Interfaces;
 using MediatR;
 
@@ -11,7 +11,7 @@ public class UpdateBoardCommandHandler : IRequestHandler<UpdateBoardCommand, Uni
     private readonly string _userId;
 
     public UpdateBoardCommandHandler(
-        IRepository<Board> repository, 
+        IRepository<Board> repository,
         IUserService userService)
     {
         _repository = repository;

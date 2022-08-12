@@ -1,40 +1,92 @@
-﻿using Jobby.Core.Entities.BoardAggregate;
+﻿using Jobby.Core.Entities;
 using Jobby.Core.Interfaces;
+using Jobby.Core.Specifications;
 using MediatR;
 
 namespace Jobby.Core.Features.JobFeatures.Commands.Create;
 
 public class CreateJobCommandHandler : IRequestHandler<CreateJobCommand, Guid>
 {
-    private readonly IRepository<Board> _repository;
+    private readonly IRepository<Board> _boardRepository;
+    private readonly IRepository<JobList> _jobListRepository;
     private readonly IUserService _userService;
     private readonly string _userId;
 
     public CreateJobCommandHandler(
         IRepository<Board> repository,
-        IUserService userService)
+        IUserService userService,
+        IRepository<JobList> jobListRepository)
     {
-        _repository = repository;
+        _boardRepository = repository;
         _userService = userService;
         _userId = _userService.UserId();
+        _jobListRepository = jobListRepository;
     }
 
+    /*
+        A Job is created by it being added to a JobList inside board entity (parent).
+    */
     public async Task<Guid> Handle(CreateJobCommand request, CancellationToken cancellationToken)
     {
-        var boardToUpdate = await _repository.GetByIdAsync(request.BoardId, cancellationToken);
+        var boardSpec = new IncludeJobListSpecification(request.BoardId);
 
-        if (boardToUpdate == null)
+        var BoardToLink = await _boardRepository.FirstOrDefaultAsync(boardSpec, cancellationToken);
+
+        if (BoardToLink is null)
         {
             // TODO: NotFound Problem Details.
         }
 
-        if (boardToUpdate.OwnerId != _userId)
-        { 
+        if (BoardToLink.OwnerId != _userId)
+        {
             // TODO: NotAuthorized Problem Details.
         }
 
-        var sus = boardToUpdate.JobList.Where(x => x.Id == request.JobListId).FirstOrDefault();
+        if (!BoardOwnsJobList(BoardToLink, request.JobListId))
+        {
+            // TODO: NotFound Problem Details.
+        }
 
-        sus.Jobs.Add();
+        Job createdJob = new(request.CompanyName, request.JobTitle);
+
+        await LinkJobToBoardList(createdJob, BoardToLink, request.JobListId);
+
+        return createdJob.Id;
+    }
+
+    private async Task LinkJobToBoardList(Job createdJob, Board board, Guid jobListId)
+    {
+        JobList selectedJobList =
+            board.JobList
+                .Where(x => x.Id == jobListId)
+                .FirstOrDefault();
+
+        if (selectedJobList.Jobs is null)
+        {
+            selectedJobList.Jobs = new List<Job>
+            {
+                createdJob
+            };
+        }
+        else
+        {
+            selectedJobList.Jobs.Add(createdJob);
+        }
+
+        selectedJobList.SetCount();
+        
+        await _jobListRepository.UpdateAsync(selectedJobList);
+    }
+
+    private static bool BoardOwnsJobList(Board board, Guid jobListId)
+    {
+        if (board.JobList
+            .Select(x => x.Id == jobListId)
+            .Any())
+        {
+            return true;
+        }
+
+        return false;
     }
 }

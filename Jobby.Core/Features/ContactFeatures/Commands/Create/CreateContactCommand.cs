@@ -1,5 +1,4 @@
-﻿using Jobby.Core.Dtos;
-using MediatR;
+﻿using MediatR;
 
 namespace Jobby.Core.Features.ContactFeatures.Commands.Create;
 
@@ -14,7 +13,7 @@ public class CreateContactCommand : IRequest<Guid>
     public string LinkedInUri { get; set; }
     public string GithubUri { get; set; }
     public Guid[] JobIds { get; set; }
-    public string[] Companies{ get; set; }
     public string[] Emails { get; set; }
-    public string[] Phones { get; set; }    
+    public string[] Phones { get; set; }
+    public string[] Companies { get; set; }
 }

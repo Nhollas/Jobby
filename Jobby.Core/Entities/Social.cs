@@ -1,6 +1,4 @@
-﻿using Jobby.Core.Entities.Common;
-
-namespace Jobby.Core.Entities.ContactAggregate;
+﻿namespace Jobby.Core.Entities;
 
 public class Social
 {
@@ -10,9 +8,9 @@ public class Social
     public string GithubUri { get; set; }
 
     public Social(
-        string twitterUri, 
-        string facebookUri, 
-        string linkedInUri, 
+        string twitterUri,
+        string facebookUri,
+        string linkedInUri,
         string githubUri)
     {
         TwitterUri = twitterUri;

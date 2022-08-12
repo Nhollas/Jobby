@@ -1,9 +1,11 @@
-﻿namespace Jobby.Core.Dtos;
+﻿using Jobby.Core.Dtos.Common;
 
-public class BoardDto
+namespace Jobby.Core.Dtos;
+
+public class BoardDto : BaseDto
 {
     public string Name { get; set; }
-    public DateTimeOffset CreatedDate { get; set; }
-    public DateTimeOffset UpdatedDate { get; set; }
     public List<JobListDto> JobList { get; set; }
+    public List<ActivityDto> Activities { get; set; }
+    public List<ContactDto> Contacts { get; set; }
 }

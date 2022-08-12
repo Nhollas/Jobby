@@ -1,4 +1,4 @@
-﻿using Jobby.Core.Entities.BoardAggregate;
+﻿using Jobby.Core.Entities;
 using Jobby.Core.Interfaces;
 using MediatR;
 
@@ -18,6 +18,7 @@ public class DeleteBoardCommandHandler : IRequestHandler<DeleteBoardCommand, Uni
         _userService = userService;
         _userId = _userService.UserId();
     }
+
     public async Task<Unit> Handle(DeleteBoardCommand request, CancellationToken cancellationToken)
     {
         Board boardToDelete = await _repository.GetByIdAsync(request.BoardId, cancellationToken);

@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Jobby.Core.Dtos;
-using Jobby.Core.Entities.BoardAggregate;
+using Jobby.Core.Entities;
 using Jobby.Core.Interfaces;
 using Jobby.Core.Specifications;
 using MediatR;
@@ -27,7 +27,14 @@ public class GetBoardListQueryHandler : IRequestHandler<GetBoardListQuery, List<
 
     public async Task<List<BoardDto>> Handle(GetBoardListQuery request, CancellationToken cancellationToken)
     {
-        var boardList = await _repository.ListAsync(new OwnedBoardsSpecification(_userId), cancellationToken);
+        var boardSpec = new OwnedBoardsSpecification(_userId);
+
+        var boardList = await _repository.ListAsync(boardSpec, cancellationToken);
+
+        if (boardList is null)
+        {
+            return new List<BoardDto>();
+        }
 
         return _mapper.Map<List<BoardDto>>(boardList);
     }

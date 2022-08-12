@@ -8,7 +8,7 @@ namespace Jobby.Api.Controllers;
 [Route("api/[controller]")]
 [ApiController]
 [AllowAnonymous]
-public class AuthController : ApiController
+public class AuthController : Controller
 {
     private readonly IAuthenticationService _authenticationService;
 

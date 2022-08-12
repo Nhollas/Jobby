@@ -4,11 +4,6 @@ using Jobby.Core.Exceptions;
 using Jobby.Core.Exceptions.Auth;
 using Jobby.Core.Interfaces;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 
 namespace Jobby.Core.Services;
 

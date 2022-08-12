@@ -1,6 +1,8 @@
-﻿namespace Jobby.Core.Dtos;
+﻿using Jobby.Core.Dtos.Common;
 
-public class JobListDto
+namespace Jobby.Core.Dtos;
+
+public class JobListDto : BaseDto
 {
     public string Name { get; set; }
     public int Count { get; set; }

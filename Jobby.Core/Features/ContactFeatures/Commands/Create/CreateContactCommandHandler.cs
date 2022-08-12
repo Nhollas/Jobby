@@ -1,34 +1,39 @@
-﻿using AutoMapper;
-using Jobby.Core.Entities.BoardAggregate;
-using Jobby.Core.Entities.ContactAggregate;
+﻿using Jobby.Core.Entities;
 using Jobby.Core.Interfaces;
+using Jobby.Core.Specifications;
 using MediatR;
 
 namespace Jobby.Core.Features.ContactFeatures.Commands.Create;
 
 public class CreateContactCommandHandler : IRequestHandler<CreateContactCommand, Guid>
 {
-    private readonly IRepository<Contact> _contactRepository;
-    private readonly IReadRepository<Board> _boardRepository;
+    private readonly IRepository<Job> _jobRepository;
+    private readonly IRepository<Board> _boardRepository;
     private readonly IUserService _userService;
     private readonly string _userId;
 
     public CreateContactCommandHandler(
-    IRepository<Contact> contactRepository,
     IUserService userService,
-    IReadRepository<Board> boardRepository)
+    IRepository<Board> boardRepository,
+    IRepository<Job> jobRepository)
     {
-        _contactRepository = contactRepository;
         _userService = userService;
         _userId = _userService.UserId();
         _boardRepository = boardRepository;
+        _jobRepository = jobRepository;
     }
 
+    /*
+        A Contact is created by it being added to a board entity (parent).
+        The Contact can be added to multiple jobs that the board owns as well.
+    */
     public async Task<Guid> Handle(CreateContactCommand request, CancellationToken cancellationToken)
     {
-        Board boardTolink = await _boardRepository.GetByIdAsync(request.BoardId, cancellationToken);
+        var boardSpec = new IncludeJobListSpecification(request.BoardId);
 
-        if (boardTolink == null)
+        Board boardTolink = await _boardRepository.FirstOrDefaultAsync(boardSpec, cancellationToken);
+
+        if (boardTolink is null)
         {
             // TODO: NotFound Problem Details.
         }
@@ -38,28 +43,55 @@ public class CreateContactCommandHandler : IRequestHandler<CreateContactCommand,
             // TODO: NotAuthorised Problem Details.
         }
 
-        var ownedJobs = boardTolink.JobList.Select(x => x.Id);
-
-        if (!JobIdsInBoard(ownedJobs, request.JobIds))
-        {
-            // TODO: NotAuthorised Problem Details.
-        }
-
-        Contact mockContact = new(
+        Contact createdContact = new(
             request.FirstName,
             request.LastName,
             request.JobTitle,
             new Social(request.TwitterUri, request.FacebookUri, request.LinkedInUri, request.GithubUri),
             request.BoardId,
-            _userId);
+            _userId,
+            request.Companies,
+            request.Emails,
+            request.Phones);
 
-        var convertedJobIds = request.JobIds.Select(g => g.ToString()).ToArray();
+        await LinkContactToBoard(createdContact, boardTolink);
 
-        mockContact.Join(convertedJobIds, request.Companies, request.Emails, request.Phones);
+        if (request.JobIds != null)
+        {
+            var ownedJobs = boardTolink.JobList.Select(x => x.Id);
 
-        var createdContact = await _contactRepository.AddAsync(mockContact, cancellationToken);
+            if (!JobIdsInBoard(ownedJobs, request.JobIds))
+            {
+                // TODO: NotAuthorised Problem Details.
+            }
+
+            await LinkContactToJobs(createdContact, request.JobIds);
+        }
 
         return createdContact.Id;
+    }
+
+    private async Task LinkContactToBoard(Contact contact, Board board)
+    {
+        board.AddContact(contact);
+
+        await _boardRepository.UpdateAsync(board);
+    }
+
+    private async Task LinkContactToJobs(Contact createdContact, Guid[] selectedJobIds)
+    {
+        var getSelectJobsSpec = new GetSelectedJobSpecification(selectedJobIds);
+
+        var selectedJobs = await _jobRepository.ListAsync(getSelectJobsSpec);
+
+        foreach (var job in selectedJobs)
+        {
+            JobContact contact = new(createdContact, job);
+
+            job.AddContact(contact);
+        }
+
+        await _jobRepository.UpdateRangeAsync(selectedJobs);
     }
 
     private static bool JobIdsInBoard(IEnumerable<Guid> ownedJobs, Guid[] jobIds)

@@ -7,11 +7,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{97CF0E9E-E70
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{B485B69E-161A-4E37-8211-76D7BAD50FE3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jobby.Api", "Jobby.Api\Jobby.Api.csproj", "{A9536E3A-B8CC-4638-BD74-17E515FACB34}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jobby.Api", "Jobby.Api\Jobby.Api.csproj", "{A9536E3A-B8CC-4638-BD74-17E515FACB34}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jobby.Persistence", "Jobby.Persistence\Jobby.Persistence.csproj", "{0C1E2C11-C4B4-498E-BC39-03665489320E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jobby.Persistence", "Jobby.Persistence\Jobby.Persistence.csproj", "{0C1E2C11-C4B4-498E-BC39-03665489320E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jobby.Core", "Jobby.Core\Jobby.Core.csproj", "{3BADF1BE-F82A-4420-9663-407A8248A4E7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jobby.Core", "Jobby.Core\Jobby.Core.csproj", "{3BADF1BE-F82A-4420-9663-407A8248A4E7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,8 +1,17 @@
-﻿namespace Jobby.Core.Exceptions;
+﻿using Jobby.Core.Exceptions.Common;
+using System.Net;
 
-public class BadRequestException : ApplicationException
+namespace Jobby.Core.Exceptions;
+
+public class BadRequestException : Exception, IServiceException
 {
-    public BadRequestException(string message) : base(message)
+    private string _message;
+
+    public BadRequestException(string message)
     {
+        _message = message;
     }
+
+    public HttpStatusCode StatusCode => HttpStatusCode.BadRequest;
+    public string ErrorMessage => _message;
 }
