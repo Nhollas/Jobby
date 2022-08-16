@@ -11,7 +11,7 @@ Jobby keeps track of every detail about your job applications - notes, dates, ta
 <br>
 
 ### Client Features 
-*03-08-2022*
+*16-08-2022*
 
 ##### TODO: Complete this.
 

@@ -16,7 +16,7 @@ public class JobController : Controller
         _mediator = mediator;
     }
 
-    [HttpPost("Create", Name = "Create Job")]
+    [HttpPost("Create", Name = "CreateJob")]
     public async Task<ActionResult<Guid>> Create([FromBody] CreateJobCommand command)
     {
         var dto = await _mediator.Send(command);
@@ -24,7 +24,7 @@ public class JobController : Controller
         return Ok(dto);
     }
 
-    [HttpDelete("Delete/{id:guid}", Name = "Delete Job")]
+    [HttpDelete("Delete/{id:guid}", Name = "DeleteJob")]
     public async Task<ActionResult> Delete(Guid id)
     {
         await _mediator.Send(new DeleteJobCommand(id));

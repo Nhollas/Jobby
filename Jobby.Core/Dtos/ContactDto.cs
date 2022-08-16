@@ -7,10 +7,10 @@ public class ContactDto : BaseDto
     public string FirstName { get; set; }
     public string LastName { get; set; }
     public string JobTitle { get; set; }
-    public string Company { get; set; }
     public SocialDto Social { get; set; }
-    public Guid[] Emails { get; set; }
-    public Guid[] Phones { get; set; }
+    public string[] Companies { get; set; }
+    public string[] Emails { get; set; }
+    public string[] Phones { get; set; }
 }
 
 public class SocialDto

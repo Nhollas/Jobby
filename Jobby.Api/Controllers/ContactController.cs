@@ -19,7 +19,7 @@ public class ContactController : Controller
         _mediator = mediator;
     }
 
-    [HttpPost("Create", Name = "Create Contact")]
+    [HttpPost("Create", Name = "CreateContact")]
     public async Task<ActionResult<Guid>> Create([FromBody] CreateContactCommand command)
     {
         var dto = await _mediator.Send(command);
@@ -27,14 +27,14 @@ public class ContactController : Controller
         return Ok(dto);
     }
 
-    [HttpDelete("Delete/{id:guid}", Name = "Delete Contact")]
+    [HttpDelete("Delete/{id:guid}", Name = "DeleteContact")]
     public async Task<ActionResult> Delete(Guid id)
     {
         await _mediator.Send(new DeleteContactCommand(id));
         return NoContent();
     }
 
-    [HttpPut("Update", Name = "Update Contact")]
+    [HttpPut("Update", Name = "UpdateContact")]
     public async Task<ActionResult> Update([FromBody] UpdateContactCommand command)
     {
         await _mediator.Send(command);

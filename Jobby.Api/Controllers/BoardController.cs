@@ -24,7 +24,7 @@ public class BoardController : Controller
         _mediator = mediator;
     }
 
-    [HttpPost("Create", Name = "Create Board")]
+    [HttpPost("Create", Name = "CreateBoard")]
     public async Task<ActionResult<Guid>> Create([FromBody] CreateBoardCommand command)
     {
         var id = await _mediator.Send(command);
@@ -32,28 +32,28 @@ public class BoardController : Controller
         return Ok(id);
     }
 
-    [HttpDelete("Delete/{id:guid}", Name = "Delete Board")]
+    [HttpDelete("Delete/{id:guid}", Name = "DeleteBoard")]
     public async Task<ActionResult> Delete(Guid id)
     {
         await _mediator.Send(new DeleteBoardCommand(id));
         return NoContent();
     }
 
-    [HttpPut("Update", Name = "Update Board")]
+    [HttpPut("Update", Name = "UpdateBoard")]
     public async Task<ActionResult> Update([FromBody] UpdateBoardCommand command)
     {
         await _mediator.Send(command);
         return NoContent();
     }
 
-    [HttpGet("{id:guid}", Name = "Get Board By Id")]
+    [HttpGet("{id:guid}", Name = "GetBoardById")]
     public async Task<ActionResult<BoardDto>> GetById(Guid id)
     {
         var boardQuery = new GetBoardDetailQuery(id);
         return Ok(await _mediator.Send(boardQuery));
     }
 
-    [Route("~/api/Boards")]
+    [Route("~/api/Boards", Name = "ListBoards")]
     [HttpGet]
     public async Task<ActionResult<List<BoardDto>>> List()
     {
@@ -61,14 +61,14 @@ public class BoardController : Controller
         return Ok(dtos);
     }
 
-    [HttpPost("{id:guid}/JobList")]
+    [HttpPost("{id:guid}/JobList", Name = "AddJobList")]
     public async Task<ActionResult> AddJobList(Guid id)
     {
         await _mediator.Send(new AddJobListCommand(id));
         return NoContent();
     }
 
-    [HttpDelete("{boardid:guid}/JobList/{listid:guid}")]
+    [HttpDelete("{boardid:guid}/JobList/{listid:guid}", Name = "DeleteJobList")]
     public async Task<ActionResult> DeleteJobList(Guid boardid, Guid listid)
     {
         await _mediator.Send(new DeleteJobListCommand(boardid, listid));

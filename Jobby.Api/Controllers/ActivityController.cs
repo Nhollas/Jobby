@@ -22,7 +22,7 @@ public class ActivityController : ControllerBase
         _mediator = mediator;
     }
 
-    [HttpPost("Create")]
+    [HttpPost("Create", Name = "CreateActivity")]
     public async Task<ActionResult<Guid>> Create([FromBody] CreateActivityCommand command)
     {
         var id = await _mediator.Send(command);
@@ -30,14 +30,14 @@ public class ActivityController : ControllerBase
         return Ok(id);
     }
 
-    [HttpDelete("Delete/{id:guid}")]
+    [HttpDelete("Delete/{id:guid}", Name = "DeleteActivity")]
     public async Task<ActionResult> Delete(Guid id)
     {
         await _mediator.Send(new DeleteActivityCommand(id));
         return NoContent();
     }
 
-    [HttpPut("Update")]
+    [HttpPut("Update", Name = "UpdateActivity")]
     public async Task<ActionResult> Update([FromBody] UpdateActivityCommand command)
     {
         await _mediator.Send(command);
@@ -45,15 +45,15 @@ public class ActivityController : ControllerBase
     }
 
     // List Activities From A Board.
-    [HttpGet("List/{id:guid}")]
+    [HttpGet("List/{id:guid}", Name = "ListActivities")]
     public async Task<ActionResult<List<ActivityDto>>> List(Guid id)
     {
         var dtos = await _mediator.Send(new GetBoardActivityListQuery(id));
         return Ok(dtos);
     }
 
-    [HttpGet("{id:guid}")]
-    public async Task<ActionResult<List<ActivityDto>>> GetById(Guid id)
+    [HttpGet("{id:guid}", Name = "GetActivityById")]
+    public async Task<ActionResult<ActivityDto>> GetById(Guid id)
     {
         var dtos = await _mediator.Send(new GetActivityDetailQuery(id));
         return Ok(dtos);
