@@ -18,11 +18,6 @@ public class AuthController : Controller
         _authService = authService;
     }
 
-    public IActionResult Login()
-    {
-        return View();
-    }
-
     [HttpPost]
     public async Task<IActionResult> Login(LoginViewModel model)
     {
@@ -39,7 +34,7 @@ public class AuthController : Controller
 
         Response.Cookies.Append("Access-Token", result.Token, new CookieOptions()
         {
-            HttpOnly = true, 
+            HttpOnly = true,
             SameSite = SameSiteMode.Strict
         });
 
@@ -50,6 +45,34 @@ public class AuthController : Controller
             controller = "Dashboard",
             action = "Index"
         });
+    }
+
+    public IActionResult Register()
+    {
+        return View();
+    }
+
+    [HttpGet("{username}")]
+    public IActionResult Login(string username)
+    {
+        ViewData["ImportedUsername"] = username;
+
+        return View();
+    }
+
+    public IActionResult Login()
+    {
+        ViewData["ImportedUsername"] = "";
+
+        return View();
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Register(RegisterViewModel model)
+    {
+        var result = await _authService.Register(model);
+
+        return RedirectToAction("Login", new { username = result.Username });
     }
 
     public async Task<IActionResult> Logout()

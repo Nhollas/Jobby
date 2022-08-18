@@ -5,8 +5,7 @@ using System.Net;
 namespace Jobby.Core.Exceptions;
 public class ValidationException : Exception, IServiceException
 {
-    private string _message = "test";
-    private List<string> _errors = new();
+    private readonly List<string> _errors = new();
 
     public ValidationException(ValidationResult result)
     {
@@ -17,5 +16,5 @@ public class ValidationException : Exception, IServiceException
     }
 
     public HttpStatusCode StatusCode => HttpStatusCode.BadRequest;
-    public string ErrorMessage => _message;
+    public string ErrorMessage { get; } = "test";
 }

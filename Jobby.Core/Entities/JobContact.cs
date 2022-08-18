@@ -17,6 +17,5 @@ public class JobContact
 
     private JobContact()
     {
-
     }
 }

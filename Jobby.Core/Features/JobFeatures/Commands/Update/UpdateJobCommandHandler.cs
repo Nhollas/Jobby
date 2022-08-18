@@ -8,7 +8,7 @@ public class UpdateJobCommandHandler : IRequestHandler<UpdateJobCommand, Unit>
 {
     private readonly IRepository<Job> _repository;
     private readonly IUserService _userService;
-    private readonly IMapper _mapper; 
+    private readonly IMapper _mapper;
     private readonly string _userId;
 
     public UpdateJobCommandHandler(

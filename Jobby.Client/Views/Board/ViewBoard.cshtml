@@ -5,7 +5,7 @@
 }
 
 <section class="p-8 flex flex-col gap-y-8 relative h-full">
-    <h1 class="text-2xl font-semibold">@Model.Name</h1>
+    <h1 class="text-2xl font-semibold">@Model.Name Board</h1>
     <div class="w-full flex flex-row gap-x-4">
         @foreach (var jobList in Model.JobList)
         {
@@ -22,7 +22,15 @@
                 </button>
                 @foreach(var job in jobList.Jobs)
                 {
-                    <div class="border-y-1 border-gray-900 bg-gray-100 -mx-4">
+                    <div class="border-y-1 border-gray-900 bg-gray-100 -mx-4 relative cursor-pointer">
+                        <button 
+                            data-job-id="@job.Id"
+                            data-job-title="@job.Title"
+                            data-job-company="@job.Company"
+                            data-board-id="@Model.Id"
+                            class="delete-job-btn text-xl absolute right-3 bottom-2">
+                            <i class="bi bi-trash"></i>
+                        </button>
                         <a asp-action="ViewJob" asp-controller="Board" asp-route-boardId="@Model.Id"  asp-route-jobId="@job.Id">
                             <div class="flex px-4 py-2 flex-col gap-y-2">
                                 <p class="text-sm font-medium">@job.Company</p>
@@ -34,5 +42,6 @@
             </div>
         }
     </div>
-    <div id="add-job-partial" class="absolute inset-0 bg-gray-50 hidden flex justify-center pt-8"></div>
+    <div id="add-job-partial" class="absolute inset-0 bg-gray-50/90 hidden flex justify-center"></div>
+    <div id="delete-job-partial" class="absolute inset-0 bg-gray-50/90 hidden flex justify-center"></div>
 </section>

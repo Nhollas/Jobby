@@ -57,9 +57,7 @@ public class CreateJobCommandHandler : IRequestHandler<CreateJobCommand, Guid>
     private async Task LinkJobToBoardList(Job createdJob, Board board, Guid jobListId)
     {
         JobList selectedJobList =
-            board.JobList
-                .Where(x => x.Id == jobListId)
-                .FirstOrDefault();
+            board.JobList.FirstOrDefault(x => x.Id == jobListId);
 
         if (selectedJobList.Jobs is null)
         {
@@ -72,19 +70,14 @@ public class CreateJobCommandHandler : IRequestHandler<CreateJobCommand, Guid>
         {
             selectedJobList.Jobs.Add(createdJob);
         }
-        
+
         await _jobListRepository.UpdateAsync(selectedJobList);
     }
 
     private static bool BoardOwnsJobList(Board board, Guid jobListId)
     {
-        if (board.JobList
+        return board.JobList
             .Select(x => x.Id == jobListId)
-            .Any())
-        {
-            return true;
-        }
-
-        return false;
+            .Any();
     }
 }

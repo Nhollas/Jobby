@@ -3,7 +3,7 @@
 namespace Jobby.Core.Features.BoardFeatures.Commands.AddJobList;
 public class AddJobListCommand : IRequest
 {
-    public Guid BoardId { get; private set; }
+    public Guid BoardId { get; }
 
     public AddJobListCommand(Guid boardId)
     {

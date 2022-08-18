@@ -4,13 +4,11 @@ using System.Net;
 namespace Jobby.Core.Exceptions;
 public class NotAuthorisedException : Exception, IServiceException
 {
-    private string _message;
-
     public NotAuthorisedException(string message)
     {
-        _message = message;
+        ErrorMessage = message;
     }
 
     public HttpStatusCode StatusCode => HttpStatusCode.Forbidden;
-    public string ErrorMessage => _message;
+    public string ErrorMessage { get; }
 }

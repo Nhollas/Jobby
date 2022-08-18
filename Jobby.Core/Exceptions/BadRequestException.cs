@@ -5,13 +5,11 @@ namespace Jobby.Core.Exceptions;
 
 public class BadRequestException : Exception, IServiceException
 {
-    private string _message;
-
     public BadRequestException(string message)
     {
-        _message = message;
+        ErrorMessage = message;
     }
 
     public HttpStatusCode StatusCode => HttpStatusCode.BadRequest;
-    public string ErrorMessage => _message;
+    public string ErrorMessage { get; }
 }

@@ -4,13 +4,11 @@ using System.Net;
 namespace Jobby.Core.Exceptions;
 public class NotFoundException : Exception, IServiceException
 {
-    private string _message;
-
     public NotFoundException(string message)
     {
-        _message = message;
+        ErrorMessage = message;
     }
 
     public HttpStatusCode StatusCode => HttpStatusCode.NotFound;
-    public string ErrorMessage => _message;
+    public string ErrorMessage { get; }
 }

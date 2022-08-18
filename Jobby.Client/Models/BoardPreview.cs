@@ -1,9 +1,8 @@
-﻿namespace Jobby.Client.Models;
+﻿using Jobby.Client.Models.Common;
 
-public class BoardPreview
+namespace Jobby.Client.Models;
+
+public class BoardPreview : BaseEntity
 {
-    public virtual Guid Id { get; set; }
-    public virtual DateTime CreatedDate { get; set; }
-    public virtual DateTime LastUpdated { get; set; }
     public string Name { get; set; }
 }

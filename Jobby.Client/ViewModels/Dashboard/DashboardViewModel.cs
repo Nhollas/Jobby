@@ -6,5 +6,5 @@ namespace Jobby.Client.ViewModels.Dashboard;
 public class DashboardViewModel
 {
     public List<BoardPreview> Boards { get; set; }
-    public UpdateBoardViewModel BoardToUpdate { get; set; }
+    public CreateBoardViewModel BoardToCreate { get; set; }
 }

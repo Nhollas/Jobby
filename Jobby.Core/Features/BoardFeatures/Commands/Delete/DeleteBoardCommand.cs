@@ -4,7 +4,7 @@ namespace Jobby.Core.Features.BoardFeatures.Commands.Delete;
 
 public class DeleteBoardCommand : IRequest
 {
-    public Guid BoardId { get; private set; }
+    public Guid BoardId { get; }
 
     public DeleteBoardCommand(Guid id)
     {

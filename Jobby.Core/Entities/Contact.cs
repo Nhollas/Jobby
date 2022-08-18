@@ -6,7 +6,6 @@ public class Contact : BaseEntity
 {
     private Contact()
     {
-
     }
 
     public Contact(

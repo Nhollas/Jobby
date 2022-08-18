@@ -2,9 +2,9 @@
 
 public class RegisterRequest
 {
-    public string Username { get; private set; }
-    public string Password { get; private set; }
-    public string Email { get; private set; }
+    public string Username { get; }
+    public string Password { get; }
+    public string Email { get; }
 
     public RegisterRequest(string username, string password, string email)
     {

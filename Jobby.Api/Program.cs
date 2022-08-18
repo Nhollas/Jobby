@@ -80,7 +80,6 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -89,7 +88,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-
 app.UseExceptionHandler("/error");
 app.UseHttpsRedirection();
 app.UseStaticFiles();
@@ -97,5 +95,5 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
-app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+app.UseEndpoints(endpoints => endpoints.MapControllers());
 app.Run();

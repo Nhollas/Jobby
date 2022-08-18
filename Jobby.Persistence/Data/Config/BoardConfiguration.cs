@@ -18,6 +18,5 @@ public class BoardConfiguration : IEntityTypeConfiguration<Board>
         builder.HasMany(x => x.Activities)
             .WithOne(x => x.Board)
             .HasForeignKey(x => x.BoardFk);
-
     }
 }

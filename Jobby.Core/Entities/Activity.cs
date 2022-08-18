@@ -6,16 +6,15 @@ public class Activity : BaseEntity
 {
     public Activity()
     {
-
     }
 
     public Activity(
-        string title, 
-        int categoryType, 
-        DateTime startDate, 
-        DateTime endDate, 
-        string note, 
-        bool completed, 
+        string title,
+        int categoryType,
+        DateTime startDate,
+        DateTime endDate,
+        string note,
+        bool completed,
         string ownerId)
     {
         _categories.TryGetValue(categoryType, out var category);
@@ -37,13 +36,11 @@ public class Activity : BaseEntity
     public bool Completed { get; set; }
     public string OwnerId { get; set; }
 
-
     public virtual Board Board { get; set; }
     public virtual Job Job { get; set; }
 
     public Guid BoardFk { get; set; }
     public Guid? JobFk { get; set; }
-
 
     public void SetCategory(int categoryType)
     {

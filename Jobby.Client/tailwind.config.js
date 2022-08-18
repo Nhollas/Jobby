@@ -10,7 +10,25 @@ module.exports = {
       borderWidth: {
         '1': '1px',
         '4': '4px'
+          },
+      outlineWidth: {
+        '1': '1px',
+        '4': '4px'
       },
+      fontSize: {
+        '0': '0',
+      },
+      colors: {
+        'main-blue': '#471cff',
+        'main-red': '#ff0000',
+        'main-orange': '#ffa410',
+      },
+      fontFamily: {
+        raleway: ["Raleway", "sans-serif"]
+      },
+      scale: {
+        'base': '1.025'
+      }
     },
   },
   plugins: [],

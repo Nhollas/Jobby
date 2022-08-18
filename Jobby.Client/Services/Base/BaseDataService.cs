@@ -12,7 +12,7 @@ public class BaseDataService
     {
         if (ex.StatusCode == 400)
         {
-            return new ApiResponse<Guid>() { Message = "Validation errors have occured.", ValidationErrors = ex.Response, Success = false };
+            return new ApiResponse<Guid>() { Message = "Validation errors have occurred.", ValidationErrors = ex.Response, Success = false };
         }
         else if (ex.StatusCode == 404)
         {
@@ -24,5 +24,3 @@ public class BaseDataService
         }
     }
 }
-
-

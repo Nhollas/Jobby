@@ -12,7 +12,6 @@ public class Job : BaseEntity
 
     private Job()
     {
-
     }
 
     public string Company { get; set; }
@@ -29,27 +28,16 @@ public class Job : BaseEntity
 
     public ICollection<JobContact> JobContacts { get; set; }
 
-
     public JobList JobList { get; set; }
     public Guid JobListFk { get; set; }
 
     public void AddActivity(Activity activity)
     {
-        if (Activities == null)
-        {
-            Activities = new List<Activity>();
-        }
-
-        Activities.Add(activity);
+        (Activities ??= new List<Activity>()).Add(activity);
     }
 
     public void AddContact(JobContact contact)
     {
-        if (JobContacts == null)
-        {
-            JobContacts = new List<JobContact>();
-        }
-
-        JobContacts.Add(contact);
+        (JobContacts ??= new List<JobContact>()).Add(contact);
     }
 }

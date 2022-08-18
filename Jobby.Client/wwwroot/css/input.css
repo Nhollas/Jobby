@@ -5,3 +5,11 @@
 * {
     font-family: Poppins;
 }
+
+.btn-primary {
+    @apply text-white font-semibold bg-main-blue rounded-md font-raleway hover:bg-gray-50 hover:text-black hover:border-main-blue border-1;
+}
+
+.btn-secondary {
+    @apply font-semibold border-1 border-gray-900 bg-white font-raleway;
+}

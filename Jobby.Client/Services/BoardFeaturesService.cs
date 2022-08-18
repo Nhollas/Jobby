@@ -31,9 +31,9 @@ public class BoardFeaturesService : BaseDataService, IBoardFeaturesService
         }
     }
 
-    public async Task DeleteBoard(Guid id)
+    public async Task DeleteBoard(Guid boardId)
     {
-        await _client.DeleteBoardAsync(id);
+        await _client.DeleteBoardAsync(boardId);
     }
 
     public async Task UpdateBoard(Guid BoardId, string Name)

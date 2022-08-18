@@ -14,17 +14,17 @@ public class BoardController : Controller
     private readonly IJobFeaturesService _jobService;
 
     public BoardController(
-        IBoardFeaturesService boardService, 
+        IBoardFeaturesService boardService,
         IJobFeaturesService jobService)
     {
         _boardService = boardService;
         _jobService = jobService;
     }
 
-    [HttpGet("{id:guid}/Board")]
-    public async Task<ActionResult<BoardDetailViewModel>> ViewBoard(Guid id)
+    [HttpGet("{boardId:guid}/Board")]
+    public async Task<ActionResult<BoardDetailViewModel>> ViewBoard(Guid boardId)
     {
-        BoardDetailViewModel model = await _boardService.GetBoardById(id);
+        BoardDetailViewModel model = await _boardService.GetBoardById(boardId);
 
         return View(model);
     }
@@ -47,6 +47,31 @@ public class BoardController : Controller
         return PartialView("_UpdateBoardPartial", model);
     }
 
+    [HttpPost("Create")]
+    public async Task<ActionResult> Create(CreateBoardViewModel viewModel)
+    {
+        var result = await _boardService.CreateBoard(viewModel.Name);
+
+        return RedirectToAction("ViewBoard", new { boardId = result.Data });
+    }
+
+    [HttpPost("Delete")]
+    public async Task<ActionResult> Delete(DeleteBoardViewModel viewModel)
+    {
+        await _boardService.DeleteBoard(viewModel.BoardId);
+
+        return RedirectToRoute(new
+        {
+            controller = "Dashboard",
+            action = "Index"
+        });
+    }
+
+    [HttpPost("DeletePartial")]
+    public PartialViewResult DeletePartial(DeleteBoardViewModel model)
+    {
+        return PartialView("_DeleteBoardPartial", model);
+    }
 
     [HttpGet("{boardId:guid}/Job/{jobId:guid}")]
     public async Task<ActionResult<JobDetailViewModel>> ViewJob(Guid boardId, Guid jobId)

@@ -31,7 +31,7 @@ public class DashboardController : Controller
         DashboardViewModel model = new()
         {
             Boards = minifiedBoardList,
-            BoardToUpdate = new()
+            BoardToCreate = new()
         };
 
         return View(model);

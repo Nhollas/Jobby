@@ -19,9 +19,8 @@ public class JobList : BaseEntity
         }
     }
 
-    public string Name { get; private set; }
+    public string Name { get; set; }
     public ICollection<Job> Jobs { get; set; }
-
 
     public Board Board { get; set; }
     public Guid BoardFk { get; set; }

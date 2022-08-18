@@ -22,17 +22,36 @@ public class JobController : Controller
         return PartialView("_CreateJobPartial", model);
     }
 
+    [HttpPost("DeletePartial")]
+    public PartialViewResult DeletePartial(DeleteJobViewModel model)
+    {
+        return PartialView("_DeleteJobPartial", model);
+    }
+
+    [HttpPost("Delete")]
+    public async Task<ActionResult> Delete(DeleteJobViewModel viewModel)
+    {
+        await _jobService.DeleteJob(viewModel.JobId);
+
+        return RedirectToRoute(new
+        {
+            controller = "Board",
+            action = "ViewBoard",
+            boardId = viewModel.BoardId
+        });
+    }
+
     [HttpPost("Create")]
     public async Task<ActionResult> Create(CreateJobViewModel viewModel)
     {
-        var createdJobId = await _jobService.CreateJob(viewModel);
+        var result = await _jobService.CreateJob(viewModel);
 
         return RedirectToRoute(new
         {
             controller = "Board",
             action = "ViewJob",
             boardId = viewModel.BoardId,
-            jobId = createdJobId.Data
+            jobId = result.Data
         });
     }
 }

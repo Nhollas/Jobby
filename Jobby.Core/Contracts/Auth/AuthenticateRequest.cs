@@ -2,8 +2,8 @@
 
 public class AuthenticateRequest
 {
-    public string Username { get; private set; }
-    public string Password { get; private set; }
+    public string Username { get; }
+    public string Password { get; }
 
     public AuthenticateRequest(string username, string password)
     {

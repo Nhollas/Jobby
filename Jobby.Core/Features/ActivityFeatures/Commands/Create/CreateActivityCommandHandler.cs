@@ -89,14 +89,9 @@ public class CreateActivityCommandHandler : IRequestHandler<CreateActivityComman
 
     private static bool BoardOwnsJob(Board board, Guid jobId)
     {
-        if (board.JobList
+        return board.JobList
             .Select(x => x.Jobs
             .Where(x => x.Id == jobId))
-            .Any())
-        {
-            return true;
-        }
-
-        return false;
+            .Any();
     }
 }

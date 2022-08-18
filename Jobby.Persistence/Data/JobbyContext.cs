@@ -1,4 +1,5 @@
 ﻿using Jobby.Core.Entities;
+using Jobby.Core.Entities.Common;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
@@ -21,5 +22,22 @@ public class JobbyContext : DbContext
     {
         base.OnModelCreating(builder);
         builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+    }
+
+    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
+    {
+        foreach (var entry in ChangeTracker.Entries<BaseEntity>())
+        {
+            switch (entry.State)
+            {
+                case EntityState.Added:
+                    entry.Entity.CreatedDate = DateTime.Now;
+                    break;
+                case EntityState.Modified:
+                    entry.Entity.LastUpdated = DateTime.Now;
+                    break;
+            }
+        }
+        return base.SaveChangesAsync(cancellationToken);
     }
 }
