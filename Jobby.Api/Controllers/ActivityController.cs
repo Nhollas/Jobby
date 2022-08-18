@@ -22,6 +22,7 @@ public class ActivityController : ControllerBase
         _mediator = mediator;
     }
 
+    [ProducesResponseType(StatusCodes.Status200OK)]
     [HttpPost("Create", Name = "CreateActivity")]
     public async Task<ActionResult<Guid>> Create([FromBody] CreateActivityCommand command)
     {
@@ -30,6 +31,9 @@ public class ActivityController : ControllerBase
         return Ok(id);
     }
 
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesDefaultResponseType]
     [HttpDelete("Delete/{id:guid}", Name = "DeleteActivity")]
     public async Task<ActionResult> Delete(Guid id)
     {
@@ -37,6 +41,9 @@ public class ActivityController : ControllerBase
         return NoContent();
     }
 
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesDefaultResponseType]
     [HttpPut("Update", Name = "UpdateActivity")]
     public async Task<ActionResult> Update([FromBody] UpdateActivityCommand command)
     {
@@ -44,7 +51,8 @@ public class ActivityController : ControllerBase
         return NoContent();
     }
 
-    // List Activities From A Board.
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesDefaultResponseType]
     [HttpGet("List/{id:guid}", Name = "ListActivities")]
     public async Task<ActionResult<List<ActivityDto>>> List(Guid id)
     {
@@ -52,6 +60,9 @@ public class ActivityController : ControllerBase
         return Ok(dtos);
     }
 
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesDefaultResponseType]
     [HttpGet("{id:guid}", Name = "GetActivityById")]
     public async Task<ActionResult<ActivityDto>> GetById(Guid id)
     {

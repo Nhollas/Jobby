@@ -35,6 +35,8 @@ public class UpdateBoardCommandHandler : IRequestHandler<UpdateBoardCommand, Uni
 
         boardToUpdate.Name = request.BoardName;
 
+        await _repository.UpdateAsync(boardToUpdate, cancellationToken);
+
         return Unit.Value;
     }
 }

@@ -72,8 +72,6 @@ public class CreateJobCommandHandler : IRequestHandler<CreateJobCommand, Guid>
         {
             selectedJobList.Jobs.Add(createdJob);
         }
-
-        selectedJobList.SetCount();
         
         await _jobListRepository.UpdateAsync(selectedJobList);
     }

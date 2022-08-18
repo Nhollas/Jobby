@@ -1,7 +1,5 @@
 using Jobby.Client;
 using Jobby.Client.Services.Base;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Net.Http.Headers;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -24,13 +22,7 @@ builder.Services.AddAuthentication("Auth-Cookie")
     options.ExpireTimeSpan = TimeSpan.FromHours(2);
 });
 
-builder.Services.AddMvc(o =>
-{
-    var policy = new AuthorizationPolicyBuilder()
-        .RequireAuthenticatedUser()
-        .Build();
-    o.Filters.Add(new AuthorizeFilter(policy));
-});
+builder.Services.AddMvc();
 
 
 var app = builder.Build();
@@ -54,4 +46,5 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
 app.Run();

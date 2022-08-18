@@ -5,7 +5,7 @@ using System.Net;
 namespace Jobby.Core.Exceptions;
 public class ValidationException : Exception, IServiceException
 {
-    private string _message;
+    private string _message = "test";
     private List<string> _errors = new();
 
     public ValidationException(ValidationResult result)

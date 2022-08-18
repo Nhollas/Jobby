@@ -24,6 +24,7 @@ public class BoardController : Controller
         _mediator = mediator;
     }
 
+    [ProducesResponseType(StatusCodes.Status200OK)]
     [HttpPost("Create", Name = "CreateBoard")]
     public async Task<ActionResult<Guid>> Create([FromBody] CreateBoardCommand command)
     {
@@ -32,6 +33,9 @@ public class BoardController : Controller
         return Ok(id);
     }
 
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesDefaultResponseType]
     [HttpDelete("Delete/{id:guid}", Name = "DeleteBoard")]
     public async Task<ActionResult> Delete(Guid id)
     {
@@ -39,6 +43,9 @@ public class BoardController : Controller
         return NoContent();
     }
 
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesDefaultResponseType]
     [HttpPut("Update", Name = "UpdateBoard")]
     public async Task<ActionResult> Update([FromBody] UpdateBoardCommand command)
     {
@@ -46,6 +53,9 @@ public class BoardController : Controller
         return NoContent();
     }
 
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesDefaultResponseType]
     [HttpGet("{id:guid}", Name = "GetBoardById")]
     public async Task<ActionResult<BoardDto>> GetById(Guid id)
     {
@@ -53,6 +63,8 @@ public class BoardController : Controller
         return Ok(await _mediator.Send(boardQuery));
     }
 
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesDefaultResponseType]
     [Route("~/api/Boards", Name = "ListBoards")]
     [HttpGet]
     public async Task<ActionResult<List<BoardDto>>> List()
@@ -61,6 +73,9 @@ public class BoardController : Controller
         return Ok(dtos);
     }
 
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesDefaultResponseType]
     [HttpPost("{id:guid}/JobList", Name = "AddJobList")]
     public async Task<ActionResult> AddJobList(Guid id)
     {
@@ -68,6 +83,9 @@ public class BoardController : Controller
         return NoContent();
     }
 
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesDefaultResponseType]
     [HttpDelete("{boardid:guid}/JobList/{listid:guid}", Name = "DeleteJobList")]
     public async Task<ActionResult> DeleteJobList(Guid boardid, Guid listid)
     {

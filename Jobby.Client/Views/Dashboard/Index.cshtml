@@ -1,0 +1,25 @@
+﻿@using Jobby.Client.ViewModels.Dashboard;
+@model DashboardViewModel
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Dashboard";
+}
+
+<section class="p-8 flex flex-col gap-y-8 relative h-full">
+    <h1 class="text-2xl font-semibold">Dashboard</h1>
+    <h2 class="text-lg font-medium">Boards</h2>
+    <div class="w-full flex flex-row gap-x-4">
+        @foreach (var item in Model.Boards)
+        {
+            <div class="bg-gray-50 border-1 border-gray-900 w-full max-w-lg relative z-0 cursor-pointer">
+                <button data-name="@item.Name" data-id="@item.Id" class="update-board-btn text-xl z-10 absolute right-3 top-2"><i class="bi bi-pencil"></i></button>
+                <a asp-action="ViewBoard" asp-controller="Board" asp-route-id="@item.Id">
+                    <div class="flex items-center p-4">
+                        <p class="text-base font-medium">@item.Name</p>
+                    </div>
+                </a>
+            </div>
+        }
+    </div>
+    <div id="update-partial" class="absolute inset-0 bg-gray-50 hidden flex justify-center pt-8"></div>
+</section>

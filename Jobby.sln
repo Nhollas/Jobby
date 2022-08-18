@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jobby.Persistence", "Jobby.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jobby.Core", "Jobby.Core\Jobby.Core.csproj", "{3BADF1BE-F82A-4420-9663-407A8248A4E7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jobby.Client", "Jobby.Client\Jobby.Client.csproj", "{6BDF49E8-03D8-47A1-AC34-AF06480CCAE5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jobby.Client", "Jobby.Client\Jobby.Client.csproj", "{6BDF49E8-03D8-47A1-AC34-AF06480CCAE5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

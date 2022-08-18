@@ -33,7 +33,7 @@ public class AuthenticationService : IAuthenticationService
             {
                 string token = _jwtTokenGenerator.GenerateToken(_user);
 
-                return new AuthenticateResponse(token);
+                return new AuthenticateResponse(token, _user.Id, _user.NormalizedUserName);
             }
 
             throw new InvalidUserOrPassException();

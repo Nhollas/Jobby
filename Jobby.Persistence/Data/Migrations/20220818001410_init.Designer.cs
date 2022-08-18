@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Jobby.Persistence.Data.Migrations
 {
     [DbContext(typeof(JobbyContext))]
-    [Migration("20220811111746_test")]
-    partial class test
+    [Migration("20220818001410_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -213,9 +213,6 @@ namespace Jobby.Persistence.Data.Migrations
 
                     b.Property<Guid>("BoardFk")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Count")
-                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");

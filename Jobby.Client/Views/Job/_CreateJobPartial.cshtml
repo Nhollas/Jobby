@@ -1,0 +1,28 @@
+﻿@using Jobby.Client.ViewModels.Job
+@model CreateJobViewModel
+
+<div class="w-full max-w-lg border-1 border-gray-900 h-max p-8 flex flex-col gap-y-4">
+    <h1 class="text-2xl font-semibold">Add Job</h1>
+    <form asp-controller="Job" asp-action="Create" class="flex flex-col gap-6" method="post">
+        <div class="flex flex-col gap-y-3">
+            <label asp-for="Title" class="text-base"></label>
+            <input asp-for="Title" class="border-1 border-gray-300 border-b-[#001534] border-b-2 h-10 w-full max-w-md px-5">
+        </div>
+        <div class="flex flex-col gap-y-3">
+            <label asp-for="Company" class="text-base"></label>
+            <input asp-for="Company" class="border-1 border-gray-300 border-b-[#001534] border-b-2 h-10 w-full max-w-md px-5">
+        </div>
+        <div class="flex flex-col gap-y-3">
+            <label asp-for="BoardName" class="text-base"></label>
+            <input asp-for="BoardName" value="@Model.BoardName" disabled class="border-1 border-gray-300 border-b-[#001534] border-b-2 h-10 w-full max-w-md px-5">
+        </div>
+        <div class="flex flex-col gap-y-3">
+            <label asp-for="JobListName" class="text-base"></label>
+            <input asp-for="JobListName" value="@Model.JobListName" disabled class="border-1 border-gray-300 border-b-[#001534] border-b-2 h-10 w-full max-w-md px-5">
+        </div>
+        @Html.HiddenFor(model => model.BoardId)
+        @Html.HiddenFor(model => model.JobListId)
+        <button type="submit" class="font-link flex w-full max-w-sm cursor-pointer items-center justify-center py-3 font-semibold border-[1px] border-purple-600 bg-purple-100 hover:bg-purple-300 mt-4">Create</button>
+    </form>
+</div>
+

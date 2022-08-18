@@ -23,7 +23,6 @@
 
   <ItemGroup>
     <Folder Include="Features\ContactFeatures\Queries\GetList\" />
-    <Folder Include="Features\JobFeatures\Queries\" />
   </ItemGroup>
 
 </Project>

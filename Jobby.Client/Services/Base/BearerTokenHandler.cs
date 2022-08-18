@@ -12,7 +12,6 @@ public class BearerTokenHandler : DelegatingHandler
             throw new ArgumentNullException(nameof(httpContextAccessor));
     }
 
-
     protected override async Task<HttpResponseMessage> SendAsync(
         HttpRequestMessage request,
         CancellationToken cancellationToken)

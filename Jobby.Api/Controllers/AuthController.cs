@@ -18,7 +18,7 @@ public class AuthController : Controller
     }
 
     [HttpPost("register", Name = "Register")]
-    public async Task<IActionResult> Register([FromBody] RegisterRequest request)
+    public async Task<ActionResult<RegisterResponse>> Register([FromBody] RegisterRequest request)
     {
         var result = await _authenticationService.Register(request);
 
@@ -26,7 +26,7 @@ public class AuthController : Controller
     }
 
     [HttpPost("login", Name = "Login")]
-    public async Task<IActionResult> Login([FromBody] AuthenticateRequest request)
+    public async Task<ActionResult<AuthenticateResponse>> Login([FromBody] AuthenticateRequest request)
     {
         var result = await _authenticationService.Login(request);
 

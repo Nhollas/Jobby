@@ -19,6 +19,7 @@ public class ContactController : Controller
         _mediator = mediator;
     }
 
+    [ProducesResponseType(StatusCodes.Status200OK)]
     [HttpPost("Create", Name = "CreateContact")]
     public async Task<ActionResult<Guid>> Create([FromBody] CreateContactCommand command)
     {
@@ -27,6 +28,9 @@ public class ContactController : Controller
         return Ok(dto);
     }
 
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesDefaultResponseType]
     [HttpDelete("Delete/{id:guid}", Name = "DeleteContact")]
     public async Task<ActionResult> Delete(Guid id)
     {
@@ -34,6 +38,9 @@ public class ContactController : Controller
         return NoContent();
     }
 
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesDefaultResponseType]
     [HttpPut("Update", Name = "UpdateContact")]
     public async Task<ActionResult> Update([FromBody] UpdateContactCommand command)
     {

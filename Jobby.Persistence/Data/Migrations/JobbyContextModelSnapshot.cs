@@ -212,9 +212,6 @@ namespace Jobby.Persistence.Data.Migrations
                     b.Property<Guid>("BoardFk")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("Count")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 

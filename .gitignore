@@ -9,7 +9,6 @@ bin/
 
 **/bin/*
 **/obj/*
+**/node_modules/*
 **/appsettings.json
 **/appsettings.Development.json
-
-# Test test

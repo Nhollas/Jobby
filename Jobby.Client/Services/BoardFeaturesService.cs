@@ -1,12 +1,17 @@
-﻿using Jobby.Client.Interfaces;
+﻿using AutoMapper;
+using Jobby.Client.Interfaces;
 using Jobby.Client.Services.Base;
+using Jobby.Client.ViewModels.Board;
 
 namespace Jobby.Client.Services;
 
 public class BoardFeaturesService : BaseDataService, IBoardFeaturesService
 {
-    public BoardFeaturesService(IClient client) : base(client)
+    private readonly IMapper _mapper;
+
+    public BoardFeaturesService(IClient client, IMapper mapper) : base(client)
     {
+        _mapper = mapper;
     }
 
     public async Task<ApiResponse<Guid>> CreateBoard(string Name)
@@ -42,10 +47,13 @@ public class BoardFeaturesService : BaseDataService, IBoardFeaturesService
         await _client.UpdateBoardAsync(command);
     }
 
-    public async Task<BoardDto> GetBoardById(Guid Id)
+    public async Task<BoardDetailViewModel> GetBoardById(Guid Id)
     {
         BoardDto selectedBoard = await _client.GetBoardByIdAsync(Id);
-        return selectedBoard;
+
+        BoardDetailViewModel mappedBoard = _mapper.Map<BoardDetailViewModel>(selectedBoard);
+
+        return mappedBoard;
     }
 
     public async Task<List<BoardDto>> ListBoards()
@@ -63,6 +71,6 @@ public class BoardFeaturesService : BaseDataService, IBoardFeaturesService
 
     public async Task DeleteJobList(Guid BoardId, Guid ListId)
     {
-        await _client.DeleteJobListAsync(BoardId, ListId);  
+        await _client.DeleteJobListAsync(BoardId, ListId);
     }
 }

@@ -1,0 +1,12 @@
+﻿@using Jobby.Client.ViewModels.Job
+@model JobDetailViewModel
+@{
+    ViewData["Title"] = $"{Model.Title} at {Model.Company}";
+}
+
+<section class="p-8 flex flex-col gap-y-8 relative h-full">
+    <h1 class="text-2xl font-semibold">@Model.Title</h1>
+    <h1 class="text-2xl font-semibold">@Model.Company</h1>
+    <div class="w-full flex flex-row gap-x-4">
+    </div>
+</section>
