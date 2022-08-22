@@ -5,6 +5,7 @@ namespace Jobby.Client.ViewModels.Job;
 
 public class JobDetailViewModel : BaseViewModel
 {
+    public Guid BoardId { get; set; }
     public string Title { get; set; }
     public string Company { get; set; }
     public string PostUrl { get; set; }

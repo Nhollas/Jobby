@@ -1,5 +1,5 @@
 ﻿using Ardalis.Specification.EntityFrameworkCore;
-using Jobby.Core.Interfaces;
+using Jobby.Application.Abstractions.Specification;
 
 namespace Jobby.Persistence.Data;
 

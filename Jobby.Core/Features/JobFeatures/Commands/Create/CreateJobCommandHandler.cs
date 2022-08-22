@@ -1,11 +1,13 @@
-﻿using Jobby.Core.Entities;
-using Jobby.Core.Interfaces;
-using Jobby.Core.Specifications;
+﻿using Jobby.Application.Abstractions.Specification;
+using Jobby.Application.Exceptions.Base;
+using Jobby.Application.Interfaces;
+using Jobby.Application.Specifications;
+using Jobby.Domain.Entities;
 using MediatR;
 
-namespace Jobby.Core.Features.JobFeatures.Commands.Create;
+namespace Jobby.Application.Features.JobFeatures.Commands.Create;
 
-public class CreateJobCommandHandler : IRequestHandler<CreateJobCommand, Guid>
+internal sealed class CreateJobCommandHandler : IRequestHandler<CreateJobCommand, Guid>
 {
     private readonly IRepository<Board> _boardRepository;
     private readonly IRepository<JobList> _jobListRepository;
@@ -34,17 +36,17 @@ public class CreateJobCommandHandler : IRequestHandler<CreateJobCommand, Guid>
 
         if (BoardToLink is null)
         {
-            // TODO: NotFound Problem Details.
+            throw new NotFoundException($"The Board {request.BoardId} could not be found.");
         }
 
         if (BoardToLink.OwnerId != _userId)
         {
-            // TODO: NotAuthorized Problem Details.
+            throw new NotAuthorisedException(_userId);
         }
 
         if (!BoardOwnsJobList(BoardToLink, request.JobListId))
         {
-            // TODO: NotFound Problem Details.
+            throw new NotFoundException($"The board {request.BoardId} does not contain the JobList {request.JobListId}.");
         }
 
         Job createdJob = new(request.CompanyName, request.JobTitle);

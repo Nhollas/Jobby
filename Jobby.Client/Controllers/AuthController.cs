@@ -1,9 +1,9 @@
-﻿using System.Security.Claims;
-using Jobby.Client.Interfaces;
+﻿using Jobby.Client.Interfaces;
 using Jobby.Client.ViewModels.Auth;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Jobby.Client.Controllers;
 

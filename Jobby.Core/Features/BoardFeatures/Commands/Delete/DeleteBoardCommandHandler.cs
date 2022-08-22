@@ -1,10 +1,12 @@
-﻿using Jobby.Core.Entities;
-using Jobby.Core.Interfaces;
+﻿using Jobby.Application.Abstractions.Specification;
+using Jobby.Application.Exceptions.Base;
+using Jobby.Application.Interfaces;
+using Jobby.Domain.Entities;
 using MediatR;
 
-namespace Jobby.Core.Features.BoardFeatures.Commands.Delete;
+namespace Jobby.Application.Features.BoardFeatures.Commands.Delete;
 
-public class DeleteBoardCommandHandler : IRequestHandler<DeleteBoardCommand, Unit>
+internal sealed class DeleteBoardCommandHandler : IRequestHandler<DeleteBoardCommand, Unit>
 {
     private readonly IRepository<Board> _repository;
     private readonly IUserService _userService;
@@ -23,14 +25,14 @@ public class DeleteBoardCommandHandler : IRequestHandler<DeleteBoardCommand, Uni
     {
         Board boardToDelete = await _repository.GetByIdAsync(request.BoardId, cancellationToken);
 
-        if (boardToDelete == null)
+        if (boardToDelete is null)
         {
-            // TODO: NotFound Problem Details.
+            throw new NotFoundException($"A board with id {request.BoardId} could not be found.");
         }
 
         if (boardToDelete.OwnerId != _userId)
         {
-            // TODO: NotAuthorized Problem Details.
+            throw new NotAuthorisedException(_userId);
         }
 
         await _repository.DeleteAsync(boardToDelete, cancellationToken);

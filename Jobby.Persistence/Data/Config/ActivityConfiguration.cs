@@ -1,4 +1,4 @@
-﻿using Jobby.Core.Entities;
+﻿using Jobby.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

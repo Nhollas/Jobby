@@ -1,11 +1,10 @@
-﻿using Jobby.Core.Contracts.Auth;
-using Jobby.Core.Entities.Common;
-using Jobby.Core.Exceptions;
-using Jobby.Core.Exceptions.Auth;
-using Jobby.Core.Interfaces;
+﻿using Jobby.Application.Contracts.Auth;
+using Jobby.Application.Exceptions.Base;
+using Jobby.Application.Interfaces;
+using Jobby.Domain.Entities.Common;
 using Microsoft.AspNetCore.Identity;
 
-namespace Jobby.Core.Services;
+namespace Jobby.Application.Services;
 
 public class AuthenticationService : IAuthenticationService
 {
@@ -36,10 +35,10 @@ public class AuthenticationService : IAuthenticationService
                 return new AuthenticateResponse(token, _user.Id, _user.NormalizedUserName);
             }
 
-            throw new InvalidUserOrPassException();
+            throw new NotImplementedException();
         }
 
-        throw new InvalidUserOrPassException();
+        throw new NotImplementedException();
     }
 
     public async Task<RegisterResponse> Register(RegisterRequest request)

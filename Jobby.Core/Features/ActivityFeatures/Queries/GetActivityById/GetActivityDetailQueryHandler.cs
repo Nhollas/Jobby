@@ -1,11 +1,13 @@
 ﻿using AutoMapper;
-using Jobby.Core.Dtos;
-using Jobby.Core.Entities;
-using Jobby.Core.Interfaces;
+using Jobby.Application.Abstractions.Specification;
+using Jobby.Application.Dtos;
+using Jobby.Application.Exceptions.Base;
+using Jobby.Application.Interfaces;
+using Jobby.Domain.Entities;
 using MediatR;
 
-namespace Jobby.Core.Features.ActivityFeatures.Queries.GetActivityById;
-public class GetActivityDetailQueryHandler : IRequestHandler<GetActivityDetailQuery, ActivityDto>
+namespace Jobby.Application.Features.ActivityFeatures.Queries.GetActivityById;
+internal sealed class GetActivityDetailQueryHandler : IRequestHandler<GetActivityDetailQuery, ActivityDto>
 {
     private readonly IRepository<Activity> _repository;
     private readonly IMapper _mapper;
@@ -29,12 +31,12 @@ public class GetActivityDetailQueryHandler : IRequestHandler<GetActivityDetailQu
 
         if (activityToGet == null)
         {
-            // TODO: NotFound Problem Details.
+            throw new NotFoundException($"An activity with id {request.ActivityId} could not be found.");
         }
 
         if (activityToGet.OwnerId != _userId)
         {
-            // TODO: NotAuthorized Problem Details.
+            throw new NotAuthorisedException(_userId);
         }
 
         return _mapper.Map<ActivityDto>(activityToGet);

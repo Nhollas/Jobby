@@ -29,7 +29,7 @@ public class ActivityFeaturesService : BaseDataService, IActivityFeaturesService
 
     public async Task<ActivityDto> GetActivityById(Guid id)
     {
-        var selectedActivity = await _client.GetActivityByIdAsync(id);
+        var selectedActivity = await _client.GetActivityAsync(id);
 
         return selectedActivity;
     }

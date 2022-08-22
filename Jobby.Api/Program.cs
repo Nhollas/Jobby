@@ -1,11 +1,10 @@
-using Jobby.Api.Errors;
-using Jobby.Core;
-using Jobby.Core.Entities.Common;
+using Jobby.Api.Middleware;
+using Jobby.Application;
+using Jobby.Domain.Entities.Common;
 using Jobby.Persistence;
 using Jobby.Persistence.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
@@ -17,12 +16,14 @@ builder.Services.AddApplicationServices();
 builder.Services.AddPersistenceServices(config);
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
-        .AddEntityFrameworkStores<JobbyIdentityContext>()
-        .AddDefaultTokenProviders();
-
-builder.Services.AddTransient<ProblemDetailsFactory, JobbyProblemDetailsFactory>();
+    .AddEntityFrameworkStores<JobbyIdentityContext>()
+    .AddDefaultTokenProviders();
 
 builder.Services.AddControllers();
+
+builder.Services.AddTransient<ExceptionHandlingMiddleware>();
+
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
@@ -46,15 +47,15 @@ builder.Services.AddSwaggerGen(c =>
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
-                new OpenApiSecurityScheme
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
                 {
-                    Reference = new OpenApiReference
-                    {
-                        Type = ReferenceType.SecurityScheme,
-                        Id = "Bearer"
-                    }
-                },
-                Array.Empty<string>()
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
         }
     });
 });
@@ -86,11 +87,13 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.UseDeveloperExceptionPage();
 }
 
-app.UseExceptionHandler("/error");
+app.UseMiddleware<ExceptionHandlingMiddleware>();
+
+
 app.UseHttpsRedirection();
-app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();

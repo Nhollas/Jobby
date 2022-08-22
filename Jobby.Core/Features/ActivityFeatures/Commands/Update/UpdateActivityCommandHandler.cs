@@ -1,11 +1,13 @@
 ﻿using AutoMapper;
-using Jobby.Core.Entities;
-using Jobby.Core.Interfaces;
+using Jobby.Application.Abstractions.Specification;
+using Jobby.Application.Exceptions.Base;
+using Jobby.Application.Interfaces;
+using Jobby.Domain.Entities;
 using MediatR;
 
-namespace Jobby.Core.Features.ActivityFeatures.Commands.Update;
+namespace Jobby.Application.Features.ActivityFeatures.Commands.Update;
 
-public class UpdateActivityCommandHandler : IRequestHandler<UpdateActivityCommand, Unit>
+internal sealed class UpdateActivityCommandHandler : IRequestHandler<UpdateActivityCommand, Unit>
 {
     private readonly IRepository<Activity> _repository;
     private readonly IMapper _mapper;
@@ -29,12 +31,12 @@ public class UpdateActivityCommandHandler : IRequestHandler<UpdateActivityComman
 
         if (activityToUpdate == null)
         {
-            // TODO: NotFound Problem Details.
+            throw new NotFoundException($"An activity with id {request.ActivityId} could not be found.");
         }
 
         if (activityToUpdate.OwnerId != _userId)
         {
-            // TODO: NotAuthorized Problem Details.
+            throw new NotAuthorisedException(_userId);
         }
 
         _mapper.Map(request, activityToUpdate, typeof(UpdateActivityCommand), typeof(Activity));

@@ -1,11 +1,13 @@
 ﻿using AutoMapper;
-using Jobby.Core.Dtos;
-using Jobby.Core.Entities;
-using Jobby.Core.Interfaces;
+using Jobby.Application.Abstractions.Specification;
+using Jobby.Application.Dtos;
+using Jobby.Application.Exceptions.Base;
+using Jobby.Application.Interfaces;
+using Jobby.Domain.Entities;
 using MediatR;
 
-namespace Jobby.Core.Features.JobFeatures.Queries.GetById;
-internal class GetJobDetailQueryHandler : IRequestHandler<GetJobDetailQuery, JobDto>
+namespace Jobby.Application.Features.JobFeatures.Queries.GetById;
+internal sealed class GetJobDetailQueryHandler : IRequestHandler<GetJobDetailQuery, JobDto>
 {
     private readonly IRepository<Job> _repository;
     private readonly IMapper _mapper;
@@ -29,12 +31,12 @@ internal class GetJobDetailQueryHandler : IRequestHandler<GetJobDetailQuery, Job
 
         if (jobToGet == null)
         {
-            // TODO: NotFound Problem Details.
+            throw new NotFoundException($"The Job {request.JobId} could not be found.");
         }
 
         if (jobToGet.OwnerId != _userId)
         {
-            // TODO: NotAuthorized Problem Details.
+            throw new NotAuthorisedException(_userId);
         }
 
         return _mapper.Map<JobDto>(jobToGet);

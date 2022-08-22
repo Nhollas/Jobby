@@ -1,13 +1,5 @@
 ﻿using MediatR;
 
-namespace Jobby.Core.Features.ContactFeatures.Commands.Delete;
+namespace Jobby.Application.Features.ContactFeatures.Commands.Delete;
 
-public class DeleteContactCommand : IRequest
-{
-    public Guid ContactId { get; }
-
-    public DeleteContactCommand(Guid id)
-    {
-        ContactId = id;
-    }
-}
+public sealed record DeleteContactCommand(Guid ContactId) : IRequest;

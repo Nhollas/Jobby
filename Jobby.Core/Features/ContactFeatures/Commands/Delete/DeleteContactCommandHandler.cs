@@ -1,10 +1,12 @@
-﻿using Jobby.Core.Entities;
-using Jobby.Core.Interfaces;
+﻿using Jobby.Application.Abstractions.Specification;
+using Jobby.Application.Exceptions.Base;
+using Jobby.Application.Interfaces;
+using Jobby.Domain.Entities;
 using MediatR;
 
-namespace Jobby.Core.Features.ContactFeatures.Commands.Delete;
+namespace Jobby.Application.Features.ContactFeatures.Commands.Delete;
 
-public class DeleteContactCommandHandler : IRequestHandler<DeleteContactCommand, Unit>
+internal sealed class DeleteContactCommandHandler : IRequestHandler<DeleteContactCommand, Unit>
 {
     private readonly IRepository<Contact> _repository;
     private readonly IUserService _userService;
@@ -25,12 +27,12 @@ public class DeleteContactCommandHandler : IRequestHandler<DeleteContactCommand,
 
         if (contactToDelete == null)
         {
-            // TODO: NotFound Problem Details.
+            throw new NotFoundException($"A contact with id {request.ContactId} could not be found.");
         }
 
         if (contactToDelete.OwnerId != _userId)
         {
-            // TODO: NotAuthorized Problem Details.
+            throw new NotAuthorisedException(_userId);
         }
 
         await _repository.DeleteAsync(contactToDelete, cancellationToken);

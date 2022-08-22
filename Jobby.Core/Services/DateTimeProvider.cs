@@ -1,6 +1,6 @@
-﻿using Jobby.Core.Interfaces;
+﻿using Jobby.Application.Interfaces;
 
-namespace Jobby.Core.Services;
+namespace Jobby.Application.Services;
 
 public class DateTimeProvider : IDateTimeProvider
 {

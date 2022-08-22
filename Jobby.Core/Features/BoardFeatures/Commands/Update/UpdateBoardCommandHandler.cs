@@ -1,10 +1,12 @@
-﻿using Jobby.Core.Entities;
-using Jobby.Core.Interfaces;
+﻿using Jobby.Application.Abstractions.Specification;
+using Jobby.Application.Exceptions.Base;
+using Jobby.Application.Interfaces;
+using Jobby.Domain.Entities;
 using MediatR;
 
-namespace Jobby.Core.Features.BoardFeatures.Commands.Update;
+namespace Jobby.Application.Features.BoardFeatures.Commands.Update;
 
-public class UpdateBoardCommandHandler : IRequestHandler<UpdateBoardCommand, Unit>
+internal sealed class UpdateBoardCommandHandler : IRequestHandler<UpdateBoardCommand, Unit>
 {
     private readonly IRepository<Board> _repository;
     private readonly IUserService _userService;
@@ -25,12 +27,12 @@ public class UpdateBoardCommandHandler : IRequestHandler<UpdateBoardCommand, Uni
 
         if (boardToUpdate == null)
         {
-            // TODO: NotFound Problem Details.
+            throw new NotFoundException($"A board with id {request.BoardId} could not be found.");
         }
 
         if (boardToUpdate.OwnerId != _userId)
         {
-            // TODO: NotAuthorized Problem Details.
+            throw new NotAuthorisedException(_userId);
         }
 
         boardToUpdate.Name = request.BoardName;

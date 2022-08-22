@@ -1,8 +1,5 @@
-﻿using MediatR;
+﻿using Jobby.Application.Abstractions.Messaging;
 
-namespace Jobby.Core.Features.BoardFeatures.Commands.Create;
+namespace Jobby.Application.Features.BoardFeatures.Commands.Create;
 
-public class CreateBoardCommand : IRequest<Guid>
-{
-    public string Name { get; set; }
-}
+public sealed record CreateBoardCommand(string Name) : ICommand<Guid>;

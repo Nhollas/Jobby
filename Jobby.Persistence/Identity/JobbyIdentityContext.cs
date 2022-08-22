@@ -1,4 +1,4 @@
-﻿using Jobby.Core.Entities.Common;
+﻿using Jobby.Domain.Entities.Common;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 

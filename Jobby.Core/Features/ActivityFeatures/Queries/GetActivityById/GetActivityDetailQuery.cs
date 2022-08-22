@@ -1,13 +1,5 @@
-﻿using Jobby.Core.Dtos;
+﻿using Jobby.Application.Dtos;
 using MediatR;
 
-namespace Jobby.Core.Features.ActivityFeatures.Queries.GetActivityById;
-public class GetActivityDetailQuery : IRequest<ActivityDto>
-{
-    public Guid ActivityId { get; }
-
-    public GetActivityDetailQuery(Guid activityId)
-    {
-        ActivityId = activityId;
-    }
-}
+namespace Jobby.Application.Features.ActivityFeatures.Queries.GetActivityById;
+public sealed record GetActivityDetailQuery(Guid ActivityId) : IRequest<ActivityDto>;

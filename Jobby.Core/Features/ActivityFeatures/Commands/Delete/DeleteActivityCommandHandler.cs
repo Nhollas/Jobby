@@ -1,10 +1,12 @@
-﻿using Jobby.Core.Entities;
-using Jobby.Core.Interfaces;
+﻿using Jobby.Application.Abstractions.Specification;
+using Jobby.Application.Exceptions.Base;
+using Jobby.Application.Interfaces;
+using Jobby.Domain.Entities;
 using MediatR;
 
-namespace Jobby.Core.Features.ActivityFeatures.Commands.Delete;
+namespace Jobby.Application.Features.ActivityFeatures.Commands.Delete;
 
-public class DeleteActivityCommandHandler : IRequestHandler<DeleteActivityCommand, Unit>
+internal sealed class DeleteActivityCommandHandler : IRequestHandler<DeleteActivityCommand, Unit>
 {
     private readonly IRepository<Activity> _repository;
     private readonly IUserService _userService;
@@ -25,12 +27,12 @@ public class DeleteActivityCommandHandler : IRequestHandler<DeleteActivityComman
 
         if (activityToDelete == null)
         {
-            // TODO: NotFound Problem Details.
+            throw new NotFoundException($"An activity with id {request.ActivityId} could not be found.");
         }
 
         if (activityToDelete.OwnerId != _userId)
         {
-            // TODO: NotAuthorized Problem Details.
+            throw new NotAuthorisedException(_userId);
         }
 
         await _repository.DeleteAsync(activityToDelete, cancellationToken);

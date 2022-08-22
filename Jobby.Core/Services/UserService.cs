@@ -1,8 +1,8 @@
-﻿using Jobby.Core.Interfaces;
+﻿using Jobby.Application.Interfaces;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 
-namespace Jobby.Core.Services;
+namespace Jobby.Application.Services;
 
 public class UserService : IUserService
 {

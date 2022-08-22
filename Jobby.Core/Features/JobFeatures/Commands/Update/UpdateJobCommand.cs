@@ -1,7 +1,7 @@
 ﻿using MediatR;
 
-namespace Jobby.Core.Features.JobFeatures.Commands.Update;
-public class UpdateJobCommand : IRequest
+namespace Jobby.Application.Features.JobFeatures.Commands.Update;
+public sealed record UpdateJobCommand : IRequest
 {
     public Guid JobId { get; set; }
     public string Company { get; set; }

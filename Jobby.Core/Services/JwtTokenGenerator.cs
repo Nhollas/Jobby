@@ -1,12 +1,12 @@
-﻿using Jobby.Core.Entities.Common;
-using Jobby.Core.Interfaces;
+﻿using Jobby.Application.Interfaces;
+using Jobby.Domain.Entities.Common;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace Jobby.Core.Services;
+namespace Jobby.Application.Services;
 
 public class JwtTokenGenerator : IJwtTokenGenerator
 {

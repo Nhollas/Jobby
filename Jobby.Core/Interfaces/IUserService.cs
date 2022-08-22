@@ -1,4 +1,4 @@
-﻿namespace Jobby.Core.Interfaces;
+﻿namespace Jobby.Application.Interfaces;
 
 public interface IUserService
 {

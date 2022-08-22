@@ -1,13 +1,16 @@
-﻿using Jobby.Core.Entities;
-using Jobby.Core.Exceptions;
-using Jobby.Core.Interfaces;
+﻿using FluentValidation;
+using Jobby.Application.Abstractions.Specification;
+using Jobby.Application.Exceptions.Base;
+using Jobby.Application.Interfaces;
+using Jobby.Domain.Entities;
 using MediatR;
 
-namespace Jobby.Core.Features.ActivityFeatures.Commands.Create;
+namespace Jobby.Application.Features.ActivityFeatures.Commands.Create;
 
-public class CreateActivityCommandHandler : IRequestHandler<CreateActivityCommand, Guid>
+internal sealed class CreateActivityCommandHandler : IRequestHandler<CreateActivityCommand, Guid>
 {
     private readonly IRepository<Board> _boardRepository;
+    private readonly IDateTimeProvider _dateTimeProvider;
     private readonly IRepository<Job> _jobRepository;
     private readonly IUserService _userService;
     private readonly string _userId;
@@ -15,12 +18,14 @@ public class CreateActivityCommandHandler : IRequestHandler<CreateActivityComman
     public CreateActivityCommandHandler(
         IRepository<Board> repository,
         IUserService userService,
-        IRepository<Job> jobRepository)
+        IRepository<Job> jobRepository,
+        IDateTimeProvider dateTimeProvider)
     {
         _boardRepository = repository;
         _userService = userService;
         _userId = _userService.UserId();
         _jobRepository = jobRepository;
+        _dateTimeProvider = dateTimeProvider;
     }
 
     /*
@@ -32,9 +37,6 @@ public class CreateActivityCommandHandler : IRequestHandler<CreateActivityComman
         var validator = new CreateActivityCommandValidator();
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
 
-        if (validationResult.Errors.Count > 0)
-            throw new ValidationException(validationResult);
-
         Board BoardToLink = await _boardRepository.GetByIdAsync(request.BoardId, cancellationToken);
 
         if (BoardToLink is null)
@@ -44,17 +46,20 @@ public class CreateActivityCommandHandler : IRequestHandler<CreateActivityComman
 
         if (BoardToLink.OwnerId != _userId)
         {
-            throw new NotAuthorisedException($"User {_userId} does not have access to this resource.");
+            throw new NotAuthorisedException(_userId);
         }
 
         Activity createdActivity = new(
+            Guid.NewGuid(),
+            _dateTimeProvider.UtcNow,
+            _userId,
             request.Title,
             request.ActivityType,
             request.StartDate,
             request.EndDate,
             request.Note,
-            request.Completed,
-            _userId);
+            request.Completed);
+
 
         await LinkActivityToBoard(createdActivity, BoardToLink);
 

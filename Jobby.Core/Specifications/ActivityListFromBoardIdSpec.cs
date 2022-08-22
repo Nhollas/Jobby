@@ -1,7 +1,7 @@
 ﻿using Ardalis.Specification;
-using Jobby.Core.Entities;
+using Jobby.Domain.Entities;
 
-namespace Jobby.Core.Specifications;
+namespace Jobby.Application.Specifications;
 public class ActivityListFromBoardIdSpec : Specification<Activity>
 {
     public ActivityListFromBoardIdSpec(Guid BoardId, string UserId)

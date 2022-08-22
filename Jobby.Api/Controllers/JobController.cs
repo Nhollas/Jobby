@@ -1,49 +1,44 @@
-﻿using Jobby.Core.Dtos;
-using Jobby.Core.Features.JobFeatures.Commands.Create;
-using Jobby.Core.Features.JobFeatures.Commands.Delete;
-using Jobby.Core.Features.JobFeatures.Queries.GetById;
-using MediatR;
+﻿using Jobby.Application.Dtos;
+using Jobby.Application.Features.JobFeatures.Commands.Create;
+using Jobby.Application.Features.JobFeatures.Commands.Delete;
+using Jobby.Application.Features.JobFeatures.Queries.GetById;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Jobby.Api.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class JobController : Controller
+public class JobController : ApiController
 {
-    private readonly IMediator _mediator;
-
-    public JobController(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Guid), StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [HttpPost("Create", Name = "CreateJob")]
-    public async Task<ActionResult<Guid>> Create([FromBody] CreateJobCommand command)
+    public async Task<IActionResult> CreateJob([FromBody] CreateJobCommand command)
     {
-        var dto = await _mediator.Send(command);
+        var jobId = await Sender.Send(command);
 
-        return Ok(dto);
+        return CreatedAtAction(nameof(CreateJob), jobId);
     }
 
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesDefaultResponseType]
-    [HttpDelete("Delete/{id:guid}", Name = "DeleteJob")]
-    public async Task<ActionResult> Delete(Guid id)
+    [HttpDelete("Delete/{jobId:guid}", Name = "DeleteJob")]
+    public async Task<IActionResult> DeleteJob(Guid jobId)
     {
-        await _mediator.Send(new DeleteJobCommand(id));
+        await Sender.Send(new DeleteJobCommand(jobId));
         return NoContent();
     }
 
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(JobDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesDefaultResponseType]
-    [HttpGet("{id:guid}", Name = "GetJobById")]
-    public async Task<ActionResult<JobDto>> GetById(Guid id)
+    [HttpGet("{jobId:guid}", Name = "GetJob")]
+    public async Task<IActionResult> GetJob(Guid jobId)
     {
-        var dtos = await _mediator.Send(new GetJobDetailQuery(id));
-        return Ok(dtos);
+        var jobQuery = new GetJobDetailQuery(jobId);
+        return Ok(await Sender.Send(jobQuery));
     }
 }

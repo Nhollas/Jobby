@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
-using Jobby.Core.Entities;
-using Jobby.Core.Interfaces;
+using Jobby.Application.Abstractions.Specification;
+using Jobby.Application.Exceptions.Base;
+using Jobby.Application.Interfaces;
+using Jobby.Domain.Entities;
 using MediatR;
 
-namespace Jobby.Core.Features.JobFeatures.Commands.Update;
-public class UpdateJobCommandHandler : IRequestHandler<UpdateJobCommand, Unit>
+namespace Jobby.Application.Features.JobFeatures.Commands.Update;
+internal sealed class UpdateJobCommandHandler : IRequestHandler<UpdateJobCommand, Unit>
 {
     private readonly IRepository<Job> _repository;
     private readonly IUserService _userService;
@@ -28,12 +30,12 @@ public class UpdateJobCommandHandler : IRequestHandler<UpdateJobCommand, Unit>
 
         if (jobToUpdate == null)
         {
-            // TODO: NotFound Problem Details.
+            throw new NotFoundException($"The Job {request.JobId} could not be found.");
         }
 
         if (jobToUpdate.OwnerId != _userId)
         {
-            // TODO: NotAuthorized Problem Details.
+            throw new NotAuthorisedException(_userId);
         }
 
         _mapper.Map(request, jobToUpdate, typeof(UpdateJobCommand), typeof(Job));

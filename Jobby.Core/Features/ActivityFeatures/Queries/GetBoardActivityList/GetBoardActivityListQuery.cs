@@ -1,12 +1,6 @@
-﻿using Jobby.Core.Dtos;
+﻿using Jobby.Application.Dtos;
 using MediatR;
 
-namespace Jobby.Core.Features.ActivityFeatures.Queries.GetBoardActivityList;
-public class GetBoardActivityListQuery : IRequest<List<ActivityDto>>
-{
-    public Guid BoardId { get; }
-    public GetBoardActivityListQuery(Guid id)
-    {
-        BoardId = id;
-    }
-}
+namespace Jobby.Application.Features.ActivityFeatures.Queries.GetBoardActivityList;
+
+public sealed record GetBoardActivityListQuery(Guid BoardId) : IRequest<List<ActivityDto>>;

@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 
-namespace Jobby.Core.Features.ActivityFeatures.Commands.Create;
-public class CreateActivityCommandValidator : AbstractValidator<CreateActivityCommand>
+namespace Jobby.Application.Features.ActivityFeatures.Commands.Create;
+public sealed class CreateActivityCommandValidator : AbstractValidator<CreateActivityCommand>
 {
     public CreateActivityCommandValidator()
     {

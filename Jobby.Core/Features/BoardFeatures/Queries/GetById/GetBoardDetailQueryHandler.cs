@@ -1,13 +1,15 @@
 ﻿using AutoMapper;
-using Jobby.Core.Dtos;
-using Jobby.Core.Entities;
-using Jobby.Core.Interfaces;
-using Jobby.Core.Specifications;
+using Jobby.Application.Abstractions.Specification;
+using Jobby.Application.Dtos;
+using Jobby.Application.Exceptions.Base;
+using Jobby.Application.Interfaces;
+using Jobby.Application.Specifications;
+using Jobby.Domain.Entities;
 using MediatR;
 
-namespace Jobby.Core.Features.BoardFeatures.Queries.GetById;
+namespace Jobby.Application.Features.BoardFeatures.Queries.GetById;
 
-public class GetBoardDetailQueryHandler : IRequestHandler<GetBoardDetailQuery, BoardDto>
+internal sealed class GetBoardDetailQueryHandler : IRequestHandler<GetBoardDetailQuery, BoardDto>
 {
     private readonly IRepository<Board> _repository;
     private readonly IMapper _mapper;
@@ -33,12 +35,12 @@ public class GetBoardDetailQueryHandler : IRequestHandler<GetBoardDetailQuery, B
 
         if (boardToGet == null)
         {
-            // TODO: NotFound Problem Details.
+            throw new NotFoundException($"A board with id {request.BoardId} could not be found.");
         }
 
         if (boardToGet.OwnerId != _userId)
         {
-            // TODO: NotAuthorized Problem Details.
+            throw new NotAuthorisedException(_userId);
         }
 
         return _mapper.Map<BoardDto>(boardToGet);

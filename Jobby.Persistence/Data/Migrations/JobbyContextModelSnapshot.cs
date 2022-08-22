@@ -22,7 +22,7 @@ namespace Jobby.Persistence.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("Jobby.Core.Entities.Activity", b =>
+            modelBuilder.Entity("Jobby.Domain.Entities.Activity", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -70,7 +70,7 @@ namespace Jobby.Persistence.Data.Migrations
                     b.ToTable("Activities");
                 });
 
-            modelBuilder.Entity("Jobby.Core.Entities.Board", b =>
+            modelBuilder.Entity("Jobby.Domain.Entities.Board", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -93,7 +93,7 @@ namespace Jobby.Persistence.Data.Migrations
                     b.ToTable("Boards");
                 });
 
-            modelBuilder.Entity("Jobby.Core.Entities.Contact", b =>
+            modelBuilder.Entity("Jobby.Domain.Entities.Contact", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -136,7 +136,7 @@ namespace Jobby.Persistence.Data.Migrations
                     b.ToTable("Contacts");
                 });
 
-            modelBuilder.Entity("Jobby.Core.Entities.Job", b =>
+            modelBuilder.Entity("Jobby.Domain.Entities.Job", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -188,7 +188,7 @@ namespace Jobby.Persistence.Data.Migrations
                     b.ToTable("Jobs");
                 });
 
-            modelBuilder.Entity("Jobby.Core.Entities.JobContact", b =>
+            modelBuilder.Entity("Jobby.Domain.Entities.JobContact", b =>
                 {
                     b.Property<Guid>("ContactFk")
                         .HasColumnType("uniqueidentifier");
@@ -203,7 +203,7 @@ namespace Jobby.Persistence.Data.Migrations
                     b.ToTable("JobContacts");
                 });
 
-            modelBuilder.Entity("Jobby.Core.Entities.JobList", b =>
+            modelBuilder.Entity("Jobby.Domain.Entities.JobList", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -231,15 +231,15 @@ namespace Jobby.Persistence.Data.Migrations
                     b.ToTable("JobLists");
                 });
 
-            modelBuilder.Entity("Jobby.Core.Entities.Activity", b =>
+            modelBuilder.Entity("Jobby.Domain.Entities.Activity", b =>
                 {
-                    b.HasOne("Jobby.Core.Entities.Board", "Board")
+                    b.HasOne("Jobby.Domain.Entities.Board", "Board")
                         .WithMany("Activities")
                         .HasForeignKey("BoardFk")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Jobby.Core.Entities.Job", "Job")
+                    b.HasOne("Jobby.Domain.Entities.Job", "Job")
                         .WithMany("Activities")
                         .HasForeignKey("JobFk");
 
@@ -248,15 +248,15 @@ namespace Jobby.Persistence.Data.Migrations
                     b.Navigation("Job");
                 });
 
-            modelBuilder.Entity("Jobby.Core.Entities.Contact", b =>
+            modelBuilder.Entity("Jobby.Domain.Entities.Contact", b =>
                 {
-                    b.HasOne("Jobby.Core.Entities.Board", "Board")
+                    b.HasOne("Jobby.Domain.Entities.Board", "Board")
                         .WithMany("Contacts")
                         .HasForeignKey("BoardFk")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsOne("Jobby.Core.Entities.Social", "Social", b1 =>
+                    b.OwnsOne("Jobby.Domain.Entities.Social", "Social", b1 =>
                         {
                             b1.Property<Guid>("ContactId")
                                 .HasColumnType("uniqueidentifier");
@@ -286,9 +286,9 @@ namespace Jobby.Persistence.Data.Migrations
                     b.Navigation("Social");
                 });
 
-            modelBuilder.Entity("Jobby.Core.Entities.Job", b =>
+            modelBuilder.Entity("Jobby.Domain.Entities.Job", b =>
                 {
-                    b.HasOne("Jobby.Core.Entities.JobList", "JobList")
+                    b.HasOne("Jobby.Domain.Entities.JobList", "JobList")
                         .WithMany("Jobs")
                         .HasForeignKey("JobListFk")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -297,15 +297,15 @@ namespace Jobby.Persistence.Data.Migrations
                     b.Navigation("JobList");
                 });
 
-            modelBuilder.Entity("Jobby.Core.Entities.JobContact", b =>
+            modelBuilder.Entity("Jobby.Domain.Entities.JobContact", b =>
                 {
-                    b.HasOne("Jobby.Core.Entities.Contact", "Contact")
+                    b.HasOne("Jobby.Domain.Entities.Contact", "Contact")
                         .WithMany("JobContacts")
                         .HasForeignKey("ContactFk")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("Jobby.Core.Entities.Job", "Job")
+                    b.HasOne("Jobby.Domain.Entities.Job", "Job")
                         .WithMany("JobContacts")
                         .HasForeignKey("JobFk")
                         .OnDelete(DeleteBehavior.NoAction)
@@ -316,9 +316,9 @@ namespace Jobby.Persistence.Data.Migrations
                     b.Navigation("Job");
                 });
 
-            modelBuilder.Entity("Jobby.Core.Entities.JobList", b =>
+            modelBuilder.Entity("Jobby.Domain.Entities.JobList", b =>
                 {
-                    b.HasOne("Jobby.Core.Entities.Board", "Board")
+                    b.HasOne("Jobby.Domain.Entities.Board", "Board")
                         .WithMany("JobList")
                         .HasForeignKey("BoardFk")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -327,7 +327,7 @@ namespace Jobby.Persistence.Data.Migrations
                     b.Navigation("Board");
                 });
 
-            modelBuilder.Entity("Jobby.Core.Entities.Board", b =>
+            modelBuilder.Entity("Jobby.Domain.Entities.Board", b =>
                 {
                     b.Navigation("Activities");
 
@@ -336,19 +336,19 @@ namespace Jobby.Persistence.Data.Migrations
                     b.Navigation("JobList");
                 });
 
-            modelBuilder.Entity("Jobby.Core.Entities.Contact", b =>
+            modelBuilder.Entity("Jobby.Domain.Entities.Contact", b =>
                 {
                     b.Navigation("JobContacts");
                 });
 
-            modelBuilder.Entity("Jobby.Core.Entities.Job", b =>
+            modelBuilder.Entity("Jobby.Domain.Entities.Job", b =>
                 {
                     b.Navigation("Activities");
 
                     b.Navigation("JobContacts");
                 });
 
-            modelBuilder.Entity("Jobby.Core.Entities.JobList", b =>
+            modelBuilder.Entity("Jobby.Domain.Entities.JobList", b =>
                 {
                     b.Navigation("Jobs");
                 });

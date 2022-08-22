@@ -1,11 +1,13 @@
 ﻿using AutoMapper;
-using Jobby.Core.Entities;
-using Jobby.Core.Interfaces;
+using Jobby.Application.Abstractions.Specification;
+using Jobby.Application.Exceptions.Base;
+using Jobby.Application.Interfaces;
+using Jobby.Domain.Entities;
 using MediatR;
 
-namespace Jobby.Core.Features.ContactFeatures.Commands.Update;
+namespace Jobby.Application.Features.ContactFeatures.Commands.Update;
 
-public class UpdateContactCommandHandler : IRequestHandler<UpdateContactCommand, Unit>
+internal sealed class UpdateContactCommandHandler : IRequestHandler<UpdateContactCommand, Unit>
 {
     private readonly IRepository<Contact> _repository;
     private readonly IUserService _userService;
@@ -29,22 +31,20 @@ public class UpdateContactCommandHandler : IRequestHandler<UpdateContactCommand,
 
         if (contactToUpdate == null)
         {
-            // TODO: NotFound Problem Details.
+            throw new NotFoundException($"A contact with id {request.ContactId} could not be found.");
         }
 
         if (contactToUpdate.OwnerId != _userId)
         {
-            // TODO: NotAuthorized Problem Details.
+            throw new NotAuthorisedException(_userId);
         }
 
         contactToUpdate = _mapper.Map<Contact>(request);
-
-        string[] convertedJobIds = request.JobIds.Select(g => g.ToString()).ToArray();
-
-        // contactToUpdate.Join(convertedJobIds, request.Emails, request.Phones);
 
         await _repository.UpdateAsync(contactToUpdate, cancellationToken);
 
         return Unit.Value;
     }
+
+    //TODO: Review this method.
 }

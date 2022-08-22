@@ -41,9 +41,11 @@ public class JobFeaturesService : BaseDataService, IJobFeaturesService
 
     public async Task<JobDetailViewModel> GetJobById(Guid boardId, Guid jobId)
     {
-        JobDto selectedJob = await _client.GetJobByIdAsync(jobId);
+        JobDto selectedJob = await _client.GetJobAsync(jobId);
 
         JobDetailViewModel mappedJob = _mapper.Map<JobDetailViewModel>(selectedJob);
+
+        mappedJob.BoardId = boardId;
 
         return mappedJob;
     }

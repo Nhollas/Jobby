@@ -1,4 +1,4 @@
-﻿namespace Jobby.Core.Contracts.Auth;
+﻿namespace Jobby.Application.Contracts.Auth;
 
 public class RegisterRequest
 {

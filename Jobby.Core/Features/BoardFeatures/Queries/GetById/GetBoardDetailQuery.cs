@@ -1,14 +1,6 @@
-﻿using Jobby.Core.Dtos;
+﻿using Jobby.Application.Dtos;
 using MediatR;
 
-namespace Jobby.Core.Features.BoardFeatures.Queries.GetById;
+namespace Jobby.Application.Features.BoardFeatures.Queries.GetById;
 
-public class GetBoardDetailQuery : IRequest<BoardDto>
-{
-    public Guid BoardId { get; set; }
-
-    public GetBoardDetailQuery(Guid id)
-    {
-        BoardId = id;
-    }
-}
+public sealed record GetBoardDetailQuery(Guid BoardId) : IRequest<BoardDto>;

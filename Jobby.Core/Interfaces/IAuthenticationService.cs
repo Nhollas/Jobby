@@ -1,6 +1,6 @@
-﻿using Jobby.Core.Contracts.Auth;
+﻿using Jobby.Application.Contracts.Auth;
 
-namespace Jobby.Core.Interfaces;
+namespace Jobby.Application.Interfaces;
 
 public interface IAuthenticationService
 {

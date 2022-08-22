@@ -1,6 +1,6 @@
-﻿using Jobby.Core.Dtos.Common;
+﻿using Jobby.Application.Dtos.Common;
 
-namespace Jobby.Core.Dtos;
+namespace Jobby.Application.Dtos;
 
 public class JobListDto : BaseDto
 {

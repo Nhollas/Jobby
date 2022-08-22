@@ -1,13 +1,5 @@
 ﻿using MediatR;
 
-namespace Jobby.Core.Features.ActivityFeatures.Commands.Delete;
+namespace Jobby.Application.Features.ActivityFeatures.Commands.Delete;
 
-public class DeleteActivityCommand : IRequest
-{
-    public Guid ActivityId { get; }
-
-    public DeleteActivityCommand(Guid id)
-    {
-        ActivityId = id;
-    }
-}
+public sealed record DeleteActivityCommand(Guid ActivityId) : IRequest;

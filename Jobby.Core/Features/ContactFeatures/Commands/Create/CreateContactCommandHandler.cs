@@ -1,13 +1,17 @@
-﻿using Jobby.Core.Entities;
-using Jobby.Core.Interfaces;
-using Jobby.Core.Specifications;
+﻿using Jobby.Application.Abstractions.Specification;
+using Jobby.Application.Exceptions.Base;
+using Jobby.Application.Interfaces;
+using Jobby.Application.Specifications;
+using Jobby.Domain.Entities;
 using MediatR;
 
-namespace Jobby.Core.Features.ContactFeatures.Commands.Create;
+namespace Jobby.Application.Features.ContactFeatures.Commands.Create;
 
-public class CreateContactCommandHandler : IRequestHandler<CreateContactCommand, Guid>
+internal sealed class CreateContactCommandHandler : IRequestHandler<CreateContactCommand, Guid>
 {
     private readonly IRepository<Job> _jobRepository;
+    private readonly IDateTimeProvider _dateTimeProvider;
+    private readonly IRepository<Contact> _contactRepository;
     private readonly IRepository<Board> _boardRepository;
     private readonly IUserService _userService;
     private readonly string _userId;
@@ -15,12 +19,16 @@ public class CreateContactCommandHandler : IRequestHandler<CreateContactCommand,
     public CreateContactCommandHandler(
     IUserService userService,
     IRepository<Board> boardRepository,
-    IRepository<Job> jobRepository)
+    IRepository<Job> jobRepository,
+    IDateTimeProvider dateTimeProvider,
+    IRepository<Contact> contactRepository)
     {
         _userService = userService;
         _userId = _userService.UserId();
         _boardRepository = boardRepository;
         _jobRepository = jobRepository;
+        _dateTimeProvider = dateTimeProvider;
+        _contactRepository = contactRepository;
     }
 
     /*
@@ -35,45 +43,58 @@ public class CreateContactCommandHandler : IRequestHandler<CreateContactCommand,
 
         if (boardTolink is null)
         {
-            // TODO: NotFound Problem Details.
+            throw new NotFoundException($"A board with id {request.BoardId} could not be found.");
         }
 
         if (boardTolink.OwnerId != _userId)
         {
-            // TODO: NotAuthorised Problem Details.
+            throw new NotAuthorisedException(_userId);
         }
 
-        Contact createdContact = new(
+        Contact contact = new(
+            Guid.NewGuid(),
+            _dateTimeProvider.UtcNow,
+            _userId,
             request.FirstName,
             request.LastName,
             request.JobTitle,
             new Social(request.TwitterUri, request.FacebookUri, request.LinkedInUri, request.GithubUri),
             request.BoardId,
-            _userId,
             request.Companies,
             request.Emails,
             request.Phones);
 
-        await LinkContactToBoard(createdContact, boardTolink);
+        var newContact = await _contactRepository.AddAsync(contact, cancellationToken);
+
+        await LinkContactToBoard(newContact, boardTolink);
 
         if (request.JobIds != null)
         {
-            var ownedJobs = boardTolink.JobList.Select(x => x.Id);
+            var ownedJobs = boardTolink.JobList
+                .SelectMany(x => x.Jobs)
+                .ToList();
 
-            if (!JobIdsInBoard(ownedJobs, request.JobIds))
+            List<Guid> ownedJobIds = new();
+
+            foreach (var job in ownedJobs)
             {
-                // TODO: NotAuthorised Problem Details.
+                ownedJobIds.Add(job.Id);
             }
 
-            await LinkContactToJobs(createdContact, request.JobIds);
+            if (!JobIdsInBoard(ownedJobIds, request.JobIds))
+            {
+                throw new NotAuthorisedException(_userId);
+            }
+
+            await LinkContactToJobs(newContact, request.JobIds);
         }
 
-        return createdContact.Id;
+        return newContact.Id;
     }
 
     private async Task LinkContactToBoard(Contact contact, Board board)
     {
-        board.AddContact(contact);
+        board.Contacts.Add(contact);
 
         await _boardRepository.UpdateAsync(board);
     }
@@ -94,13 +115,18 @@ public class CreateContactCommandHandler : IRequestHandler<CreateContactCommand,
         await _jobRepository.UpdateRangeAsync(selectedJobs);
     }
 
-    private static bool JobIdsInBoard(IEnumerable<Guid> ownedJobs, Guid[] jobIds)
+    private static bool JobIdsInBoard(List<Guid> ownedJobIds, Guid[] jobIds)
     {
+        bool result = true;
+
         for (int i = 0; i < jobIds.Length; i++)
         {
-            if (ownedJobs.Contains(jobIds[i]))
-                return true;
+            if (ownedJobIds.Contains(jobIds[i]))
+            {
+            }
+            result = false;
         }
-        return false;
+
+        return result;
     }
 }

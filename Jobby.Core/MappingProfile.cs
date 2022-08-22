@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
-using Jobby.Core.Dtos;
-using Jobby.Core.Entities;
-using Jobby.Core.Features.ActivityFeatures.Commands.Create;
+using Jobby.Application.Dtos;
+using Jobby.Application.Features.ActivityFeatures.Commands.Create;
+using Jobby.Domain.Entities;
 
-namespace Jobby.Core;
+namespace Jobby.Application;
 
 public class MappingProfile : Profile
 {

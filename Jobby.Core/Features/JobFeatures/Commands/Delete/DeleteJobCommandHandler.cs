@@ -1,10 +1,12 @@
-﻿using Jobby.Core.Entities;
-using Jobby.Core.Interfaces;
+﻿using Jobby.Application.Abstractions.Specification;
+using Jobby.Application.Exceptions.Base;
+using Jobby.Application.Interfaces;
+using Jobby.Domain.Entities;
 using MediatR;
 
-namespace Jobby.Core.Features.JobFeatures.Commands.Delete;
+namespace Jobby.Application.Features.JobFeatures.Commands.Delete;
 
-public class DeleteJobCommandHandler : IRequestHandler<DeleteJobCommand, Unit>
+internal sealed class DeleteJobCommandHandler : IRequestHandler<DeleteJobCommand, Unit>
 {
     private readonly IRepository<Job> _repository;
     private readonly IUserService _userService;
@@ -25,12 +27,12 @@ public class DeleteJobCommandHandler : IRequestHandler<DeleteJobCommand, Unit>
 
         if (jobToDelete == null)
         {
-            // TODO: NotFound Problem Details.
+            throw new NotFoundException($"The Job {request.JobId} could not be found.");
         }
 
         if (jobToDelete.OwnerId != _userId)
         {
-            // TODO: NotAuthorized Problem Details.
+            throw new NotAuthorisedException(_userId);
         }
 
         await _repository.DeleteAsync(jobToDelete, cancellationToken);

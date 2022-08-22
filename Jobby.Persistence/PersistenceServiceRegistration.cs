@@ -1,4 +1,4 @@
-﻿using Jobby.Core.Interfaces;
+﻿using Jobby.Application.Abstractions.Specification;
 using Jobby.Persistence.Data;
 using Jobby.Persistence.Identity;
 using Microsoft.EntityFrameworkCore;

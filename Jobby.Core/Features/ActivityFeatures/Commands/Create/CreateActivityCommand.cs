@@ -1,8 +1,8 @@
 ﻿using MediatR;
 
-namespace Jobby.Core.Features.ActivityFeatures.Commands.Create;
+namespace Jobby.Application.Features.ActivityFeatures.Commands.Create;
 
-public class CreateActivityCommand : IRequest<Guid>
+public sealed record CreateActivityCommand : IRequest<Guid>
 {
     public string Title { get; set; }
     public int ActivityType { get; set; }

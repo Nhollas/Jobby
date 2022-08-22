@@ -49,7 +49,7 @@ public class BoardFeaturesService : BaseDataService, IBoardFeaturesService
 
     public async Task<BoardDetailViewModel> GetBoardById(Guid Id)
     {
-        BoardDto selectedBoard = await _client.GetBoardByIdAsync(Id);
+        BoardDto selectedBoard = await _client.GetBoardAsync(Id);
 
         BoardDetailViewModel mappedBoard = _mapper.Map<BoardDetailViewModel>(selectedBoard);
 
@@ -62,15 +62,5 @@ public class BoardFeaturesService : BaseDataService, IBoardFeaturesService
         var boardList = boardCollection.ToList();
 
         return boardList;
-    }
-
-    public async Task AddJobList(Guid BoardId)
-    {
-        await _client.AddJobListAsync(BoardId);
-    }
-
-    public async Task DeleteJobList(Guid BoardId, Guid ListId)
-    {
-        await _client.DeleteJobListAsync(BoardId, ListId);
     }
 }

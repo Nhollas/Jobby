@@ -1,8 +1,8 @@
 ﻿using MediatR;
 
-namespace Jobby.Core.Features.ContactFeatures.Commands.Create;
+namespace Jobby.Application.Features.ContactFeatures.Commands.Create;
 
-public class CreateContactCommand : IRequest<Guid>
+public sealed record CreateContactCommand : IRequest<Guid>
 {
     public string FirstName { get; set; }
     public string LastName { get; set; }

@@ -73,6 +73,23 @@ $(".delete-job-btn").on('click', function () {
     });
 });
 
+$(".get-job-btn").on('click', function () {
+
+    var jobId = $(this).attr("data-job-id");
+    var boardId = $(this).attr("data-board-id");
+
+    $("#get-job-partial").toggleClass("hidden");
+
+    $.ajax({
+        type: "GET",
+        url: "/Board/"+boardId+"/Job/"+jobId+"",
+        success: function (result) {
+            $("#get-job-partial").empty();
+            $("#get-job-partial").html(result);
+        }
+    });
+});
+
 $(".delete-board-btn").on('click', function () {
 
     var boardId = $(this).attr("data-board-id");

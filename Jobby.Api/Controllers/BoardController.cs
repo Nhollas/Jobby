@@ -1,12 +1,9 @@
-﻿using Jobby.Core.Dtos;
-using Jobby.Core.Features.BoardFeatures.Commands.AddJobList;
-using Jobby.Core.Features.BoardFeatures.Commands.Create;
-using Jobby.Core.Features.BoardFeatures.Commands.Delete;
-using Jobby.Core.Features.BoardFeatures.Commands.DeleteJobList;
-using Jobby.Core.Features.BoardFeatures.Commands.Update;
-using Jobby.Core.Features.BoardFeatures.Queries.GetById;
-using Jobby.Core.Features.BoardFeatures.Queries.GetList;
-using MediatR;
+﻿using Jobby.Application.Dtos;
+using Jobby.Application.Features.BoardFeatures.Commands.Create;
+using Jobby.Application.Features.BoardFeatures.Commands.Delete;
+using Jobby.Application.Features.BoardFeatures.Commands.Update;
+using Jobby.Application.Features.BoardFeatures.Queries.GetById;
+using Jobby.Application.Features.BoardFeatures.Queries.GetList;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,81 +12,57 @@ namespace Jobby.Api.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
-public class BoardController : Controller
+public class BoardController : ApiController
 {
-    private readonly IMediator _mediator;
-
-    public BoardController(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
-
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Guid), StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [HttpPost("Create", Name = "CreateBoard")]
-    public async Task<ActionResult<Guid>> Create([FromBody] CreateBoardCommand command)
+    public async Task<IActionResult> CreateBoard([FromBody] CreateBoardCommand command)
     {
-        var id = await _mediator.Send(command);
-
-        return Ok(id);
+        var boardId = await Sender.Send(command);
+        return CreatedAtAction(nameof(CreateBoard), boardId);
     }
 
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesDefaultResponseType]
-    [HttpDelete("Delete/{id:guid}", Name = "DeleteBoard")]
-    public async Task<ActionResult> Delete(Guid id)
+    [HttpDelete("Delete/{boardId:guid}", Name = "DeleteBoard")]
+    public async Task<IActionResult> DeleteBoard(Guid boardId)
     {
-        await _mediator.Send(new DeleteBoardCommand(id));
+        await Sender.Send(new DeleteBoardCommand(boardId));
         return NoContent();
     }
 
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesDefaultResponseType]
     [HttpPut("Update", Name = "UpdateBoard")]
-    public async Task<ActionResult> Update([FromBody] UpdateBoardCommand command)
+    public async Task<IActionResult> UpdateBoard([FromBody] UpdateBoardCommand command)
     {
-        await _mediator.Send(command);
+        await Sender.Send(command);
         return NoContent();
     }
 
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BoardDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesDefaultResponseType]
-    [HttpGet("{id:guid}", Name = "GetBoardById")]
-    public async Task<ActionResult<BoardDto>> GetById(Guid id)
+    [HttpGet("{boardId:guid}", Name = "GetBoard")]
+    public async Task<IActionResult> GetBoard(Guid boardId)
     {
-        var boardQuery = new GetBoardDetailQuery(id);
-        return Ok(await _mediator.Send(boardQuery));
+        var boardQuery = new GetBoardDetailQuery(boardId);
+        return Ok(await Sender.Send(boardQuery));
     }
 
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(List<BoardDto>), StatusCodes.Status200OK)]
     [ProducesDefaultResponseType]
     [Route("~/api/Boards", Name = "ListBoards")]
     [HttpGet]
-    public async Task<ActionResult<List<BoardDto>>> List()
+    public async Task<IActionResult> ListBoards()
     {
-        var dtos = await _mediator.Send(new GetBoardListQuery());
+        var dtos = await Sender.Send(new GetBoardListQuery());
         return Ok(dtos);
-    }
-
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesDefaultResponseType]
-    [HttpPost("{id:guid}/JobList", Name = "AddJobList")]
-    public async Task<ActionResult> AddJobList(Guid id)
-    {
-        await _mediator.Send(new AddJobListCommand(id));
-        return NoContent();
-    }
-
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesDefaultResponseType]
-    [HttpDelete("{boardid:guid}/JobList/{listid:guid}", Name = "DeleteJobList")]
-    public async Task<ActionResult> DeleteJobList(Guid boardid, Guid listid)
-    {
-        await _mediator.Send(new DeleteJobListCommand(boardid, listid));
-        return NoContent();
     }
 }

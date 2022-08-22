@@ -1,6 +1,5 @@
 ﻿using Jobby.Client.Interfaces;
 using Jobby.Client.ViewModels.Board;
-using Jobby.Client.ViewModels.Job;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -74,10 +73,10 @@ public class BoardController : Controller
     }
 
     [HttpGet("{boardId:guid}/Job/{jobId:guid}")]
-    public async Task<ActionResult<JobDetailViewModel>> ViewJob(Guid boardId, Guid jobId)
+    public async Task<PartialViewResult> ViewJob(Guid boardId, Guid jobId)
     {
-        var job = await _jobService.GetJobById(boardId, jobId);
+        var model = await _jobService.GetJobById(boardId, jobId);
 
-        return View(job);
+        return PartialView("_GetJobPartial", model);
     }
 }
