@@ -12,15 +12,8 @@
         @Html.HiddenFor(model => model.JobId)
         @Html.HiddenFor(model => model.BoardId)
         <div class="flex flex-row gap-4 justify-center">
-            <button type="button" class="btn-secondary py-2 px-4 delete-job-switch">Cancel</button>
+            <button type="button" onclick='hideElement("delete-job-parent")' class="btn-secondary py-2 px-4">Cancel</button>
             <button type="submit" class="btn-primary w-full py-2">Delete</button>
         </div>
     </form>
 </div>
-
-<script>
-    $(".delete-job-switch").click(function () {
-        $("#delete-job-partial").toggleClass("hidden");
-    });
-</script>
-

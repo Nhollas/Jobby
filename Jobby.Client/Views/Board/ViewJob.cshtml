@@ -4,9 +4,75 @@
     ViewData["Title"] = $"{Model.Title} at {Model.Company}";
 }
 
-<section class="p-8 flex flex-col gap-y-8 relative h-full">
-    <h1 class="text-2xl font-semibold">@Model.Title at @Model.Company</h1>
-    <div class="flex flex-col">
-        <a asp-action="ViewBoard" asp-route-boardId="@Model.BoardId" class="btn-secondary ml-auto py-2 text-sm px-4 w-full max-w-[16rem] text-center">Back To Board</a>
+<section class="h-full w-full flex justify-center">
+    <div class="p-8 flex flex-col gap-y-4 w-full max-w-4xl">
+        <h1 class="text-xl xl:text-2xl font-semibold">@Model.Title at @Model.Company</h1>
+        <a asp-action="ViewBoard" asp-route-boardId="@Model.BoardId" class="btn-secondary ml-auto py-2 px-8 w-max text-center">Back To Board</a>
+        <div class="flex flex-col border-1 border-gray-900 w-full">
+            <div class="grid grid-cols-4">
+                <button class="font-semibold font-raleway h-12 px-4 py-1 border-r-1 border-gray-900 custom-shadow">Job Info</button>
+                <button class="font-semibold font-raleway h-12 px-4 py-1 border-r-1 border-gray-900 custom-shadow">Activities</button>
+                <button class="font-semibold font-raleway h-12 px-4 py-1 border-r-1 border-gray-900 custom-shadow">Notes</button>
+                <button class="font-semibold font-raleway h-12 px-4 py-1 custom-shadow">Contacts</button>
+            </div>
+            <div class="flex flex-col xl:flex-row-reverse border-t-1 border-gray-900">
+                <div class="flex flex-row flex-wrap gap-4 w-full xl:flex-col xl:max-w-[17rem] p-6 border-b-1 xl:border-b-0 xl:border-l-1 border-gray-900">
+                    <div class="flex flex-col gap-y-2">
+                        <p class="text-base">Application</p>
+                        <button class="flex flex-row justify-start border-1 text-sm border-gray-300 rounded-lg px-5 py-1"><i class="mr-2 bi bi-plus-square"></i> Log Application</button>
+                    </div>
+                    <div class="flex flex-col gap-y-2">
+                        <p class="text-base">Interviews</p>
+                        <button class="flex flex-row justify-start border-1 text-sm border-gray-300 rounded-lg px-5 py-1"><i class="mr-2 bi bi-plus-square"></i> Log Interview</button>
+                    </div>
+                    <div class="flex flex-col gap-y-2">
+                        <p class="text-base">Offer</p>
+                        <button class="flex flex-row justify-start border-1 text-sm border-gray-300 rounded-lg px-5 py-1"><i class="mr-2 bi bi-plus-square"></i> Log Offer</button>
+                    </div>
+                    <div class="flex flex-col gap-y-2">
+                        <p class="text-base">Offer Acceptance</p>
+                        <button class="flex flex-row justify-start border-1 text-sm border-gray-300 rounded-lg px-5 py-1"><i class="mr-2 bi bi-plus-square"></i> Log Offer Acceptance</button>
+                    </div>
+                </div>
+                <form class="p-6 w-full max-w-xl xl:max-w-none">
+                    <section class="flex flex-col gap-y-6 w-full">
+                        <div class="flex flex-row gap-x-4 w-full">
+                            <div class="flex flex-col gap-y-2 w-full">
+                                <label asp-for="Company" class="text-base"></label>
+                                <input asp-for="Company" class="text-sm border-1 border-gray-300 h-10 w-full px-5">
+                            </div>
+                            <div class="flex flex-col gap-y-2 w-full">
+                                <label asp-for="Title" class="text-base"></label>
+                                <input asp-for="Title" class="text-sm border-1 border-gray-300 h-10 w-full px-5">
+                            </div>
+                        </div>
+                        <div class="flex flex-row gap-x-4 w-full">
+                            <div class="flex flex-col gap-y-2 w-full">
+                                <label asp-for="PostUrl" class="text-base"></label>
+                                <input asp-for="PostUrl" class="text-sm border-1 border-gray-300 h-10 w-full px-5">
+                            </div>
+                            <div class="flex flex-col gap-y-2 w-full">
+                                <label asp-for="Salary" class="text-base"></label>
+                                <input asp-for="Salary" class="text-sm border-1 border-gray-300 h-10 w-full px-5">
+                            </div>
+                        </div>
+                        <div class="flex flex-row gap-x-4 w-full">
+                            <div class="flex flex-col gap-y-2 w-full">
+                                <label asp-for="City" class="text-base"></label>
+                                <input asp-for="City" class="text-sm border-1 border-gray-300 h-10 w-full px-5">
+                            </div>
+                            <div class="flex flex-col gap-y-2 w-full">
+                                <label asp-for="HexColour" class="text-base"></label>
+                                <input asp-for="HexColour" class="text-sm border-1 border-gray-300 h-10 w-full px-5">
+                            </div>
+                        </div>
+                        <div class="flex flex-col gap-y-2">
+                            <label asp-for="Description" class="text-base"></label>
+                            <textarea asp-for="Description" class="text-sm border-1 border-gray-300 min-h-[6rem] w-full px-5"></textarea>
+                        </div>
+                    </section>
+                </form>
+            </div>
+        </div>
     </div>
 </section>

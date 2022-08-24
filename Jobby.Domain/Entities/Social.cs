@@ -2,20 +2,20 @@
 
 public class Social
 {
-    public string TwitterUri { get; set; }
-    public string FacebookUri { get; set; }
-    public string LinkedInUri { get; set; }
-    public string GithubUri { get; set; }
+    public string TwitterUrl { get; private set; }
+    public string FacebookUrl { get; private set; }
+    public string LinkedInUrl { get; private set; }
+    public string GithubUrl { get; private set; }
 
     public Social(
-        string twitterUri,
-        string facebookUri,
-        string linkedInUri,
-        string githubUri)
+        string twitterUrl,
+        string facebookUrl,
+        string linkedInUrl,
+        string githubUrl)
     {
-        TwitterUri = twitterUri;
-        FacebookUri = facebookUri;
-        LinkedInUri = linkedInUri;
-        GithubUri = githubUri;
+        TwitterUrl = twitterUrl;
+        FacebookUrl = facebookUrl;
+        LinkedInUrl = linkedInUrl;
+        GithubUrl = githubUrl;
     }
 }

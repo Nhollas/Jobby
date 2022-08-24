@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Jobby.Core\Jobby.Application.csproj" />
+    <ProjectReference Include="..\Jobby.Application\Jobby.Application.csproj" />
     <ProjectReference Include="..\Jobby.Persistence\Jobby.Persistence.csproj" />
   </ItemGroup>
 

@@ -4,12 +4,12 @@ namespace Jobby.Domain.Entities;
 
 public class Activity : BaseEntity
 {
-    public Activity()
+    private Activity()
     {
+
     }
 
-    public Activity(
-        Guid id,
+    private Activity(
         DateTime createdDate,
         string ownerId,
         string title,
@@ -18,7 +18,7 @@ public class Activity : BaseEntity
         DateTime endDate,
         string note,
         bool completed)
-        : base(id, createdDate, ownerId)
+        : base(createdDate, ownerId)
     {
         _categories.TryGetValue(categoryType, out var category);
 
@@ -30,16 +30,17 @@ public class Activity : BaseEntity
         Completed = completed;
     }
 
-    public string Title { get; set; }
-    public string Category { get; set; }
-    public DateTime StartDate { get; set; }
-    public DateTime EndDate { get; set; }
-    public string Note { get; set; }
-    public bool Completed { get; set; }
+    public string Title { get; private set; }
+    public string Category { get; private set; }
+    public DateTime StartDate { get; private set; }
+    public DateTime EndDate { get; private set; }
+    public string Note { get; private set; }
+    public bool Completed { get; private set; }
 
+
+    // Database Relationship Properties
     public virtual Board Board { get; set; }
     public virtual Job Job { get; set; }
-
     public Guid BoardFk { get; set; }
     public Guid? JobFk { get; set; }
 
@@ -48,4 +49,27 @@ public class Activity : BaseEntity
     {
 
     };
+
+    public static Activity Create(
+        DateTime createdDate,
+        string ownerId,
+        string title,
+        int activityType,
+        DateTime startDate,
+        DateTime endDate,
+        string note,
+        bool completed)
+    {
+        var activity = new Activity(
+            createdDate,
+            ownerId,
+            title,
+            activityType,
+            startDate,
+            endDate,
+            note,
+            completed);
+
+        return activity;
+    }
 }

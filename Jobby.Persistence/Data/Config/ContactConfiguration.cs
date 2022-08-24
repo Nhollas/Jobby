@@ -1,6 +1,5 @@
 ﻿using Jobby.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Jobby.Persistence.Data.Config;
@@ -9,32 +8,30 @@ public class ContactConfiguration : IEntityTypeConfiguration<Contact>
 {
     public void Configure(EntityTypeBuilder<Contact> builder)
     {
-        builder.OwnsOne(p => p.Social);
+        builder.HasKey(contact => contact.Id);
 
-        var valueComparer = new ValueComparer<string[]>(
-            (c1, c2) => c1.SequenceEqual(c2),
-            c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
-            c => c.ToArray());
+        builder.OwnsOne(p => p.Socials);
 
-        builder.Property(e => e.Emails)
-            .HasConversion(
-            v => string.Join(';', v),
-            v => v.Split(';', StringSplitOptions.RemoveEmptyEntries))
-            .Metadata
-            .SetValueComparer(valueComparer);
+        builder.HasMany(p => p.Emails);
+        builder.HasMany(p => p.Companies);
+        builder.HasMany(p => p.Phones);
 
-        builder.Property(e => e.Phones)
-            .HasConversion(
-            v => string.Join(';', v),
-            v => v.Split(';', StringSplitOptions.RemoveEmptyEntries))
-            .Metadata
-            .SetValueComparer(valueComparer);
-
-        builder.Property(e => e.Companies)
-            .HasConversion(
-            v => string.Join(';', v),
-            v => v.Split(';', StringSplitOptions.RemoveEmptyEntries))
-            .Metadata
-            .SetValueComparer(valueComparer);
+        builder.HasMany(x => x.Jobs)
+            .WithMany(x => x.Contacts)
+            .UsingEntity<JobContact>(
+                j => j
+                    .HasOne(pt => pt.Job)
+                    .WithMany(t => t.JobContacts)
+                    .HasForeignKey(pt => pt.JobFk)            
+                    .OnDelete(DeleteBehavior.NoAction),
+                j => j
+                    .HasOne(pt => pt.Contact)
+                    .WithMany(p => p.JobContacts)
+                    .HasForeignKey(pt => pt.ContactFk)
+                    .OnDelete(DeleteBehavior.NoAction),
+                j =>
+                {
+                    j.HasKey(t => new { t.JobFk, t.ContactFk });
+                });
     }
 }

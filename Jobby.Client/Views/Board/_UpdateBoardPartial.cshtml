@@ -10,15 +10,8 @@
         </div>
         @Html.HiddenFor(model => model.BoardId)
         <div class="flex flex-row gap-4 justify-center">
-            <button type="button" class="btn-secondary py-2 px-4 update-board-switch">Cancel</button>
+            <button type="button" onclick='hideElement("update-board-parent")' class="btn-secondary py-2 px-4">Cancel</button>
             <button type="submit" class="btn-primary w-full py-2">Update</button>
         </div>
     </form>
 </div>
-
-<script>
-    $(".update-board-switch").click(function () {
-        $("#update-board-partial").toggleClass("hidden");
-    });
-</script>
-

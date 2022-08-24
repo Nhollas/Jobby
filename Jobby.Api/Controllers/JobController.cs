@@ -1,7 +1,5 @@
-﻿using Jobby.Application.Dtos;
-using Jobby.Application.Features.JobFeatures.Commands.Create;
+﻿using Jobby.Application.Features.JobFeatures.Commands.Create;
 using Jobby.Application.Features.JobFeatures.Commands.Delete;
-using Jobby.Application.Features.JobFeatures.Queries.GetById;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Jobby.Api.Controllers;
@@ -29,16 +27,5 @@ public class JobController : ApiController
     {
         await Sender.Send(new DeleteJobCommand(jobId));
         return NoContent();
-    }
-
-    [ProducesResponseType(typeof(JobDto), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    [ProducesDefaultResponseType]
-    [HttpGet("{jobId:guid}", Name = "GetJob")]
-    public async Task<IActionResult> GetJob(Guid jobId)
-    {
-        var jobQuery = new GetJobDetailQuery(jobId);
-        return Ok(await Sender.Send(jobQuery));
     }
 }

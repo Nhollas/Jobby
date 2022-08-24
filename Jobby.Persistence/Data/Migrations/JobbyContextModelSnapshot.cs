@@ -93,6 +93,25 @@ namespace Jobby.Persistence.Data.Migrations
                     b.ToTable("Boards");
                 });
 
+            modelBuilder.Entity("Jobby.Domain.Entities.Company", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ContactId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ContactId");
+
+                    b.ToTable("Company");
+                });
+
             modelBuilder.Entity("Jobby.Domain.Entities.Contact", b =>
                 {
                     b.Property<Guid>("Id")
@@ -102,14 +121,8 @@ namespace Jobby.Persistence.Data.Migrations
                     b.Property<Guid>("BoardFk")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Companies")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("Emails")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FirstName")
                         .HasColumnType("nvarchar(max)");
@@ -126,14 +139,30 @@ namespace Jobby.Persistence.Data.Migrations
                     b.Property<string>("OwnerId")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Phones")
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("BoardFk");
 
                     b.ToTable("Contacts");
+                });
+
+            modelBuilder.Entity("Jobby.Domain.Entities.Email", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ContactId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ContactId");
+
+                    b.ToTable("Email");
                 });
 
             modelBuilder.Entity("Jobby.Domain.Entities.Job", b =>
@@ -231,6 +260,28 @@ namespace Jobby.Persistence.Data.Migrations
                     b.ToTable("JobLists");
                 });
 
+            modelBuilder.Entity("Jobby.Domain.Entities.Phone", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ContactId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Number")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ContactId");
+
+                    b.ToTable("Phone");
+                });
+
             modelBuilder.Entity("Jobby.Domain.Entities.Activity", b =>
                 {
                     b.HasOne("Jobby.Domain.Entities.Board", "Board")
@@ -248,6 +299,13 @@ namespace Jobby.Persistence.Data.Migrations
                     b.Navigation("Job");
                 });
 
+            modelBuilder.Entity("Jobby.Domain.Entities.Company", b =>
+                {
+                    b.HasOne("Jobby.Domain.Entities.Contact", null)
+                        .WithMany("Companies")
+                        .HasForeignKey("ContactId");
+                });
+
             modelBuilder.Entity("Jobby.Domain.Entities.Contact", b =>
                 {
                     b.HasOne("Jobby.Domain.Entities.Board", "Board")
@@ -256,21 +314,21 @@ namespace Jobby.Persistence.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsOne("Jobby.Domain.Entities.Social", "Social", b1 =>
+                    b.OwnsOne("Jobby.Domain.Entities.Social", "Socials", b1 =>
                         {
                             b1.Property<Guid>("ContactId")
                                 .HasColumnType("uniqueidentifier");
 
-                            b1.Property<string>("FacebookUri")
+                            b1.Property<string>("FacebookUrl")
                                 .HasColumnType("nvarchar(max)");
 
-                            b1.Property<string>("GithubUri")
+                            b1.Property<string>("GithubUrl")
                                 .HasColumnType("nvarchar(max)");
 
-                            b1.Property<string>("LinkedInUri")
+                            b1.Property<string>("LinkedInUrl")
                                 .HasColumnType("nvarchar(max)");
 
-                            b1.Property<string>("TwitterUri")
+                            b1.Property<string>("TwitterUrl")
                                 .HasColumnType("nvarchar(max)");
 
                             b1.HasKey("ContactId");
@@ -283,7 +341,14 @@ namespace Jobby.Persistence.Data.Migrations
 
                     b.Navigation("Board");
 
-                    b.Navigation("Social");
+                    b.Navigation("Socials");
+                });
+
+            modelBuilder.Entity("Jobby.Domain.Entities.Email", b =>
+                {
+                    b.HasOne("Jobby.Domain.Entities.Contact", null)
+                        .WithMany("Emails")
+                        .HasForeignKey("ContactId");
                 });
 
             modelBuilder.Entity("Jobby.Domain.Entities.Job", b =>
@@ -327,6 +392,13 @@ namespace Jobby.Persistence.Data.Migrations
                     b.Navigation("Board");
                 });
 
+            modelBuilder.Entity("Jobby.Domain.Entities.Phone", b =>
+                {
+                    b.HasOne("Jobby.Domain.Entities.Contact", null)
+                        .WithMany("Phones")
+                        .HasForeignKey("ContactId");
+                });
+
             modelBuilder.Entity("Jobby.Domain.Entities.Board", b =>
                 {
                     b.Navigation("Activities");
@@ -338,7 +410,13 @@ namespace Jobby.Persistence.Data.Migrations
 
             modelBuilder.Entity("Jobby.Domain.Entities.Contact", b =>
                 {
+                    b.Navigation("Companies");
+
+                    b.Navigation("Emails");
+
                     b.Navigation("JobContacts");
+
+                    b.Navigation("Phones");
                 });
 
             modelBuilder.Entity("Jobby.Domain.Entities.Job", b =>

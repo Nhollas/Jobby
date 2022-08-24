@@ -4,44 +4,86 @@ namespace Jobby.Domain.Entities;
 
 public class Contact : BaseEntity
 {
+    private readonly List<Job> _jobs = new();
+    private readonly List<Company> _companies = new();
+    private readonly List<Email> _emails = new();
+    private readonly List<Phone> _phones = new();
+    private readonly List<JobContact> _jobContacts = new();
+
     private Contact()
     {
+
     }
 
-    public Contact(
-        Guid id,
+    private Contact(
         DateTime createdDate,
         string ownerId,
         string firstName,
         string lastName,
         string jobTitle,
-        Social social,
+        Social socials,
         Guid boardId,
-        string[] companies,
-        string[] emails,
-        string[] phones)
-        : base(id, createdDate, ownerId)
+        List<Company> companies,
+        List<Email> emails,
+        List<Phone> phones)
+        : base(createdDate, ownerId)
     {
         FirstName = firstName;
         LastName = lastName;
         JobTitle = jobTitle;
-        Social = social;
+        Socials = socials;
         BoardFk = boardId;
-        Companies = companies;
-        Emails = emails;
-        Phones = phones;
+        _companies = companies;
+        _emails = emails;
+        _phones = phones;
     }
 
-    public string FirstName { get; set; }
-    public string LastName { get; set; }
-    public string JobTitle { get; set; }
-    public Social Social { get; set; }
-    public string[] Companies { get; set; }
-    public string[] Emails { get; set; }
-    public string[] Phones { get; set; }
+    public string FirstName { get; private set; }
 
-    public Board Board { get; set; }
+    public string LastName { get; private set; }
+
+    public string JobTitle { get; private set; }
+
+    public Social Socials { get; private set; }
+
+    public IReadOnlyCollection<Job> Jobs => _jobs;
+
+    public IReadOnlyCollection<Company> Companies => _companies;
+
+    public IReadOnlyCollection<Email> Emails => _emails;
+
+    public IReadOnlyCollection<Phone> Phones => _phones;
+
+
+    // Database Relationship Properties
+    public ICollection<JobContact> JobContacts => _jobContacts;
+    public virtual Board Board { get; set; }
     public Guid BoardFk { get; set; }
 
-    public ICollection<JobContact> JobContacts { get; set; }
+    public static Contact Create(
+        DateTime createdDate,
+        string ownerId,
+        string firstName,
+        string lastName,
+        string jobTitle,
+        Social socials,
+        Guid boardId,
+        List<Company> companies,
+        List<Email> emails,
+        List<Phone> phones)
+    {
+        var contact = new Contact(
+            createdDate,
+            ownerId,
+            firstName,
+            lastName,
+            jobTitle,
+            socials,
+            boardId,
+            companies,
+            emails,
+            phones);
+
+        return contact;
+    }
 }

@@ -21,7 +21,9 @@ url("./fonts/bootstrap-icons.woff2?4601c71fb26c9277391ec80789bfde9c") format("wo
 .bi-linkedin::before { content: "\F472"; }
 .bi-pencil::before { content: "\F4CB"; }
 .bi-plus::before { content: "\F4FE"; }
+.bi-plus-square::before { content: "\F4FD"; }
 .bi-trash::before { content: "\F5DE"; }
 .bi-x-square::before { content: "\F629"; }
 .bi-pencil-square::before { content: "\F4CA"; }
 .bi-x-square-fill::before { content: "\F628"; }
+.bi-plus-lg::before { content: "\F64D"; }

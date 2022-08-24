@@ -1,11 +1,9 @@
 ﻿namespace Jobby.Domain.Entities;
 public class JobContact
 {
-    public Guid JobFk { get; set; }
-    public Job Job { get; set; }
-
-    public Guid ContactFk { get; set; }
-    public Contact Contact { get; set; }
+    private JobContact()
+    {
+    }
 
     public JobContact(Contact contact, Job job)
     {
@@ -15,7 +13,9 @@ public class JobContact
         ContactFk = contact.Id;
     }
 
-    private JobContact()
-    {
-    }
+    public Guid JobFk { get; set; }
+    public Job Job { get; set; }
+
+    public Guid ContactFk { get; set; }
+    public Contact Contact { get; set; }
 }

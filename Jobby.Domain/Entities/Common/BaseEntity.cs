@@ -2,9 +2,10 @@
 
 public abstract class BaseEntity
 {
-    protected BaseEntity(Guid id, DateTime createdDate, string ownerId)
+    protected BaseEntity(
+        DateTime createdDate, 
+        string ownerId)
     {
-        Id = id;
         CreatedDate = createdDate;
         OwnerId = ownerId;
     }

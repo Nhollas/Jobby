@@ -7,9 +7,13 @@
 }
 
 .btn-primary {
-    @apply text-white font-semibold bg-main-blue rounded-md font-raleway hover:bg-gray-50 hover:text-black hover:border-main-blue border-1;
+    @apply text-white font-raleway font-semibold text-base bg-main-blue rounded-md hover:bg-gray-50 hover:text-black hover:border-main-blue border-1;
 }
 
 .btn-secondary {
     @apply font-semibold border-1 border-gray-900 bg-white font-raleway;
+}
+
+.custom-shadow:hover {
+    box-shadow: inset 0px 10px 15px -3px rgba(0,0,0,0.15);
 }

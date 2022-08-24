@@ -2,55 +2,42 @@
 @model BoardDetailViewModel
 @{
     ViewData["Title"] = Model.Name + " Board";
+    Layout = "_DashboardLayout";
 }
 
-<section class="p-8 flex flex-col gap-y-8 relative h-full">
-    <h1 class="text-2xl font-semibold">@Model.Name Board</h1>
-    <div class="w-full gap-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
+<section class="p-8 flex flex-col gap-y-4 relative h-full">
+    <h1 class="text-xl xl:text-2xl font-semibold">@Model.Name Board</h1>
+    <button class="btn-secondary rounded-full px-8 py-2 w-max ml-auto">Actions</button>
+    <div class="w-full gap-4 grid grid-cols-1 TwoJobList:grid-cols-2 ThreeJobList:grid-cols-3 FourJobList:grid-cols-4 FiveJobList:grid-cols-5">
         @foreach (var jobList in Model.JobList)
         {
-            <div class="bg-gray-50 p-4 pb-0 border-1 border-b-0 border-gray-900 flex flex-col gap-y-4 w-full h-max">
-                <div class="flex flex-col gap-y-2">
+            <div class="bg-gray-50 border-1 border-gray-900 flex flex-col h-max w-full">
+                <div class="flex flex-col gap-y-2 p-4">
                     <p class="text-base font-medium">@jobList.Name</p>
                     <p>@jobList.Count Jobs</p>
+                    <button 
+                        hx-post="/Job/CreatePartial"
+                        hx-vals='{"BoardId": "@Model.Id", "JobListId": "@jobList.Id", "JobListName": "@jobList.Name", "BoardName": "@Model.Name"}'
+                        hx-swap="innerHTML"
+                        hx-target="#create-job-parent"
+                        onclick='showElement("create-job-parent")'
+                        class="btn-primary py-2 px-8 w-max ml-auto !rounded-full">
+                        Add Job
+                    </button>
                 </div>
-                <button 
-                    data-board-id="@Model.Id"
-                    data-board-name="@Model.Name"
-                    data-list-id="@jobList.Id"
-                    data-list-name="@jobList.Name"
-                    class="btn-primary py-2 text-sm px-4 add-job-btn">
-                    Create Job
-                </button>
                 @foreach(var job in jobList.Jobs)
                 {
-                    <div class="border-y-1 border-gray-900 bg-gray-100 -mx-4 flex flex-row p-4">
-                        <div class="flex flex-col gap-2 mr-auto">
-                            <h2 class="font-semibold">@job.Title</h2>
-                            <p>@job.Company</p>
-                        </div>
-                        <div class="flex flex-col gap-y-2">
-                            <button
-                                data-job-id="@job.Id"
-                                data-board-id="@Model.Id"
-                                class="get-job-btn text-sm rounded-full px-4 py-1 font-semibold border-1 border-main-orange bg-orange-100">
-                                View
-                            </button>
-                            <button
-                                data-job-id="@job.Id"
-                                data-job-title="@job.Title"
-                                data-job-company="@job.Company"
-                                data-board-id="@Model.Id"
-                                class="delete-job-btn text-sm rounded-full px-4 py-1 font-semibold border-1 border-main-red bg-red-100">
-                                Delete
-                            </button>
-                        </div>
+                    <div class="bg-gray-50 border-gray-900 border-t-1 w-full cursor-pointer p-4 custom-shadow">
+                        <a asp-action="ViewJob" asp-controller="Board" asp-route-boardId="@Model.Id" asp-route-jobId="@job.Id">
+                            <div class="flex flex-col">
+                                <p class="text-lg font-medium text-ellipsis overflow-hidden ... whitespace-nowrap">@job.Title</p>
+                                <p class="text-base text-ellipsis overflow-hidden ... whitespace-nowrap">@job.Company</p>
+                            </div>
+                        </a>
                     </div>
                 }
             </div>
         }
     </div>
-    <div id="add-job-partial" class="absolute inset-0 bg-gray-50/90 hidden flex justify-center"></div>
-    <div id="delete-job-partial" class="absolute inset-0 bg-gray-50/90 hidden flex justify-center"></div>
-    <div id="get-job-partial" class="absolute inset-0 bg-gray-50/90 hidden flex justify-center"></div>
+    <div id="create-job-parent" class="absolute inset-0 bg-gray-50/90 hidden flex justify-center"></div>
 </section>

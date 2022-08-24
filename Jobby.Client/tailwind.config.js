@@ -26,8 +26,14 @@ module.exports = {
       fontFamily: {
         raleway: ["Raleway", "sans-serif"]
       },
-      scale: {
-        'base': '1.025'
+      screens: {
+        'TwoJobList': '625px',
+        'ThreeJobList': '920px',
+        'FourJobList': '1200px',
+        'FiveJobList': '1500px',    
+      },
+      maxWidth: {
+        '8xl': '100rem'
       }
     },
   },

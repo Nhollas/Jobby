@@ -20,7 +20,7 @@
                 <li><a class="text-sm font-semibold" asp-controller="Home" asp-action="Features">Features</a></li>
                 <li><a class="text-sm font-semibold" asp-controller="Home" asp-action="Documentation">Docs</a></li>
             </ul>
-            <ul class="flex flex-row gap-x-8 ml-auto">
+            <ul class="flex flex-row gap-x-4 ml-auto">
                 @if (User.Identity.IsAuthenticated)
                 {
                     <li><a class="text-sm font-semibold" asp-controller="Dashboard" asp-action="Index">Dashboard</a></li>
@@ -28,8 +28,8 @@
                 }
                 else
                 {
-                    <li><a class="text-sm font-semibold" asp-controller="Auth" asp-action="Login">Log In</a></li>
-                    <li><a class="text-sm text-white font-semibold bg-main-blue px-5 py-1.5 rounded-lg" asp-controller="Auth" asp-action="Register">Sign Up</a></li>
+                    <li><a class="px-5 py-1.5 text-sm font-semibold border-1 border-gray-900 bg-white font-raleway;" asp-controller="Auth" asp-action="Login">Log In</a></li>
+                    <li><a class="text-sm text-white font-medium bg-main-blue px-5 py-1.5 rounded-lg" asp-controller="Auth" asp-action="Register">Sign Up</a></li>
                 }
             </ul>
         </nav>
@@ -54,8 +54,9 @@
             </div>
         </section>
     </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/htmx.min.js"></script>
+    <script src="~/js/_hyperscript.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

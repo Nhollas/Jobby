@@ -1,9 +1,6 @@
-﻿using Jobby.Application.Dtos;
-using Jobby.Application.Features.ActivityFeatures.Commands.Create;
+﻿using Jobby.Application.Features.ActivityFeatures.Commands.Create;
 using Jobby.Application.Features.ActivityFeatures.Commands.Delete;
 using Jobby.Application.Features.ActivityFeatures.Commands.Update;
-using Jobby.Application.Features.ActivityFeatures.Queries.GetActivityById;
-using Jobby.Application.Features.ActivityFeatures.Queries.GetBoardActivityList;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -23,7 +20,7 @@ public class ActivityController : ApiController
     {
         var activityId = await Sender.Send(command);
 
-        return CreatedAtAction("Create", activityId);
+        return CreatedAtAction(nameof(CreateActivity), activityId);
     }
 
     [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -46,25 +43,5 @@ public class ActivityController : ApiController
     {
         await Sender.Send(command);
         return NoContent();
-    }
-
-    [ProducesResponseType(typeof(ActivityDto), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    [ProducesDefaultResponseType]
-    [HttpGet("{activityId:guid}", Name = "GetActivity")]
-    public async Task<IActionResult> GetActivity(Guid activityId)
-    {
-        var activityQuery = new GetActivityDetailQuery(activityId);
-        return Ok(await Sender.Send(activityQuery));
-    }
-
-    [ProducesResponseType(typeof(List<ActivityDto>), StatusCodes.Status200OK)]
-    [ProducesDefaultResponseType]
-    [HttpGet("List/{boardId:guid}", Name = "ListActivities")]
-    public async Task<IActionResult> ListActivities(Guid boardId)
-    {
-        var dtos = await Sender.Send(new GetBoardActivityListQuery(boardId));
-        return Ok(dtos);
     }
 }

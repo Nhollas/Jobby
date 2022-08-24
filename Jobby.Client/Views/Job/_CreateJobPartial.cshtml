@@ -23,15 +23,10 @@
         @Html.HiddenFor(model => model.BoardId)
         @Html.HiddenFor(model => model.JobListId)
         <div class="flex flex-row gap-4 justify-center">
-            <button type="button" class="btn-secondary py-2 px-4 create-job-switch">Cancel</button>
+            <button type="button" onclick='hideElement("create-job-parent")' class="btn-secondary py-2 px-4">Cancel</button>
             <button type="submit" class="btn-primary w-full py-2">Create</button>
         </div>
     </form>
 </div>
 
-<script>
-    $(".create-job-switch").click(function () {
-        $("#add-job-partial").toggleClass("hidden");
-    });
-</script>
 

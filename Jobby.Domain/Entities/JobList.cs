@@ -4,24 +4,30 @@ namespace Jobby.Domain.Entities;
 
 public class JobList : BaseEntity
 {
+    private readonly List<Job> _jobs = new();
+
     private JobList()
     {
         // required by EF
     }
 
-    public JobList(string listName)
+    public JobList(
+        string listName,
+        DateTime createdDate,
+        string ownerId)
+        : base(createdDate, ownerId)
     {
         Name = listName;
-
-        if (Jobs == null)
-        {
-            Jobs = new List<Job>();
-        }
     }
 
     public string Name { get; set; }
-    public ICollection<Job> Jobs { get; set; }
+    public IReadOnlyCollection<Job> Jobs => _jobs;
 
     public Board Board { get; set; }
     public Guid BoardFk { get; set; }
+
+    public void AddJob(Job job)
+    {
+        _jobs.Add(job);
+    }
 }

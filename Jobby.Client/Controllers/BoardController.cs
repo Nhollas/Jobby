@@ -73,10 +73,10 @@ public class BoardController : Controller
     }
 
     [HttpGet("{boardId:guid}/Job/{jobId:guid}")]
-    public async Task<PartialViewResult> ViewJob(Guid boardId, Guid jobId)
+    public async Task<ActionResult> ViewJob(Guid boardId, Guid jobId)
     {
         var model = await _jobService.GetJobById(boardId, jobId);
 
-        return PartialView("_GetJobPartial", model);
+        return View(model);
     }
 }

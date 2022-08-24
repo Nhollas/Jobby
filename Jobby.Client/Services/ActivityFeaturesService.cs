@@ -27,9 +27,9 @@ public class ActivityFeaturesService : BaseDataService, IActivityFeaturesService
         await _client.DeleteActivityAsync(id);
     }
 
-    public async Task<ActivityDto> GetActivityById(Guid id)
+    public async Task<ActivityDto> GetActivityById(Guid boardId, Guid activityId)
     {
-        var selectedActivity = await _client.GetActivityAsync(id);
+        var selectedActivity = await _client.GetActivityAsync(boardId, activityId);
 
         return selectedActivity;
     }

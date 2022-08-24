@@ -7,6 +7,8 @@ public class JobListConfiguration : IEntityTypeConfiguration<JobList>
 {
     public void Configure(EntityTypeBuilder<JobList> builder)
     {
+        builder.HasKey(jobList => jobList.Id);
+
         builder.HasMany(p => p.Jobs)
             .WithOne(x => x.JobList)
             .HasForeignKey(x => x.JobListFk);
