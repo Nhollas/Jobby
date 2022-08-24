@@ -9,6 +9,7 @@ namespace Jobby.Application.Features.JobFeatures.Commands.Update;
 internal sealed class UpdateJobCommandHandler : IRequestHandler<UpdateJobCommand, Unit>
 {
     private readonly IRepository<Job> _repository;
+    private readonly IDateTimeProvider _timeProvider;
     private readonly IUserService _userService;
     private readonly IMapper _mapper;
     private readonly string _userId;
@@ -16,12 +17,14 @@ internal sealed class UpdateJobCommandHandler : IRequestHandler<UpdateJobCommand
     public UpdateJobCommandHandler(
         IRepository<Job> repository,
         IUserService userService,
-        IMapper mapper)
+        IMapper mapper,
+        IDateTimeProvider timeProvider)
     {
         _repository = repository;
         _userService = userService;
         _userId = _userService.UserId();
         _mapper = mapper;
+        _timeProvider = timeProvider;
     }
 
     public async Task<Unit> Handle(UpdateJobCommand request, CancellationToken cancellationToken)
@@ -39,6 +42,8 @@ internal sealed class UpdateJobCommandHandler : IRequestHandler<UpdateJobCommand
         }
 
         _mapper.Map(request, jobToUpdate, typeof(UpdateJobCommand), typeof(Job));
+
+        jobToUpdate.UpdateEntity(_timeProvider.UtcNow);
 
         await _repository.UpdateAsync(jobToUpdate, cancellationToken);
 

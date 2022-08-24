@@ -17,3 +17,37 @@
 .custom-shadow:hover {
     box-shadow: inset 0px 10px 15px -3px rgba(0,0,0,0.15);
 }
+
+.tablink {
+    @apply font-semibold font-raleway h-12 px-4 py-1 border-r-1 border-gray-900 custom-shadow;
+}
+
+.tablink.active {
+    @apply border-b-4 border-b-main-blue shadow-none;
+}
+
+.tabcontent {
+    @apply hidden;
+}
+
+.tabcontent.active {
+    @apply block;
+}
+
+.scrollbar::-webkit-scrollbar {
+    width: 10px;
+    height: 20px;
+  }
+
+.scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-gray-800 rounded-full hover:bg-gray-600
+}
+
+.select-item.active {
+    @apply bg-main-blue text-white;
+}
+
+.select-item {
+    @apply cursor-pointer text-sm border-1 border-gray-300 rounded-full px-3 py-1;
+}
+

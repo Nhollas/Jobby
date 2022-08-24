@@ -50,7 +50,7 @@ public class BoardController : ApiController
         return NoContent();
     }
 
-    [ProducesResponseType(typeof(BoardDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BoardDetailDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesDefaultResponseType]
@@ -59,6 +59,16 @@ public class BoardController : ApiController
     {
         var boardQuery = new GetBoardDetailQuery(boardId);
         return Ok(await Sender.Send(boardQuery));
+    }
+
+    [ProducesResponseType(typeof(List<BoardListDto>), StatusCodes.Status200OK)]
+    [ProducesDefaultResponseType]
+    [Route("~/api/Boards", Name = "ListBoards")]
+    [HttpGet]
+    public async Task<IActionResult> ListBoards()
+    {
+        var dtos = await Sender.Send(new GetBoardListQuery());
+        return Ok(dtos);
     }
 
     [ProducesResponseType(typeof(JobDto), StatusCodes.Status200OK)]
@@ -92,16 +102,6 @@ public class BoardController : ApiController
     {
         var contactQuery = new GetContactDetailQuery(boardId, contactId);
         return Ok(await Sender.Send(contactQuery));
-    }
-
-    [ProducesResponseType(typeof(List<BoardDto>), StatusCodes.Status200OK)]
-    [ProducesDefaultResponseType]
-    [Route("~/api/Boards", Name = "ListBoards")]
-    [HttpGet]
-    public async Task<IActionResult> ListBoards()
-    {
-        var dtos = await Sender.Send(new GetBoardListQuery());
-        return Ok(dtos);
     }
 
     [ProducesResponseType(typeof(List<ActivityDto>), StatusCodes.Status200OK)]

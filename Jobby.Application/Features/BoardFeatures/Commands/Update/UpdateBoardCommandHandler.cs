@@ -9,16 +9,19 @@ namespace Jobby.Application.Features.BoardFeatures.Commands.Update;
 internal sealed class UpdateBoardCommandHandler : IRequestHandler<UpdateBoardCommand, Unit>
 {
     private readonly IRepository<Board> _repository;
+    private readonly IDateTimeProvider _timeProvider;
     private readonly IUserService _userService;
     private readonly string _userId;
 
     public UpdateBoardCommandHandler(
         IRepository<Board> repository,
-        IUserService userService)
+        IUserService userService,
+        IDateTimeProvider timeProvider)
     {
         _repository = repository;
         _userService = userService;
         _userId = _userService.UserId();
+        _timeProvider = timeProvider;
     }
 
     public async Task<Unit> Handle(UpdateBoardCommand request, CancellationToken cancellationToken)
@@ -36,6 +39,8 @@ internal sealed class UpdateBoardCommandHandler : IRequestHandler<UpdateBoardCom
         }
 
         boardToUpdate.SetBoardName(request.BoardName);
+
+        boardToUpdate.UpdateEntity(_timeProvider.UtcNow);
 
         await _repository.UpdateAsync(boardToUpdate, cancellationToken);
 

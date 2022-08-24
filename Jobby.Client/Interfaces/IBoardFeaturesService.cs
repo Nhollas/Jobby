@@ -1,5 +1,6 @@
-﻿using Jobby.Client.Services.Base;
-using Jobby.Client.ViewModels.Board;
+﻿using Jobby.Client.Models.BoardModels;
+using Jobby.Client.Services.Base;
+using Jobby.Client.ViewModels.BoardViewModels;
 
 namespace Jobby.Client.Interfaces;
 
@@ -9,5 +10,5 @@ public interface IBoardFeaturesService
     Task DeleteBoard(Guid boardId);
     Task UpdateBoard(Guid boardId, string name);
     Task<BoardDetailViewModel> GetBoardById(Guid id);
-    Task<List<BoardDto>> ListBoards();
+    Task<List<BoardPreview>> ListBoards();
 }

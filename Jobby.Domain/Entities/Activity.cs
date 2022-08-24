@@ -13,17 +13,15 @@ public class Activity : BaseEntity
         DateTime createdDate,
         string ownerId,
         string title,
-        int categoryType,
+        int activityType,
         DateTime startDate,
         DateTime endDate,
         string note,
         bool completed)
         : base(createdDate, ownerId)
     {
-        _categories.TryGetValue(categoryType, out var category);
-
         Title = title;
-        Category = category;
+        ActivityType = activityType;
         StartDate = startDate;
         EndDate = endDate;
         Note = note;
@@ -31,7 +29,7 @@ public class Activity : BaseEntity
     }
 
     public string Title { get; private set; }
-    public string Category { get; private set; }
+    public int ActivityType { get; private set; }
     public DateTime StartDate { get; private set; }
     public DateTime EndDate { get; private set; }
     public string Note { get; private set; }
@@ -43,12 +41,6 @@ public class Activity : BaseEntity
     public virtual Job Job { get; set; }
     public Guid BoardFk { get; set; }
     public Guid? JobFk { get; set; }
-
-
-    private readonly Dictionary<int, string> _categories = new()
-    {
-
-    };
 
     public static Activity Create(
         DateTime createdDate,

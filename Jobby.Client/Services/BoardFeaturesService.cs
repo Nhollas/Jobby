@@ -1,7 +1,8 @@
 ﻿using AutoMapper;
 using Jobby.Client.Interfaces;
+using Jobby.Client.Models.BoardModels;
 using Jobby.Client.Services.Base;
-using Jobby.Client.ViewModels.Board;
+using Jobby.Client.ViewModels.BoardViewModels;
 
 namespace Jobby.Client.Services;
 
@@ -49,18 +50,19 @@ public class BoardFeaturesService : BaseDataService, IBoardFeaturesService
 
     public async Task<BoardDetailViewModel> GetBoardById(Guid Id)
     {
-        BoardDto selectedBoard = await _client.GetBoardAsync(Id);
+        BoardDetailDto selectedBoard = await _client.GetBoardAsync(Id);
 
         BoardDetailViewModel mappedBoard = _mapper.Map<BoardDetailViewModel>(selectedBoard);
 
         return mappedBoard;
     }
 
-    public async Task<List<BoardDto>> ListBoards()
+    public async Task<List<BoardPreview>> ListBoards()
     {
-        ICollection<BoardDto> boardCollection = await _client.ListBoardsAsync();
-        var boardList = boardCollection.ToList();
+        ICollection<BoardListDto> boardCollection = await _client.ListBoardsAsync();
 
-        return boardList;
+        var mappedList = _mapper.Map<List<BoardPreview>>(boardCollection);
+
+        return mappedList;
     }
 }

@@ -13,7 +13,7 @@ public sealed record JobDto
     public string HexColour { get; set; }
     public string Description { get; set; }
     public DateTime Deadline { get; set; }
-    public string Notes { get; set; }
+    public List<NoteDto> Notes { get; set; }
     public List<ContactDto> Contacts { get; set; }
     public List<ActivityDto> Activities { get; set; }
 }

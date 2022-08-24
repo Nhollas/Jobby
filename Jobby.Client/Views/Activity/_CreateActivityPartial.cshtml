@@ -1,0 +1,65 @@
+﻿@using Jobby.Client.ViewModels.ActivityViewModels
+@model CreateActivityViewModel
+
+<div class="w-full max-w-md m-8 border-1 border-gray-900 h-max p-8 flex flex-col gap-y-4 bg-gray-50">
+    <h1 class="text-2xl font-semibold">Log Activity</h1>
+    <form asp-controller="Activity" asp-action="Create" class="flex flex-col gap-6" method="post">
+        @Html.HiddenFor(model => model.BoardId)
+        @Html.HiddenFor(model => model.JobId)
+        <div class="flex flex-col gap-y-3">
+            <label asp-for="Title" class="text-base"></label>
+            <input asp-for="Title" class="border-1 border-gray-300 border-b-gray-900 border-b-2 h-10 w-full max-w-md px-5">
+        </div>
+        <div class="flex flex-col gap-y-3">
+            <label asp-for="ActivityType"></label>
+            @Html.HiddenFor(model => model.ActivityType)
+            <div class="flex flex-row flex-wrap gap-3 max-h-[10rem] overflow-scroll overflow-x-hidden scrollbar">
+                @foreach(var type in Model.ActivityTypes)
+                {
+                    if (Model.ActivityTypes.First() == type)
+                    {
+                        <p class="select-item active" data-value="@type.Value">@type.Text</p>
+                    }
+                    else
+                    {
+                        <p class="select-item" data-value="@type.Value">@type.Text</p>
+                    }
+                }
+            </div>        
+        </div>
+        <div class="flex flex-col gap-y-3">
+            <label asp-for="StartDate" class="text-base"></label>
+            <input asp-for="StartDate" class="border-1 border-gray-300 border-b-gray-900 border-b-2 h-10 w-full max-w-md px-5">
+        </div>
+        <div class="flex flex-col gap-y-3">
+            <label asp-for="EndDate" class="text-base"></label>
+            <input asp-for="EndDate" class="border-1 border-gray-300 border-b-gray-900 border-b-2 h-10 w-full max-w-md px-5">
+        </div>
+        <div class="flex flex-col gap-y-3">
+            <label asp-for="Note" class="text-base"></label>
+            <input asp-for="Note" class="border-1 border-gray-300 border-b-gray-900 border-b-2 h-10 w-full max-w-md px-5">
+        </div>
+        <div class="flex flex-col gap-y-3">
+            <label asp-for="Completed" class="text-base"></label>
+            <input asp-for="Completed" class="border-1 border-gray-300 border-b-gray-900 border-b-2 h-10 w-full max-w-md px-5">
+        </div>
+        <div class="flex flex-row gap-4 justify-center">
+            <button type="button" onclick='hideElement("create-activity-parent")' class="btn-secondary py-2 px-4">Cancel</button>
+            <button type="submit" class="btn-primary w-full py-2">Create</button>
+        </div>
+    </form>
+</div>
+
+<script type="text/javascript">
+    var selectItems = document.querySelectorAll(".select-item");
+    var activityType = document.getElementById("ActivityType");
+    selectItems.forEach(item => {
+        item.addEventListener('click', event => {
+            selectItems.forEach(element => {
+                element.classList.remove("active");
+            })
+            event.currentTarget.classList.add("active");
+            activityType.value = event.currentTarget.dataset.value;
+        })
+    })
+</script>

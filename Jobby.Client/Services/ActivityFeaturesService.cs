@@ -1,19 +1,27 @@
-﻿using Jobby.Client.Interfaces;
+﻿using AutoMapper;
+using Jobby.Client.Interfaces;
 using Jobby.Client.Services.Base;
+using Jobby.Client.ViewModels.ActivityViewModels;
 
 namespace Jobby.Client.Services;
 
 public class ActivityFeaturesService : BaseDataService, IActivityFeaturesService
 {
-    public ActivityFeaturesService(IClient client) : base(client)
+    private readonly IMapper _mapper;
+
+    public ActivityFeaturesService(IClient client, IMapper mapper) : base(client)
     {
+        _mapper = mapper;
     }
 
-    public async Task<ApiResponse<Guid>> CreateActivity(CreateActivityCommand command)
+    public async Task<ApiResponse<Guid>> CreateActivity(CreateActivityViewModel model)
     {
         try
         {
+            var command = _mapper.Map<CreateActivityCommand>(model);
+
             var newActivityId = await _client.CreateActivityAsync(command);
+
             return new ApiResponse<Guid>() { Data = newActivityId, Success = true };
         }
         catch (ApiException ex)
@@ -42,8 +50,10 @@ public class ActivityFeaturesService : BaseDataService, IActivityFeaturesService
         return activityList;
     }
 
-    public async Task UpdateActivity(UpdateActivityCommand command)
+    public async Task UpdateActivity(UpdateActivityViewModel model)
     {
+        var command = _mapper.Map<UpdateActivityCommand>(model);
+
         await _client.UpdateActivityAsync(command);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Jobby.Application.Features.JobFeatures.Commands.Create;
 using Jobby.Application.Features.JobFeatures.Commands.Delete;
+using Jobby.Application.Features.JobFeatures.Commands.Update;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Jobby.Api.Controllers;
@@ -26,6 +27,17 @@ public class JobController : ApiController
     public async Task<IActionResult> DeleteJob(Guid jobId)
     {
         await Sender.Send(new DeleteJobCommand(jobId));
+        return NoContent();
+    }
+
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesDefaultResponseType]
+    [HttpPut("Update", Name = "UpdateJob")]
+    public async Task<IActionResult> UpdateJob([FromBody] UpdateJobCommand command)
+    {
+        await Sender.Send(command);
         return NoContent();
     }
 }

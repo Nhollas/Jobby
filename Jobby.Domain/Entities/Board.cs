@@ -35,7 +35,7 @@ public class Board : BaseEntity
 
     public static Board Create(
         DateTime createdDate,
-        string ownerId, 
+        string ownerId,
         string name,
         List<JobList> jobLists)
     {

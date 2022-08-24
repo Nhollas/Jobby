@@ -1,0 +1,211 @@
+﻿@using Jobby.Client.ViewModels.JobViewModels
+@model JobDetailViewModel
+@{
+    ViewData["Title"] = $"{Model.Title} at {Model.Company}";
+}
+
+<section class="h-full w-full flex justify-center relative">
+    <div class="p-8 flex flex-col gap-y-4 w-full max-w-4xl">
+        <h1 class="text-xl xl:text-2xl font-semibold">@Model.Title at @Model.Company</h1>
+        <a asp-action="ViewBoard" asp-route-boardId="@Model.BoardId" class="btn-secondary ml-auto py-2 px-8 w-max text-center">Back To Board</a>
+        <div class="flex flex-col border-1 border-gray-900 w-full">
+            <div class="grid grid-cols-4 border-b-1 border-gray-300">
+                <button id="Job-Info-Link" onclick="openTab(event, 'Job-Info')" class="tablink relative">Job Info</button>
+                <button id="Activities-Link" onclick="openTab(event, 'Activities')" class="tablink relative">
+                    Activities
+                    @if (Model.Activities.Count > 0)
+                    {
+                        <span class="rounded-full border-1 border-gray-300 px-2 absolute right-4">@Model.Activities.Count</span>
+                    }
+                </button>
+                <button id="Notes-Link" onclick="openTab(event, 'Notes')" class="tablink relative">
+                    Notes
+                    @if (Model.Notes.Count > 0)
+                    {
+                        <span class="rounded-full border-1 border-gray-300 px-2 absolute right-4">@Model.Notes.Count</span>
+                    }
+                </button>
+                <button id="Contacts-Link" onclick="openTab(event, 'Contacts')" class="tablink !border-r-0 relative">
+                    Contacts
+                    @if (Model.Contacts.Count > 0)
+                    {
+                        <span class="rounded-full border-1 border-gray-300 px-2 absolute right-4">@Model.Contacts.Count</span>
+                    }
+                </button>
+            </div>
+            <div id="Job-Info" class="tabcontent">
+                <div class="flex flex-col xl:flex-row-reverse">
+                    <div class="flex flex-row flex-wrap gap-4 w-full xl:flex-col xl:max-w-[17rem] p-6 border-b-1 xl:border-b-0 xl:border-l-1 border-gray-900">
+                        <div class="flex flex-col gap-y-2">
+                            <p class="text-base">Application</p>
+                            <button
+                                hx-post="/Activity/CreatePartial"
+                                hx-vals='{"BoardId": "@Model.BoardId", "JobId": "@Model.Id", "ActivityTypesOption": "1"}'
+                                hx-swap="innerHTML"
+                                hx-target="#create-activity-parent"
+                                onclick='showElement("create-activity-parent")' 
+                                class="flex flex-row justify-start border-1 text-sm border-gray-300 rounded-lg px-5 py-1"><i class="mr-2 bi bi-plus-square"></i> Log Application</button>
+                        </div>
+                        <div class="flex flex-col gap-y-2">
+                            <p class="text-base">Interviews</p>
+                            <button
+                                hx-post="/Activity/CreatePartial"
+                                hx-vals='{"BoardId": "@Model.BoardId", "JobId": "@Model.Id", "ActivityTypesOption": "2"}'
+                                hx-swap="innerHTML"
+                                hx-target="#create-activity-parent"
+                                onclick='showElement("create-activity-parent")' 
+                                class="flex flex-row justify-start border-1 text-sm border-gray-300 rounded-lg px-5 py-1"><i class="mr-2 bi bi-plus-square"></i> Log Interview</button>
+                        </div>
+                        <div class="flex flex-col gap-y-2">
+                            <p class="text-base">Offer</p>
+                            <button
+                                hx-post="/Activity/CreatePartial"
+                                hx-vals='{"BoardId": "@Model.BoardId", "JobId": "@Model.Id", "ActivityTypesOption": "3"}'
+                                hx-swap="innerHTML"
+                                hx-target="#create-activity-parent"
+                                onclick='showElement("create-activity-parent")' 
+                                class="flex flex-row justify-start border-1 text-sm border-gray-300 rounded-lg px-5 py-1"><i class="mr-2 bi bi-plus-square"></i> Log Offer</button>
+                        </div>
+                        <div class="flex flex-col gap-y-2">
+                            <p class="text-base">Offer Acceptance</p>
+                            <button
+                                hx-post="/Activity/CreatePartial"
+                                hx-vals='{"BoardId": "@Model.BoardId", "JobId": "@Model.Id", "ActivityTypesOption": "4"}'
+                                hx-swap="innerHTML"
+                                hx-target="#create-activity-parent"
+                                onclick='showElement("create-activity-parent")' 
+                                class="flex flex-row justify-start border-1 text-sm border-gray-300 rounded-lg px-5 py-1"><i class="mr-2 bi bi-plus-square"></i> Log Offer Acceptance</button>
+                        </div>
+                    </div>
+                    <form class="p-6 w-full max-w-xl xl:max-w-none">
+                        <section class="flex flex-col gap-y-6 w-full">
+                            <div class="flex flex-row gap-x-4 w-full">
+                                <div class="flex flex-col gap-y-2 w-full">
+                                    <label asp-for="Company" class="text-base"></label>
+                                    <input asp-for="Company" class="text-sm border-1 border-gray-300 h-10 w-full px-5">
+                                </div>
+                                <div class="flex flex-col gap-y-2 w-full">
+                                    <label asp-for="Title" class="text-base"></label>
+                                    <input asp-for="Title" class="text-sm border-1 border-gray-300 h-10 w-full px-5">
+                                </div>
+                            </div>
+                            <div class="flex flex-row gap-x-4 w-full">
+                                <div class="flex flex-col gap-y-2 w-full">
+                                    <label asp-for="PostUrl" class="text-base"></label>
+                                    <input asp-for="PostUrl" class="text-sm border-1 border-gray-300 h-10 w-full px-5">
+                                </div>
+                                <div class="flex flex-col gap-y-2 w-full">
+                                    <label asp-for="Salary" class="text-base"></label>
+                                    <input asp-for="Salary" class="text-sm border-1 border-gray-300 h-10 w-full px-5">
+                                </div>
+                            </div>
+                            <div class="flex flex-row gap-x-4 w-full">
+                                <div class="flex flex-col gap-y-2 w-full">
+                                    <label asp-for="City" class="text-base"></label>
+                                    <input asp-for="City" class="text-sm border-1 border-gray-300 h-10 w-full px-5">
+                                </div>
+                                <div class="flex flex-col gap-y-2 w-full">
+                                    <label asp-for="HexColour" class="text-base"></label>
+                                    <input asp-for="HexColour" class="text-sm border-1 border-gray-300 h-10 w-full px-5">
+                                </div>
+                            </div>
+                            <div class="flex flex-col gap-y-2">
+                                <label asp-for="Description" class="text-base"></label>
+                                <textarea asp-for="Description" class="text-sm border-1 border-gray-300 min-h-[6rem] w-full px-5"></textarea>
+                            </div>
+                        </section>
+                    </form>
+                </div>
+            </div>
+            <div id="Activities" class="tabcontent">
+                <div class="w-full flex flex-row gap-x-4 p-4 pb-0">
+                    <button
+                        hx-post="/Activity/CreatePartial"
+                        hx-vals='{"BoardId": "@Model.BoardId", "JobId": "@Model.Id", "ActivityTypesOption": "5"}'
+                        hx-swap="innerHTML"
+                        hx-target="#create-activity-parent"
+                        onclick='showElement("create-activity-parent")' 
+                        class="btn-primary py-2 px-8 w-max ml-auto !rounded-full">Add Activity
+                    </button>
+                </div>
+                <div class="w-full flex flex-col items-center justify-center gap-4 p-4">
+                    @if (Model.Activities.Count == 0)
+                    {
+                        <p class="text-lg w-max">No activities found...</p>
+                    }
+                    @foreach (var activity in Model.Activities)
+                    {
+                        <div class="bg-gray-50 border-1 border-gray-900 w-full relative cursor-pointer p-4 rounded-lg">
+                            <input asp-for="@activity.Title">
+                            <p class="select-item">@activity.ActivityName</p>
+                        </div>
+                    }
+                </div>
+            </div>
+            <div id="Notes" class="tabcontent">
+                <div class="w-full flex flex-row gap-x-4 p-4 pb-0">
+                    <button
+                        hx-post="/Contact/CreatePartial"
+                        hx-vals='{"BoardId": "@Model.BoardId", "JobId": "@Model.Id", "ActivityTypesOption": "5"}'
+                        hx-swap="innerHTML"
+                        hx-target="#create-activity-parent"
+                        onclick='showElement("create-contact-parent")' 
+                        class="btn-primary py-2 px-8 w-max ml-auto !rounded-full">Add Activity
+                    </button>
+                </div>
+                <div class="w-full flex flex-col items-center justify-center gap-4 p-4">
+                    @if (Model.Notes.Count == 0)
+                    {
+                        <p class="text-lg w-max">No notes found...</p>
+                    }
+                    @foreach (var note in Model.Notes)
+                    {
+                        <div class="bg-gray-50 border-1 border-gray-900 w-full relative cursor-pointer">
+                            <p>@note.Id</p>
+                        </div>
+                    }
+                </div>
+            </div>
+            <div id="Contacts" class="tabcontent">
+                <div class="w-full flex flex-row gap-x-4 p-4 pb-0">
+                    <button
+                        hx-post="/Contact/CreatePartial"
+                        hx-vals='{"BoardId": "@Model.BoardId", "JobId": "@Model.Id", "ActivityTypesOption": "5"}'
+                        hx-swap="innerHTML"
+                        hx-target="#create-activity-parent"
+                        onclick='showElement("create-contact-parent")' 
+                        class="btn-primary py-2 px-8 w-max ml-auto !rounded-full">Add Contact
+                    </button>
+                </div>
+                <div class="w-full flex flex-col items-center justify-center gap-4 p-4">
+                    @if (Model.Contacts.Count == 0)
+                    {
+                        <p class="text-lg w-max">No contacts found...</p>
+                    }
+                    @foreach (var contact in Model.Contacts)
+                    {
+                        <div class="bg-gray-50 border-1 border-gray-900 w-full relative cursor-pointer">
+                            <p>@contact.Id</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="create-activity-parent" class="absolute inset-0 bg-gray-50/90 hidden flex justify-center"></div>
+    <div id="create-contact-parent" class="absolute inset-0 bg-gray-50/90 hidden flex justify-center"></div>
+</section>
+
+<script type="text/javascript">
+    window.onload = simpleFunction();
+    function simpleFunction() {
+        var currentUrl = window.location.href;
+        var currentTab = currentUrl.split('/').slice(-1);
+
+        document.getElementById(currentTab[0]).classList.add("active");
+
+        tablink = document.getElementById(currentTab[0] + "-Link");
+
+        tablink.classList.add("active");
+    }
+</script>

@@ -22,7 +22,7 @@ public class ContactConfiguration : IEntityTypeConfiguration<Contact>
                 j => j
                     .HasOne(pt => pt.Job)
                     .WithMany(t => t.JobContacts)
-                    .HasForeignKey(pt => pt.JobFk)            
+                    .HasForeignKey(pt => pt.JobFk)
                     .OnDelete(DeleteBehavior.NoAction),
                 j => j
                     .HasOne(pt => pt.Contact)

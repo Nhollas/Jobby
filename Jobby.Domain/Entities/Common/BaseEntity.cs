@@ -3,7 +3,7 @@
 public abstract class BaseEntity
 {
     protected BaseEntity(
-        DateTime createdDate, 
+        DateTime createdDate,
         string ownerId)
     {
         CreatedDate = createdDate;
@@ -18,4 +18,9 @@ public abstract class BaseEntity
     public virtual DateTime CreatedDate { get; protected set; }
     public virtual DateTime LastUpdated { get; protected set; }
     public virtual string OwnerId { get; protected set; }
+
+    public void UpdateEntity(DateTime updatedDate)
+    {
+        LastUpdated = updatedDate;
+    }
 }

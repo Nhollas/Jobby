@@ -11,6 +11,6 @@ public class GetJobSpecification : Specification<Job>
             .Where(b => b.Id == JobId)
             .Include(x => x.Contacts)
             .Include(x => x.Activities);
-           
+
     }
 }

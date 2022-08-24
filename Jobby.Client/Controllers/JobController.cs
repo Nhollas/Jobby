@@ -1,5 +1,5 @@
 ﻿using Jobby.Client.Interfaces;
-using Jobby.Client.ViewModels.Job;
+using Jobby.Client.ViewModels.JobViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,6 +22,34 @@ public class JobController : Controller
         return PartialView("_CreateJobPartial", model);
     }
 
+    [HttpPost("Create")]
+    public async Task<ActionResult> Create(CreateJobViewModel viewModel)
+    {
+        var result = await _jobService.CreateJob(viewModel);
+
+        return RedirectToRoute(new
+        {
+            controller = "Board",
+            action = "ViewJob",
+            boardId = viewModel.BoardId,
+            jobId = result.Data
+        });
+    }
+
+    [HttpPost("UpdatePartial")]
+    public PartialViewResult UpdatePartial(UpdateJobViewModel model)
+    {
+        return PartialView("_UpdateJobPartial", model);
+    }
+
+    [HttpPost("Update")]
+    public async Task<ActionResult> Update(UpdateJobViewModel viewModel)
+    {
+        await _jobService.UpdateJob(viewModel);
+
+        return RedirectToRoute("Board/{boardId}/Job/{jobId}/Job-Info", new { boardId = viewModel.BoardId, jobId = viewModel.JobId });
+    }
+
     [HttpPost("DeletePartial")]
     public PartialViewResult DeletePartial(DeleteJobViewModel model)
     {
@@ -38,20 +66,6 @@ public class JobController : Controller
             controller = "Board",
             action = "ViewBoard",
             boardId = viewModel.BoardId
-        });
-    }
-
-    [HttpPost("Create")]
-    public async Task<ActionResult> Create(CreateJobViewModel viewModel)
-    {
-        var result = await _jobService.CreateJob(viewModel);
-
-        return RedirectToRoute(new
-        {
-            controller = "Board",
-            action = "ViewJob",
-            boardId = viewModel.BoardId,
-            jobId = result.Data
         });
     }
 }

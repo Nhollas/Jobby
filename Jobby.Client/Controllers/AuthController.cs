@@ -1,5 +1,5 @@
 ﻿using Jobby.Client.Interfaces;
-using Jobby.Client.ViewModels.Auth;
+using Jobby.Client.ViewModels.AuthViewModels;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

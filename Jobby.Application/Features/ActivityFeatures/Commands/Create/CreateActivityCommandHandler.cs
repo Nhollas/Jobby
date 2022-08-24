@@ -35,9 +35,6 @@ internal sealed class CreateActivityCommandHandler : IRequestHandler<CreateActiv
     */
     public async Task<Guid> Handle(CreateActivityCommand request, CancellationToken cancellationToken)
     {
-        var validator = new CreateActivityCommandValidator();
-        var validationResult = await validator.ValidateAsync(request, cancellationToken);
-
         var boardSpec = new GetBoardByIdSpec(request.BoardId);
 
         Board BoardToLink = await _boardRepository.FirstOrDefaultAsync(boardSpec, cancellationToken);

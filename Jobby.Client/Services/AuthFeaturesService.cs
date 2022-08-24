@@ -1,6 +1,6 @@
 using Jobby.Client.Interfaces;
 using Jobby.Client.Services.Base;
-using Jobby.Client.ViewModels.Auth;
+using Jobby.Client.ViewModels.AuthViewModels;
 
 namespace Jobby.Client.Services;
 

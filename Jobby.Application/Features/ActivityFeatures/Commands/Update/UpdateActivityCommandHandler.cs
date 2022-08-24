@@ -12,17 +12,20 @@ internal sealed class UpdateActivityCommandHandler : IRequestHandler<UpdateActiv
     private readonly IRepository<Activity> _repository;
     private readonly IMapper _mapper;
     private readonly IUserService _userService;
+    private readonly IDateTimeProvider _timeProvider;
     private readonly string _userId;
 
     public UpdateActivityCommandHandler(
         IRepository<Activity> repository,
         IUserService userService,
-        IMapper mapper)
+        IMapper mapper,
+        IDateTimeProvider timeProvider)
     {
         _repository = repository;
         _userService = userService;
         _userId = _userService.UserId();
         _mapper = mapper;
+        _timeProvider = timeProvider;
     }
 
     public async Task<Unit> Handle(UpdateActivityCommand request, CancellationToken cancellationToken)
@@ -40,6 +43,8 @@ internal sealed class UpdateActivityCommandHandler : IRequestHandler<UpdateActiv
         }
 
         _mapper.Map(request, activityToUpdate, typeof(UpdateActivityCommand), typeof(Activity));
+
+        activityToUpdate.UpdateEntity(_timeProvider.UtcNow);
 
         await _repository.UpdateAsync(activityToUpdate, cancellationToken);
 

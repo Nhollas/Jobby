@@ -10,6 +10,7 @@ namespace Jobby.Application.Features.ContactFeatures.Commands.Update;
 internal sealed class UpdateContactCommandHandler : IRequestHandler<UpdateContactCommand, Unit>
 {
     private readonly IRepository<Contact> _repository;
+    private readonly IDateTimeProvider _timeProvider;
     private readonly IUserService _userService;
     private readonly IMapper _mapper;
     private readonly string _userId;
@@ -17,12 +18,14 @@ internal sealed class UpdateContactCommandHandler : IRequestHandler<UpdateContac
     public UpdateContactCommandHandler(
         IRepository<Contact> repository,
         IUserService userService,
-        IMapper mapper)
+        IMapper mapper,
+        IDateTimeProvider timeProvider)
     {
         _repository = repository;
         _userService = userService;
         _userId = _userService.UserId();
         _mapper = mapper;
+        _timeProvider = timeProvider;
     }
 
     public async Task<Unit> Handle(UpdateContactCommand request, CancellationToken cancellationToken)
@@ -40,6 +43,8 @@ internal sealed class UpdateContactCommandHandler : IRequestHandler<UpdateContac
         }
 
         contactToUpdate = _mapper.Map<Contact>(request);
+
+        contactToUpdate.UpdateEntity(_timeProvider.UtcNow);
 
         await _repository.UpdateAsync(contactToUpdate, cancellationToken);
 
