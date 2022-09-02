@@ -1,13 +1,13 @@
 ﻿using AutoMapper;
 using Jobby.Application.Abstractions.Specification;
-using Jobby.Application.Dtos;
+using Jobby.Application.Contracts.Contact;
 using Jobby.Application.Interfaces;
 using Jobby.Application.Specifications;
 using Jobby.Domain.Entities;
 using MediatR;
 
 namespace Jobby.Application.Features.ContactFeatures.Queries.GetList;
-internal sealed class GetBoardContactListQueryHandler : IRequestHandler<GetBoardContactListQuery, List<ContactDto>>
+internal sealed class GetBoardContactListQueryHandler : IRequestHandler<GetBoardContactListQuery, List<ListContactsResponse>>
 {
     private readonly IRepository<Contact> _repository;
     private readonly IMapper _mapper;
@@ -25,7 +25,7 @@ internal sealed class GetBoardContactListQueryHandler : IRequestHandler<GetBoard
         _mapper = mapper;
     }
 
-    public async Task<List<ContactDto>> Handle(GetBoardContactListQuery request, CancellationToken cancellationToken)
+    public async Task<List<ListContactsResponse>> Handle(GetBoardContactListQuery request, CancellationToken cancellationToken)
     {
         var contactSpec = new ContactListFromBoardIdSpec(request.BoardId, _userId);
 
@@ -33,9 +33,9 @@ internal sealed class GetBoardContactListQueryHandler : IRequestHandler<GetBoard
 
         if (contactList is null)
         {
-            return new List<ContactDto>();
+            return new List<ListContactsResponse>();
         }
 
-        return _mapper.Map<List<ContactDto>>(contactList);
+        return _mapper.Map<List<ListContactsResponse>>(contactList);
     }
 }

@@ -8,6 +8,7 @@ public sealed record CreateContactCommand : IRequest<Guid>
     public string FirstName { get; set; }
     public string LastName { get; set; }
     public string JobTitle { get; set; }
+    public string Location { get; set; }
     public Guid BoardId { get; set; }
     public List<Guid> JobIds { get; set; }
     public SocialDto Socials { get; set; }

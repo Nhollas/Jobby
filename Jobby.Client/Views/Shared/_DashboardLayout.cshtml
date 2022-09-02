@@ -15,20 +15,18 @@
 <body>
     <header class="w-full flex justify-center">
         <nav class="h-12 w-full max-w-8xl border-gray-900 border-x-1 border-b-1 flex items-center px-8">
-            <ul class="flex flex-row gap-x-8">
+            <ul class="flex flex-row gap-x-8 w-full">
                 <li><a class="text-lg font-semibold" asp-controller="Home" asp-action="Index">Jobby</a></li>
-                <li><a class="text-sm font-semibold" asp-controller="Home" asp-action="Features">Features</a></li>
-                <li><a class="text-sm font-semibold" asp-controller="Home" asp-action="Documentation">Docs</a></li>
-            </ul>
-            <ul class="flex flex-row gap-x-4 ml-auto">
+                <li><a class="text-sm font-medium" asp-controller="Home" asp-action="Features">Features</a></li>
+                <li class="mr-auto"><a class="text-sm font-medium" asp-controller="Home" asp-action="Documentation">Docs</a></li>
                 @if (User.Identity.IsAuthenticated)
                 {
-                    <li><a class="text-sm font-semibold" asp-controller="Dashboard" asp-action="Index">Dashboard</a></li>
-                    <li><a class="text-sm font-semibold" asp-controller="Auth" asp-action="Logout">Logout</a></li>
+                    <li><a class="text-sm font-medium" asp-controller="Dashboard" asp-action="Index">Dashboard</a></li>
+                    <li><a class="text-sm font-medium" asp-controller="Auth" asp-action="Logout">Logout</a></li>
                 }
                 else
                 {
-                    <li><a class="px-5 py-1.5 text-sm font-semibold border-1 border-gray-900 bg-white font-raleway;" asp-controller="Auth" asp-action="Login">Log In</a></li>
+                    <li><a class="px-5 py-1.5 text-sm font-medium border-1 border-gray-900 bg-white font-raleway;" asp-controller="Auth" asp-action="Login">Log In</a></li>
                     <li><a class="text-sm text-white font-medium bg-main-blue px-5 py-1.5 rounded-lg" asp-controller="Auth" asp-action="Register">Sign Up</a></li>
                 }
             </ul>

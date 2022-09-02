@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Jobby.Application.Abstractions.Specification;
-using Jobby.Application.Dtos;
+using Jobby.Application.Contracts.Job;
 using Jobby.Application.Exceptions.Base;
 using Jobby.Application.Interfaces;
 using Jobby.Application.Specifications;
@@ -8,7 +8,7 @@ using Jobby.Domain.Entities;
 using MediatR;
 
 namespace Jobby.Application.Features.JobFeatures.Queries.GetById;
-internal sealed class GetJobDetailQueryHandler : IRequestHandler<GetJobDetailQuery, JobDto>
+internal sealed class GetJobDetailQueryHandler : IRequestHandler<GetJobDetailQuery, GetJobResponse>
 {
     private readonly IReadRepository<Board> _repository;
     private readonly IMapper _mapper;
@@ -26,7 +26,7 @@ internal sealed class GetJobDetailQueryHandler : IRequestHandler<GetJobDetailQue
         _mapper = mapper;
     }
 
-    public async Task<JobDto> Handle(GetJobDetailQuery request, CancellationToken cancellationToken)
+    public async Task<GetJobResponse> Handle(GetJobDetailQuery request, CancellationToken cancellationToken)
     {
         var boardSpec = new GetBoardByIdSpec(request.BoardId);
 
@@ -49,6 +49,6 @@ internal sealed class GetJobDetailQueryHandler : IRequestHandler<GetJobDetailQue
             throw new NotFoundException($"The Board {request.BoardId} does not contain the Job {request.JobId}.");
         }
 
-        return _mapper.Map<JobDto>(selectedJob);
+        return _mapper.Map<GetJobResponse>(selectedJob);
     }
 }

@@ -49,19 +49,6 @@ internal sealed class CreateActivityCommandHandler : IRequestHandler<CreateActiv
             throw new NotAuthorisedException(_userId);
         }
 
-        var createdActivity = Activity.Create(
-            _dateTimeProvider.UtcNow,
-            _userId,
-            request.Title,
-            request.ActivityType,
-            request.StartDate,
-            request.EndDate,
-            request.Note,
-            request.Completed);
-
-
-        await LinkActivityToBoard(createdActivity, BoardToLink);
-
         if (request.JobId != Guid.Empty)
         {
             if (!BoardOwnsJob(BoardToLink, request.JobId))
@@ -69,19 +56,43 @@ internal sealed class CreateActivityCommandHandler : IRequestHandler<CreateActiv
                 throw new NotFoundException($"The {nameof(Job)} {request.JobId} you wanted to link doesn't exist in the Board {request.BoardId}.");
             }
 
-            await LinkActivityToJob(createdActivity, request.JobId);
+            await LinkActivityToJob(request.JobId);
         }
+
+        var createdActivity = Activity.Create(
+            Guid.NewGuid(),
+            _dateTimeProvider.UtcNow,
+            _userId,
+            request.Title,
+            request.ActivityType,
+            request.StartDate,
+            request.EndDate,
+            request.Note,
+            request.Completed, 
+            BoardToLink,
+            await LinkActivityToJob(request.JobId));
+
+
+        await LinkActivityToBoard(createdActivity, BoardToLink);
 
         return createdActivity.Id;
     }
 
-    private async Task LinkActivityToJob(Activity activity, Guid jobId)
+    private async Task<Job> LinkActivityToJob(Guid jobId)
     {
         Job job = await _jobRepository.GetByIdAsync(jobId);
 
-        job.AddActivity(activity);
+        if (job == null)
+        {
+            throw new NotFoundException($"A job with id {jobId} could not be found.");
+        }
 
-        await _jobRepository.UpdateAsync(job);
+        if (job.OwnerId != _userId)
+        {
+            throw new NotAuthorisedException(_userId);
+        }
+
+        return job;
     }
 
     private async Task LinkActivityToBoard(Activity activity, Board board)

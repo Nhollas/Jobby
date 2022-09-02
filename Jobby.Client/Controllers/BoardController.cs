@@ -95,6 +95,8 @@ public class BoardController : Controller
     {
         var model = await _jobService.GetJobById(boardId, jobId);
 
+        model.OnGet();
+
         return View("~/Views/Job/ViewJob.cshtml", model);
     }
 }

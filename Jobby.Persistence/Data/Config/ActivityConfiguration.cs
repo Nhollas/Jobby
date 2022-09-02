@@ -12,10 +12,10 @@ public class ActivityConfiguration : IEntityTypeConfiguration<Activity>
 
         builder.HasOne(x => x.Board)
             .WithMany(x => x.Activities)
-            .HasForeignKey(x => x.BoardFk);
+            .HasForeignKey(x => x.BoardId);
 
         builder.HasOne(x => x.Job)
             .WithMany(x => x.Activities)
-            .HasForeignKey(x => x.JobFk);
+            .HasForeignKey(x => x.JobId);
     }
 }

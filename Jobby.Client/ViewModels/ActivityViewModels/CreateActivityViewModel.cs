@@ -76,6 +76,6 @@ public class CreateActivityViewModel
         activityTypesDict.TryGetValue(ActivityTypesOption, out var categoryTypes);
 
         ActivityTypes = categoryTypes;
-        ActivityType = 1;
+        ActivityType = int.Parse(ActivityTypes[0].Value);
     }
 }

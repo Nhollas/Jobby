@@ -11,6 +11,6 @@ public class JobListConfiguration : IEntityTypeConfiguration<JobList>
 
         builder.HasMany(p => p.Jobs)
             .WithOne(x => x.JobList)
-            .HasForeignKey(x => x.JobListFk);
+            .HasForeignKey(x => x.JobListId);
     }
 }

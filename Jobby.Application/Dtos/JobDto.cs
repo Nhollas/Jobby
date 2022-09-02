@@ -10,7 +10,7 @@ public sealed record JobDto
     public string PostUrl { get; set; }
     public int Salary { get; set; }
     public string City { get; set; }
-    public string HexColour { get; set; }
+    public string Colour { get; set; }
     public string Description { get; set; }
     public DateTime Deadline { get; set; }
     public List<NoteDto> Notes { get; set; }

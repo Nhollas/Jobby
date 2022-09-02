@@ -10,6 +10,7 @@ namespace Jobby.Application.Features.JobFeatures.Commands.Create;
 internal sealed class CreateJobCommandHandler : IRequestHandler<CreateJobCommand, Guid>
 {
     private readonly IRepository<Board> _boardRepository;
+    private readonly IRepository<Job> _jobRepository;
     private readonly IDateTimeProvider _dateTimeProvider;
     private readonly IUserService _userService;
     private readonly string _userId;
@@ -17,12 +18,14 @@ internal sealed class CreateJobCommandHandler : IRequestHandler<CreateJobCommand
     public CreateJobCommandHandler(
         IRepository<Board> repository,
         IUserService userService,
-        IDateTimeProvider dateTimeProvider)
+        IDateTimeProvider dateTimeProvider,
+        IRepository<Job> jobRepository)
     {
         _boardRepository = repository;
         _userService = userService;
         _userId = _userService.UserId();
         _dateTimeProvider = dateTimeProvider;
+        _jobRepository = jobRepository;
     }
 
     /*
@@ -52,14 +55,14 @@ internal sealed class CreateJobCommandHandler : IRequestHandler<CreateJobCommand
         JobList selectedJobList = board.JobList.Where(x => x.Id == request.JobListId).First();
 
         var createdJob = Job.Create(
+            Guid.NewGuid(),
             _dateTimeProvider.UtcNow,
             _userId,
-            request.CompanyName,
-            request.JobTitle);
+            request.Company,
+            request.Title,
+            selectedJobList);
 
-        selectedJobList.AddJob(createdJob);
-
-        await _boardRepository.SaveChangesAsync(cancellationToken);
+        await _jobRepository.AddAsync(createdJob, cancellationToken);
 
         return createdJob.Id;
     }

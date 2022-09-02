@@ -1,8 +1,8 @@
-﻿using Jobby.Domain.Entities.Common;
+﻿using Jobby.Domain.Primitives;
 
 namespace Jobby.Domain.Entities;
 
-public class Contact : BaseEntity
+public class Contact : Entity
 {
     private readonly List<Job> _jobs = new();
     private readonly List<Company> _companies = new();
@@ -16,23 +16,28 @@ public class Contact : BaseEntity
     }
 
     private Contact(
+        Guid id,
         DateTime createdDate,
         string ownerId,
         string firstName,
         string lastName,
         string jobTitle,
+        string location,
         Social socials,
-        Guid boardId,
+        Board board,
+        List<Job> jobs,
         List<Company> companies,
         List<Email> emails,
         List<Phone> phones)
-        : base(createdDate, ownerId)
+        : base(id, createdDate, ownerId)
     {
         FirstName = firstName;
         LastName = lastName;
         JobTitle = jobTitle;
+        Location = location;
         Socials = socials;
-        BoardFk = boardId;
+        Board = board;
+        _jobs = jobs;
         _companies = companies;
         _emails = emails;
         _phones = phones;
@@ -43,6 +48,8 @@ public class Contact : BaseEntity
     public string LastName { get; private set; }
 
     public string JobTitle { get; private set; }
+
+    public string Location { get; private set; }
 
     public Social Socials { get; private set; }
 
@@ -56,30 +63,36 @@ public class Contact : BaseEntity
 
 
     // Database Relationship Properties
-    public ICollection<JobContact> JobContacts => _jobContacts;
-    public virtual Board Board { get; set; }
-    public Guid BoardFk { get; set; }
+    public IReadOnlyCollection<JobContact> JobContacts => _jobContacts;
+    public Board Board { get; private set; }
+    public Guid BoardId { get; private set; }
 
     public static Contact Create(
+        Guid id,
         DateTime createdDate,
         string ownerId,
         string firstName,
         string lastName,
         string jobTitle,
+        string location,
         Social socials,
-        Guid boardId,
+        Board board,
+        List<Job> jobs,
         List<Company> companies,
         List<Email> emails,
         List<Phone> phones)
     {
         var contact = new Contact(
+            id,
             createdDate,
             ownerId,
             firstName,
             lastName,
             jobTitle,
+            location,
             socials,
-            boardId,
+            board,
+            jobs,
             companies,
             emails,
             phones);

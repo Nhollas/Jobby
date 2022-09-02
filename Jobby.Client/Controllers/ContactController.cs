@@ -28,7 +28,7 @@ public class ContactController : Controller
     {
         await _contactService.CreateContact(viewModel);
 
-        return RedirectToRoute("Board/{boardId}/Job/{jobId}/Contacts", new { boardId = viewModel.BoardId, jobId = viewModel.JobId });
+        return Redirect($"/Board/{viewModel.BoardId}/Job/{viewModel.JobId}/Contacts");
     }
 
     [HttpPost("UpdatePartial")]
@@ -42,7 +42,7 @@ public class ContactController : Controller
     {
         await _contactService.UpdateContact(viewModel);
 
-        return RedirectToRoute("Board/{boardId}/Job/{jobId}/Contacts", new { boardId = viewModel.BoardId, jobId = viewModel.JobId });
+        return Redirect($"/Board/{viewModel.BoardId}/Job/{viewModel.JobId}/Contacts");
     }
 
     [HttpPost("DeletePartial")]
@@ -56,6 +56,6 @@ public class ContactController : Controller
     {
         await _contactService.DeleteContact(viewModel.ContactId);
 
-        return RedirectToRoute("Board/{boardId}/Job/{jobId}/Contacts", new { boardId = viewModel.BoardId, jobId = viewModel.JobId });
+        return Redirect($"/Board/{viewModel.BoardId}/Job/{viewModel.JobId}/Contacts");
     }
 }

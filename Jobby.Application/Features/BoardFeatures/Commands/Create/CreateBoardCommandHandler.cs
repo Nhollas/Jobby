@@ -27,14 +27,15 @@ internal sealed class CreateBoardCommandHandler : ICommandHandler<CreateBoardCom
     {
         List<JobList> defaultJobLists = new()
         {
-            new JobList("Wishlist", _dateTimeProvider.UtcNow, _userId),
-            new JobList("Applied", _dateTimeProvider.UtcNow, _userId),
-            new JobList("Interview", _dateTimeProvider.UtcNow, _userId),
-            new JobList("Offer", _dateTimeProvider.UtcNow, _userId),
-            new JobList("Rejected", _dateTimeProvider.UtcNow, _userId),
+            new JobList(Guid.NewGuid(), _dateTimeProvider.UtcNow, _userId, "Wishlist"),
+            new JobList(Guid.NewGuid(), _dateTimeProvider.UtcNow, _userId, "Applied"),
+            new JobList(Guid.NewGuid(), _dateTimeProvider.UtcNow, _userId, "Interview"),
+            new JobList(Guid.NewGuid(), _dateTimeProvider.UtcNow, _userId, "Offer"),
+            new JobList(Guid.NewGuid(), _dateTimeProvider.UtcNow, _userId, "Rejected"),
         };
 
         var board = Board.Create(
+            Guid.NewGuid(),
             _dateTimeProvider.UtcNow,
             _userId,
             request.Name,

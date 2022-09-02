@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Jobby.Application.Abstractions.Specification;
-using Jobby.Application.Dtos;
+using Jobby.Application.Contracts.Contact;
 using Jobby.Application.Exceptions.Base;
 using Jobby.Application.Interfaces;
 using Jobby.Application.Specifications;
@@ -8,7 +8,7 @@ using Jobby.Domain.Entities;
 using MediatR;
 
 namespace Jobby.Application.Features.ContactFeatures.Queries.GetById;
-internal sealed class GetContactDetailQueryHandler : IRequestHandler<GetContactDetailQuery, ContactDto>
+internal sealed class GetContactDetailQueryHandler : IRequestHandler<GetContactDetailQuery, GetContactResponse>
 {
     private readonly IReadRepository<Board> _repository;
     private readonly IMapper _mapper;
@@ -26,7 +26,7 @@ internal sealed class GetContactDetailQueryHandler : IRequestHandler<GetContactD
         _mapper = mapper;
     }
 
-    public async Task<ContactDto> Handle(GetContactDetailQuery request, CancellationToken cancellationToken)
+    public async Task<GetContactResponse> Handle(GetContactDetailQuery request, CancellationToken cancellationToken)
     {
         var boardSpec = new GetBoardByIdSpec(request.BoardId);
 
@@ -49,6 +49,6 @@ internal sealed class GetContactDetailQueryHandler : IRequestHandler<GetContactD
             throw new NotFoundException($"The Board {request.BoardId} does not contain the Contact {request.ContactId}.");
         }
 
-        return _mapper.Map<ContactDto>(selectedContact);
+        return _mapper.Map<GetContactResponse>(selectedContact);
     }
 }

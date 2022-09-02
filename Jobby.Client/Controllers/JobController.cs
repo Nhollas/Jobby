@@ -27,13 +27,7 @@ public class JobController : Controller
     {
         var result = await _jobService.CreateJob(viewModel);
 
-        return RedirectToRoute(new
-        {
-            controller = "Board",
-            action = "ViewJob",
-            boardId = viewModel.BoardId,
-            jobId = result.Data
-        });
+        return Redirect($"/Board/{viewModel.BoardId}/Job/{result.Data}/Job-Info");
     }
 
     [HttpPost("UpdatePartial")]
@@ -47,7 +41,7 @@ public class JobController : Controller
     {
         await _jobService.UpdateJob(viewModel);
 
-        return RedirectToRoute("Board/{boardId}/Job/{jobId}/Job-Info", new { boardId = viewModel.BoardId, jobId = viewModel.JobId });
+        return Redirect($"/Board/{viewModel.BoardId}/Job/{viewModel.JobId}/Job-Info");
     }
 
     [HttpPost("DeletePartial")]

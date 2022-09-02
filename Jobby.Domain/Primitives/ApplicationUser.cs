@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace Jobby.Domain.Entities.Common;
+namespace Jobby.Domain.Primitives;
 
 public class ApplicationUser : IdentityUser
 {

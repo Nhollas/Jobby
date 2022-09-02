@@ -1,5 +1,5 @@
 ﻿using Jobby.Application.Interfaces;
-using Jobby.Domain.Entities.Common;
+using Jobby.Domain.Primitives;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;

@@ -5,10 +5,12 @@
     Layout = "_DashboardLayout";
 }
 
-<section class="p-8 flex flex-col gap-y-4 relative h-full">
-    <h1 class="text-xl xl:text-2xl font-semibold">@Model.Name Board</h1>
-    <button class="btn-secondary rounded-full px-8 py-2 w-max ml-auto">Actions</button>
-    <div class="w-full gap-4 grid grid-cols-1 TwoJobList:grid-cols-2 ThreeJobList:grid-cols-3 FourJobList:grid-cols-4 FiveJobList:grid-cols-5">
+<section class="p-8 flex flex-col gap-y-8 relative h-full">
+    <div class="flex flex-row items-end">
+        <h1 class="text-xl xl:text-2xl font-semibold">@Model.Name Board</h1>
+        <button class="btn-secondary rounded-full px-8 py-2 w-max ml-auto">Actions</button>
+    </div>
+    <div class="w-full gap-8 grid grid-cols-1 TwoJobList:grid-cols-2 ThreeJobList:grid-cols-3 FourJobList:grid-cols-4 FiveJobList:grid-cols-5">
         @foreach (var jobList in Model.JobList)
         {
             <div class="bg-gray-50 border-1 border-gray-900 flex flex-col h-max w-full">
@@ -27,17 +29,17 @@
                 </div>
                 @foreach(var job in jobList.Jobs)
                 {
-                    <div class="bg-gray-50 border-gray-900 border-t-1 w-full cursor-pointer p-4 custom-shadow">
-                        <a asp-action="ViewJob" asp-controller="Board" asp-route-boardId="@Model.Id" asp-route-jobId="@job.Id">
-                            <div class="flex flex-col">
-                                <p class="text-lg font-medium text-ellipsis overflow-hidden ... whitespace-nowrap">@job.Title</p>
-                                <p class="text-base text-ellipsis overflow-hidden ... whitespace-nowrap">@job.Company</p>
-                            </div>
-                        </a>
-                    </div>
+                    <a class="bg-gray-50 border-gray-900 border-t-1 w-full cursor-pointer p-4 custom-shadow" asp-action="ViewJob" asp-controller="Board" asp-route-boardId="@Model.Id" asp-route-jobId="@job.Id">
+                        <div class="flex flex-col">
+                            <p class="text-lg font-medium text-ellipsis overflow-hidden ... whitespace-nowrap">@job.Title</p>
+                            <p class="text-base text-ellipsis overflow-hidden ... whitespace-nowrap">@job.Company</p>
+                        </div>
+                    </a>
                 }
             </div>
         }
     </div>
-    <div id="create-job-parent" class="absolute inset-0 bg-gray-50/90 hidden flex justify-center"></div>
+    <section class="fixed top-12 inset-x-0">
+        <div id="create-job-parent" class="inset-0 bg-gray-50/90 h-screen hidden flex justify-center"></div>
+    </section>
 </section>

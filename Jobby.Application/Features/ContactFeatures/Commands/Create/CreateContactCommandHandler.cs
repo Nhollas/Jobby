@@ -12,24 +12,23 @@ internal sealed class CreateContactCommandHandler : IRequestHandler<CreateContac
 {
     private readonly IDateTimeProvider _dateTimeProvider;
     private readonly IRepository<Board> _boardRepository;
+    private readonly IRepository<Contact> _contactRepository;
     private readonly IUserService _userService;
     private readonly string _userId;
 
     public CreateContactCommandHandler(
     IUserService userService,
     IRepository<Board> boardRepository,
-    IDateTimeProvider dateTimeProvider)
+    IDateTimeProvider dateTimeProvider,
+    IRepository<Contact> contactRepository)
     {
         _userService = userService;
         _userId = _userService.UserId();
         _boardRepository = boardRepository;
         _dateTimeProvider = dateTimeProvider;
+        _contactRepository = contactRepository;
     }
 
-    /*
-        A Contact is created by it being added to a board entity (parent).
-        The Contact can be added to multiple jobs that the board owns as well.
-    */
     public async Task<Guid> Handle(CreateContactCommand request, CancellationToken cancellationToken)
     {
         var boardSpec = new IncludeJobListSpecification(request.BoardId);
@@ -46,26 +45,9 @@ internal sealed class CreateContactCommandHandler : IRequestHandler<CreateContac
             throw new NotAuthorisedException(_userId);
         }
 
-        var createdContact = Contact.Create(
-            _dateTimeProvider.UtcNow,
-            _userId,
-            request.FirstName,
-            request.LastName,
-            request.JobTitle,
-            new Social(
-                request.Socials.TwitterUrl,
-                request.Socials.FacebookUrl,
-                request.Socials.LinkedInUrl,
-                request.Socials.GithubUrl
-                ),
-            request.BoardId,
-            GetCompanies(request.Companies),
-            GetEmails(request.Emails),
-            GetPhones(request.Phones));
+        List<Job> jobsToLink = new();
 
-        board.AddContact(createdContact);
-
-        if (request.JobIds != null)
+        if (request.JobIds != null)  
         {
             var ownedJobIds = board.JobList
                 .SelectMany(x => x.Jobs)
@@ -73,19 +55,42 @@ internal sealed class CreateContactCommandHandler : IRequestHandler<CreateContac
                 .ToList();
 
             var jobList = board.JobList
-                .SelectMany(x => x.Jobs);
+                .SelectMany(x => x.Jobs)
+                .Where(x => request.JobIds.Contains(x.Id));
 
             foreach (var job in jobList)
             {
                 if (ownedJobIds.Contains(job.Id))
                 {
-                    job.AddContact(createdContact);
+                    jobsToLink.Add(job);
+                    continue;
                 }
-                continue;
+
+                throw new NotAuthorisedException(_userId);
             }
         }
 
-        await _boardRepository.SaveChangesAsync(cancellationToken);
+        var createdContact = Contact.Create(
+            Guid.NewGuid(),
+            _dateTimeProvider.UtcNow,
+            _userId,
+            request.FirstName,
+            request.LastName,
+            request.JobTitle,
+            request.Location,
+            new Social(
+                request.Socials.TwitterUrl,
+                request.Socials.FacebookUrl,
+                request.Socials.LinkedInUrl,
+                request.Socials.GithubUrl
+                ),
+            board,
+            jobsToLink,
+            GetCompanies(request.Companies),
+            GetEmails(request.Emails),
+            GetPhones(request.Phones));
+
+        await _contactRepository.AddAsync(createdContact, cancellationToken); 
 
         return createdContact.Id;
     }
@@ -96,7 +101,7 @@ internal sealed class CreateContactCommandHandler : IRequestHandler<CreateContac
 
         foreach (CompanyDto company in companies)
         {
-            companyList.Add(new Company { Name = company.Name });
+            companyList.Add(new Company(Guid.NewGuid(), company.Name));
         }
 
         return companyList;
@@ -108,7 +113,7 @@ internal sealed class CreateContactCommandHandler : IRequestHandler<CreateContac
 
         foreach (EmailDto email in emails)
         {
-            emailList.Add(new Email { Name = email.Name });
+            emailList.Add(new Email(Guid.NewGuid(), email.Name));
         }
 
         return emailList;
@@ -120,7 +125,7 @@ internal sealed class CreateContactCommandHandler : IRequestHandler<CreateContac
 
         foreach (PhoneDto phone in phones)
         {
-            phoneList.Add(new Phone { Number = phone.Number, Type = (PhoneType)phone.Type });
+            phoneList.Add(new Phone(Guid.NewGuid(), phone.Number, (PhoneType)phone.Type));
         }
 
         return phoneList;

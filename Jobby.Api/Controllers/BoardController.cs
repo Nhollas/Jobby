@@ -1,5 +1,7 @@
-﻿using Jobby.Application.Dtos;
-using Jobby.Application.Features.ActivityFeatures.Queries.GetById;
+﻿using Jobby.Application.Contracts.Activity;
+using Jobby.Application.Contracts.Board;
+using Jobby.Application.Contracts.Contact;
+using Jobby.Application.Dtos;
 using Jobby.Application.Features.ActivityFeatures.Queries.GetList;
 using Jobby.Application.Features.BoardFeatures.Commands.Create;
 using Jobby.Application.Features.BoardFeatures.Commands.Delete;
@@ -50,7 +52,7 @@ public class BoardController : ApiController
         return NoContent();
     }
 
-    [ProducesResponseType(typeof(BoardDetailDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(GetBoardResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesDefaultResponseType]
@@ -61,7 +63,7 @@ public class BoardController : ApiController
         return Ok(await Sender.Send(boardQuery));
     }
 
-    [ProducesResponseType(typeof(List<BoardListDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(List<ListBoardsResponse>), StatusCodes.Status200OK)]
     [ProducesDefaultResponseType]
     [Route("~/api/Boards", Name = "ListBoards")]
     [HttpGet]
@@ -82,17 +84,6 @@ public class BoardController : ApiController
         return Ok(await Sender.Send(jobQuery));
     }
 
-    [ProducesResponseType(typeof(ActivityDto), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    [ProducesDefaultResponseType]
-    [HttpGet("{boardId:guid}/Activity/{activityId:guid}", Name = "GetActivity")]
-    public async Task<IActionResult> GetActivity(Guid boardId, Guid activityId)
-    {
-        var activityQuery = new GetActivityDetailQuery(boardId, activityId);
-        return Ok(await Sender.Send(activityQuery));
-    }
-
     [ProducesResponseType(typeof(ContactDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
@@ -104,7 +95,7 @@ public class BoardController : ApiController
         return Ok(await Sender.Send(contactQuery));
     }
 
-    [ProducesResponseType(typeof(List<ActivityDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(List<ListActivitiesResponse>), StatusCodes.Status200OK)]
     [ProducesDefaultResponseType]
     [HttpGet("{boardId:guid}/Activites", Name = "ListActivities")]
     public async Task<IActionResult> ListActivities(Guid boardId)
@@ -113,7 +104,7 @@ public class BoardController : ApiController
         return Ok(dtos);
     }
 
-    [ProducesResponseType(typeof(List<ContactDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(List<ListContactsResponse>), StatusCodes.Status200OK)]
     [ProducesDefaultResponseType]
     [HttpGet("{boardId:guid}/Contacts", Name = "ListContacts")]
     public async Task<IActionResult> ListContacts(Guid boardId)

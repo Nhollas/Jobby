@@ -7,7 +7,7 @@
 }
 
 .btn-primary {
-    @apply text-white font-raleway font-semibold text-base bg-main-blue rounded-md hover:bg-gray-50 hover:text-black hover:border-main-blue border-1;
+    @apply text-white font-raleway font-semibold text-base bg-main-blue hover:bg-gray-50 hover:text-black hover:border-main-blue border-1;
 }
 
 .btn-secondary {
@@ -19,11 +19,15 @@
 }
 
 .tablink {
-    @apply font-semibold font-raleway h-12 px-4 py-1 border-r-1 border-gray-900 custom-shadow;
+    @apply font-semibold font-raleway px-4 h-10 custom-shadow relative w-full text-sm border-1 border-l-0 border-gray-300;
 }
 
 .tablink.active {
-    @apply border-b-4 border-b-main-blue shadow-none;
+    @apply border-b-2 border-b-main-blue shadow-none border-r-1 md:text-base;
+}
+
+.tablink.active ~ .tablink {
+    @apply border-l-0;
 }
 
 .tabcontent {
@@ -31,7 +35,7 @@
 }
 
 .tabcontent.active {
-    @apply block;
+    @apply flex;
 }
 
 .scrollbar::-webkit-scrollbar {
@@ -40,7 +44,7 @@
   }
 
 .scrollbar::-webkit-scrollbar-thumb {
-    @apply bg-gray-800 rounded-full hover:bg-gray-600
+    @apply bg-gray-800 rounded-full hover:bg-gray-600;
 }
 
 .select-item.active {
@@ -50,4 +54,38 @@
 .select-item {
     @apply cursor-pointer text-sm border-1 border-gray-300 rounded-full px-3 py-1;
 }
+
+.activity-container {
+    @apply bg-gray-50 border-1 border-gray-300 w-full relative cursor-pointer p-4 md:rounded-lg max-w-xl flex flex-col gap-y-4 h-[6rem] overflow-y-hidden z-0;
+}
+
+.activity-select {
+    @apply z-10 rounded-lg text-sm border-1 border-gray-300 px-4 h-8 flex items-center w-max ml-auto;
+}
+
+.activity-container.active {
+    @apply h-full;
+}
+
+.activity-option-list {
+    @apply hidden border-1 border-gray-300 bg-white flex-col gap-y-2 max-h-[16rem] overflow-y-scroll absolute top-12 right-0 scrollbar z-20 w-max;
+}
+
+.activity-option-list.active {
+    @apply flex;
+}
+
+.input-container {
+    @apply flex flex-col gap-y-2;
+}
+
+input, textarea {
+    @apply text-sm border-1 border-gray-300 h-10 px-3 w-full;
+}
+
+label {
+    @apply text-sm font-medium;
+}
+
+
 

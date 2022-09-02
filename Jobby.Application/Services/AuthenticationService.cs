@@ -1,7 +1,7 @@
 ﻿using Jobby.Application.Contracts.Auth;
 using Jobby.Application.Exceptions.Base;
 using Jobby.Application.Interfaces;
-using Jobby.Domain.Entities.Common;
+using Jobby.Domain.Primitives;
 using Microsoft.AspNetCore.Identity;
 
 namespace Jobby.Application.Services;

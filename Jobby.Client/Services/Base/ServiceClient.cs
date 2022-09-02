@@ -2325,6 +2325,9 @@ namespace Jobby.Client.Services.Base
         [System.Text.Json.Serialization.JsonPropertyName("activityType")]
         public int ActivityType { get; set; }
 
+        [System.Text.Json.Serialization.JsonPropertyName("activityName")]
+        public string ActivityName { get; set; }
+
         [System.Text.Json.Serialization.JsonPropertyName("startDate")]
         public System.DateTime StartDate { get; set; }
 
@@ -2336,6 +2339,12 @@ namespace Jobby.Client.Services.Base
 
         [System.Text.Json.Serialization.JsonPropertyName("completed")]
         public bool Completed { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("boardFk")]
+        public System.Guid BoardFk { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("jobFk")]
+        public System.Guid JobFk { get; set; }
 
     }
 
@@ -2448,6 +2457,12 @@ namespace Jobby.Client.Services.Base
         [System.Text.Json.Serialization.JsonPropertyName("companies")]
         public System.Collections.Generic.ICollection<CompanyDto> Companies { get; set; }
 
+        [System.Text.Json.Serialization.JsonPropertyName("jobs")]
+        public System.Collections.Generic.ICollection<JobDto> Jobs { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("boardFk")]
+        public System.Guid BoardFk { get; set; }
+
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.15.10.0 (NJsonSchema v10.6.10.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -2526,11 +2541,11 @@ namespace Jobby.Client.Services.Base
     public partial class CreateJobCommand
     {
 
-        [System.Text.Json.Serialization.JsonPropertyName("companyName")]
-        public string CompanyName { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("company")]
+        public string Company { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("jobTitle")]
-        public string JobTitle { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("title")]
+        public string Title { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("boardId")]
         public System.Guid BoardId { get; set; }

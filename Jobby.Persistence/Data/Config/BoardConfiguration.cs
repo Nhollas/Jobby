@@ -11,17 +11,17 @@ public class BoardConfiguration : IEntityTypeConfiguration<Board>
 
         builder.HasMany(x => x.JobList)
             .WithOne(x => x.Board)
-            .HasForeignKey(x => x.BoardFk)
+            .HasForeignKey(x => x.BoardId)
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasMany(x => x.Contacts)
             .WithOne(x => x.Board)
-            .HasForeignKey(x => x.BoardFk)
+            .HasForeignKey(x => x.BoardId)
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasMany(x => x.Activities)
             .WithOne(x => x.Board)
-            .HasForeignKey(x => x.BoardFk)
+            .HasForeignKey(x => x.BoardId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

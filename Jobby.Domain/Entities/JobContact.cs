@@ -9,13 +9,13 @@ public class JobContact
     {
         Job = job;
         Contact = contact;
-        JobFk = job.Id;
-        ContactFk = contact.Id;
+        JobId = job.Id;
+        ContactId = contact.Id;
     }
 
-    public Guid JobFk { get; set; }
+    public Guid JobId { get; set; }
     public Job Job { get; set; }
 
-    public Guid ContactFk { get; set; }
+    public Guid ContactId { get; set; }
     public Contact Contact { get; set; }
 }

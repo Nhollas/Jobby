@@ -29,7 +29,7 @@ public class ActivityController : Controller
     {
         await _activityService.CreateActivity(viewModel);
 
-        return RedirectToRoute("Board/{boardId}/Job/{jobId}/Activities", new { boardId = viewModel.BoardId, jobId = viewModel.JobId });
+        return Redirect($"/Board/{viewModel.BoardId}/Job/{viewModel.JobId}/Activities");
     }
 
     [HttpPost("UpdatePartial")]
@@ -43,7 +43,7 @@ public class ActivityController : Controller
     {
         await _activityService.UpdateActivity(viewModel);
 
-        return RedirectToRoute("Board/{boardId}/Job/{jobId}/Activities", new { boardId = viewModel.BoardId, jobId = viewModel.JobId });
+        return Redirect($"/Board/{viewModel.BoardId}/Job/{viewModel.JobId}/Activities");
     }
 
     [HttpPost("DeletePartial")]
@@ -57,6 +57,14 @@ public class ActivityController : Controller
     {
         await _activityService.DeleteActivity(viewModel.ActivityId);
 
-        return RedirectToRoute("Board/{boardId}/Job/{jobId}/Activities", new { boardId = viewModel.BoardId, jobId = viewModel.JobId });
+        return Redirect($"/Board/{viewModel.BoardId}/Job/{viewModel.JobId}/Activities");
+    }
+
+    [HttpGet("Board/{boardId:guid}/Board/{activityId:guid}")]
+    public async Task<PartialViewResult> ViewActivity(Guid boardId, Guid activityId)
+    {
+        var model = await _activityService.GetActivityById(boardId, activityId);
+
+        return PartialView("_ViewActivityPartial", model);
     }
 }

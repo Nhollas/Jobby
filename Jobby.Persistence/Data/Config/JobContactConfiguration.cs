@@ -8,17 +8,17 @@ public class JobContactConfiguration : IEntityTypeConfiguration<JobContact>
     public void Configure(EntityTypeBuilder<JobContact> builder)
     {
         builder
-            .HasKey(bc => new { bc.ContactFk, bc.JobFk });
+            .HasKey(bc => new { bc.ContactId, bc.JobId });
 
         builder
             .HasOne(bc => bc.Job)
             .WithMany(b => b.JobContacts)
-            .HasForeignKey(bc => bc.JobFk)
+            .HasForeignKey(bc => bc.JobId)
             .OnDelete(DeleteBehavior.NoAction);
         builder
             .HasOne(bc => bc.Contact)
             .WithMany(c => c.JobContacts)
-            .HasForeignKey(bc => bc.ContactFk)
+            .HasForeignKey(bc => bc.ContactId)
             .OnDelete(DeleteBehavior.NoAction);
     }
 }

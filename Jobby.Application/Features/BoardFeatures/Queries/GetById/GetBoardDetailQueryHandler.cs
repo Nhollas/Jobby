@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Jobby.Application.Abstractions.Specification;
+using Jobby.Application.Contracts.Board;
 using Jobby.Application.Exceptions.Base;
 using Jobby.Application.Interfaces;
 using Jobby.Application.Specifications;
@@ -8,7 +9,7 @@ using MediatR;
 
 namespace Jobby.Application.Features.BoardFeatures.Queries.GetById;
 
-internal sealed class GetBoardDetailQueryHandler : IRequestHandler<GetBoardDetailQuery, BoardDetailDto>
+internal sealed class GetBoardDetailQueryHandler : IRequestHandler<GetBoardDetailQuery, GetBoardResponse>
 {
     private readonly IReadRepository<Board> _repository;
     private readonly IMapper _mapper;
@@ -26,7 +27,7 @@ internal sealed class GetBoardDetailQueryHandler : IRequestHandler<GetBoardDetai
         _mapper = mapper;
     }
 
-    public async Task<BoardDetailDto> Handle(GetBoardDetailQuery request, CancellationToken cancellationToken)
+    public async Task<GetBoardResponse> Handle(GetBoardDetailQuery request, CancellationToken cancellationToken)
     {
         var boardSpec = new BoardDetailSpecification(request.BoardId);
 
@@ -42,6 +43,6 @@ internal sealed class GetBoardDetailQueryHandler : IRequestHandler<GetBoardDetai
             throw new NotAuthorisedException(_userId);
         }
 
-        return _mapper.Map<BoardDetailDto>(boardToGet);
+        return _mapper.Map<GetBoardResponse>(boardToGet);
     }
 }

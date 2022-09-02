@@ -4,7 +4,9 @@ using Jobby.Client.Models.BoardModels;
 using Jobby.Client.Models.ContactModels;
 using Jobby.Client.Models.JobModels;
 using Jobby.Client.Services.Base;
+using Jobby.Client.ViewModels.ActivityViewModels;
 using Jobby.Client.ViewModels.BoardViewModels;
+using Jobby.Client.ViewModels.ContactViewModels;
 using Jobby.Client.ViewModels.JobViewModels;
 
 namespace Jobby.Client;
@@ -26,5 +28,11 @@ public class MappingProfile : Profile
         // ViewModels
         CreateMap<BoardDetailViewModel, BoardDetailDto>().ReverseMap();
         CreateMap<JobDetailViewModel, JobDto>().ReverseMap();
+        CreateMap<CreateJobViewModel, CreateJobCommand>();
+        CreateMap<UpdateJobViewModel, UpdateJobCommand>();
+        CreateMap<CreateActivityViewModel, CreateActivityCommand>();
+        CreateMap<UpdateActivityViewModel, UpdateActivityCommand>();
+        CreateMap<CreateContactViewModel, CreateContactCommand>();
+        CreateMap<UpdateContactViewModel, UpdateContactCommand>();
     }
 }

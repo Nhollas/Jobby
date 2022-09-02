@@ -1,4 +1,4 @@
-﻿using Jobby.Domain.Entities.Common;
+﻿using Jobby.Domain.Primitives;
 
 namespace Jobby.Application.Interfaces;
 

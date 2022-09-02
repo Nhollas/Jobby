@@ -1,8 +1,8 @@
-﻿using Jobby.Domain.Entities.Common;
+﻿using Jobby.Domain.Primitives;
 
 namespace Jobby.Domain.Entities;
 
-public class Board : BaseEntity
+public class Board : Entity
 {
     private readonly List<JobList> _jobLists = new();
     private readonly List<Activity> _activities = new();
@@ -14,11 +14,12 @@ public class Board : BaseEntity
     }
 
     private Board(
+        Guid id,
         DateTime createdDate,
         string ownerId,
         string name,
         List<JobList> jobLists)
-        : base(createdDate, ownerId)
+        : base(id, createdDate, ownerId)
     {
         _jobLists = jobLists;
         Name = name;
@@ -34,12 +35,14 @@ public class Board : BaseEntity
 
 
     public static Board Create(
+        Guid id,
         DateTime createdDate,
         string ownerId,
         string name,
         List<JobList> jobLists)
     {
         var board = new Board(
+            id,
             createdDate,
             ownerId,
             name,
