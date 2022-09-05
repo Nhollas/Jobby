@@ -11,6 +11,7 @@ public class JobListConfiguration : IEntityTypeConfiguration<JobList>
 
         builder.HasMany(p => p.Jobs)
             .WithOne(x => x.JobList)
-            .HasForeignKey(x => x.JobListId);
+            .HasForeignKey(x => x.JobListId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

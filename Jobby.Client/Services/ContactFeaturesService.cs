@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
+using Jobby.Client.Contracts.Contact;
 using Jobby.Client.Interfaces;
 using Jobby.Client.Services.Base;
-using Jobby.Client.ViewModels.ContactViewModels;
 
 namespace Jobby.Client.Services;
 
@@ -14,7 +14,7 @@ public class ContactFeaturesService : BaseDataService, IContactFeaturesService
         _mapper = mapper;
     }
 
-    public async Task<ApiResponse<Guid>> CreateContact(CreateContactViewModel model)
+    public async Task<ApiResponse<Guid>> CreateContact(CreateContactRequest model)
     {
         try
         {
@@ -35,7 +35,7 @@ public class ContactFeaturesService : BaseDataService, IContactFeaturesService
         await _client.DeleteContactAsync(id);
     }
 
-    public async Task UpdateContact(UpdateContactViewModel model)
+    public async Task UpdateContact(UpdateContactRequest model)
     {
         var command = _mapper.Map<UpdateContactCommand>(model);
 

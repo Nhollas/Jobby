@@ -8,7 +8,6 @@ public class Contact : Entity
     private readonly List<Company> _companies = new();
     private readonly List<Email> _emails = new();
     private readonly List<Phone> _phones = new();
-    private readonly List<JobContact> _jobContacts = new();
 
     private Contact()
     {
@@ -25,7 +24,6 @@ public class Contact : Entity
         string location,
         Social socials,
         Board board,
-        List<Job> jobs,
         List<Company> companies,
         List<Email> emails,
         List<Phone> phones)
@@ -37,7 +35,6 @@ public class Contact : Entity
         Location = location;
         Socials = socials;
         Board = board;
-        _jobs = jobs;
         _companies = companies;
         _emails = emails;
         _phones = phones;
@@ -63,7 +60,7 @@ public class Contact : Entity
 
 
     // Database Relationship Properties
-    public IReadOnlyCollection<JobContact> JobContacts => _jobContacts;
+    public List<JobContact> JobContacts { get; set; }
     public Board Board { get; private set; }
     public Guid BoardId { get; private set; }
 
@@ -77,7 +74,6 @@ public class Contact : Entity
         string location,
         Social socials,
         Board board,
-        List<Job> jobs,
         List<Company> companies,
         List<Email> emails,
         List<Phone> phones)
@@ -92,11 +88,70 @@ public class Contact : Entity
             location,
             socials,
             board,
-            jobs,
             companies,
             emails,
             phones);
 
         return contact;
+    }
+
+    public void Update(
+        string firstName,
+        string lastName,
+        string jobTitle,
+        string location,
+        Social socials
+        )
+    {
+        FirstName = firstName;
+        LastName = lastName;
+        JobTitle = jobTitle;
+        Location = location;
+        Socials = socials;
+
+        _companies.Clear();
+        _emails.Clear();
+        _phones.Clear();
+        _jobs.Clear();
+    }
+
+    public void UpdateCompanies(List<Company> companies)
+    {
+        _companies.Clear();
+
+        foreach (var company in companies)
+        {
+            _companies.Add(company);
+        }
+    }
+
+    public void UpdateEmails(List<Email> emails)
+    {
+        _emails.Clear();
+
+        foreach (var email in emails)
+        {
+            _emails.Add(email);
+        }
+    }
+
+    public void UpdatePhones(List<Phone> phones)
+    {
+        _phones.Clear();
+
+        foreach (var phone in phones)
+        {
+            _phones.Add(phone);
+        }
+    }
+
+    public void SetJobs(List<Job> jobs)
+    {
+        _jobs.Clear();
+
+        foreach (var job in jobs)
+        {
+            _jobs.Add(job);
+        }
     }
 }

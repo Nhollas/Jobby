@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Jobby.Client.Interfaces;
 using Jobby.Client.Services.Base;
+using Jobby.Client.ViewModels;
 using Jobby.Client.ViewModels.JobViewModels;
 
 namespace Jobby.Client.Services;
@@ -42,13 +43,11 @@ public class JobFeaturesService : BaseDataService, IJobFeaturesService
         await _client.UpdateJobAsync(command);
     }
 
-    public async Task<JobDetailViewModel> GetJobById(Guid boardId, Guid jobId)
+    public async Task<ViewJobVM> GetJobById(Guid boardId, Guid jobId)
     {
-        JobDto selectedJob = await _client.GetJobAsync(boardId, jobId);
+        GetJobResponse selectedJob = await _client.GetJobAsync(boardId, jobId);
 
-        JobDetailViewModel mappedJob = _mapper.Map<JobDetailViewModel>(selectedJob);
-
-        mappedJob.BoardId = boardId;
+        ViewJobVM mappedJob = _mapper.Map<ViewJobVM>(selectedJob);
 
         return mappedJob;
     }

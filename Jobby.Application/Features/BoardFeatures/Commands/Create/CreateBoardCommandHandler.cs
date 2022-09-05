@@ -1,6 +1,6 @@
 ﻿using Jobby.Application.Abstractions.Messaging;
 using Jobby.Application.Abstractions.Specification;
-using Jobby.Application.Interfaces;
+using Jobby.Application.Interfaces.Services;
 using Jobby.Domain.Entities;
 
 namespace Jobby.Application.Features.BoardFeatures.Commands.Create;

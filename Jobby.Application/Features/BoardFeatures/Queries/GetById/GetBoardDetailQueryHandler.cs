@@ -2,7 +2,7 @@
 using Jobby.Application.Abstractions.Specification;
 using Jobby.Application.Contracts.Board;
 using Jobby.Application.Exceptions.Base;
-using Jobby.Application.Interfaces;
+using Jobby.Application.Interfaces.Services;
 using Jobby.Application.Specifications;
 using Jobby.Domain.Entities;
 using MediatR;

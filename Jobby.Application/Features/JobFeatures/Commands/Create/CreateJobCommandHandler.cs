@@ -1,6 +1,6 @@
 ﻿using Jobby.Application.Abstractions.Specification;
 using Jobby.Application.Exceptions.Base;
-using Jobby.Application.Interfaces;
+using Jobby.Application.Interfaces.Services;
 using Jobby.Application.Specifications;
 using Jobby.Domain.Entities;
 using MediatR;
@@ -28,12 +28,9 @@ internal sealed class CreateJobCommandHandler : IRequestHandler<CreateJobCommand
         _jobRepository = jobRepository;
     }
 
-    /*
-        A Job is created by it being added to a JobList inside board entity (parent).
-    */
     public async Task<Guid> Handle(CreateJobCommand request, CancellationToken cancellationToken)
     {
-        var boardSpec = new IncludeJobListSpecification(request.BoardId);
+        var boardSpec = new GetBoardWithJobsSpec(request.BoardId);
 
         var board = await _boardRepository.FirstOrDefaultAsync(boardSpec, cancellationToken);
 
@@ -60,7 +57,8 @@ internal sealed class CreateJobCommandHandler : IRequestHandler<CreateJobCommand
             _userId,
             request.Company,
             request.Title,
-            selectedJobList);
+            selectedJobList,
+            board);
 
         await _jobRepository.AddAsync(createdJob, cancellationToken);
 

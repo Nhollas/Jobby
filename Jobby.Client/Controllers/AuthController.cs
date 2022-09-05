@@ -1,5 +1,5 @@
-﻿using Jobby.Client.Interfaces;
-using Jobby.Client.ViewModels.AuthViewModels;
+﻿using Jobby.Client.Contracts.Auth;
+using Jobby.Client.Interfaces;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,7 +19,7 @@ public class AuthController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> Login(LoginViewModel model)
+    public async Task<IActionResult> Login(LoginRequest model)
     {
         var result = await _authService.Authenticate(model);
 
@@ -68,7 +68,7 @@ public class AuthController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> Register(RegisterViewModel model)
+    public async Task<IActionResult> Register(RegisterRequest model)
     {
         var result = await _authService.Register(model);
 

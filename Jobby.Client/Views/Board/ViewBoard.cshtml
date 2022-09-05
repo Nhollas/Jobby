@@ -1,14 +1,35 @@
-﻿@using Jobby.Client.ViewModels.BoardViewModels
-@model BoardDetailViewModel
+﻿@using Jobby.Client.ViewModels
+@model ViewBoardVM
 @{
     ViewData["Title"] = Model.Name + " Board";
     Layout = "_DashboardLayout";
 }
 
 <section class="p-8 flex flex-col gap-y-8 relative h-full">
-    <div class="flex flex-row items-end">
-        <h1 class="text-xl xl:text-2xl font-semibold">@Model.Name Board</h1>
-        <button class="btn-secondary rounded-full px-8 py-2 w-max ml-auto">Actions</button>
+    <div class="flex flex-col gap-y-4">
+        <div class="flex flex-row">
+            <h1 class="text-xl xl:text-2xl font-semibold">@Model.Name Board</h1>
+            <button class="btn-secondary rounded-full px-8 py-2 w-max ml-auto">Actions</button>
+        </div>
+        <div class="flex flex-row gap-x-4">
+            <a
+            asp-action="ActivityList"
+            asp-route-boardId="@Model.Id"
+            class="flex flex-row gap-4 relative border-1 border-gray-900 px-8 py-1 text-base">
+                Activities
+                <div class="border-1 border-gray-300 w-5 h-5 rounded-full flex justify-center items-center absolute top-1 right-1">
+                    <p class="text-sm">@Model.ActivitiesCount</p>
+                </div>
+            </a>
+            <a
+            asp-action="ContactList" 
+            class="flex flex-row gap-4 relative border-1 border-gray-900 px-8 py-1 text-base">
+                Contacts
+                <div class="border-1 border-gray-300 w-5 h-5 rounded-full flex justify-center items-center absolute top-1 right-1">
+                    <p class="text-sm">@Model.ContactsCount</p>
+                </div>
+            </a>
+        </div>
     </div>
     <div class="w-full gap-8 grid grid-cols-1 TwoJobList:grid-cols-2 ThreeJobList:grid-cols-3 FourJobList:grid-cols-4 FiveJobList:grid-cols-5">
         @foreach (var jobList in Model.JobList)

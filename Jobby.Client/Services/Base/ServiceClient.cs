@@ -47,6 +47,15 @@ namespace Jobby.Client.Services.Base
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task UpdateActivityAsync(UpdateActivityCommand body, System.Threading.CancellationToken cancellationToken);
 
+        /// <returns>No Content</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task LinkJobAsync(System.Guid activityId, System.Guid jobId);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>No Content</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task LinkJobAsync(System.Guid activityId, System.Guid jobId, System.Threading.CancellationToken cancellationToken);
+
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
         System.Threading.Tasks.Task<RegisterResponse> RegisterAsync(RegisterRequest body);
@@ -94,66 +103,57 @@ namespace Jobby.Client.Services.Base
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<BoardDetailDto> GetBoardAsync(System.Guid boardId);
+        System.Threading.Tasks.Task<GetBoardResponse> GetBoardAsync(System.Guid boardId);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<BoardDetailDto> GetBoardAsync(System.Guid boardId, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<GetBoardResponse> GetBoardAsync(System.Guid boardId, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<BoardListDto>> ListBoardsAsync();
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<BoardListDto>> ListBoardsAsync(System.Threading.CancellationToken cancellationToken);
-
-        /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<JobDto> GetJobAsync(System.Guid boardId, System.Guid jobId);
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ListBoardsResponse>> ListBoardsAsync();
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<JobDto> GetJobAsync(System.Guid boardId, System.Guid jobId, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ListBoardsResponse>> ListBoardsAsync(System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<ActivityDto> GetActivityAsync(System.Guid boardId, System.Guid activityId);
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<ActivityDto> GetActivityAsync(System.Guid boardId, System.Guid activityId, System.Threading.CancellationToken cancellationToken);
-
-        /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<ContactDto> GetContactAsync(System.Guid boardId, System.Guid contactId);
+        System.Threading.Tasks.Task<GetJobResponse> GetJobAsync(System.Guid boardId, System.Guid jobId);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<ContactDto> GetContactAsync(System.Guid boardId, System.Guid contactId, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<GetJobResponse> GetJobAsync(System.Guid boardId, System.Guid jobId, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ActivityDto>> ListActivitiesAsync(System.Guid boardId);
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ActivityDto>> ListActivitiesAsync(System.Guid boardId, System.Threading.CancellationToken cancellationToken);
-
-        /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ContactDto>> ListContactsAsync(System.Guid boardId);
+        System.Threading.Tasks.Task<GetContactResponse> GetContactAsync(System.Guid boardId, System.Guid contactId);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ContactDto>> ListContactsAsync(System.Guid boardId, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<GetContactResponse> GetContactAsync(System.Guid boardId, System.Guid contactId, System.Threading.CancellationToken cancellationToken);
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ListActivitiesResponse>> ListActivitiesAsync(System.Guid boardId);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ListActivitiesResponse>> ListActivitiesAsync(System.Guid boardId, System.Threading.CancellationToken cancellationToken);
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ListContactsResponse>> ListContactsAsync(System.Guid boardId);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ListContactsResponse>> ListContactsAsync(System.Guid boardId, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Created</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -465,6 +465,107 @@ namespace Jobby.Client.Services.Base
                     var content_ = new System.Net.Http.StringContent(System.Text.Json.JsonSerializer.Serialize(body, _settings.Value));
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
                     request_.Content = content_;
+                    request_.Method = new System.Net.Http.HttpMethod("PUT");
+
+                    PrepareRequest(client_, request_, urlBuilder_);
+
+                    var url_ = urlBuilder_.ToString();
+                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
+
+                    PrepareRequest(client_, request_, url_);
+
+                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
+                    var disposeResponse_ = true;
+                    try
+                    {
+                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
+                        if (response_.Content != null && response_.Content.Headers != null)
+                        {
+                            foreach (var item_ in response_.Content.Headers)
+                                headers_[item_.Key] = item_.Value;
+                        }
+
+                        ProcessResponse(client_, response_);
+
+                        var status_ = (int)response_.StatusCode;
+                        if (status_ == 204)
+                        {
+                            return;
+                        }
+                        else
+                        if (status_ == 404)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        if (status_ == 403)
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                        else
+                        {
+                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            throw new ApiException<ProblemDetails>("Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
+                        }
+                    }
+                    finally
+                    {
+                        if (disposeResponse_)
+                            response_.Dispose();
+                    }
+                }
+            }
+            finally
+            {
+                if (disposeClient_)
+                    client_.Dispose();
+            }
+        }
+
+        /// <returns>No Content</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual System.Threading.Tasks.Task LinkJobAsync(System.Guid activityId, System.Guid jobId)
+        {
+            return LinkJobAsync(activityId, jobId, System.Threading.CancellationToken.None);
+        }
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>No Content</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        public virtual async System.Threading.Tasks.Task LinkJobAsync(System.Guid activityId, System.Guid jobId, System.Threading.CancellationToken cancellationToken)
+        {
+            if (activityId == null)
+                throw new System.ArgumentNullException("activityId");
+
+            if (jobId == null)
+                throw new System.ArgumentNullException("jobId");
+
+            var urlBuilder_ = new System.Text.StringBuilder();
+            urlBuilder_.Append("api/activity/{activityId}/linkjob/{jobId}");
+            urlBuilder_.Replace("{activityId}", System.Uri.EscapeDataString(ConvertToString(activityId, System.Globalization.CultureInfo.InvariantCulture)));
+            urlBuilder_.Replace("{jobId}", System.Uri.EscapeDataString(ConvertToString(jobId, System.Globalization.CultureInfo.InvariantCulture)));
+
+            var client_ = _httpClient;
+            var disposeClient_ = false;
+            try
+            {
+                using (var request_ = new System.Net.Http.HttpRequestMessage())
+                {
+                    request_.Content = new System.Net.Http.StringContent(string.Empty, System.Text.Encoding.UTF8, "application/json");
                     request_.Method = new System.Net.Http.HttpMethod("PUT");
 
                     PrepareRequest(client_, request_, urlBuilder_);
@@ -970,7 +1071,7 @@ namespace Jobby.Client.Services.Base
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<BoardDetailDto> GetBoardAsync(System.Guid boardId)
+        public virtual System.Threading.Tasks.Task<GetBoardResponse> GetBoardAsync(System.Guid boardId)
         {
             return GetBoardAsync(boardId, System.Threading.CancellationToken.None);
         }
@@ -978,7 +1079,7 @@ namespace Jobby.Client.Services.Base
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<BoardDetailDto> GetBoardAsync(System.Guid boardId, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<GetBoardResponse> GetBoardAsync(System.Guid boardId, System.Threading.CancellationToken cancellationToken)
         {
             if (boardId == null)
                 throw new System.ArgumentNullException("boardId");
@@ -1019,7 +1120,7 @@ namespace Jobby.Client.Services.Base
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<BoardDetailDto>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<GetBoardResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -1072,7 +1173,7 @@ namespace Jobby.Client.Services.Base
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<BoardListDto>> ListBoardsAsync()
+        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ListBoardsResponse>> ListBoardsAsync()
         {
             return ListBoardsAsync(System.Threading.CancellationToken.None);
         }
@@ -1080,7 +1181,7 @@ namespace Jobby.Client.Services.Base
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<BoardListDto>> ListBoardsAsync(System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ListBoardsResponse>> ListBoardsAsync(System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append("api/boards");
@@ -1117,7 +1218,7 @@ namespace Jobby.Client.Services.Base
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<BoardListDto>>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<ListBoardsResponse>>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -1150,7 +1251,7 @@ namespace Jobby.Client.Services.Base
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<JobDto> GetJobAsync(System.Guid boardId, System.Guid jobId)
+        public virtual System.Threading.Tasks.Task<GetJobResponse> GetJobAsync(System.Guid boardId, System.Guid jobId)
         {
             return GetJobAsync(boardId, jobId, System.Threading.CancellationToken.None);
         }
@@ -1158,7 +1259,7 @@ namespace Jobby.Client.Services.Base
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<JobDto> GetJobAsync(System.Guid boardId, System.Guid jobId, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<GetJobResponse> GetJobAsync(System.Guid boardId, System.Guid jobId, System.Threading.CancellationToken cancellationToken)
         {
             if (boardId == null)
                 throw new System.ArgumentNullException("boardId");
@@ -1203,7 +1304,7 @@ namespace Jobby.Client.Services.Base
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<JobDto>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<GetJobResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -1256,113 +1357,7 @@ namespace Jobby.Client.Services.Base
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<ActivityDto> GetActivityAsync(System.Guid boardId, System.Guid activityId)
-        {
-            return GetActivityAsync(boardId, activityId, System.Threading.CancellationToken.None);
-        }
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<ActivityDto> GetActivityAsync(System.Guid boardId, System.Guid activityId, System.Threading.CancellationToken cancellationToken)
-        {
-            if (boardId == null)
-                throw new System.ArgumentNullException("boardId");
-
-            if (activityId == null)
-                throw new System.ArgumentNullException("activityId");
-
-            var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append("api/board/{boardId}/activity/{activityId}");
-            urlBuilder_.Replace("{boardId}", System.Uri.EscapeDataString(ConvertToString(boardId, System.Globalization.CultureInfo.InvariantCulture)));
-            urlBuilder_.Replace("{activityId}", System.Uri.EscapeDataString(ConvertToString(activityId, System.Globalization.CultureInfo.InvariantCulture)));
-
-            var client_ = _httpClient;
-            var disposeClient_ = false;
-            try
-            {
-                using (var request_ = new System.Net.Http.HttpRequestMessage())
-                {
-                    request_.Method = new System.Net.Http.HttpMethod("GET");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
-
-                    PrepareRequest(client_, request_, urlBuilder_);
-
-                    var url_ = urlBuilder_.ToString();
-                    request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
-                    PrepareRequest(client_, request_, url_);
-
-                    var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
-                    var disposeResponse_ = true;
-                    try
-                    {
-                        var headers_ = System.Linq.Enumerable.ToDictionary(response_.Headers, h_ => h_.Key, h_ => h_.Value);
-                        if (response_.Content != null && response_.Content.Headers != null)
-                        {
-                            foreach (var item_ in response_.Content.Headers)
-                                headers_[item_.Key] = item_.Value;
-                        }
-
-                        ProcessResponse(client_, response_);
-
-                        var status_ = (int)response_.StatusCode;
-                        if (status_ == 200)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ActivityDto>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
-                        }
-                        else
-                        if (status_ == 404)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new ApiException<ProblemDetails>("Not Found", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
-                        }
-                        else
-                        if (status_ == 403)
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new ApiException<ProblemDetails>("Forbidden", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
-                        }
-                        else
-                        {
-                            var objectResponse_ = await ReadObjectResponseAsync<ProblemDetails>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            throw new ApiException<ProblemDetails>("Error", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
-                        }
-                    }
-                    finally
-                    {
-                        if (disposeResponse_)
-                            response_.Dispose();
-                    }
-                }
-            }
-            finally
-            {
-                if (disposeClient_)
-                    client_.Dispose();
-            }
-        }
-
-        /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<ContactDto> GetContactAsync(System.Guid boardId, System.Guid contactId)
+        public virtual System.Threading.Tasks.Task<GetContactResponse> GetContactAsync(System.Guid boardId, System.Guid contactId)
         {
             return GetContactAsync(boardId, contactId, System.Threading.CancellationToken.None);
         }
@@ -1370,7 +1365,7 @@ namespace Jobby.Client.Services.Base
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<ContactDto> GetContactAsync(System.Guid boardId, System.Guid contactId, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<GetContactResponse> GetContactAsync(System.Guid boardId, System.Guid contactId, System.Threading.CancellationToken cancellationToken)
         {
             if (boardId == null)
                 throw new System.ArgumentNullException("boardId");
@@ -1415,7 +1410,7 @@ namespace Jobby.Client.Services.Base
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<ContactDto>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<GetContactResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -1468,7 +1463,7 @@ namespace Jobby.Client.Services.Base
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ActivityDto>> ListActivitiesAsync(System.Guid boardId)
+        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ListActivitiesResponse>> ListActivitiesAsync(System.Guid boardId)
         {
             return ListActivitiesAsync(boardId, System.Threading.CancellationToken.None);
         }
@@ -1476,7 +1471,7 @@ namespace Jobby.Client.Services.Base
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ActivityDto>> ListActivitiesAsync(System.Guid boardId, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ListActivitiesResponse>> ListActivitiesAsync(System.Guid boardId, System.Threading.CancellationToken cancellationToken)
         {
             if (boardId == null)
                 throw new System.ArgumentNullException("boardId");
@@ -1517,7 +1512,7 @@ namespace Jobby.Client.Services.Base
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<ActivityDto>>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<ListActivitiesResponse>>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -1550,7 +1545,7 @@ namespace Jobby.Client.Services.Base
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ContactDto>> ListContactsAsync(System.Guid boardId)
+        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ListContactsResponse>> ListContactsAsync(System.Guid boardId)
         {
             return ListContactsAsync(boardId, System.Threading.CancellationToken.None);
         }
@@ -1558,7 +1553,7 @@ namespace Jobby.Client.Services.Base
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ContactDto>> ListContactsAsync(System.Guid boardId, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<ListContactsResponse>> ListContactsAsync(System.Guid boardId, System.Threading.CancellationToken cancellationToken)
         {
             if (boardId == null)
                 throw new System.ArgumentNullException("boardId");
@@ -1599,7 +1594,7 @@ namespace Jobby.Client.Services.Base
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<ContactDto>>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<ListContactsResponse>>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -2313,6 +2308,12 @@ namespace Jobby.Client.Services.Base
         [System.Text.Json.Serialization.JsonPropertyName("id")]
         public System.Guid Id { get; set; }
 
+        [System.Text.Json.Serialization.JsonPropertyName("job")]
+        public PreviewJobDto Job { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("board")]
+        public PreviewBoardDto Board { get; set; }
+
         [System.Text.Json.Serialization.JsonPropertyName("createdDate")]
         public System.DateTime CreatedDate { get; set; }
 
@@ -2322,11 +2323,11 @@ namespace Jobby.Client.Services.Base
         [System.Text.Json.Serialization.JsonPropertyName("title")]
         public string Title { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("activityType")]
-        public int ActivityType { get; set; }
-
         [System.Text.Json.Serialization.JsonPropertyName("activityName")]
         public string ActivityName { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("activityType")]
+        public int ActivityType { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("startDate")]
         public System.DateTime StartDate { get; set; }
@@ -2339,12 +2340,6 @@ namespace Jobby.Client.Services.Base
 
         [System.Text.Json.Serialization.JsonPropertyName("completed")]
         public bool Completed { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("boardFk")]
-        public System.Guid BoardFk { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("jobFk")]
-        public System.Guid JobFk { get; set; }
 
     }
 
@@ -2376,45 +2371,6 @@ namespace Jobby.Client.Services.Base
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.15.10.0 (NJsonSchema v10.6.10.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class BoardDetailDto
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("id")]
-        public System.Guid Id { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("createdDate")]
-        public System.DateTime CreatedDate { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("lastUpdated")]
-        public System.DateTime LastUpdated { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("name")]
-        public string Name { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("jobList")]
-        public System.Collections.Generic.ICollection<JobListDetailDto> JobList { get; set; }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.15.10.0 (NJsonSchema v10.6.10.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class BoardListDto
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("id")]
-        public System.Guid Id { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("createdDate")]
-        public System.DateTime CreatedDate { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("lastUpdated")]
-        public System.DateTime LastUpdated { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("name")]
-        public string Name { get; set; }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.15.10.0 (NJsonSchema v10.6.10.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class CompanyDto
     {
 
@@ -2424,50 +2380,14 @@ namespace Jobby.Client.Services.Base
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.15.10.0 (NJsonSchema v10.6.10.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class ContactDto
-    {
-
-        [System.Text.Json.Serialization.JsonPropertyName("id")]
-        public System.Guid Id { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("createdDate")]
-        public System.DateTime CreatedDate { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("lastUpdated")]
-        public System.DateTime LastUpdated { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("firstName")]
-        public string FirstName { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("lastName")]
-        public string LastName { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("jobTitle")]
-        public string JobTitle { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("social")]
-        public SocialDto Social { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("emails")]
-        public System.Collections.Generic.ICollection<EmailDto> Emails { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("phones")]
-        public System.Collections.Generic.ICollection<PhoneDto> Phones { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("companies")]
-        public System.Collections.Generic.ICollection<CompanyDto> Companies { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("jobs")]
-        public System.Collections.Generic.ICollection<JobDto> Jobs { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("boardFk")]
-        public System.Guid BoardFk { get; set; }
-
-    }
-
-    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.15.10.0 (NJsonSchema v10.6.10.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class CreateActivityCommand
     {
+
+        [System.Text.Json.Serialization.JsonPropertyName("boardId")]
+        public System.Guid BoardId { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("jobId")]
+        public System.Guid JobId { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("title")]
         public string Title { get; set; }
@@ -2487,12 +2407,6 @@ namespace Jobby.Client.Services.Base
         [System.Text.Json.Serialization.JsonPropertyName("completed")]
         public bool Completed { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("boardId")]
-        public System.Guid BoardId { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("jobId")]
-        public System.Guid JobId { get; set; }
-
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.15.10.0 (NJsonSchema v10.6.10.0 (Newtonsoft.Json v13.0.0.0))")]
@@ -2508,6 +2422,12 @@ namespace Jobby.Client.Services.Base
     public partial class CreateContactCommand
     {
 
+        [System.Text.Json.Serialization.JsonPropertyName("boardId")]
+        public System.Guid BoardId { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("jobIds")]
+        public System.Collections.Generic.ICollection<System.Guid> JobIds { get; set; }
+
         [System.Text.Json.Serialization.JsonPropertyName("firstName")]
         public string FirstName { get; set; }
 
@@ -2517,11 +2437,8 @@ namespace Jobby.Client.Services.Base
         [System.Text.Json.Serialization.JsonPropertyName("jobTitle")]
         public string JobTitle { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("boardId")]
-        public System.Guid BoardId { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("jobIds")]
-        public System.Collections.Generic.ICollection<System.Guid> JobIds { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("location")]
+        public string Location { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("socials")]
         public SocialDto Socials { get; set; }
@@ -2565,34 +2482,28 @@ namespace Jobby.Client.Services.Base
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.15.10.0 (NJsonSchema v10.6.10.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class JobDetailDto
+    public partial class GetBoardResponse
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("id")]
         public System.Guid Id { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("createdDate")]
-        public System.DateTime CreatedDate { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        public string Name { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("lastUpdated")]
-        public System.DateTime LastUpdated { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("jobList")]
+        public System.Collections.Generic.ICollection<JobListDto> JobList { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("company")]
-        public string Company { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("activitiesCount")]
+        public int ActivitiesCount { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("title")]
-        public string Title { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("postUrl")]
-        public string PostUrl { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("hexColour")]
-        public string HexColour { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("contactsCount")]
+        public int ContactsCount { get; set; }
 
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.15.10.0 (NJsonSchema v10.6.10.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class JobDto
+    public partial class GetContactResponse
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("id")]
@@ -2601,8 +2512,47 @@ namespace Jobby.Client.Services.Base
         [System.Text.Json.Serialization.JsonPropertyName("createdDate")]
         public System.DateTime CreatedDate { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("lastUpdated")]
-        public System.DateTime LastUpdated { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("board")]
+        public PreviewBoardDto Board { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("firstName")]
+        public string FirstName { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("lastName")]
+        public string LastName { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("jobTitle")]
+        public string JobTitle { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("location")]
+        public string Location { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("jobs")]
+        public System.Collections.Generic.ICollection<PreviewJobDto> Jobs { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("socials")]
+        public SocialDto Socials { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("phones")]
+        public System.Collections.Generic.ICollection<PhoneDto> Phones { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("emails")]
+        public System.Collections.Generic.ICollection<EmailDto> Emails { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("companies")]
+        public System.Collections.Generic.ICollection<CompanyDto> Companies { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.15.10.0 (NJsonSchema v10.6.10.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class GetJobResponse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("id")]
+        public System.Guid Id { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("createdDate")]
+        public System.DateTime CreatedDate { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("company")]
         public string Company { get; set; }
@@ -2614,13 +2564,13 @@ namespace Jobby.Client.Services.Base
         public string PostUrl { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("salary")]
-        public int Salary { get; set; }
+        public double Salary { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("city")]
-        public string City { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("location")]
+        public string Location { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("hexColour")]
-        public string HexColour { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("colour")]
+        public string Colour { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("description")]
         public string Description { get; set; }
@@ -2628,11 +2578,14 @@ namespace Jobby.Client.Services.Base
         [System.Text.Json.Serialization.JsonPropertyName("deadline")]
         public System.DateTime Deadline { get; set; }
 
+        [System.Text.Json.Serialization.JsonPropertyName("board")]
+        public PreviewBoardDto Board { get; set; }
+
         [System.Text.Json.Serialization.JsonPropertyName("notes")]
         public System.Collections.Generic.ICollection<NoteDto> Notes { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("contacts")]
-        public System.Collections.Generic.ICollection<ContactDto> Contacts { get; set; }
+        public System.Collections.Generic.ICollection<PreviewContactDto> Contacts { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("activities")]
         public System.Collections.Generic.ICollection<ActivityDto> Activities { get; set; }
@@ -2640,7 +2593,7 @@ namespace Jobby.Client.Services.Base
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.15.10.0 (NJsonSchema v10.6.10.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial class JobListDetailDto
+    public partial class JobListDto
     {
 
         [System.Text.Json.Serialization.JsonPropertyName("id")]
@@ -2649,9 +2602,6 @@ namespace Jobby.Client.Services.Base
         [System.Text.Json.Serialization.JsonPropertyName("createdDate")]
         public System.DateTime CreatedDate { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("lastUpdated")]
-        public System.DateTime LastUpdated { get; set; }
-
         [System.Text.Json.Serialization.JsonPropertyName("name")]
         public string Name { get; set; }
 
@@ -2659,7 +2609,100 @@ namespace Jobby.Client.Services.Base
         public int Count { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("jobs")]
-        public System.Collections.Generic.ICollection<JobDetailDto> Jobs { get; set; }
+        public System.Collections.Generic.ICollection<PreviewJobDto> Jobs { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.15.10.0 (NJsonSchema v10.6.10.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ListActivitiesResponse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("id")]
+        public System.Guid Id { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("createdDate")]
+        public System.DateTime CreatedDate { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("title")]
+        public string Title { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("activityName")]
+        public string ActivityName { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("activityType")]
+        public int ActivityType { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("startDate")]
+        public System.DateTime StartDate { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("endDate")]
+        public System.DateTime EndDate { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("note")]
+        public string Note { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("completed")]
+        public bool Completed { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("board")]
+        public PreviewBoardDto Board { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("job")]
+        public PreviewJobDto Job { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.15.10.0 (NJsonSchema v10.6.10.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ListBoardsResponse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("id")]
+        public System.Guid Id { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("createdDate")]
+        public System.DateTime CreatedDate { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        public string Name { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.15.10.0 (NJsonSchema v10.6.10.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class ListContactsResponse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("id")]
+        public System.Guid Id { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("createdDate")]
+        public System.DateTime CreatedDate { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("board")]
+        public PreviewBoardDto Board { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("firstName")]
+        public string FirstName { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("lastName")]
+        public string LastName { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("jobTitle")]
+        public string JobTitle { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("location")]
+        public string Location { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("socials")]
+        public SocialDto Socials { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("phones")]
+        public System.Collections.Generic.ICollection<PhoneDto> Phones { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("emails")]
+        public System.Collections.Generic.ICollection<EmailDto> Emails { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("companies")]
+        public System.Collections.Generic.ICollection<CompanyDto> Companies { get; set; }
 
     }
 
@@ -2684,6 +2727,81 @@ namespace Jobby.Client.Services.Base
 
         [System.Text.Json.Serialization.JsonPropertyName("type")]
         public int Type { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.15.10.0 (NJsonSchema v10.6.10.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class PreviewBoardDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("id")]
+        public System.Guid Id { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        public string Name { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("createdDate")]
+        public System.DateTime CreatedDate { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("lastUpdated")]
+        public System.DateTime LastUpdated { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.15.10.0 (NJsonSchema v10.6.10.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class PreviewContactDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("id")]
+        public System.Guid Id { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("board")]
+        public PreviewBoardDto Board { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("firstName")]
+        public string FirstName { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("lastName")]
+        public string LastName { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("jobTitle")]
+        public string JobTitle { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("location")]
+        public string Location { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("socials")]
+        public SocialDto Socials { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("phones")]
+        public System.Collections.Generic.ICollection<PhoneDto> Phones { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("emails")]
+        public System.Collections.Generic.ICollection<EmailDto> Emails { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("companies")]
+        public System.Collections.Generic.ICollection<CompanyDto> Companies { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.15.10.0 (NJsonSchema v10.6.10.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class PreviewJobDto
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("id")]
+        public System.Guid Id { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("createdDate")]
+        public System.DateTime CreatedDate { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("lastUpdated")]
+        public System.DateTime LastUpdated { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("company")]
+        public string Company { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("title")]
+        public string Title { get; set; }
 
     }
 
@@ -2817,11 +2935,14 @@ namespace Jobby.Client.Services.Base
         [System.Text.Json.Serialization.JsonPropertyName("jobTitle")]
         public string JobTitle { get; set; }
 
+        [System.Text.Json.Serialization.JsonPropertyName("location")]
+        public string Location { get; set; }
+
         [System.Text.Json.Serialization.JsonPropertyName("socials")]
         public SocialDto Socials { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("jobs")]
-        public System.Collections.Generic.ICollection<JobDto> Jobs { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("jobIds")]
+        public System.Collections.Generic.ICollection<System.Guid> JobIds { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("companies")]
         public System.Collections.Generic.ICollection<CompanyDto> Companies { get; set; }
@@ -2856,17 +2977,14 @@ namespace Jobby.Client.Services.Base
         [System.Text.Json.Serialization.JsonPropertyName("city")]
         public string City { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("hexColour")]
-        public string HexColour { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("colour")]
+        public string Colour { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("description")]
         public string Description { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("deadline")]
         public System.DateTime Deadline { get; set; }
-
-        [System.Text.Json.Serialization.JsonPropertyName("notes")]
-        public string Notes { get; set; }
 
     }
 

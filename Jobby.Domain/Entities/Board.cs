@@ -7,8 +7,9 @@ public class Board : Entity
     private readonly List<JobList> _jobLists = new();
     private readonly List<Activity> _activities = new();
     private readonly List<Contact> _contacts = new();
+    private readonly List<Job> _jobs = new();
 
-    private Board()
+    public Board()
     {
 
     }
@@ -32,6 +33,8 @@ public class Board : Entity
     public IReadOnlyCollection<Activity> Activities => _activities;
 
     public IReadOnlyCollection<Contact> Contacts => _contacts;
+
+    public IReadOnlyCollection<Job> Jobs => _jobs;
 
 
     public static Board Create(

@@ -1,7 +1,8 @@
 ﻿using AutoMapper;
+using Jobby.Client.Contracts.Activity;
 using Jobby.Client.Interfaces;
 using Jobby.Client.Services.Base;
-using Jobby.Client.ViewModels.ActivityViewModels;
+using Jobby.Client.ViewModels;
 
 namespace Jobby.Client.Services;
 
@@ -14,7 +15,7 @@ public class ActivityFeaturesService : BaseDataService, IActivityFeaturesService
         _mapper = mapper;
     }
 
-    public async Task<ApiResponse<Guid>> CreateActivity(CreateActivityViewModel model)
+    public async Task<ApiResponse<Guid>> CreateActivity(CreateActivityRequest model)
     {
         try
         {
@@ -35,22 +36,19 @@ public class ActivityFeaturesService : BaseDataService, IActivityFeaturesService
         await _client.DeleteActivityAsync(id);
     }
 
-    public async Task<ActivityDto> GetActivityById(Guid boardId, Guid activityId)
+    public async Task LinkJob(Guid ActivityId, Guid JobId)
     {
-        var selectedActivity = await _client.GetActivityAsync(boardId, activityId);
-
-        return selectedActivity;
+        await _client.LinkJobAsync(ActivityId, JobId);
     }
 
-    public async Task<List<ActivityDto>> ListActivities(Guid boardId)
+    public async Task<List<ActivityListVM>> ListActivities(Guid boardId)
     {
-        ICollection<ActivityDto> activityCollection = await _client.ListActivitiesAsync(boardId);
-        var activityList = activityCollection.ToList();
+        var activityCollection = await _client.ListActivitiesAsync(boardId);
 
-        return activityList;
+        return _mapper.Map<List<ActivityListVM>>(activityCollection);
     }
 
-    public async Task UpdateActivity(UpdateActivityViewModel model)
+    public async Task UpdateActivity(UpdateActivityRequest model)
     {
         var command = _mapper.Map<UpdateActivityCommand>(model);
 

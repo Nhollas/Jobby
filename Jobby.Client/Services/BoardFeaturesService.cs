@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using Jobby.Client.Interfaces;
-using Jobby.Client.Models.BoardModels;
+using Jobby.Client.Models;
 using Jobby.Client.Services.Base;
-using Jobby.Client.ViewModels.BoardViewModels;
+using Jobby.Client.ViewModels;
 
 namespace Jobby.Client.Services;
 
@@ -37,6 +37,20 @@ public class BoardFeaturesService : BaseDataService, IBoardFeaturesService
         await _client.DeleteBoardAsync(boardId);
     }
 
+    public async Task<ViewBoardVM> GetBoardById(Guid id)
+    {
+        var board = await _client.GetBoardAsync(id);
+
+        return _mapper.Map<ViewBoardVM>(board);
+    }
+
+    public async Task<List<BoardPreview>> ListBoards()
+    {
+        var boards = await _client.ListBoardsAsync();
+
+        return _mapper.Map<List<BoardPreview>>(boards);
+    }
+
     public async Task UpdateBoard(Guid BoardId, string Name)
     {
         UpdateBoardCommand command = new()
@@ -46,23 +60,5 @@ public class BoardFeaturesService : BaseDataService, IBoardFeaturesService
         };
 
         await _client.UpdateBoardAsync(command);
-    }
-
-    public async Task<BoardDetailViewModel> GetBoardById(Guid Id)
-    {
-        BoardDetailDto selectedBoard = await _client.GetBoardAsync(Id);
-
-        BoardDetailViewModel mappedBoard = _mapper.Map<BoardDetailViewModel>(selectedBoard);
-
-        return mappedBoard;
-    }
-
-    public async Task<List<BoardPreview>> ListBoards()
-    {
-        ICollection<BoardListDto> boardCollection = await _client.ListBoardsAsync();
-
-        var mappedList = _mapper.Map<List<BoardPreview>>(boardCollection);
-
-        return mappedList;
     }
 }

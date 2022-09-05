@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using Jobby.Application.Abstractions.Specification;
 using Jobby.Application.Exceptions.Base;
-using Jobby.Application.Interfaces;
+using Jobby.Application.Interfaces.Services;
 using Jobby.Application.Specifications;
 using Jobby.Domain.Entities;
 using MediatR;
@@ -11,22 +11,22 @@ namespace Jobby.Application.Features.ActivityFeatures.Commands.Create;
 internal sealed class CreateActivityCommandHandler : IRequestHandler<CreateActivityCommand, Guid>
 {
     private readonly IRepository<Board> _boardRepository;
+    private readonly IRepository<Activity> _activityRepository;
     private readonly IDateTimeProvider _dateTimeProvider;
-    private readonly IRepository<Job> _jobRepository;
     private readonly IUserService _userService;
     private readonly string _userId;
 
     public CreateActivityCommandHandler(
         IRepository<Board> repository,
         IUserService userService,
-        IRepository<Job> jobRepository,
-        IDateTimeProvider dateTimeProvider)
+        IDateTimeProvider dateTimeProvider,
+        IRepository<Activity> activityRepository)
     {
         _boardRepository = repository;
         _userService = userService;
         _userId = _userService.UserId();
-        _jobRepository = jobRepository;
         _dateTimeProvider = dateTimeProvider;
+        _activityRepository = activityRepository;
     }
 
     /*
@@ -49,16 +49,6 @@ internal sealed class CreateActivityCommandHandler : IRequestHandler<CreateActiv
             throw new NotAuthorisedException(_userId);
         }
 
-        if (request.JobId != Guid.Empty)
-        {
-            if (!BoardOwnsJob(BoardToLink, request.JobId))
-            {
-                throw new NotFoundException($"The {nameof(Job)} {request.JobId} you wanted to link doesn't exist in the Board {request.BoardId}.");
-            }
-
-            await LinkActivityToJob(request.JobId);
-        }
-
         var createdActivity = Activity.Create(
             Guid.NewGuid(),
             _dateTimeProvider.UtcNow,
@@ -68,38 +58,27 @@ internal sealed class CreateActivityCommandHandler : IRequestHandler<CreateActiv
             request.StartDate,
             request.EndDate,
             request.Note,
-            request.Completed, 
-            BoardToLink,
-            await LinkActivityToJob(request.JobId));
+            request.Completed,
+            BoardToLink);
 
+        if (request.JobId != Guid.Empty)
+        {
+            if (!BoardOwnsJob(BoardToLink, request.JobId))
+            {
+                throw new NotFoundException($"The {nameof(Job)} {request.JobId} you wanted to link doesn't exist in the Board {request.BoardId}.");
+            }
 
-        await LinkActivityToBoard(createdActivity, BoardToLink);
+            Job jobToLink = BoardToLink.JobList
+                                .SelectMany(x => x.Jobs)
+                                .Where(x => x.Id == request.JobId)
+                                .First();
+
+            createdActivity.SetJob(jobToLink);  
+        }
+
+        await _activityRepository.AddAsync(createdActivity, cancellationToken);
 
         return createdActivity.Id;
-    }
-
-    private async Task<Job> LinkActivityToJob(Guid jobId)
-    {
-        Job job = await _jobRepository.GetByIdAsync(jobId);
-
-        if (job == null)
-        {
-            throw new NotFoundException($"A job with id {jobId} could not be found.");
-        }
-
-        if (job.OwnerId != _userId)
-        {
-            throw new NotAuthorisedException(_userId);
-        }
-
-        return job;
-    }
-
-    private async Task LinkActivityToBoard(Activity activity, Board board)
-    {
-        board.AddActivity(activity);
-
-        await _boardRepository.UpdateAsync(board);
     }
 
     private static bool BoardOwnsJob(Board board, Guid jobId)

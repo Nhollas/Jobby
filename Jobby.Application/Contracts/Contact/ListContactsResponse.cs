@@ -4,7 +4,8 @@ namespace Jobby.Application.Contracts.Contact;
 public sealed record ListContactsResponse
 {
     public Guid Id { get; set; }
-    public Guid BoardId { get; set; }
+    public DateTime CreatedDate { get; set; }
+    public PreviewBoardDto Board { get; set; }
     public string FirstName { get; set; }
     public string LastName { get; set; }
     public string JobTitle { get; set; }

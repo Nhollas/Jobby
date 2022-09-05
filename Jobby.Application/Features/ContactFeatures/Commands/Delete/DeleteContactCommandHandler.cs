@@ -1,6 +1,6 @@
 ﻿using Jobby.Application.Abstractions.Specification;
 using Jobby.Application.Exceptions.Base;
-using Jobby.Application.Interfaces;
+using Jobby.Application.Interfaces.Services;
 using Jobby.Domain.Entities;
 using MediatR;
 
@@ -25,7 +25,7 @@ internal sealed class DeleteContactCommandHandler : IRequestHandler<DeleteContac
     {
         Contact contactToDelete = await _repository.GetByIdAsync(request.ContactId, cancellationToken);
 
-        if (contactToDelete == null)
+        if (contactToDelete is null)
         {
             throw new NotFoundException($"A contact with id {request.ContactId} could not be found.");
         }

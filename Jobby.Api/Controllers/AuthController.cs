@@ -1,5 +1,5 @@
 ﻿using Jobby.Application.Contracts.Auth;
-using Jobby.Application.Interfaces;
+using Jobby.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

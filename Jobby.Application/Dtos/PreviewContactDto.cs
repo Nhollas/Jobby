@@ -2,7 +2,7 @@
 public sealed record PreviewContactDto
 {
     public Guid Id { get; set; }
-    public Guid BoardId { get; set; }
+    public PreviewBoardDto Board { get; set; }
     public string FirstName { get; set; }
     public string LastName { get; set; }
     public string JobTitle { get; set; }

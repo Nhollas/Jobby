@@ -1,5 +1,6 @@
 ﻿using Jobby.Application.Features.ActivityFeatures.Commands.Create;
 using Jobby.Application.Features.ActivityFeatures.Commands.Delete;
+using Jobby.Application.Features.ActivityFeatures.Commands.LinkJob;
 using Jobby.Application.Features.ActivityFeatures.Commands.Update;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -41,6 +42,19 @@ public class ActivityController : ApiController
     [HttpPut("Update", Name = "UpdateActivity")]
     public async Task<IActionResult> UpdateActivity([FromBody] UpdateActivityCommand command)
     {
+        await Sender.Send(command);
+        return NoContent();
+    }
+
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesDefaultResponseType]
+    [HttpPut("{activityId:guid}/LinkJob/{jobId:guid}", Name = "LinkJob")]
+    public async Task<IActionResult> LinkJob([FromRoute] Guid activityId, [FromRoute] Guid jobId)
+    {
+        var command = new LinkJobCommand(activityId, jobId);
+
         await Sender.Send(command);
         return NoContent();
     }

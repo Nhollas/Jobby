@@ -1,5 +1,5 @@
-﻿using Jobby.Client.Interfaces;
-using Jobby.Client.ViewModels.ActivityViewModels;
+﻿using Jobby.Client.Contracts.Activity;
+using Jobby.Client.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,7 +17,7 @@ public class ActivityController : Controller
     }
 
     [HttpPost("CreatePartial")]
-    public PartialViewResult CreatePartial(CreateActivityViewModel model)
+    public PartialViewResult CreatePartial(CreateActivityRequest model)
     {
         model.OnGet();
 
@@ -25,7 +25,7 @@ public class ActivityController : Controller
     }
 
     [HttpPost("Create")]
-    public async Task<ActionResult> Create(CreateActivityViewModel viewModel)
+    public async Task<ActionResult> Create(CreateActivityRequest viewModel)
     {
         await _activityService.CreateActivity(viewModel);
 
@@ -33,13 +33,13 @@ public class ActivityController : Controller
     }
 
     [HttpPost("UpdatePartial")]
-    public PartialViewResult UpdatePartial(UpdateActivityViewModel model)
+    public PartialViewResult UpdatePartial(UpdateActivityRequest model)
     {
         return PartialView("_UpdateActivityPartial", model);
     }
 
     [HttpPost("Update")]
-    public async Task<ActionResult> Update(UpdateActivityViewModel viewModel)
+    public async Task<ActionResult> Update(UpdateActivityRequest viewModel)
     {
         await _activityService.UpdateActivity(viewModel);
 
@@ -47,24 +47,16 @@ public class ActivityController : Controller
     }
 
     [HttpPost("DeletePartial")]
-    public PartialViewResult DeletePartial(DeleteActivityViewModel model)
+    public PartialViewResult DeletePartial(DeleteActivityRequest model)
     {
         return PartialView("_DeleteActivityPartial", model);
     }
 
     [HttpPost("Delete")]
-    public async Task<ActionResult> Delete(DeleteActivityViewModel viewModel)
+    public async Task<ActionResult> Delete(DeleteActivityRequest viewModel)
     {
         await _activityService.DeleteActivity(viewModel.ActivityId);
 
         return Redirect($"/Board/{viewModel.BoardId}/Job/{viewModel.JobId}/Activities");
-    }
-
-    [HttpGet("Board/{boardId:guid}/Board/{activityId:guid}")]
-    public async Task<PartialViewResult> ViewActivity(Guid boardId, Guid activityId)
-    {
-        var model = await _activityService.GetActivityById(boardId, activityId);
-
-        return PartialView("_ViewActivityPartial", model);
     }
 }

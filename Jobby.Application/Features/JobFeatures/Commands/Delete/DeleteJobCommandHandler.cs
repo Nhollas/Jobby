@@ -1,6 +1,6 @@
 ﻿using Jobby.Application.Abstractions.Specification;
 using Jobby.Application.Exceptions.Base;
-using Jobby.Application.Interfaces;
+using Jobby.Application.Interfaces.Services;
 using Jobby.Domain.Entities;
 using MediatR;
 
@@ -25,7 +25,7 @@ internal sealed class DeleteJobCommandHandler : IRequestHandler<DeleteJobCommand
     {
         Job jobToDelete = await _repository.GetByIdAsync(request.JobId, cancellationToken);
 
-        if (jobToDelete == null)
+        if (jobToDelete is null)
         {
             throw new NotFoundException($"The Job {request.JobId} could not be found.");
         }

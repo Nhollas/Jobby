@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Jobby.Application.Abstractions.Specification;
 using Jobby.Application.Contracts.Board;
-using Jobby.Application.Interfaces;
+using Jobby.Application.Interfaces.Services;
 using Jobby.Application.Specifications;
 using Jobby.Domain.Entities;
 using MediatR;
@@ -28,7 +28,7 @@ internal sealed class GetBoardListQueryHandler : IRequestHandler<GetBoardListQue
 
     public async Task<List<ListBoardsResponse>> Handle(GetBoardListQuery request, CancellationToken cancellationToken)
     {
-        var boardSpec = new BoardListSpecification(_userId);
+        var boardSpec = new ListOwnedBoardsSpec(_userId);
 
         var boardList = await _repository.ListAsync(boardSpec, cancellationToken);
 

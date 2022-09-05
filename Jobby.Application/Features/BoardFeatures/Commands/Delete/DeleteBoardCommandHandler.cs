@@ -1,6 +1,6 @@
 ﻿using Jobby.Application.Abstractions.Specification;
 using Jobby.Application.Exceptions.Base;
-using Jobby.Application.Interfaces;
+using Jobby.Application.Interfaces.Services;
 using Jobby.Domain.Entities;
 using MediatR;
 

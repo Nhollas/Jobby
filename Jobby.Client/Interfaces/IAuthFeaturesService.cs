@@ -1,10 +1,10 @@
-﻿using Jobby.Client.Services.Base;
-using Jobby.Client.ViewModels.AuthViewModels;
+﻿using Jobby.Client.Contracts.Auth;
+using Jobby.Client.Services.Base;
 
 namespace Jobby.Client.Interfaces;
 
 public interface IAuthFeaturesService
 {
-    Task<AuthenticateResponse> Authenticate(LoginViewModel model);
-    Task<RegisterResponse> Register(RegisterViewModel model);
+    Task<AuthenticateResponse> Authenticate(LoginRequest model);
+    Task<RegisterResponse> Register(Contracts.Auth.RegisterRequest model);
 }

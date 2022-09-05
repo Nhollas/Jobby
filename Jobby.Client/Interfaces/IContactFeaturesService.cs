@@ -1,11 +1,11 @@
-﻿using Jobby.Client.Services.Base;
-using Jobby.Client.ViewModels.ContactViewModels;
+﻿using Jobby.Client.Contracts.Contact;
+using Jobby.Client.Services.Base;
 
 namespace Jobby.Client.Interfaces;
 
 public interface IContactFeaturesService
 {
-    Task<ApiResponse<Guid>> CreateContact(CreateContactViewModel model);
+    Task<ApiResponse<Guid>> CreateContact(CreateContactRequest model);
     Task DeleteContact(Guid id);
-    Task UpdateContact(UpdateContactViewModel model);
+    Task UpdateContact(UpdateContactRequest model);
 }

@@ -14,26 +14,16 @@
 </head>
 <body>
     <header class="w-full flex justify-center">
-        <nav class="h-12 w-full max-w-8xl border-gray-900 border-x-1 border-b-1 flex items-center px-8">
+        <nav class="flex items-center h-12 w-full max-w-8xl border-gray-900 lg:border-x-1 border-b-1 px-8 z-10">
             <ul class="flex flex-row gap-x-8 w-full">
                 <li><a class="text-lg font-semibold" asp-controller="Home" asp-action="Index">Jobby</a></li>
-                <li><a class="text-sm font-medium" asp-controller="Home" asp-action="Features">Features</a></li>
-                <li class="mr-auto"><a class="text-sm font-medium" asp-controller="Home" asp-action="Documentation">Docs</a></li>
-                @if (User.Identity.IsAuthenticated)
-                {
-                    <li><a class="text-sm font-medium" asp-controller="Dashboard" asp-action="Index">Dashboard</a></li>
-                    <li><a class="text-sm font-medium" asp-controller="Auth" asp-action="Logout">Logout</a></li>
-                }
-                else
-                {
-                    <li><a class="px-5 py-1.5 text-sm font-medium border-1 border-gray-900 bg-white font-raleway;" asp-controller="Auth" asp-action="Login">Log In</a></li>
-                    <li><a class="text-sm text-white font-medium bg-main-blue px-5 py-1.5 rounded-lg" asp-controller="Auth" asp-action="Register">Sign Up</a></li>
-                }
+                <li class="ml-auto"><a class="text-sm font-medium" asp-controller="Dashboard" asp-action="Index">Dashboard</a></li>
+                <li><a class="text-sm font-medium" asp-controller="Auth" asp-action="Logout">Logout</a></li>
             </ul>
         </nav>
     </header>
     <main role="main" class="w-full flex justify-center min-h-[calc(100vh_-_9rem)]">
-        <div class="border-gray-900 border-x-1 border-b-1 w-full max-w-8xl">
+        <div class="border-gray-900 lg:border-x-1 w-full max-w-8xl">
             @RenderBody()
         </div>
     </main>

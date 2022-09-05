@@ -9,8 +9,6 @@ public sealed class GetBoardByIdSpec : Specification<Board>
         Query
             .Where(b => b.Id == BoardId)
             .Include(x => x.JobList)
-                .ThenInclude(x => x.Jobs)
-            .Include(x => x.Activities)
-            .Include(x => x.Contacts);
+                .ThenInclude(x => x.Jobs);
     }
 }

@@ -4,12 +4,12 @@ namespace Jobby.Application.Features.ActivityFeatures.Commands.Create;
 
 public sealed record CreateActivityCommand : IRequest<Guid>
 {
+    public Guid BoardId { get; set; }
+    public Guid JobId { get; set; }
     public string Title { get; set; }
     public int ActivityType { get; set; }
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
     public string Note { get; set; }
     public bool Completed { get; set; }
-    public Guid BoardId { get; set; }
-    public Guid JobId { get; set; }
 }

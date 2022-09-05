@@ -1,0 +1,77 @@
+﻿@using Jobby.Client.ViewModels
+@model DashboardVM
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Dashboard";
+}
+
+<section class="flex flex-col h-full gap-y-4 p-5 sm:p-8 relative w-full">
+    <h1 class="text-xl xl:text-2xl font-semibold">Dashboard</h1>
+    <div class="flex flex-col gap-y-6">
+        <h2 class="text-lg font-medium w-full mr-auto">Owned Boards</h2>
+        @if (Model.Boards.Count == 0)
+        {
+            <div class="w-full flex justify-center items-center">
+                <button
+                    onclick='showElement("create-board-parent")'
+                    class="btn-primary w-full max-w-[16rem] cursor-pointer py-2">
+                    Create Your First Board
+                </button>
+            </div>
+        }
+        else
+        {
+            <button
+                onclick='showElement("create-board-parent")'
+                class="btn-primary py-2 px-8 w-max !rounded-full">
+                Create Board
+            </button>   
+        }
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 w-full">
+            @foreach (var item in Model.Boards)
+            {
+                <div class="flex flex-col">
+                    <a 
+                        asp-action="ViewBoard" 
+                        asp-controller="Board" 
+                        asp-route-boardId="@item.Id"
+                        class="w-full sm:max-w-none border-1 border-gray-900 bg-gray-50">
+                        <div class="flex flex-col gap-y-2 p-4">
+                            <p class="text-base font-medium overflow-hidden whitespace-nowrap">@item.Name</p>
+                            <p class="text-sm">Created: item.FormatedCreatedDate</p>
+                        </div>
+                    </a>
+                    <section class="grid grid-cols-2 border-1 border-t-0 border-gray-900 bg-slate-200">
+                        <button
+                            hx-post="/Board/UpdatePartial"
+                            hx-vals='{"BoardId": "@item.Id", "Name": "@item.Name"}'
+                            hx-swap="innerHTML"
+                            hx-target="#update-board-parent"
+                            onclick='showElement("update-board-parent")'
+                            class="text-sm px-4 py-1 font-semibold border-r-1 border-gray-900">
+                            Edit
+                        </button>
+                        <button
+                            hx-post="/Board/DeletePartial"
+                            hx-vals='{"BoardId": "@item.Id", "Name": "@item.Name"}'
+                            hx-swap="innerHTML"
+                            hx-target="#delete-board-parent"
+                            onclick='showElement("delete-board-parent")'
+                            class="text-sm px-4 py-1 font-semibold">
+                            Delete
+                        </button>
+                    </section>
+                </div>
+            }
+        </div>
+    </div>
+    <section class="fixed top-12 inset-x-0 w-full flex justify-center">
+        <div class="max-w-5xl w-full lg:border-x-1 border-gray-900">
+            <div id="update-board-parent" class="inset-0 bg-gray-50/90 h-screen hidden flex justify-center"></div>
+            <div id="delete-board-parent" class="inset-0 bg-gray-50/90 h-screen hidden flex justify-center"></div>
+            <div id="create-board-parent" class="inset-0 bg-gray-50/90 h-screen hidden flex justify-center">
+                <partial name="~/Views/Board/_CreateBoardPartial.cshtml" model="Model.BoardToCreate" />
+            </div>
+        </div>
+    </section>
+</section>

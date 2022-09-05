@@ -96,7 +96,6 @@ namespace Jobby.Persistence.Data.Migrations
             modelBuilder.Entity("Jobby.Domain.Entities.Company", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("ContactId")
@@ -152,7 +151,6 @@ namespace Jobby.Persistence.Data.Migrations
             modelBuilder.Entity("Jobby.Domain.Entities.Email", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("ContactId")
@@ -172,6 +170,9 @@ namespace Jobby.Persistence.Data.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("BoardId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Colour")
@@ -211,6 +212,8 @@ namespace Jobby.Persistence.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("BoardId");
 
                     b.HasIndex("JobListId");
 
@@ -285,7 +288,6 @@ namespace Jobby.Persistence.Data.Migrations
             modelBuilder.Entity("Jobby.Domain.Entities.Phone", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("ContactId")
@@ -309,12 +311,13 @@ namespace Jobby.Persistence.Data.Migrations
                     b.HasOne("Jobby.Domain.Entities.Board", "Board")
                         .WithMany("Activities")
                         .HasForeignKey("BoardId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("Jobby.Domain.Entities.Job", "Job")
                         .WithMany("Activities")
-                        .HasForeignKey("JobId");
+                        .HasForeignKey("JobId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Board");
 
@@ -337,7 +340,7 @@ namespace Jobby.Persistence.Data.Migrations
                     b.HasOne("Jobby.Domain.Entities.Board", "Board")
                         .WithMany("Contacts")
                         .HasForeignKey("BoardId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.OwnsOne("Jobby.Domain.Entities.Social", "Socials", b1 =>
@@ -383,11 +386,19 @@ namespace Jobby.Persistence.Data.Migrations
 
             modelBuilder.Entity("Jobby.Domain.Entities.Job", b =>
                 {
+                    b.HasOne("Jobby.Domain.Entities.Board", "Board")
+                        .WithMany("Jobs")
+                        .HasForeignKey("BoardId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
                     b.HasOne("Jobby.Domain.Entities.JobList", "JobList")
                         .WithMany("Jobs")
                         .HasForeignKey("JobListId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Board");
 
                     b.Navigation("JobList");
                 });
@@ -397,13 +408,13 @@ namespace Jobby.Persistence.Data.Migrations
                     b.HasOne("Jobby.Domain.Entities.Contact", "Contact")
                         .WithMany("JobContacts")
                         .HasForeignKey("ContactId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Jobby.Domain.Entities.Job", "Job")
                         .WithMany("JobContacts")
                         .HasForeignKey("JobId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Contact");
@@ -451,6 +462,8 @@ namespace Jobby.Persistence.Data.Migrations
                     b.Navigation("Contacts");
 
                     b.Navigation("JobList");
+
+                    b.Navigation("Jobs");
                 });
 
             modelBuilder.Entity("Jobby.Domain.Entities.Contact", b =>

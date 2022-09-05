@@ -2,7 +2,7 @@
 using Jobby.Application.Abstractions.Specification;
 using Jobby.Application.Contracts.Contact;
 using Jobby.Application.Exceptions.Base;
-using Jobby.Application.Interfaces;
+using Jobby.Application.Interfaces.Services;
 using Jobby.Application.Specifications;
 using Jobby.Domain.Entities;
 using MediatR;
@@ -10,45 +10,38 @@ using MediatR;
 namespace Jobby.Application.Features.ContactFeatures.Queries.GetById;
 internal sealed class GetContactDetailQueryHandler : IRequestHandler<GetContactDetailQuery, GetContactResponse>
 {
-    private readonly IReadRepository<Board> _repository;
+    private readonly IReadRepository<Contact> _contactRepository;
     private readonly IMapper _mapper;
     private readonly IUserService _userService;
     private readonly string _userId;
 
     public GetContactDetailQueryHandler(
-        IReadRepository<Board> repository,
         IUserService userService,
-        IMapper mapper)
+        IMapper mapper,
+        IReadRepository<Contact> contactRepository)
     {
-        _repository = repository;
         _userService = userService;
         _userId = _userService.UserId();
         _mapper = mapper;
+        _contactRepository = contactRepository;
     }
 
     public async Task<GetContactResponse> Handle(GetContactDetailQuery request, CancellationToken cancellationToken)
     {
-        var boardSpec = new GetBoardByIdSpec(request.BoardId);
+        var contactSpec = new GetContactByIdSpec(request.ContactId, request.BoardId);
 
-        var board = await _repository.FirstOrDefaultAsync(boardSpec, cancellationToken);
+        var contact = await _contactRepository.FirstOrDefaultAsync(contactSpec, cancellationToken);
 
-        if (board is null)
+        if (contact is null)
         {
-            throw new NotFoundException($"The Board {request.BoardId} could not be found.");
+            throw new NotFoundException($"The Contact {request.ContactId} could not be found.");
         }
 
-        if (board.OwnerId != _userId)
+        if (contact.OwnerId != _userId)
         {
             throw new NotAuthorisedException(_userId);
         }
 
-        var selectedContact = board.Contacts.Where(x => x.Id == request.ContactId).FirstOrDefault();
-
-        if (selectedContact is null)
-        {
-            throw new NotFoundException($"The Board {request.BoardId} does not contain the Contact {request.ContactId}.");
-        }
-
-        return _mapper.Map<GetContactResponse>(selectedContact);
+        return _mapper.Map<GetContactResponse>(contact);
     }
 }

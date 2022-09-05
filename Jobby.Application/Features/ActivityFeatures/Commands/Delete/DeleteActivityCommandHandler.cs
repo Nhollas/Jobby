@@ -1,6 +1,6 @@
 ﻿using Jobby.Application.Abstractions.Specification;
 using Jobby.Application.Exceptions.Base;
-using Jobby.Application.Interfaces;
+using Jobby.Application.Interfaces.Services;
 using Jobby.Domain.Entities;
 using MediatR;
 
@@ -25,7 +25,7 @@ internal sealed class DeleteActivityCommandHandler : IRequestHandler<DeleteActiv
     {
         Activity activityToDelete = await _repository.GetByIdAsync(request.ActivityId, cancellationToken);
 
-        if (activityToDelete == null)
+        if (activityToDelete is null)
         {
             throw new NotFoundException($"An activity with id {request.ActivityId} could not be found.");
         }

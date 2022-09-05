@@ -1,5 +1,5 @@
-﻿using Jobby.Client.Interfaces;
-using Jobby.Client.ViewModels.ContactViewModels;
+﻿using Jobby.Client.Contracts.Contact;
+using Jobby.Client.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,14 +17,14 @@ public class ContactController : Controller
     }
 
     [HttpPost("CreatePartial")]
-    public PartialViewResult CreatePartial(CreateContactViewModel model)
+    public PartialViewResult CreatePartial(CreateContactRequest model)
     {
         return PartialView("_CreateContactPartial", model);
     }
 
 
     [HttpPost("Create")]
-    public async Task<ActionResult> Create(CreateContactViewModel viewModel)
+    public async Task<ActionResult> Create(CreateContactRequest viewModel)
     {
         await _contactService.CreateContact(viewModel);
 
@@ -32,13 +32,13 @@ public class ContactController : Controller
     }
 
     [HttpPost("UpdatePartial")]
-    public PartialViewResult UpdatePartial(UpdateContactViewModel model)
+    public PartialViewResult UpdatePartial(UpdateContactRequest model)
     {
         return PartialView("_UpdateContactPartial", model);
     }
 
     [HttpPost("Update")]
-    public async Task<ActionResult> Update(UpdateContactViewModel viewModel)
+    public async Task<ActionResult> Update(UpdateContactRequest viewModel)
     {
         await _contactService.UpdateContact(viewModel);
 
@@ -46,13 +46,13 @@ public class ContactController : Controller
     }
 
     [HttpPost("DeletePartial")]
-    public PartialViewResult DeletePartial(DeleteContactViewModel model)
+    public PartialViewResult DeletePartial(DeleteContactRequest model)
     {
         return PartialView("_DeleteContactPartial", model);
     }
 
     [HttpPost("Delete")]
-    public async Task<ActionResult> Delete(DeleteContactViewModel viewModel)
+    public async Task<ActionResult> Delete(DeleteContactRequest viewModel)
     {
         await _contactService.DeleteContact(viewModel.ContactId);
 

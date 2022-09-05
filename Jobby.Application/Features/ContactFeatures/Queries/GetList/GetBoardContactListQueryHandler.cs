@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Jobby.Application.Abstractions.Specification;
 using Jobby.Application.Contracts.Contact;
-using Jobby.Application.Interfaces;
+using Jobby.Application.Interfaces.Services;
 using Jobby.Application.Specifications;
 using Jobby.Domain.Entities;
 using MediatR;
@@ -27,7 +27,7 @@ internal sealed class GetBoardContactListQueryHandler : IRequestHandler<GetBoard
 
     public async Task<List<ListContactsResponse>> Handle(GetBoardContactListQuery request, CancellationToken cancellationToken)
     {
-        var contactSpec = new ContactListFromBoardIdSpec(request.BoardId, _userId);
+        var contactSpec = new ListBoardContactsSpec(request.BoardId, _userId);
 
         var contactList = await _repository.ListAsync(contactSpec, cancellationToken);
 

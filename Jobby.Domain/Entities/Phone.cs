@@ -4,6 +4,19 @@ public class Phone
     public Phone(
     Guid id,
     string number,
+    PhoneType type,
+    Contact contact)
+    {
+        Id = id;
+        Number = number;
+        Type = type;
+        Contact = contact;
+        ContactId = contact.Id;
+    }
+
+        public Phone(
+    Guid id,
+    string number,
     PhoneType type)
     {
         Id = id;

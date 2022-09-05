@@ -16,15 +16,16 @@ public class ContactConfiguration : IEntityTypeConfiguration<Contact>
             .WithOne(x => x.Contact)
             .HasForeignKey(x => x.ContactId)
             .OnDelete(DeleteBehavior.Cascade);
+
         builder.HasMany(p => p.Companies)
             .WithOne(x => x.Contact)
             .HasForeignKey(x => x.ContactId)
             .OnDelete(DeleteBehavior.Cascade);
+
         builder.HasMany(p => p.Phones)
             .WithOne(x => x.Contact)
             .HasForeignKey(x => x.ContactId)
             .OnDelete(DeleteBehavior.Cascade);
-
 
         builder.HasMany(x => x.Jobs)
             .WithMany(x => x.Contacts)
@@ -33,7 +34,7 @@ public class ContactConfiguration : IEntityTypeConfiguration<Contact>
                     .HasOne(pt => pt.Job)
                     .WithMany(t => t.JobContacts)
                     .HasForeignKey(pt => pt.JobId)
-                    .OnDelete(DeleteBehavior.NoAction),
+                    .OnDelete(DeleteBehavior.Cascade),
                 j => j
                     .HasOne(pt => pt.Contact)
                     .WithMany(p => p.JobContacts)

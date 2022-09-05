@@ -1,7 +1,7 @@
 ﻿using Jobby.Application.Abstractions.Specification;
 using Jobby.Application.Dtos;
 using Jobby.Application.Exceptions.Base;
-using Jobby.Application.Interfaces;
+using Jobby.Application.Interfaces.Services;
 using Jobby.Application.Specifications;
 using Jobby.Domain.Entities;
 using MediatR;
@@ -31,7 +31,7 @@ internal sealed class CreateContactCommandHandler : IRequestHandler<CreateContac
 
     public async Task<Guid> Handle(CreateContactCommand request, CancellationToken cancellationToken)
     {
-        var boardSpec = new IncludeJobListSpecification(request.BoardId);
+        var boardSpec = new GetBoardWithJobsSpec(request.BoardId);
 
         Board board = await _boardRepository.FirstOrDefaultAsync(boardSpec, cancellationToken);
 
@@ -43,31 +43,6 @@ internal sealed class CreateContactCommandHandler : IRequestHandler<CreateContac
         if (board.OwnerId != _userId)
         {
             throw new NotAuthorisedException(_userId);
-        }
-
-        List<Job> jobsToLink = new();
-
-        if (request.JobIds != null)  
-        {
-            var ownedJobIds = board.JobList
-                .SelectMany(x => x.Jobs)
-                .Select(x => x.Id)
-                .ToList();
-
-            var jobList = board.JobList
-                .SelectMany(x => x.Jobs)
-                .Where(x => request.JobIds.Contains(x.Id));
-
-            foreach (var job in jobList)
-            {
-                if (ownedJobIds.Contains(job.Id))
-                {
-                    jobsToLink.Add(job);
-                    continue;
-                }
-
-                throw new NotAuthorisedException(_userId);
-            }
         }
 
         var createdContact = Contact.Create(
@@ -85,10 +60,32 @@ internal sealed class CreateContactCommandHandler : IRequestHandler<CreateContac
                 request.Socials.GithubUrl
                 ),
             board,
-            jobsToLink,
             GetCompanies(request.Companies),
             GetEmails(request.Emails),
             GetPhones(request.Phones));
+
+        if (request.JobIds != null)  
+        {
+            var ownedJobIds = board.JobList
+                .SelectMany(x => x.Jobs)
+                .Select(x => x.Id)
+                .ToList();
+
+            var requestJobList = board.JobList
+                .SelectMany(x => x.Jobs)
+                .Where(x => request.JobIds.Contains(x.Id))
+                .ToList();
+
+            foreach (var job in requestJobList)
+            {
+                if (!ownedJobIds.Contains(job.Id))
+                {
+                    throw new NotAuthorisedException(_userId);
+                }
+            }
+
+            createdContact.SetJobs(requestJobList);
+        }
 
         await _contactRepository.AddAsync(createdContact, cancellationToken); 
 

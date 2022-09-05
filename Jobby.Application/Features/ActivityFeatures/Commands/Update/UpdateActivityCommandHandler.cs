@@ -1,7 +1,7 @@
-﻿using AutoMapper;
-using Jobby.Application.Abstractions.Specification;
+﻿using Jobby.Application.Abstractions.Specification;
 using Jobby.Application.Exceptions.Base;
-using Jobby.Application.Interfaces;
+using Jobby.Application.Interfaces.Services;
+using Jobby.Application.Specifications;
 using Jobby.Domain.Entities;
 using MediatR;
 
@@ -9,30 +9,28 @@ namespace Jobby.Application.Features.ActivityFeatures.Commands.Update;
 
 internal sealed class UpdateActivityCommandHandler : IRequestHandler<UpdateActivityCommand, Unit>
 {
-    private readonly IRepository<Activity> _repository;
-    private readonly IMapper _mapper;
+    private readonly IRepository<Activity> _activityRepository;
     private readonly IUserService _userService;
     private readonly IDateTimeProvider _timeProvider;
     private readonly string _userId;
 
     public UpdateActivityCommandHandler(
-        IRepository<Activity> repository,
+
         IUserService userService,
-        IMapper mapper,
-        IDateTimeProvider timeProvider)
+        IDateTimeProvider timeProvider,
+        IRepository<Activity> activityRepository)
     {
-        _repository = repository;
         _userService = userService;
         _userId = _userService.UserId();
-        _mapper = mapper;
         _timeProvider = timeProvider;
+        _activityRepository = activityRepository;
     }
 
     public async Task<Unit> Handle(UpdateActivityCommand request, CancellationToken cancellationToken)
     {
-        Activity activityToUpdate = await _repository.GetByIdAsync(request.ActivityId, cancellationToken);
+        Activity activityToUpdate = await _activityRepository.GetByIdAsync(request.ActivityId, cancellationToken);
 
-        if (activityToUpdate == null)
+        if (activityToUpdate is null)
         {
             throw new NotFoundException($"An activity with id {request.ActivityId} could not be found.");
         }
@@ -42,11 +40,17 @@ internal sealed class UpdateActivityCommandHandler : IRequestHandler<UpdateActiv
             throw new NotAuthorisedException(_userId);
         }
 
-        _mapper.Map(request, activityToUpdate, typeof(UpdateActivityCommand), typeof(Activity));
+        activityToUpdate.Update(
+            request.Title,
+            request.ActivityType,
+            request.StartDate,
+            request.EndDate,
+            request.Note,
+            request.Completed);
 
         activityToUpdate.UpdateEntity(_timeProvider.UtcNow);
 
-        await _repository.UpdateAsync(activityToUpdate, cancellationToken);
+        await _activityRepository.UpdateAsync(activityToUpdate, cancellationToken);
 
         return Unit.Value;
     }

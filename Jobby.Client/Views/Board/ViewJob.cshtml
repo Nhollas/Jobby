@@ -1,0 +1,460 @@
+﻿@using Jobby.Client.ViewModels
+@model ViewJobVM
+@{
+    ViewData["Title"] = $"{Model.Title} at {Model.Company}";
+
+    string handleCheck(bool value)
+    {   
+        return value ? "checked" : string.Empty;
+    }
+}
+
+<section class="flex flex-col gap-y-6 w-full max-w-3xl justify-center relative p-5">
+    <a asp-action="ViewBoard" asp-route-boardId="@Model.Board.Id" class="btn-secondary py-2 px-8 w-max text-center z-10">Back To Board</a>
+    <section class="flex flex-row">
+        <div class="flex flex-col gap-y-2">
+            <h1 class="text-xl font-medium">@Model.Title</h1>
+            <h2>@Model.Company</h2>
+        </div>
+        <p class="ml-auto text-sm italic">Model.FormatedCreatedDate</p>
+    </section>
+    <section class="flex flex-row z-10 items-end -mb-6">
+        <button id="Job-Info-Link" onclick="openTab(event, 'Job-Info')" class="tablink !border-l-1">Info</button>
+        <button id="Activities-Link" onclick="openTab(event, 'Activities')" class="tablink">
+            Activities
+            @if (Model.Activities.Count > 0)
+            {
+                <div class="border-1 border-gray-300 w-4 h-4 rounded-full flex justify-center items-center absolute top-1 right-2">
+                    <p class="text-xs">@Model.Activities.Count</p>
+                </div>
+            }
+        </button>
+        <button id="Notes-Link" onclick="openTab(event, 'Notes')" class="tablink">
+            Notes
+            @if (Model.Notes.Count > 0)
+            {
+                <div class="border-1 border-gray-300 w-4 h-4 rounded-full flex justify-center items-center absolute top-1 right-2">
+                    <p class="text-xs">@Model.Notes.Count</p>
+                </div>
+            }
+        </button>
+        <button id="Contacts-Link" onclick="openTab(event, 'Contacts')" class="tablink">
+            Contacts
+            @if (Model.Contacts.Count > 0)
+            {
+                <div class="border-1 border-gray-300 w-4 h-4 rounded-full flex justify-center items-center absolute top-1 right-2">
+                    <p class="text-xs">@Model.Contacts.Count</p>
+                </div>
+            }
+        </button>
+    </section>
+    <div class="flex flex-col w-full">
+        <section id="Job-Info" class="tabcontent flex justify-center items-center bg-gray-50 p-5 border-x-1 border-gray-300 border-b-1">
+            <form class="grid grid-cols-1 gap-4 gap-y-6 w-full">
+                <div class="input-container">
+                    <label asp-for="Company"></label>
+                    <input asp-for="Company">
+                </div>
+                <div class="input-container">
+                    <label asp-for="Title"></label>
+                    <input asp-for="Title">
+                </div>
+                <div class="input-container">
+                    <label asp-for="PostUrl"></label>
+                    <input asp-for="PostUrl">
+                </div>
+                <div class="input-container">
+                    <label asp-for="Location"></label>
+                    <input asp-for="Location">
+                </div>
+                <div class="input-container">
+                    <label asp-for="Salary"></label>
+                    <input asp-for="Salary">
+                </div>
+                <div class="input-container">
+                    <label asp-for="Deadline"></label>
+                    <input asp-for="Deadline">
+                </div>
+                <div class="input-container">
+                    <label asp-for="Description"></label>
+                    <textarea asp-for="Description" class="min-h-[6rem] py-3"></textarea>
+                </div>
+                <div class="flex flex-col gap-y-2">
+                    <p class="text-sm font-medium">Application</p>  
+                    @if (Model.AppliedActivity is null)
+                    {
+                        <button
+                            hx-post="/Activity/CreatePartial"
+                            hx-vals='{"BoardId": "@Model.Board.Id", "JobId": "@Model.Id", "ActivityTypesOption": "1"}'
+                            hx-swap="innerHTML"
+                            hx-target="#create-activity-parent"
+                            onclick='showElement("create-activity-parent")' 
+                            class="flex flex-row justify-start border-1 text-sm border-gray-300 rounded-lg px-5 py-1 bg-white">
+                            <div class="flex flex-row w-full gap-x-4">
+                                <i class="bi bi-plus-square"></i>
+                                <p class="text-sm">Log Application</p>
+                            </div>
+                        </button>
+                    }
+                    else
+                    {
+                        <button
+                        hx-get="/Activity/ViewActivity/@Model.AppliedActivity.Id"
+                        hx-swap="innerHTML"
+                        hx-target="#view-activity-parent"
+                        onclick='showElement("view-activity-parent")'  
+                        class="flex flex-col gap-y-2 border-1 border-gray-300 rounded-lg w-full py-2 px-4 bg-white">
+                            <div class="flex flex-row w-full gap-x-12">
+                                <p class="font-medium text-sm whitespace-nowrap mr-auto max-w-[6rem] overflow-hidden">@Model.AppliedActivity.Title</p>
+                                <p class="text-xs font-medium bg-red-500 rounded-lg w-max text-white px-4 py-0.5">@Model.AppliedActivity.ActivityName</p>
+                            </div>
+                            <p class="text-sm">Model.AppliedActivity.FormatedPenis</p>
+                        </button>
+                    }
+                </div>
+                <div class="flex flex-col gap-y-2">
+                    <p class="text-sm font-medium">Interviews</p>
+                    @if (Model.InterviewActivities.Count == 0)
+                    {
+                        <button
+                            hx-post="/Activity/CreatePartial"
+                            hx-vals='{"BoardId": "@Model.Board.Id", "JobId": "@Model.Id", "ActivityTypesOption": "2"}'
+                            hx-swap="innerHTML"
+                            hx-target="#create-activity-parent"
+                            onclick='showElement("create-activity-parent")' 
+                            class="flex flex-row justify-start border-1 text-sm border-gray-300 rounded-lg px-5 py-1 bg-white">
+                            <div class="flex flex-row w-full gap-x-4">
+                                <i class="bi bi-plus-square"></i>
+                                <p class="text-sm">Log Interview</p>
+                            </div>
+                        </button>
+                    }
+                    else
+                    {
+                        foreach(var activity in Model.InterviewActivities)
+                        {
+                            <button
+                            hx-get="/Activity/ViewActivity/@activity.Id"
+                            hx-swap="innerHTML"
+                            hx-target="#view-activity-parent"
+                            onclick='showElement("view-activity-parent")'  
+                            class="flex flex-col gap-y-2 border-1 border-gray-300 rounded-lg w-full py-2 px-4 bg-white">
+                                <div class="flex flex-row w-full gap-x-12">
+                                    <p class="font-medium text-sm whitespace-nowrap mr-auto max-w-[6rem] overflow-hidden">@activity.Title</p>
+                                    <p class="text-xs font-medium bg-orange-500 rounded-lg w-max text-white px-4 py-0.5 whitespace-nowrap">@activity.ActivityName</p>
+                                </div>
+                                <p class="text-sm">activity.FormatedPenis</p>
+                            </button>
+                        }
+
+                        <button
+                            hx-post="/Activity/CreatePartial"
+                            hx-vals='{"BoardId": "@Model.Board.Id", "JobId": "@Model.Id", "ActivityTypesOption": "2"}'
+                            hx-swap="innerHTML"
+                            hx-target="#create-activity-parent"
+                            onclick='showElement("create-activity-parent")' 
+                            class="flex flex-row justify-start border-1 text-sm border-gray-300 rounded-lg px-5 py-1 bg-white">
+                            <div class="flex flex-row w-full gap-x-4">
+                                <i class="bi bi-plus-square"></i>
+                                <p class="text-sm">Log Interview</p>
+                            </div>
+                        </button>
+                    }
+                </div>
+                <div class="flex flex-col gap-y-2">
+                    <p class="text-sm font-medium">Offers</p>
+                    @if (Model.OfferActivities.Count == 0)
+                    {
+                        <button
+                            hx-post="/Activity/CreatePartial"
+                            hx-vals='{"BoardId": "@Model.Board.Id", "JobId": "@Model.Id", "ActivityTypesOption": "3"}'
+                            hx-swap="innerHTML"
+                            hx-target="#create-activity-parent"
+                            onclick='showElement("create-activity-parent")' 
+                            class="flex flex-row justify-start border-1 text-sm border-gray-300 rounded-lg px-5 py-1 bg-white">
+                            <div class="flex flex-row w-full gap-x-4">
+                                <i class="bi bi-plus-square"></i>
+                                <p class="text-sm">Log Offer</p>
+                            </div>
+                        </button>
+                    }
+                    else
+                    {
+                        foreach(var activity in Model.OfferActivities)
+                        {
+                            <button
+                            hx-get="/Activity/ViewActivity/@activity.Id"
+                            hx-swap="innerHTML"
+                            hx-target="#view-activity-parent"
+                            onclick='showElement("view-activity-parent")'  
+                            class="flex flex-col gap-y-2 border-1 border-gray-300 rounded-lg w-full py-2 px-4 bg-white">
+                                <div class="flex flex-row w-full gap-x-12">
+                                    <p class="font-medium text-sm whitespace-nowrap mr-auto max-w-[6rem] overflow-hidden">@activity.Title</p>
+                                    <p class="text-xs font-medium bg-purple-500 rounded-lg w-max text-white px-4 py-0.5">@activity.ActivityName</p>
+                                </div>
+                                <p class="text-sm">activity.FormatedPenis</p>
+                            </button>
+                        }
+
+                        <button
+                            hx-post="/Activity/CreatePartial"
+                            hx-vals='{"BoardId": "@Model.Board.Id", "JobId": "@Model.Id", "ActivityTypesOption": "3"}'
+                            hx-swap="innerHTML"
+                            hx-target="#create-activity-parent"
+                            onclick='showElement("create-activity-parent")' 
+                            class="flex flex-row justify-start border-1 text-sm border-gray-300 rounded-lg px-5 py-1 bg-white">
+                            <div class="flex flex-row w-full gap-x-4">
+                                <i class="bi bi-plus-square"></i>
+                                <p class="text-sm">Log Offer</p>
+                            </div>
+                        </button>
+                    }
+                </div>
+                <div class="flex flex-col gap-y-2">
+                    <p class="text-sm font-medium">Offer Acceptance</p>
+                    @if (Model.AcceptedOfferActivity is null)
+                    {
+                        <button
+                            hx-post="/Activity/CreatePartial"
+                            hx-vals='{"BoardId": "@Model.Board.Id", "JobId": "@Model.Id", "ActivityTypesOption": "4"}'
+                            hx-swap="innerHTML"
+                            hx-target="#create-activity-parent"
+                            onclick='showElement("create-activity-parent")' 
+                            class="flex flex-row justify-start border-1 text-sm border-gray-300 rounded-lg px-5 py-1 bg-white">
+                            <div class="flex flex-row w-full gap-x-4">
+                                <i class="bi bi-plus-square"></i>
+                                <p class="text-sm">Log Offer Acceptance</p>
+                            </div>
+                        </button>
+                    }
+                    else
+                    {
+                        <button
+                        hx-get="/Activity/ViewActivity/@Model.AcceptedOfferActivity.Id"
+                        hx-swap="innerHTML"
+                        hx-target="#view-activity-parent"
+                        onclick='showElement("view-activity-parent")'  
+                        class="flex flex-col gap-y-2 border-1 border-gray-300 rounded-lg w-full py-2 px-4 bg-white">
+                            <div class="flex flex-row w-full gap-x-12">
+                                <p class="font-medium text-sm whitespace-nowrap mr-auto max-w-[6rem] overflow-hidden">@Model.AcceptedOfferActivity.Title</p>
+                                <p class="text-xs font-medium bg-red-500 rounded-lg w-max text-white px-4 py-0.5">@Model.AcceptedOfferActivity.ActivityName</p>
+                            </div>
+                            <p class="text-sm">Model.AcceptedOfferActivity.FormatedPenis</p>
+                        </button>
+                    }
+                </div>
+                <button class="btn-primary py-2 max-w-sm">Update</button>
+            </form>
+        </section>
+        <section id="Activities" class="tabcontent">
+            <div class="w-full flex flex-row gap-x-4 p-4 pb-0">
+                <button
+                    hx-post="/Activity/CreatePartial"
+                    hx-vals='{"BoardId": "@Model.Board.Id", "JobId": "@Model.Id", "ActivityTypesOption": "5"}'
+                    hx-swap="innerHTML"
+                    hx-target="#create-activity-parent"
+                    onclick='showElement("create-activity-parent")'
+                        class="btn-primary py-2 px-8 w-max ml-auto !rounded-full z-10">
+                    Add Activity
+                </button>
+            </div>
+            <div class="w-full flex flex-col items-center justify-center gap-y-12 my-8">
+                @if (Model.Activities.Count == 0)
+                {
+                    <p class="text-lg w-max">No activities found...</p>
+                }
+                <div id="closeActivity" class="fixed inset-0"></div>
+                @foreach (var activity in Model.Activities)
+                {
+                    <form method="post" asp-action="Update" asp-controller="Activity" class="activity-container" data-ref="@activity.Id">
+                        <button type="button" class="close-select inset-0 absolute" data-ref="@activity.Id"></button>
+                        <input value="@activity.Id" name="ActivityId" type="hidden">
+                        <input value="@Model.Id" name="JobId" type="hidden">
+                        <input value="@Model.Board.Id" name="BoardId" type="hidden">
+                        <input class="activity-type-value" value="@activity.ActivityType" data-ref="@activity.Id" name="ActivityType" type="hidden">
+                        <input class="activity-checkbox-hidden" value="@activity.Completed.ToString()" data-ref="@activity.Id" name="Completed" type="hidden">
+
+                        <section class="flex flex-col">
+                            <div class="flex flex-col gap-y-2 mr-4">
+                                <label for="Title" class="text-sm font-medium w-max">Title</label>
+                                <input value="@activity.Title" class="max-w-[14rem] border-1 border-gray-300 px-4 h-8 z-10" name="Title" type="text">
+                            </div>
+                            <div class="flex flex-col gap-y-2">
+                                <label for="ActivityType" class="text-sm font-medium ml-auto">Activity Type</label>
+                                <div class="relative w-full">
+                                    <button 
+                                        type="button" 
+                                        class="activity-select">
+                                        @activity.ActivityName
+                                    </button>
+                                    <ul class="activity-option-list">
+@*                                        @foreach (var option in Model.ActivityTypes)
+                                        {
+                                            <li 
+                                                class="activity-option custom-shadow flex flex-row gap-4 p-2 px-4 items-center"
+                                                data-name="@option.Text" 
+                                                data-colour="@option.Colour" 
+                                                data-ref="@activity.Id" 
+                                                value="@option.Value">
+                                                @option.Text                                                   
+                                            </li>
+                                        }*@
+                                    </ul>
+                                </div>
+                            </div>
+                        </section>
+                        <div class="flex flex-col gap-y-2">
+                            <label for="Note" class="text-sm font-medium w-max">Note</label>
+                            <textarea class="border-1 border-gray-300 px-4 min-h-[4rem] py-2 z-10" name="Note">@activity.Note</textarea>
+                        </div>
+                        <div class="flex flex-col gap-y-2">
+                            <label for="StartDate" class="text-sm font-medium w-max">Start Date</label>
+                            <input class="border-1 border-gray-300 px-4 h-8 z-10" value="@activity.StartDate" name="StartDate" type="datetime-local">
+                        </div>
+                        <div class="flex flex-col gap-y-2">
+                            <label for="EndDate" class="text-sm font-medium w-max">End Date</label>
+                            <input class="border-1 border-gray-300 px-4 h-8 z-10" value="@activity.EndDate" name="EndDate" type="datetime-local">
+                        </div>
+                        <div class="flex flex-col gap-y-2 items-end">
+                            <label for="Completed" class="text-sm font-medium w-max">Completed</label>
+                            <input class="activity-checkbox z-10" data-ref="@activity.Id" type="checkbox" @handleCheck(activity.Completed) for="Completed">
+                        </div>
+                        <button class="btn-primary w-full py-2 mt-4 z-10" type="submit">Update</button>
+                    </form>
+                }
+            </div>
+        </section>
+        <section id="Contacts" class="tabcontent">
+            <div class="w-full flex flex-row gap-x-4 p-4 pb-0">
+                <button
+                    hx-post="/Contact/CreatePartial"
+                    hx-vals='{"BoardId": "@Model.Board.Id", "JobId": "@Model.Id", "ActivityTypesOption": "5"}'
+                    hx-swap="innerHTML"
+                    hx-target="#create-activity-parent"
+                    onclick='showElement("create-contact-parent")' 
+                    class="btn-primary py-2 px-8 w-max ml-auto !rounded-full">Add Contact
+                </button>
+            </div>
+            <div class="w-full flex flex-col items-center justify-center gap-4 p-4">
+                @if (Model.Contacts.Count == 0)
+                {
+                    <p class="text-lg w-max">No contacts found...</p>
+                }
+                @foreach (var contact in Model.Contacts)
+                {
+                    <div class="bg-gray-50 border-1 border-gray-900 w-full relative cursor-pointer">
+                        <p>@contact.Id</p>
+                    </div>
+                }
+            </div>
+        </section>
+    </div>
+    <div id="create-activity-parent" class="z-10 absolute inset-0 bg-gray-50/90 hidden flex justify-center"></div>
+    <div id="delete-activity-parent" class="z-10 absolute inset-0 bg-gray-50/90 hidden flex justify-center"></div>
+    <div id="update-activity-parent" class="z-10 absolute inset-0 bg-gray-50/90 hidden flex justify-center"></div>
+    <div id="view-activity-parent" class="z-10 absolute inset-0 bg-gray-50/90 hidden flex justify-center"></div>
+    <div id="create-contact-parent" class="z-10 absolute inset-0 bg-gray-50/90 hidden flex justify-center"></div>
+</section>
+
+@section scripts {
+<script type="text/javascript">
+    window.onload = setCurrentTab();
+
+    // Url will end in either: /Job-Info /Activities /Notes or /Contacts
+    function setCurrentTab() {
+        var currentUrl = window.location.href;
+        var currentTab = currentUrl.split('/').slice(-1);
+
+        // Unhide the tab.
+        document.getElementById(currentTab[0]).classList.add("active");
+        // Highlight the tab.
+        document.getElementById(currentTab[0] + "-Link").classList.add("active");
+    }
+
+
+    var activitySelects = document.querySelectorAll(".activity-select");
+
+    activitySelects.forEach(item => {
+        item.addEventListener('click', event => {
+            var optionList = Array.from(
+                event.currentTarget.parentElement.children
+            );
+
+            if (optionList[1].classList.contains("active")) {
+                optionList[1].classList.remove("active");
+            }
+            else {
+                optionList[1].classList.add("active");
+            }
+        })
+    })
+
+    var activityOptions = document.querySelectorAll(".activity-option");
+    activityOptions.forEach(item => {
+        item.addEventListener('click', event => {
+            var optionParent = Array.from(
+                event.currentTarget.parentElement.parentElement.children
+            );
+            var optionRef = item.dataset.ref;
+
+            optionParent[0].textContent = item.dataset.name;
+                
+            var activityType = document.querySelector('.activity-type-value, [data-ref="{optionRef}"]');
+
+            activityType.value = item.value;
+        })
+    })
+
+    var activityContainers = document.querySelectorAll(".activity-container");
+    activityContainers.forEach(item => {
+        item.addEventListener('click', event => {
+            activityContainers.forEach((el) => el.classList.remove("active"));
+            if (event.currentTarget.classList.contains("active"))
+            {
+                event.currentTarget.classList.remove("active");
+            }
+            else
+            {
+                event.currentTarget.classList.add("active");
+            }
+        })
+    })
+
+
+
+    var activityCheckboxes = document.querySelectorAll(".activity-checkbox");
+    var hiddenActivityCheckboxes = document.querySelectorAll(".activity-checkbox-hidden");
+    activityCheckboxes.forEach(item => {
+        item.addEventListener('click', event => {
+            hiddenActivityCheckboxes.forEach(elem => {
+                if (elem.dataset.ref == item.dataset.ref)
+                {
+                    if (elem.value == "True")
+                    {
+                        elem.value = "False";
+                    }
+                    else
+                    {
+                        elem.value = "True";
+                    }
+                }
+            })
+        })
+    })
+
+     var activityOptionLists = document.querySelectorAll(".activity-option-list");
+
+    var closeActivity = document.getElementById("closeActivity");
+    closeActivity.addEventListener('click', event => {
+        activityContainers.forEach((el) => el.classList.remove("active"));
+        activityOptionLists.forEach((el) => el.classList.remove("active"));
+    })
+
+    var closeSelects = document.querySelectorAll(".close-select");
+    closeSelects.forEach(item => {
+        item.addEventListener('click', event => {
+            activityOptionLists.forEach((el) => el.classList.remove("active"));
+        })
+    })
+</script>
+}

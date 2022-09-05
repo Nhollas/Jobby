@@ -19,8 +19,7 @@ public class Activity : Entity
         DateTime endDate,
         string note,
         bool completed,
-        Board board,
-        Job job)
+        Board board)
         : base(id, createdDate, ownerId)
     {
         Title = title;
@@ -30,7 +29,6 @@ public class Activity : Entity
         Note = note;
         Completed = completed;
         Board = board;
-        Job = job;
     }
 
     public string Title { get; private set; }
@@ -43,10 +41,10 @@ public class Activity : Entity
 
 
     // Database Relationship Properties
-    public Board Board { get; set; }
-    public Job Job { get; set; }
-    public Guid BoardId { get; set; }
+    public virtual Board Board { get; set; }
+    public virtual Job Job { get; set; }
     public Guid? JobId { get; set; }
+    public Guid BoardId { get; set; }
 
     public static Activity Create(
         Guid id,
@@ -58,8 +56,7 @@ public class Activity : Entity
         DateTime endDate,
         string note,
         bool completed, 
-        Board board,
-        Job job = null)
+        Board board)
     {
         var activity = new Activity(
             id,
@@ -71,10 +68,35 @@ public class Activity : Entity
             endDate,
             note,
             completed,
-            board,
-            job);
+            board);
 
         return activity;
+    }
+
+    public void Update(
+        string title,
+        int activityType,
+        DateTime startDate,
+        DateTime endDate,
+        string note,
+        bool completed)
+    {
+        Title = title;
+        ActivityType = activityType;
+        StartDate = startDate;
+        EndDate = endDate;
+        Note = note;
+        Completed = completed;
+    }
+
+    public void SetJob(Job job)
+    {
+        Job = job;
+    }
+
+    public void ClearJob()
+    {
+        Job = null;
     }
 
     private readonly Dictionary<int, string> activityNamesDict = new()

@@ -7,7 +7,6 @@ public class Job : Entity
     private readonly List<Activity> _activities = new();
     private readonly List<Contact> _contacts = new();
     private readonly List<Note> _notes = new();
-    private readonly List<JobContact> _jobContacts = new();
 
     public Job()
     {
@@ -20,13 +19,15 @@ public class Job : Entity
         string ownerId,
         string company,
         string jobTitle,
-        JobList jobList)
+        JobList jobList,
+        Board board)
         : base(id, createdDate, ownerId)
 
     {
         Company = company;
         Title = jobTitle;
         JobList = jobList;
+        Board = board;
     }
 
     public string Company { get; private set; }
@@ -53,9 +54,12 @@ public class Job : Entity
 
 
     // Database Relationship Properties
-    public ICollection<JobContact> JobContacts => _jobContacts;
-    public virtual JobList JobList { get; set; }
+    public List<JobContact> JobContacts { get; set; }
+    public JobList JobList { get; set; }
     public Guid JobListId { get; set; }
+
+    public Board Board { get; private set; }
+    public Guid BoardId { get; private set; }
 
     public static Job Create(
         Guid id,
@@ -63,7 +67,8 @@ public class Job : Entity
         string ownerId,
         string company,
         string jobTitle,
-        JobList jobList)
+        JobList jobList,
+        Board board)
     {
         var job = new Job(
             id,
@@ -71,9 +76,15 @@ public class Job : Entity
             ownerId,
             company,
             jobTitle,
-            jobList);
+            jobList,
+            board);
 
         return job;
+    }
+
+    public void RemoveActivity(Activity activity)
+    {
+        _activities.Remove(activity);
     }
 
     public void AddActivity(Activity activity)

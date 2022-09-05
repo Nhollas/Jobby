@@ -12,10 +12,14 @@ public class ActivityConfiguration : IEntityTypeConfiguration<Activity>
 
         builder.HasOne(x => x.Board)
             .WithMany(x => x.Activities)
-            .HasForeignKey(x => x.BoardId);
+            .HasForeignKey(x => x.BoardId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasOne(x => x.Job)
             .WithMany(x => x.Activities)
-            .HasForeignKey(x => x.JobId);
+            .HasForeignKey(x => x.JobId)
+            .IsRequired(false)
+            .OnDelete(DeleteBehavior.NoAction);
+
     }
 }

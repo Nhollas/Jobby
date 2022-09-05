@@ -14,11 +14,11 @@ public class JobContactConfiguration : IEntityTypeConfiguration<JobContact>
             .HasOne(bc => bc.Job)
             .WithMany(b => b.JobContacts)
             .HasForeignKey(bc => bc.JobId)
-            .OnDelete(DeleteBehavior.NoAction);
+            .OnDelete(DeleteBehavior.Cascade);
         builder
             .HasOne(bc => bc.Contact)
             .WithMany(c => c.JobContacts)
             .HasForeignKey(bc => bc.ContactId)
-            .OnDelete(DeleteBehavior.NoAction);
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

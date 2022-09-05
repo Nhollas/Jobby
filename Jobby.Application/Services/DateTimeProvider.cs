@@ -1,4 +1,4 @@
-﻿using Jobby.Application.Interfaces;
+﻿using Jobby.Application.Interfaces.Services;
 
 namespace Jobby.Application.Services;
 

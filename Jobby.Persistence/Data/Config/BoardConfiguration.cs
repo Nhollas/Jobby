@@ -14,14 +14,19 @@ public class BoardConfiguration : IEntityTypeConfiguration<Board>
             .HasForeignKey(x => x.BoardId)
             .OnDelete(DeleteBehavior.Cascade);
 
+        builder.HasMany(x => x.Jobs)
+            .WithOne(x => x.Board)
+            .HasForeignKey(x => x.BoardId)
+            .OnDelete(DeleteBehavior.NoAction);
+
         builder.HasMany(x => x.Contacts)
             .WithOne(x => x.Board)
             .HasForeignKey(x => x.BoardId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.NoAction);
 
         builder.HasMany(x => x.Activities)
             .WithOne(x => x.Board)
             .HasForeignKey(x => x.BoardId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.NoAction);
     }
 }

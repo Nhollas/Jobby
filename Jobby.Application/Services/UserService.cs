@@ -1,4 +1,4 @@
-﻿using Jobby.Application.Interfaces;
+﻿using Jobby.Application.Interfaces.Services;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 

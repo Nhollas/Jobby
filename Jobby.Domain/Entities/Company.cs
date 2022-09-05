@@ -3,10 +3,21 @@ public class Company
 {
     public Company(
         Guid id,
-        string name)
+        string name,
+        Contact contact)
     {
         Id = id;
         Name = name;
+        Contact = contact;
+        ContactId = contact.Id;
+    }
+
+    public Company(
+        Guid id,
+        string name)
+    {
+        Id = id;
+        Name = name; 
     }
 
     public Guid Id { get; set; }

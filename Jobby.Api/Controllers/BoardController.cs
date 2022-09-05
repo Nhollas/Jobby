@@ -1,8 +1,9 @@
 ﻿using Jobby.Application.Contracts.Activity;
 using Jobby.Application.Contracts.Board;
 using Jobby.Application.Contracts.Contact;
+using Jobby.Application.Contracts.Job;
 using Jobby.Application.Dtos;
-using Jobby.Application.Features.ActivityFeatures.Queries.GetList;
+using Jobby.Application.Features.ActivityFeatures.Queries.ListBoardActivities;
 using Jobby.Application.Features.BoardFeatures.Commands.Create;
 using Jobby.Application.Features.BoardFeatures.Commands.Delete;
 using Jobby.Application.Features.BoardFeatures.Commands.Update;
@@ -73,7 +74,7 @@ public class BoardController : ApiController
         return Ok(dtos);
     }
 
-    [ProducesResponseType(typeof(JobDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(GetJobResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesDefaultResponseType]
@@ -84,7 +85,7 @@ public class BoardController : ApiController
         return Ok(await Sender.Send(jobQuery));
     }
 
-    [ProducesResponseType(typeof(ContactDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(GetContactResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesDefaultResponseType]

@@ -1,5 +1,6 @@
-﻿using Jobby.Client.Interfaces;
-using Jobby.Client.ViewModels.BoardViewModels;
+﻿using Jobby.Client.Contracts.Board;
+using Jobby.Client.Interfaces;
+using Jobby.Client.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,22 +12,28 @@ public class BoardController : Controller
 {
     private readonly IBoardFeaturesService _boardService;
     private readonly IJobFeaturesService _jobService;
+    private readonly IActivityFeaturesService _activityService;
+    private readonly IContactFeaturesService _contactService;
 
     public BoardController(
         IBoardFeaturesService boardService,
-        IJobFeaturesService jobService)
+        IJobFeaturesService jobService,
+        IActivityFeaturesService activityService,
+        IContactFeaturesService contactService)
     {
         _boardService = boardService;
         _jobService = jobService;
+        _activityService = activityService;
+        _contactService = contactService;
     }
 
     [HttpGet]
     [Route("~/Dashboard")]
-    public async Task<ActionResult<DashboardViewModel>> Index()
+    public async Task<ActionResult<DashboardVM>> Dashboard()
     {
         var boardList = await _boardService.ListBoards();
 
-        DashboardViewModel model = new()
+        DashboardVM model = new()
         {
             Boards = boardList,
             BoardToCreate = new()
@@ -36,15 +43,15 @@ public class BoardController : Controller
     }
 
     [HttpGet("{boardId:guid}/Board")]
-    public async Task<ActionResult<BoardDetailViewModel>> ViewBoard(Guid boardId)
+    public async Task<ActionResult<ViewBoardVM>> ViewBoard(Guid boardId)
     {
-        BoardDetailViewModel model = await _boardService.GetBoardById(boardId);
+        ViewBoardVM model = await _boardService.GetBoardById(boardId);
 
         return View(model);
     }
 
     [HttpPost("Update")]
-    public async Task<ActionResult> UpdateBoard(UpdateBoardViewModel viewModel)
+    public async Task<ActionResult> UpdateBoard(UpdateBoardRequest viewModel)
     {
         await _boardService.UpdateBoard(viewModel.BoardId, viewModel.Name);
 
@@ -56,13 +63,13 @@ public class BoardController : Controller
     }
 
     [HttpPost("UpdatePartial")]
-    public PartialViewResult UpdateBoardPartial(UpdateBoardViewModel model)
+    public PartialViewResult UpdateBoardPartial(UpdateBoardRequest model)
     {
         return PartialView("_UpdateBoardPartial", model);
     }
 
     [HttpPost("Create")]
-    public async Task<ActionResult> CreateBoard(CreateBoardViewModel viewModel)
+    public async Task<ActionResult> CreateBoard(CreateBoardRequest viewModel)
     {
         var result = await _boardService.CreateBoard(viewModel.Name);
 
@@ -70,7 +77,7 @@ public class BoardController : Controller
     }
 
     [HttpPost("Delete")]
-    public async Task<ActionResult> DeleteBoard(DeleteBoardViewModel viewModel)
+    public async Task<ActionResult> DeleteBoard(DeleteBoardRequest viewModel)
     {
         await _boardService.DeleteBoard(viewModel.BoardId);
 
@@ -82,9 +89,14 @@ public class BoardController : Controller
     }
 
     [HttpPost("DeletePartial")]
-    public PartialViewResult DeleteBoardPartial(DeleteBoardViewModel model)
+    public PartialViewResult DeleteBoardPartial(DeleteBoardRequest model)
     {
         return PartialView("_DeleteBoardPartial", model);
+    }
+
+    [HttpGet("{boardId:guid}/Contact/{contactId:guid}")]
+    public async Task<ActionResult> ViewContact(Guid boardId, Guid contactId)
+    {
     }
 
     [HttpGet("{boardId:guid}/Job/{jobId:guid}/Notes", Order = 4)]
@@ -95,8 +107,19 @@ public class BoardController : Controller
     {
         var model = await _jobService.GetJobById(boardId, jobId);
 
-        model.OnGet();
-
         return View("~/Views/Job/ViewJob.cshtml", model);
+    }
+
+    [HttpGet("{boardId:guid}/Activity-List")]
+    public async Task<ActionResult> BoardActivites(Guid boardId)
+    {
+        var model = await _activityService.ListActivities(boardId);
+
+        return View(model);
+    }
+
+    [HttpGet("{boardId:guid}/Contact-List")]
+    public async Task<ActionResult> BoardContacts(Guid boardId)
+    {
     }
 }
