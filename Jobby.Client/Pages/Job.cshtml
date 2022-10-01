@@ -1,0 +1,350 @@
+﻿@page "/Board/{BoardId:guid}/Job/{JobId:guid}/{tab}"
+@model JobModel
+@{
+    ViewData["Title"] = $"{Model.Job.Title} at {Model.Job.Company}";
+    Layout = "_Layout";
+
+    string setCheckbox(bool value)
+    {
+        return value ? "Checked" : "";
+    }
+}
+
+<section class="flex flex-col gap-y-6 w-full max-w-3xl justify-center relative p-5">
+    <a asp-page="/Board" asp-route-id="@Model.Job.Board.Id" class="btn-secondary py-2 px-8 w-max text-center z-10">Back To Board</a>
+    <div class="flex flex-row">
+        <div class="flex flex-col gap-y-2">
+            <p class="px-5 py-0.5 bg-main-blue text-sm font-medium rounded-lg text-white w-max">Job</p>
+            <h1 class="text-xl font-medium">@Model.Job.Title</h1>
+            <h2>@Model.Job.Company</h2>
+        </div>
+    </div>
+    <section class="flex flex-row z-10 items-end -mb-6 border-b-1 border-gray-300 gap-x-2">
+        <h2 class="hidden">Tabs</h2>
+        <button id="Job-Info-Link" onclick="openTab(event, 'Job-Info')" class="tablink">Info</button>
+        <button id="Activities-Link" onclick="openTab(event, 'Activities')" class="tablink">
+            Activities
+            @if (Model.Job.Activities.Count > 0)
+            {
+                <span class="border-1 border-gray-300 w-4 h-4 rounded-full flex justify-center items-center absolute top-1 right-2 text-xs">@Model.Job.Activities.Count</span>
+            }
+        </button>
+        <button id="Notes-Link" onclick="openTab(event, 'Notes')" class="tablink">
+            Notes
+            @if (Model.Job.Notes.Count > 0)
+            {
+                <span class="border-1 border-gray-300 w-4 h-4 rounded-full flex justify-center items-center absolute top-1 right-2 text-xs">@Model.Job.Notes.Count</span>
+            }
+        </button>
+        <button id="Contacts-Link" onclick="openTab(event, 'Contacts')" class="tablink">
+            Contacts
+            @if (Model.Job.Contacts.Count > 0)
+            {
+                <span class="border-1 border-gray-300 w-4 h-4 rounded-full flex justify-center items-center absolute top-1 right-2 text-xs">@Model.Job.Contacts.Count</span>
+            }
+        </button>
+    </section>
+    <section id="Job-Info" class="tabcontent flex justify-center p-5 flex-col gap-y-8 border-x-1 border-gray-300 border-b-1">
+        <div class="activityFormToggle fixed inset-0"></div>
+        <div class="flex flex-col gap-y-5">
+            <div class="flex flex-col gap-y-2">
+                <p class="text-sm font-medium">Application</p>  
+                @if (Model.Job.AppliedActivity is null)
+                {
+                    <button 
+                        hx-post="@Url.Page("Job", "ShowCreateActivity", values: new { ActivityTypeChoice = 1 })"
+                        hx-swap="innerHTML"
+                        hx-target="#create-activity-parent"
+                        onclick='showElement("create-activity-parent")'
+                        class="flex flex-row justify-start border-1 text-sm border-gray-300 rounded-lg px-5 py-1 bg-white z-10">
+                        <div class="flex flex-row w-full gap-x-4">
+                            <i class="bi bi-plus-square"></i>
+                            <p class="text-sm">Log Application</p>
+                        </div>
+                    </button>
+                }
+                else
+                {
+                    <form asp-page-handler="UpdateActivity" method="post" class="activityForm z-10 border-1 border-gray-300 px-4 h-full max-h-10 overflow-hidden w-full max-w-xxs cursor-pointer">
+                        <input type="hidden" value="@Model.Job.AppliedActivity.Id" name="ActivityId">
+                        <input type="hidden" value="@Model.Job.AppliedActivity.ActivityType" name="ActivityType">
+                        <div class="flex flex-row gap-x-2 h-10 items-center">
+                            <input type="checkbox" @setCheckbox(Model.Job.AppliedActivity.Completed) value="true" name="Completed">
+                            <input class="border-0 w-full cursor-pointer" type="text" value="@Model.Job.AppliedActivity.Title" name="Title">
+                        </div>
+                        <textarea class="border-0 pl-0 min-h-[10rem] w-full" name="Note" value="@Model.Job.AppliedActivity.Note" placeholder="Note"></textarea>
+                        <button class="btn-primary rounded-sm px-5 py-0.5 mb-3">Save</button>
+                    </form>
+                }
+            </div>
+            <div class="flex flex-col gap-y-2">
+                <p class="text-sm font-medium">Interviews</p>
+                @if (Model.Job.InterviewActivities.Count == 0)
+                {
+                    <button 
+                        hx-post="@Url.Page("Job", "ShowCreateActivity", values: new { ActivityTypeChoice = 2 })"
+                        hx-swap="innerHTML"
+                        hx-target="#create-activity-parent"
+                        onclick='showElement("create-activity-parent")'
+                        class="flex flex-row justify-start border-1 text-sm border-gray-300 rounded-lg px-5 py-1 bg-white z-10">
+                        <div class="flex flex-row w-full gap-x-4">
+                            <i class="bi bi-plus-square"></i>
+                            <p class="text-sm">Log Interview</p>
+                        </div>
+                    </button>
+                }
+                else
+                {
+                    <div class="max-w-xxs w-full z-10">
+                        <div class="expandActivityList h-[8.5rem] grid gap-y-2 overflow-hidden w-full transition-all">
+                            @foreach(var activity in Model.Job.InterviewActivities)
+                            {
+                                <form asp-page-handler="UpdateActivity" method="post" class="activityForm border-1 border-gray-300 px-4 max-h-10 min-h-[2.5rem] overflow-hidden w-full max-w-xxs cursor-pointer">
+                                    <input type="hidden" value="@activity.Id" name="ActivityId">
+                                    <input type="hidden" value="@activity.ActivityType" name="ActivityType">
+                                    <div class="flex flex-row gap-x-2 h-10 items-center">
+                                        <input type="checkbox" @setCheckbox(@activity.Completed) value="true" name="Completed">
+                                        <input class="border-0 w-full cursor-pointer" type="text" value="@activity.Title" name="Title">
+                                    </div>
+                                    <textarea class="border-0 pl-0 min-h-[10rem] w-full" name="Note" value="@activity.Note" placeholder="Note"></textarea>
+                                    <button class="btn-primary rounded-sm px-5 py-0.5 mb-3">Save</button>
+                                </form>
+                            }
+                        </div>
+                        @if (Model.Job.InterviewActivities.Count > 3)
+                        {
+                            <button class="expandActivityListBtn btn-primary w-full px-5 py-0.5 !text-sm cursor-pointer">View More</button>
+                        }
+                    </div>
+                    <button hx-post="@Url.Page("Job", "ShowCreateActivity", values: new { ActivityTypeChoice = 2 })"
+                        hx-swap="innerHTML"
+                        hx-target="#create-activity-parent"
+                        onclick='showElement("create-activity-parent")'
+                        class="flex flex-row justify-start border-1 text-sm border-gray-300 rounded-lg px-5 py-1 bg-white z-10">
+                        <div class="flex flex-row w-full gap-x-4">
+                            <i class="bi bi-plus-square"></i>
+                            <p class="text-sm">Log Interview</p>
+                        </div>
+                    </button>
+                }
+            </div>
+            <div class="flex flex-col gap-y-2">
+                <p class="text-sm font-medium">Offers</p>
+                @if (Model.Job.OfferActivities.Count == 0)
+                {
+                    <button 
+                        hx-post="@Url.Page("Job", "ShowCreateActivity", values: new { ActivityTypeChoice = 3 })"
+                        hx-swap="innerHTML"
+                        hx-target="#create-activity-parent"
+                        onclick='showElement("create-activity-parent")'
+                        class="flex flex-row justify-start border-1 text-sm border-gray-300 rounded-lg px-5 py-1 bg-white z-10">
+                        <div class="flex flex-row w-full gap-x-4">
+                            <i class="bi bi-plus-square"></i>
+                            <p class="text-sm">Log Offer</p>
+                        </div>
+                    </button>
+                }
+                else
+                {
+                    foreach(var activity in Model.Job.OfferActivities)
+                    {
+                        <form asp-page-handler="UpdateActivity" method="post" class="activityForm z-10 border-1 border-gray-300 px-4 h-full max-h-10 overflow-hidden w-full max-w-xxs cursor-pointer">
+                            <input type="hidden" value="@activity.Id" name="ActivityId">
+                            <input type="hidden" value="@activity.ActivityType" name="ActivityType">
+                            <div class="flex flex-row gap-x-2 h-10 items-center">
+                                <input type="checkbox" @setCheckbox(@activity.Completed) value="true" name="Completed">
+                                <input class="border-0 w-full cursor-pointer" type="text" value="@activity.Title" name="Title">
+                            </div>
+                            <textarea class="border-0 pl-0 min-h-[10rem] w-full" name="Note" value="@activity.Note" placeholder="Note"></textarea>
+                            <button class="btn-primary rounded-sm px-5 py-0.5 mb-3">Save</button>
+                        </form>
+                    }
+
+                    <button 
+                        hx-post="@Url.Page("Job", "ShowCreateActivity", values: new { ActivityTypeChoice = 3 })"
+                        hx-swap="innerHTML"
+                        hx-target="#create-activity-parent"
+                        onclick='showElement("create-activity-parent")'
+                        class="flex flex-row justify-start border-1 text-sm border-gray-300 rounded-lg px-5 py-1 bg-white z-10">
+                        <div class="flex flex-row w-full gap-x-4">
+                            <i class="bi bi-plus-square"></i>
+                            <p class="text-sm">Log Offer</p>
+                        </div>
+                    </button>
+                }
+            </div>
+            <div class="flex flex-col gap-y-2">
+                <p class="text-sm font-medium">Offer Acceptance</p>
+                @if (Model.Job.AcceptedOfferActivity is null)
+                {
+                    <button hx-post="@Url.Page("Job", "ShowCreateActivity", values: new { ActivityTypeChoice = 4 })"
+                        hx-swap="innerHTML"
+                        hx-target="#create-activity-parent"
+                        onclick='showElement("create-activity-parent")'
+                        class="flex flex-row justify-start border-1 text-sm border-gray-300 rounded-lg px-5 py-1 bg-white z-10">
+                        <div class="flex flex-row w-full gap-x-4">
+                            <i class="bi bi-plus-square"></i>
+                            <p class="text-sm">Log Offer</p>
+                        </div>
+                    </button>
+                }
+                else
+                {
+                    <form asp-page-handler="UpdateActivity" method="post" class="activityForm z-10 border-1 border-gray-300 px-4 h-full max-h-10 overflow-hidden w-full max-w-xxs cursor-pointer">
+                        <input type="hidden" value="@Model.Job.AcceptedOfferActivity.Id" name="ActivityId">
+                        <input type="hidden" value="@Model.Job.AcceptedOfferActivity.ActivityType" name="ActivityType">
+                        <div class="flex flex-row gap-x-2 h-10 items-center">
+                            <input type="checkbox" @setCheckbox(Model.Job.AcceptedOfferActivity.Completed) value="true" name="Completed">
+                            <input class="border-0 w-full cursor-pointer" type="text" value="@Model.Job.AcceptedOfferActivity.Title" name="Title">
+                        </div>
+                        <textarea class="border-0 pl-0 min-h-[10rem] w-full" name="Note" value="@Model.Job.AcceptedOfferActivity.Note" placeholder="Note"></textarea>
+                        <button class="btn-primary rounded-sm px-5 py-0.5 mb-3">Save</button>
+                    </form>
+                }
+            </div>
+        </div>
+        <form class="grid grid-cols-1 gap-4 gap-y-6 w-full">
+            <h2 class="text-xl font-bold font-raleway uppercase">Job Info</h2>
+            <p class="input-container max-w-[16rem]">
+                <label asp-for="Job.Deadline"></label>
+                <input asp-for="Job.Deadline">
+            </p>
+            <div class="flex flex-row gap-x-3">
+                <p class="input-container">
+                    <label asp-for="Job.Company"></label>
+                    <input asp-for="Job.Company">
+                </p>
+                <p class="input-container">
+                    <label asp-for="Job.Title"></label>
+                    <input asp-for="Job.Title">
+                </p>
+            </div>
+            <div class="flex flex-row gap-x-3">
+                <p class="input-container w-full">
+                    <label asp-for="Job.PostUrl"></label>
+                    <input asp-for="Job.PostUrl">
+                </p>
+                <p class="input-container w-48">
+                    <label asp-for="Job.Salary"></label>
+                    <input asp-for="Job.Salary">
+                </p>
+            </div>
+            <div class="flex flex-row gap-x-3">
+                <p class="input-container w-full">
+                    <label asp-for="Job.Location"></label>
+                    <input asp-for="Job.Location">
+                </p>
+                <p class="input-container w-48">
+                    <label asp-for="Job.Colour"></label>
+                    <input asp-for="Job.Colour">
+                </p>
+            </div>
+            <p class="input-container">
+                <label asp-for="Job.Description"></label>
+                <textarea asp-for="Job.Description" class="min-h-[6rem] py-3"></textarea>
+            </p>
+        </form>
+        <button class="btn-primary py-2 max-w-sm">Update</button>
+    </section>
+    <section id="Activities" class="tabcontent">
+        <div id="closeActivity" class="fixed inset-0"></div>
+        <div class="w-full flex flex-col items-center justify-center gap-y-12 my-8">
+            <button 
+                hx-post="@Url.Page("Job", "ShowCreateActivity", values: new { ActivityTypeChoice = 5 })"
+                hx-swap="innerHTML"
+                hx-target="#create-activity-parent"
+                onclick='showElement("create-activity-parent")'
+                class="btn-primary py-2 px-8 w-max ml-auto !rounded-full z-10">
+                Add Activity
+            </button>
+            @if (Model.Job.Activities.Count == 0)
+            {
+                <p class="text-lg w-max">No activities found...</p>
+            }
+        </div>
+    </section>
+    <section id="Notes" class="tabcontent">
+        <div class="w-full flex flex-col items-center justify-center gap-y-12 my-8">
+            <button hx-post="/Activity/CreatePartial"
+                    hx-vals='{"BoardId": "@Model.Job.Board.Id", "JobId": "@Model.Job.Id", "ActivityTypesOption": "5"}'
+                    hx-swap="innerHTML"
+                    hx-target="#create-activity-parent"
+                    onclick='showElement("create-activity-parent")'
+                    class="btn-primary py-2 px-8 w-max ml-auto !rounded-full z-10">
+                Add Note
+            </button>
+        </div>
+    </section>
+    <section id="Contacts" class="tabcontent">
+        <div class="w-full flex flex-col items-center justify-center gap-y-12 my-8">
+            <button hx-post="/Activity/CreatePartial"
+                    hx-vals='{"BoardId": "@Model.Job.Board.Id", "JobId": "@Model.Job.Id", "ActivityTypesOption": "5"}'
+                    hx-swap="innerHTML"
+                    hx-target="#create-activity-parent"
+                    onclick='showElement("create-activity-parent")'
+                    class="btn-primary py-2 px-8 w-max ml-auto !rounded-full z-10">
+                Add Contact
+            </button>
+        </div>
+    </section>
+    <div id="create-activity-parent" class="z-10 absolute inset-0 bg-gray-50/90 hidden flex justify-center"></div>
+    <div id="delete-activity-parent" class="z-10 absolute inset-0 bg-gray-50/90 hidden flex justify-center"></div>
+    <div id="update-activity-parent" class="z-10 absolute inset-0 bg-gray-50/90 hidden flex justify-center"></div>
+    <div id="view-activity-parent" class="z-10 absolute inset-0 bg-gray-50/90 hidden flex justify-center"></div>
+    <div id="create-contact-parent" class="z-10 absolute inset-0 bg-gray-50/90 hidden flex justify-center"></div>
+</section>
+
+@section scripts {
+<script type="text/javascript">
+    window.onload = setCurrentTab();
+
+    // Url will end in either: /Job-Info /Activities /Notes or /Contacts
+    function setCurrentTab() {
+        var currentUrl = window.location.href;
+        var currentTab = currentUrl.split('/').slice(-1);
+
+        // Unhide the tab.
+        document.getElementById(currentTab[0]).classList.add("active");
+        // Highlight the tab.
+        document.getElementById(currentTab[0] + "-Link").classList.add("active");
+    }
+
+    var activityForms = document.querySelectorAll(".activityForm");
+    var activityFormToggle = document.querySelector(".activityFormToggle");
+
+    activityFormToggle.addEventListener('click', () => {
+        activityForms.forEach((el) => el.classList.remove("active"))
+    })
+
+    activityForms.forEach(form => {
+        form.addEventListener('click', event => {
+            activityForms.forEach((el) => el.classList.remove("active"));
+            handleActivityFormClick(event);
+        })
+    });
+
+    function handleActivityFormClick(event)
+    {
+        var clickedElement = event.currentTarget;
+
+        if (clickedElement.classList.contains("active"))
+        {
+            return;
+        }
+
+        clickedElement.classList.add("active");
+    }
+
+    var expandActivitiesBtns = document.querySelectorAll(".expandActivityListBtn");
+    expandActivitiesBtns.forEach(btn => {
+        btn.addEventListener('click', event => {
+            var clickedElement = event.currentTarget;
+
+            clickedElement.innerHTML = "Close";
+
+            clickedElement.previousElementSibling.classList.add("active");
+        })
+    })
+
+</script>
+}

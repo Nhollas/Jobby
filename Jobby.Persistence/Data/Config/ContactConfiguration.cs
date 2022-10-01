@@ -34,12 +34,12 @@ public class ContactConfiguration : IEntityTypeConfiguration<Contact>
                     .HasOne(pt => pt.Job)
                     .WithMany(t => t.JobContacts)
                     .HasForeignKey(pt => pt.JobId)
-                    .OnDelete(DeleteBehavior.Cascade),
+                    .OnDelete(DeleteBehavior.NoAction),
                 j => j
                     .HasOne(pt => pt.Contact)
                     .WithMany(p => p.JobContacts)
                     .HasForeignKey(pt => pt.ContactId)
-                    .OnDelete(DeleteBehavior.NoAction),
+                    .OnDelete(DeleteBehavior.Cascade),
                 j =>
                 {
                     j.HasKey(t => new { t.JobId, t.ContactId });

@@ -4,9 +4,10 @@ using Microsoft.Net.Http.Headers;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllersWithViews();
-
 builder.Services.AddClientServices();
+
+builder.Services.AddRazorPages()
+    .AddRazorRuntimeCompilation();
 
 builder.Services.AddHttpClient<IClient, Client>(client =>
 {
@@ -15,14 +16,12 @@ builder.Services.AddHttpClient<IClient, Client>(client =>
 }).AddHttpMessageHandler<BearerTokenHandler>();
 
 builder.Services.AddAuthentication("Auth-Cookie")
-.AddCookie("Auth-Cookie", options =>
-{
-    options.Cookie.Name = "Auth-Cookie";
-    options.LoginPath = "/Auth/Login";
-    options.ExpireTimeSpan = TimeSpan.FromHours(2);
-});
-
-builder.Services.AddMvc();
+    .AddCookie("Auth-Cookie", options =>
+    {
+        options.Cookie.Name = "Auth-Cookie";
+        options.LoginPath = "/Login";
+        options.ExpireTimeSpan = TimeSpan.FromDays(1);
+    });
 
 var app = builder.Build();
 
@@ -39,12 +38,10 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.MapRazorPages();
+
 app.UseAuthentication();
 app.UseAuthorization();
-
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 
 app.Run();

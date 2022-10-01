@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
+using Jobby.Client.Contracts.Job;
 using Jobby.Client.Interfaces;
 using Jobby.Client.Services.Base;
 using Jobby.Client.ViewModels;
-using Jobby.Client.ViewModels.JobViewModels;
 
 namespace Jobby.Client.Services;
 
@@ -15,7 +15,7 @@ public class JobFeaturesService : BaseDataService, IJobFeaturesService
         _mapper = mapper;
     }
 
-    public async Task<ApiResponse<Guid>> CreateJob(CreateJobViewModel model)
+    public async Task<ApiResponse<Guid>> CreateJob(CreateJobRequest model)
     {
         try
         {
@@ -36,7 +36,7 @@ public class JobFeaturesService : BaseDataService, IJobFeaturesService
         await _client.DeleteJobAsync(id);
     }
 
-    public async Task UpdateJob(UpdateJobViewModel model)
+    public async Task UpdateJob(UpdateJobRequest model)
     {
         var command = _mapper.Map<UpdateJobCommand>(model);
 

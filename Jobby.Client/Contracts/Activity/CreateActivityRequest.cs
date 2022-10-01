@@ -4,6 +4,16 @@ namespace Jobby.Client.Contracts.Activity;
 
 public class CreateActivityRequest
 {
+    public CreateActivityRequest(int activityTypeChoice)
+    {
+        ActivityTypeChoice = activityTypeChoice;
+    }
+
+    public CreateActivityRequest()
+    {
+
+    }
+
     public Guid BoardId { get; set; }
     public Guid JobId { get; set; }
     public string Title { get; set; }
@@ -15,7 +25,7 @@ public class CreateActivityRequest
 
 
     // Additional View Model Properties.
-    public int ActivityTypesOption { get; set; }
+    public int ActivityTypeChoice { get; set; }
     public List<SelectListItem> ActivityTypes { get; set; }
 
     public void OnGet()
@@ -73,7 +83,7 @@ public class CreateActivityRequest
             },
         };
 
-        activityTypesDict.TryGetValue(ActivityTypesOption, out var categoryTypes);
+        activityTypesDict.TryGetValue(ActivityTypeChoice, out var categoryTypes);
 
         ActivityTypes = categoryTypes;
         ActivityType = int.Parse(ActivityTypes[0].Value);

@@ -6,8 +6,8 @@ public class Board : Entity
 {
     private readonly List<JobList> _jobLists = new();
     private readonly List<Activity> _activities = new();
-    private readonly List<Contact> _contacts = new();
     private readonly List<Job> _jobs = new();
+    private readonly List<Contact> _contacts = new();
 
     public Board()
     {
@@ -32,10 +32,9 @@ public class Board : Entity
 
     public IReadOnlyCollection<Activity> Activities => _activities;
 
-    public IReadOnlyCollection<Contact> Contacts => _contacts;
-
     public IReadOnlyCollection<Job> Jobs => _jobs;
 
+    public IReadOnlyCollection<Contact> Contacts => _contacts;
 
     public static Board Create(
         Guid id,
@@ -52,16 +51,6 @@ public class Board : Entity
             jobLists);
 
         return board;
-    }
-
-    public void AddActivity(Activity activity)
-    {
-        _activities.Add(activity);
-    }
-
-    public void AddContact(Contact contact)
-    {
-        _contacts.Add(contact);
     }
 
     public void SetBoardName(string name)

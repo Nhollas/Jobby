@@ -123,6 +123,6 @@ public class Activity : Entity
         {20, "Assignment"},
         {21, "Networking Event"},
         {22, "Application Withdrawn"},
-        {23, "Other"},
+        {23, "Other"}
     };
 }

@@ -18,4 +18,5 @@ public class JobContact
 
     public Guid ContactId { get; set; }
     public Contact Contact { get; set; }
+
 }

@@ -2,9 +2,24 @@
 @tailwind components;
 @tailwind utilities;
 
-* {
+*,
+*::before,
+*::after {
     font-family: Poppins;
 }
+
+header {
+    @apply w-full flex justify-center;
+}
+
+main {
+    @apply w-full flex justify-center min-h-[calc(100vh_-_9rem)];
+}
+
+nav {
+    @apply flex items-center h-12 w-full max-w-5xl border-gray-900 lg:border-x-1 border-b-1 px-8 z-10;
+}
+
 
 .btn-primary {
     @apply text-white font-raleway font-semibold text-base bg-main-blue hover:bg-gray-50 hover:text-black hover:border-main-blue border-1;
@@ -19,15 +34,11 @@
 }
 
 .tablink {
-    @apply font-semibold font-raleway px-4 h-10 custom-shadow relative w-full text-sm border-1 border-l-0 border-gray-300;
+    @apply font-semibold font-raleway custom-shadow relative px-6 text-sm border-1 border-b-0 border-gray-300 py-1;
 }
 
 .tablink.active {
-    @apply border-b-2 border-b-main-blue shadow-none border-r-1 md:text-base;
-}
-
-.tablink.active ~ .tablink {
-    @apply border-l-0;
+    @apply border-b-4 border-b-main-blue shadow-none border-x-1 py-3;
 }
 
 .tabcontent {
@@ -36,15 +47,6 @@
 
 .tabcontent.active {
     @apply flex;
-}
-
-.scrollbar::-webkit-scrollbar {
-    width: 10px;
-    height: 20px;
-  }
-
-.scrollbar::-webkit-scrollbar-thumb {
-    @apply bg-gray-800 rounded-full hover:bg-gray-600;
 }
 
 .select-item.active {
@@ -68,7 +70,7 @@
 }
 
 .activity-option-list {
-    @apply hidden border-1 border-gray-300 bg-white flex-col gap-y-2 max-h-[16rem] overflow-y-scroll absolute top-12 right-0 scrollbar z-20 w-max;
+    @apply hidden border-1 border-gray-300 bg-white flex-col gap-y-2 max-h-[16rem] overflow-y-scroll absolute top-12 right-0 z-20 w-max;
 }
 
 .activity-option-list.active {
@@ -80,12 +82,40 @@
 }
 
 input, textarea {
-    @apply text-sm border-1 border-gray-300 h-10 px-3 w-full;
+    @apply text-sm border-1 border-gray-300 px-3;
 }
 
 label {
     @apply text-sm font-medium;
 }
+
+input[type="checkbox"] {
+    @apply w-4 h-4 rounded-[4px] appearance-none m-0 p-0 text-blue-600 bg-white outline-[1.5px] border-0 outline-offset-2 outline outline-gray-600 cursor-pointer grid place-content-center;
+}
+
+input[type="checkbox"]::before {
+    @apply content-[""] w-4 h-4 rounded-[4px] bg-main-blue scale-0 transition-transform ease-in-out duration-200;
+
+    transform-origin: bottom left;
+    clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+}
+
+input[type="checkbox"]:checked::before {
+    @apply scale-100;
+}
+
+.activityForm.active {
+    height: 17.375rem;
+}
+
+.activityForm {
+    transition: height 0.15s ease-out;
+}
+
+.expandActivityList.active {
+    @apply h-full;
+}
+
 
 
 

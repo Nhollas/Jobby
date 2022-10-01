@@ -2,8 +2,33 @@
 module.exports = {
   content: [
     // Example content paths...
-    "./Views/*/*.cshtml",
-    "./Views/Shared/*.cshtml",
+    "./Pages/*/*.cshtml",
+    "./Pages/*.cshtml",
+  ],
+  safelist: [
+    'bg-red-400',
+    'bg-red-600',
+    'bg-orange-400',
+    'bg-orange-600',
+    'bg-amber-400',
+    'bg-amber-400',
+    'bg-lime-400',
+    'bg-lime-600',
+    'bg-emerald-400',
+    'bg-emerald-600',
+    'bg-teal-400',
+    'bg-teal-600',
+    'bg-blue-400',
+    'bg-blue-600',
+    'bg-violet-400',
+    'bg-violet-600',
+    'bg-purple-400',
+    'bg-purple-600',
+    'bg-fuchsia-400',
+    'bg-fuchsia-600',
+    'bg-pink-400',
+    'bg-pink-600',
+    'bg-rose-600'
   ],
   theme: {
     extend: {
@@ -17,11 +42,12 @@ module.exports = {
       },
       fontSize: {
         '0': '0',
+        'xxs': '0.6rem'
       },
       colors: {
         'main-blue': '#471cff',
-        'main-red': '#ff0000',
-        'main-orange': '#ffa410',
+        'main-red': '#ff1330',
+        'main-orange': '#FF7246',
       },
       fontFamily: {
         raleway: ["Raleway", "sans-serif"]
@@ -33,8 +59,9 @@ module.exports = {
         'FiveJobList': '1500px',    
       },
       maxWidth: {
-        '8xl': '100rem'
-      }
+        '8xl': '100rem',
+        'xxs': '15rem'
+      },
     },
   },
   plugins: [],

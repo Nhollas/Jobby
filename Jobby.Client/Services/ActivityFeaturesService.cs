@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using Jobby.Client.Contracts.Activity;
 using Jobby.Client.Interfaces;
+using Jobby.Client.Models;
 using Jobby.Client.Services.Base;
-using Jobby.Client.ViewModels;
 
 namespace Jobby.Client.Services;
 
@@ -41,11 +41,11 @@ public class ActivityFeaturesService : BaseDataService, IActivityFeaturesService
         await _client.LinkJobAsync(ActivityId, JobId);
     }
 
-    public async Task<List<ActivityListVM>> ListActivities(Guid boardId)
+    public async Task<List<ActivityList>> ListActivities(Guid boardId)
     {
         var activityCollection = await _client.ListActivitiesAsync(boardId);
 
-        return _mapper.Map<List<ActivityListVM>>(activityCollection);
+        return _mapper.Map<List<ActivityList>>(activityCollection);
     }
 
     public async Task UpdateActivity(UpdateActivityRequest model)

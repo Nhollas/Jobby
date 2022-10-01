@@ -1,0 +1,17 @@
+﻿@using Jobby.Client.Contracts.Board
+@model UpdateBoardRequest
+
+<div class="w-full max-w-md m-8 border-1 border-gray-900 h-max p-8 bg-gray-50">
+    <form asp-page-handler="update" class="flex flex-col gap-6" method="post">
+        <h1 class="text-2xl font-semibold text-ellipsis overflow-hidden ... whitespace-nowrap">Update Board - @Model.Name</h1>
+        <p class="flex flex-col gap-y-3">
+            <label asp-for="Name"></label>
+            <input asp-for="Name">
+        </p>
+        @Html.HiddenFor(model => model.BoardId)
+        <p class="flex flex-row gap-4 justify-center">
+            <button type="button" onclick='hideElement("update-board-parent")' class="btn-secondary py-2 px-4">Cancel</button>
+            <button type="submit" class="btn-primary w-full py-2">Update</button>
+        </p>
+    </form>
+</div>

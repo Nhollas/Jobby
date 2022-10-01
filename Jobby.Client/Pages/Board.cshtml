@@ -1,0 +1,68 @@
+﻿@page "/Board/{id:guid}/Board"
+@model BoardModel
+@{
+    ViewData["Title"] = Model.Name + " Board";
+    Layout = "_DashboardLayout";
+}
+
+<section class="p-8 flex flex-col gap-y-8 relative h-full">
+    <div class="flex flex-col gap-y-4">
+        <div class="flex flex-row">
+            <h1 class="text-xl xl:text-2xl font-semibold">@Model.Name</h1>
+            <button class="btn-secondary rounded-full px-10 py-2 w-max ml-auto h-10">Actions</button>
+        </div>
+        <div class="flex flex-row gap-x-4">
+            <a asp-page="/Activities" asp-route-boardId="@Model.Id"
+                class="flex flex-row gap-4 relative border-1 border-gray-900 px-8 py-1 text-base">
+                Activities
+                @if (Model.ActivitiesCount > 0)
+                {
+                    <div class="border-1 border-gray-300 w-5 h-5 rounded-full flex justify-center items-center absolute top-2/4 right-0 translate-y-[-50%] right-2">
+                        <p class="text-sm font-medium">@Model.ActivitiesCount</p>
+                    </div>
+                }
+            </a>
+            <a asp-page="/Contacts" asp-route-boardId="@Model.Id"
+                class="flex flex-row gap-4 relative border-1 border-gray-900 px-8 py-1 text-base">
+                Contacts
+                @if (Model.ContactsCount > 0)
+                {
+                    <div class="border-1 border-gray-300 w-5 h-5 rounded-full flex justify-center items-center absolute top-1 right-1">
+                        <p class="text-sm">@Model.ContactsCount</p>
+                    </div>
+                }
+            </a>
+        </div>
+    </div>
+    <div class="w-full gap-8 grid grid-cols-1 TwoJobList:grid-cols-2 ThreeJobList:grid-cols-3 FourJobList:grid-cols-4 FiveJobList:grid-cols-5">
+        @foreach (var jobList in Model.JobList)
+        {
+            <div class="bg-gray-50 border-1 border-gray-900 flex flex-col h-max w-full">
+                <div class="flex flex-col gap-y-2 p-4">
+                    <p class="text-base font-medium">@jobList.Name</p>
+                    <p>@jobList.Count Jobs</p>
+                    <button hx-post="@Url.Page("Board", "ShowCreateJobPartial", values: new { BoardId = Model.Id, BoardName = Model.Name, JobListId = jobList.Id, JobListName = jobList.Name })"
+                        hx-swap="innerHTML"
+                        hx-target="#create-job-parent"
+                        onclick='showElement("create-job-parent")'
+                        class="btn-primary py-2 px-8 w-max ml-auto !rounded-full">
+                        Add Job
+                    </button>
+                </div>
+                @foreach(var job in jobList.Jobs)
+                {
+                    <a asp-page="/Job" asp-route-boardId="@Model.Id" asp-route-jobId="@job.Id" asp-route-tab="Job-Info"
+                        class="bg-gray-50 border-gray-900 border-t-1 w-full cursor-pointer p-4 custom-shadow">
+                        <div class="flex flex-col">
+                            <p class="text-lg font-medium text-ellipsis overflow-hidden whitespace-nowrap">@job.Title</p>
+                            <p class="text-base text-ellipsis overflow-hidden whitespace-nowrap">@job.Company</p>
+                        </div>
+                    </a>
+                }
+            </div>
+        }
+    </div>
+    <section class="fixed top-12 inset-x-0">
+        <div id="create-job-parent" class="inset-0 bg-gray-50/90 h-screen hidden flex justify-center"></div>
+    </section>
+</section>

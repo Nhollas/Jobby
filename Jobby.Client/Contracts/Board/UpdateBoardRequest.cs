@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Jobby.Client.Contracts.Board;
+﻿namespace Jobby.Client.Contracts.Board;
 
 public class UpdateBoardRequest
 {

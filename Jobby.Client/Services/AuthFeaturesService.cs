@@ -1,6 +1,6 @@
-using Jobby.Client.Contracts.Auth;
 using Jobby.Client.Interfaces;
 using Jobby.Client.Services.Base;
+using Jobby.Client.ViewModels;
 
 namespace Jobby.Client.Services;
 
@@ -10,7 +10,7 @@ public class AuthFeaturesService : BaseDataService, IAuthFeaturesService
     {
     }
 
-    public async Task<AuthenticateResponse> Authenticate(LoginRequest model)
+    public async Task<AuthenticateResponse> Authenticate(LoginViewModel model)
     {
         AuthenticateRequest request = new()
         {
@@ -21,9 +21,9 @@ public class AuthFeaturesService : BaseDataService, IAuthFeaturesService
         return await _client.LoginAsync(request);
     }
 
-    public async Task<RegisterResponse> Register(Contracts.Auth.RegisterRequest model)
+    public async Task<RegisterResponse> Register(RegisterViewModel model)
     {
-        Base.RegisterRequest request = new()
+        RegisterRequest request = new()
         {
             Username = model.Username,
             Password = model.Password,

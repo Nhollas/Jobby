@@ -1,0 +1,77 @@
+﻿@page "/Dashboard"
+@model DashboardModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<section class="flex flex-col h-full gap-y-4 p-5 sm:p-8 relative w-full">
+    <h1 class="text-xl xl:text-2xl font-semibold">Dashboard</h1>
+    <div class="flex flex-col gap-y-6">
+        <h2 class="text-lg font-medium w-full mr-auto">Owned Boards</h2>
+        @if (Model.Boards.Count == 0)
+        {
+            <button
+                onclick='showElement("create-board-parent")'
+                class="btn-primary w-full max-w-[16rem] cursor-pointer py-2">
+                Create Your First Board
+            </button>
+        }
+        else
+        {
+            <button     
+                onclick='showElement("create-board-parent")'
+                class="btn-primary py-2 px-8 w-max !rounded-full">
+                Create Board
+            </button>   
+        }
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 w-full">
+            @foreach (var item in Model.Boards)
+            {       
+                <div class="flex flex-col">
+                    <a asp-page="/Board" asp-route-id="@item.Id"
+                        class="w-full sm:max-w-none border-1 border-gray-900 bg-gray-50">
+                        <div class="flex flex-col gap-y-4 p-4">
+                            <p class="text-base font-medium overflow-hidden whitespace-nowrap">@item.Name</p>
+                            <p class="text-sm -mt-2">@item.CreatedDate</p>
+                            <div class="flex flex-row gap-x-2">
+                                <form
+                                    hx-post="@Url.Page("./Dashboard", "ShowUpdatePartial", values: new { BoardId = item.Id, item.Name })"
+                                    hx-swap="innerHTML"
+                                    hx-target="#update-board-parent">
+                                    <button
+                                        onclick='showElement("update-board-parent")'
+                                        type="submit"
+                                        class="px-5 py-1.5 text-sm font-medium outline outline-1 outline-gray-900 bg-white">
+                                        Edit
+                                    </button>
+                                    @Html.AntiForgeryToken()
+                                </form>
+                                <form
+                                    hx-post="@Url.Page("./Dashboard", "ShowDeletePartial", values: new { BoardId = item.Id })"
+                                    hx-swap="innerHTML"
+                                    hx-target="#delete-board-parent">
+                                    <button
+                                        onclick='showElement("delete-board-parent")'
+                                        type="submit"
+                                        class="text-sm text-white font-medium bg-main-red px-5 py-1.5 rounded-lg">
+                                        Remove
+                                    </button>
+                                    @Html.AntiForgeryToken()
+                                </form>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+    <section class="fixed top-12 inset-x-0 w-full flex justify-center">
+        <div class="max-w-5xl w-full lg:border-x-1 border-gray-900">
+            <div id="update-board-parent" class="inset-0 bg-gray-50/90 h-screen hidden flex justify-center"></div>
+            <div id="delete-board-parent" class="inset-0 bg-gray-50/90 h-screen hidden flex justify-center"></div>
+            <div id="create-board-parent" class="inset-0 bg-gray-50/90 h-screen hidden flex justify-center">
+                <partial name="~/Pages/Shared/_CreateBoard.cshtml" model="Model.BoardToCreate" />
+            </div>
+        </div>
+    </section>
+</section>

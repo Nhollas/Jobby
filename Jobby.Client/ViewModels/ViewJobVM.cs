@@ -22,7 +22,6 @@ public class ViewJobVM
     public List<Activity> Activities { get; set; }
     public BoardPreview Board { get; set; }
 
-
     // Additional View Model Properties.
     public Activity AppliedActivity => Activities.Find(x => x.ActivityType == 1);
     public List<Activity> InterviewActivities => Activities.FindAll(x => x.ActivityType == 2 || x.ActivityType == 3 || x.ActivityType == 4);

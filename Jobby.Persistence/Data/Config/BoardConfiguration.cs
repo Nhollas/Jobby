@@ -21,7 +21,7 @@ public class BoardConfiguration : IEntityTypeConfiguration<Board>
 
         builder.HasMany(x => x.Contacts)
             .WithOne(x => x.Board)
-            .HasForeignKey(x => x.BoardId)
+            .HasPrincipalKey(x => x.Id)
             .OnDelete(DeleteBehavior.NoAction);
 
         builder.HasMany(x => x.Activities)
