@@ -1,6 +1,6 @@
+using Jobby.Client.Contracts.Activity;
 using Jobby.Client.Interfaces;
 using Jobby.Client.Models;
-using Jobby.Client.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -24,5 +24,14 @@ public class ActivitiesModel : PageModel
     public async Task OnGet()
     {
         Activities = await _activityService.ListActivities(BoardId);
+
+        Activities = Activities.OrderByDescending(x => x.CreatedDate).ToList();
+    }
+
+    public async Task<IActionResult> OnPostUpdateActivity(UpdateActivityRequest request)
+    {
+        await _activityService.UpdateActivity(request);
+
+        return RedirectToPage("/Activities", new { BoardId });
     }
 }

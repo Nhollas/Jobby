@@ -90,7 +90,7 @@ label {
 }
 
 input[type="checkbox"] {
-    @apply w-4 h-4 rounded-[4px] appearance-none m-0 p-0 text-blue-600 bg-white outline-[1.5px] border-0 outline-offset-2 outline outline-gray-600 cursor-pointer grid place-content-center;
+    @apply w-4 h-4 rounded-[3px] appearance-none m-0 p-0 text-blue-600 bg-white outline-[1.5px] border-0 outline outline-gray-600 cursor-pointer grid place-content-center;
 }
 
 input[type="checkbox"]::before {
@@ -104,16 +104,12 @@ input[type="checkbox"]:checked::before {
     @apply scale-100;
 }
 
-.activityForm.active {
-    height: 17.375rem;
-}
-
-.activityForm {
-    transition: height 0.15s ease-out;
-}
-
 .expandActivityList.active {
     @apply h-full;
+}
+
+.activityForm.active {
+    height: 17rem;
 }
 
 

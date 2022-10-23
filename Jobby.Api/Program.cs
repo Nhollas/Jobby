@@ -5,7 +5,6 @@ using Jobby.Persistence;
 using Jobby.Persistence.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
@@ -31,6 +30,8 @@ builder.Services.AddControllers()
 
 
 builder.Services.AddTransient<ExceptionHandlingMiddleware>();
+
+builder.Services.AddCors();
 
 
 builder.Services.AddEndpointsApiExplorer();
@@ -104,6 +105,12 @@ app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseHttpsRedirection();
 app.UseRouting();
+
+app.UseCors(x => 
+    x.AllowAnyHeader()
+     .AllowAnyMethod()
+     .WithOrigins("http://localhost:3000"));
+
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
