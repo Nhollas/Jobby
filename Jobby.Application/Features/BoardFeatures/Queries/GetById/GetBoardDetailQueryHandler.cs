@@ -11,13 +11,13 @@ namespace Jobby.Application.Features.BoardFeatures.Queries.GetById;
 
 internal sealed class GetBoardDetailQueryHandler : IRequestHandler<GetBoardDetailQuery, GetBoardResponse>
 {
-    private readonly IReadRepository<Board> _repository;
+    private readonly IRepository<Board> _repository;
     private readonly IMapper _mapper;
     private readonly IUserService _userService;
     private readonly string _userId;
 
     public GetBoardDetailQueryHandler(
-        IReadRepository<Board> repository,
+        IRepository<Board> repository,
         IUserService userService,
         IMapper mapper)
     {

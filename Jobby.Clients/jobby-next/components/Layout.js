@@ -4,13 +4,13 @@ import Footer from './Footer'
 
 export default function Layout({ children }) {
   return (
-    <div className='bg-gray-900 w-full min-h-screen'>
+    <div className='w-full'>
       <Head>
         <title>Jobby</title>
         <meta name="description" content="Jobby is an job application tracker!" />
       </Head>
       <Navbar />
-      <main className="flex w-full justify-center">{children}</main>
+      <main className="bg-slate-50 flex w-full justify-center min-h-screen">{children}</main>
       <Footer />
     </div>
   )

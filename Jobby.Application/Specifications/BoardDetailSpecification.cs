@@ -7,10 +7,13 @@ public sealed class BoardDetailSpecification : Specification<Board>
     public BoardDetailSpecification(Guid boardId)
     {
         Query
-            .Include(x => x.JobList)
-                .ThenInclude(x => x.Jobs)
-            .Include(x => x.Contacts)
-            .Include(x => x.Activities)
+            .Include(board => board.JobList)
+                .ThenInclude(
+                    jobList => jobList.Jobs
+                    .OrderBy(job => job.CreatedDate)
+                )
+            .Include(board => board.Contacts)
+            .Include(board => board.Activities)
             .AsNoTracking()
             .Where(board => board.Id == boardId);
     }

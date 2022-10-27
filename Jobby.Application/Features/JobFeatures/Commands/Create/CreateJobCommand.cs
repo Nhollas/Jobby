@@ -1,8 +1,9 @@
-﻿using MediatR;
+﻿using Jobby.Application.Contracts.Job;
+using MediatR;
 
 namespace Jobby.Application.Features.JobFeatures.Commands.Create;
 
-public sealed record CreateJobCommand : IRequest<Guid>
+public sealed record CreateJobCommand : IRequest<CreateJobResponse>
 {
     public string Company { get; set; }
     public string Title { get; set; }

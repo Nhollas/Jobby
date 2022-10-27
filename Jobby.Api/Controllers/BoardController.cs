@@ -2,7 +2,6 @@
 using Jobby.Application.Contracts.Board;
 using Jobby.Application.Contracts.Contact;
 using Jobby.Application.Contracts.Job;
-using Jobby.Application.Dtos;
 using Jobby.Application.Features.ActivityFeatures.Queries.ListBoardActivities;
 using Jobby.Application.Features.BoardFeatures.Commands.Create;
 using Jobby.Application.Features.BoardFeatures.Commands.Delete;
@@ -22,13 +21,13 @@ namespace Jobby.Api.Controllers;
 [Authorize]
 public class BoardController : ApiController
 {
-    [ProducesResponseType(typeof(Guid), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(CreateBoardResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [HttpPost("Create", Name = "CreateBoard")]
     public async Task<IActionResult> CreateBoard([FromBody] CreateBoardCommand command)
     {
-        var boardId = await Sender.Send(command);
-        return CreatedAtAction(nameof(CreateBoard), boardId);
+        var board = await Sender.Send(command);
+        return CreatedAtAction(nameof(CreateBoard), board);
     }
 
     [ProducesResponseType(StatusCodes.Status204NoContent)]

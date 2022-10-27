@@ -1,3 +1,6 @@
+const host = process.env.APIHOST
+const jwt = process.env.JWT
+
 export const boardList = async () => {
 
     const https = require("https");
@@ -9,13 +12,12 @@ export const boardList = async () => {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJlMzdmMzIyZC0zMGRkLTQ5NTAtYjQwMC0xZjI1OTA3NDE4MGYiLCJ1bmlxdWVfbmFtZSI6IlRlc3QiLCJqdGkiOiJjNzI4Y2RmYi1lMWI0LTQ2MTYtODA2YS1hYjViMGI1NTJlYjEiLCJleHAiOjE2NjY2MjQ4OTMsImlzcyI6Imh0dHBzOi8vbG9jYWxob3N0OjYwMDEiLCJhdWQiOiJodHRwczovL2xvY2FsaG9zdDo2MDAxIn0.lfnOD93iu9qZl1qAyvN2E6AFMdLkDMqtnoCokkc2YSo'
+            'Authorization': 'Bearer ' + jwt
         },
-        agent
-        
+        agent 
     }
 
-    const response = await fetch(`${process.env.apiHost}/api/boards`, options)
+    const response = await fetch(`${host}/api/boards`, options)
 
     const result = await response.json()
 
@@ -23,6 +25,7 @@ export const boardList = async () => {
 }
 
 export const getBoardById = async (boardId) => {
+
     const https = require("https");
     const agent = new https.Agent({
     rejectUnauthorized: false
@@ -32,15 +35,63 @@ export const getBoardById = async (boardId) => {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJlMzdmMzIyZC0zMGRkLTQ5NTAtYjQwMC0xZjI1OTA3NDE4MGYiLCJ1bmlxdWVfbmFtZSI6IlRlc3QiLCJqdGkiOiJjNzI4Y2RmYi1lMWI0LTQ2MTYtODA2YS1hYjViMGI1NTJlYjEiLCJleHAiOjE2NjY2MjQ4OTMsImlzcyI6Imh0dHBzOi8vbG9jYWxob3N0OjYwMDEiLCJhdWQiOiJodHRwczovL2xvY2FsaG9zdDo2MDAxIn0.lfnOD93iu9qZl1qAyvN2E6AFMdLkDMqtnoCokkc2YSo'
+            'Authorization': 'Bearer ' + jwt
         },
         agent
         
     }
 
-    const response = await fetch(`${process.env.apiHost}/api/board/${boardId}`, options)
+    const response = await fetch(`${host}/api/board/${boardId}`, options)
 
     const result = await response.json()
 
     return result;
+}
+
+export const createBoard = async (board) => {
+    const options = {
+        method: 'POST',
+        headers: {
+            'Accept': 'text/plain',
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + jwt
+        },
+        body: JSON.stringify(board)
+    }
+
+    const response = await fetch(`${host}/api/board/create`, options)
+
+    const result = await response.json()
+
+    return result;
+}
+
+export const deleteBoard = async (boardId) => {
+    const options = {
+        method: 'DELETE',
+        headers: {
+            'Accept': 'text/plain',
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + jwt
+        }
+    }
+
+    await fetch(`${host}/api/board/delete/${boardId}`, options)
+}
+
+export const updateBoard = async (boardId, boardName) => {
+
+    const options = {
+        method: 'PUT',
+        headers: {
+            'Accept': 'text/plain',
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + jwt
+        },
+        body: JSON.stringify({ boardId, boardName })
+    }
+
+    console.log(options.body);
+
+    await fetch(`${host}/api/board/update`, options)
 }

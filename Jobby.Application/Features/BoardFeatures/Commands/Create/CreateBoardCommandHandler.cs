@@ -1,11 +1,12 @@
 ﻿using Jobby.Application.Abstractions.Messaging;
 using Jobby.Application.Abstractions.Specification;
+using Jobby.Application.Contracts.Board;
 using Jobby.Application.Interfaces.Services;
 using Jobby.Domain.Entities;
 
 namespace Jobby.Application.Features.BoardFeatures.Commands.Create;
 
-internal sealed class CreateBoardCommandHandler : ICommandHandler<CreateBoardCommand, Guid>
+internal sealed class CreateBoardCommandHandler : ICommandHandler<CreateBoardCommand, CreateBoardResponse>
 {
     private readonly IRepository<Board> _repository;
     private readonly IDateTimeProvider _dateTimeProvider;
@@ -23,7 +24,7 @@ internal sealed class CreateBoardCommandHandler : ICommandHandler<CreateBoardCom
         _dateTimeProvider = dateTimeProvider;
     }
 
-    public async Task<Guid> Handle(CreateBoardCommand request, CancellationToken cancellationToken)
+    public async Task<CreateBoardResponse> Handle(CreateBoardCommand request, CancellationToken cancellationToken)
     {
         List<JobList> defaultJobLists = new()
         {
@@ -43,6 +44,9 @@ internal sealed class CreateBoardCommandHandler : ICommandHandler<CreateBoardCom
 
         await _repository.AddAsync(board, cancellationToken);
 
-        return board.Id;
+        return new CreateBoardResponse(
+            board.Id,
+            board.Name,
+            board.CreatedDate);
     }
 }

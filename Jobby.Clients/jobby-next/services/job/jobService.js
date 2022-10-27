@@ -1,4 +1,8 @@
+const host = process.env.APIHOST
+const jwt = process.env.JWT
+
 export const getJobById = async (boardId, jobId) => {
+
   const https = require("https");
   const agent = new https.Agent({
     rejectUnauthorized: false,
@@ -8,14 +12,13 @@ export const getJobById = async (boardId, jobId) => {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      Authorization:
-        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJlMzdmMzIyZC0zMGRkLTQ5NTAtYjQwMC0xZjI1OTA3NDE4MGYiLCJ1bmlxdWVfbmFtZSI6IlRlc3QiLCJqdGkiOiJjNzI4Y2RmYi1lMWI0LTQ2MTYtODA2YS1hYjViMGI1NTJlYjEiLCJleHAiOjE2NjY2MjQ4OTMsImlzcyI6Imh0dHBzOi8vbG9jYWxob3N0OjYwMDEiLCJhdWQiOiJodHRwczovL2xvY2FsaG9zdDo2MDAxIn0.lfnOD93iu9qZl1qAyvN2E6AFMdLkDMqtnoCokkc2YSo",
+      Authorization: 'Bearer ' + jwt
     },
     agent,
   };
 
   const response = await fetch(
-    `${process.env.apiHost}/api/board/${boardId}/Job/${jobId}`,
+    `${host}/api/board/${boardId}/Job/${jobId}`,
     options
   );
 
@@ -23,3 +26,21 @@ export const getJobById = async (boardId, jobId) => {
 
   return result;
 };
+
+export const createJob = async (job) => {
+  const options = {
+      method: 'POST',
+      headers: {
+          'Accept': 'text/plain',
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + jwt
+      },
+      body: JSON.stringify(job)
+  }
+
+  const response = await fetch(`${host}/api/job/create`, options)
+
+  const result = await response.json()
+
+  return result;
+}

@@ -2,6 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  :root {
+    --btn-color: #000;
+    --heading-color: #000;
+    --subheading-color: #000;
+    --paragraph-color: black;
+    --background-color: white; 
+    /* ... */
+  }
+}
+
 *, *::before, *::after {
   margin: 0;
   padding: 0;
@@ -10,7 +21,7 @@
 }
 
 h1, p, button, label {
-  color: #000;
+  color: var(--paragraph-color);
 }
 
 @layer base {
@@ -21,10 +32,8 @@ h1, p, button, label {
 }
 
 @media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
-  body {
-    background: var(--color-primary);
+  :root {
+    --text-color: white;
+    --background-color: black; 
   }
 }

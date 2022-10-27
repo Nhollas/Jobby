@@ -1,4 +1,5 @@
 ﻿using Jobby.Application.Abstractions.Specification;
+using Jobby.Application.Contracts.Job;
 using Jobby.Application.Exceptions.Base;
 using Jobby.Application.Interfaces.Services;
 using Jobby.Application.Specifications;
@@ -7,7 +8,7 @@ using MediatR;
 
 namespace Jobby.Application.Features.JobFeatures.Commands.Create;
 
-internal sealed class CreateJobCommandHandler : IRequestHandler<CreateJobCommand, Guid>
+internal sealed class CreateJobCommandHandler : IRequestHandler<CreateJobCommand, CreateJobResponse>
 {
     private readonly IRepository<Board> _boardRepository;
     private readonly IRepository<Job> _jobRepository;
@@ -28,7 +29,7 @@ internal sealed class CreateJobCommandHandler : IRequestHandler<CreateJobCommand
         _jobRepository = jobRepository;
     }
 
-    public async Task<Guid> Handle(CreateJobCommand request, CancellationToken cancellationToken)
+    public async Task<CreateJobResponse> Handle(CreateJobCommand request, CancellationToken cancellationToken)
     {
         var boardSpec = new GetBoardWithJobsSpec(request.BoardId);
 
@@ -62,7 +63,12 @@ internal sealed class CreateJobCommandHandler : IRequestHandler<CreateJobCommand
 
         await _jobRepository.AddAsync(createdJob, cancellationToken);
 
-        return createdJob.Id;
+        return new CreateJobResponse(
+            createdJob.Id,
+            createdJob.CreatedDate,
+            createdJob.LastUpdated,
+            createdJob.Company,
+            createdJob.Title);
     }
 
     private static bool BoardOwnsJobList(Board board, Guid jobListId)

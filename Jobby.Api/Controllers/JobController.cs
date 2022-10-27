@@ -1,4 +1,5 @@
-﻿using Jobby.Application.Features.JobFeatures.Commands.Create;
+﻿using Jobby.Application.Contracts.Job;
+using Jobby.Application.Features.JobFeatures.Commands.Create;
 using Jobby.Application.Features.JobFeatures.Commands.Delete;
 using Jobby.Application.Features.JobFeatures.Commands.Update;
 using Microsoft.AspNetCore.Mvc;
@@ -9,14 +10,14 @@ namespace Jobby.Api.Controllers;
 [ApiController]
 public class JobController : ApiController
 {
-    [ProducesResponseType(typeof(Guid), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(CreateJobResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [HttpPost("Create", Name = "CreateJob")]
     public async Task<IActionResult> CreateJob([FromBody] CreateJobCommand command)
     {
-        var jobId = await Sender.Send(command);
+        var job = await Sender.Send(command);
 
-        return CreatedAtAction(nameof(CreateJob), jobId);
+        return CreatedAtAction(nameof(CreateJob), job);
     }
 
     [ProducesResponseType(StatusCodes.Status204NoContent)]
