@@ -8,8 +8,8 @@ public sealed record ActivityDto
     public DateTime CreatedDate { get; set; }
     public DateTime LastUpdated { get; set; }
     public string Title { get; set; }
-    public string ActivityName { get; set; }
-    public int ActivityType { get; set; }
+    public string Name { get; set; }
+    public int Type { get; set; }
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
     public string Note { get; set; }

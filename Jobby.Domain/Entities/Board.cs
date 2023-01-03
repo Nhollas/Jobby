@@ -1,10 +1,11 @@
 ﻿using Jobby.Domain.Primitives;
+using Jobby.Domain.Static;
 
 namespace Jobby.Domain.Entities;
 
 public class Board : Entity
 {
-    private readonly List<JobList> _jobLists = new();
+    private List<JobList> _jobLists = new();
     private readonly List<Activity> _activities = new();
     private readonly List<Job> _jobs = new();
     private readonly List<Contact> _contacts = new();
@@ -56,5 +57,15 @@ public class Board : Entity
     public void SetBoardName(string name)
     {
         Name = name;
+    }
+
+    public void ChangeJobListPosition(Guid jobListId, int targetIndex)
+    {
+        JobList jobListToMove = _jobLists.FirstOrDefault(i => i.Id == jobListId);
+
+        int startIndex = _jobLists.IndexOf(jobListToMove);
+
+        _jobLists[startIndex].Index = targetIndex;
+        _jobLists[targetIndex].Index = startIndex;
     }
 }

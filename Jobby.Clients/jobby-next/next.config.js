@@ -3,9 +3,9 @@ const nextConfig = {
   reactStrictMode: false,
   swcMinify: true,
   env: {
-    APIHOST: 'https://localhost:6001',
-    JWT: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NGZiZTgxNC03ZmU3LTQ3ZDItOWE1OS1hZWE5OWU5MjUxOTIiLCJ1bmlxdWVfbmFtZSI6InRlc3QiLCJqdGkiOiJlZTU0NTBiMS1lNjE3LTQ2NDktYmNjYi05M2JlN2E3YmRiNDkiLCJleHAiOjE2NjY5NTczODYsImlzcyI6Imh0dHBzOi8vbG9jYWxob3N0OjYwMDEiLCJhdWQiOiJodHRwczovL2xvY2FsaG9zdDo2MDAxIn0.HTHrMYCRSSRnuXJAy659bUgprKEzJ3PbyB4BGePxiB4'
-  }
-}
+    APIHOST: "https://localhost:6001",
+    JWT: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJlMzdmMzIyZC0zMGRkLTQ5NTAtYjQwMC0xZjI1OTA3NDE4MGYiLCJ1bmlxdWVfbmFtZSI6IlRlc3QiLCJqdGkiOiJkZDUwMDM2YS0xZGU5LTQ4YzYtODdkNS00MGI1MzVkZWUxMDUiLCJleHAiOjE2Njk1ODE3MjMsImlzcyI6Imh0dHBzOi8vbG9jYWxob3N0OjYwMDEiLCJhdWQiOiJodHRwczovL2xvY2FsaG9zdDo2MDAxIn0.tELFNdZzikBUplGz__oJcxaHM1_ySzT8N2rbvDMAzSo",
+  },
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;

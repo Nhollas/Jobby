@@ -76,12 +76,12 @@ namespace Jobby.Client.Services.Base
 
         /// <returns>Created</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Guid> CreateBoardAsync(CreateBoardCommand body);
+        System.Threading.Tasks.Task<CreateBoardResponse> CreateBoardAsync(CreateBoardCommand body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Created</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Guid> CreateBoardAsync(CreateBoardCommand body, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<CreateBoardResponse> CreateBoardAsync(CreateBoardCommand body, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>No Content</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -184,12 +184,12 @@ namespace Jobby.Client.Services.Base
 
         /// <returns>Created</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Guid> CreateJobAsync(CreateJobCommand body);
+        System.Threading.Tasks.Task<CreateJobResponse> CreateJobAsync(CreateJobCommand body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Created</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Guid> CreateJobAsync(CreateJobCommand body, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<CreateJobResponse> CreateJobAsync(CreateJobCommand body, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>No Content</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -793,7 +793,7 @@ namespace Jobby.Client.Services.Base
 
         /// <returns>Created</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Guid> CreateBoardAsync(CreateBoardCommand body)
+        public virtual System.Threading.Tasks.Task<CreateBoardResponse> CreateBoardAsync(CreateBoardCommand body)
         {
             return CreateBoardAsync(body, System.Threading.CancellationToken.None);
         }
@@ -801,7 +801,7 @@ namespace Jobby.Client.Services.Base
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Created</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Guid> CreateBoardAsync(CreateBoardCommand body, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<CreateBoardResponse> CreateBoardAsync(CreateBoardCommand body, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append("api/board/create");
@@ -841,7 +841,7 @@ namespace Jobby.Client.Services.Base
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 201)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Guid>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<CreateBoardResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -1477,7 +1477,7 @@ namespace Jobby.Client.Services.Base
                 throw new System.ArgumentNullException("boardId");
 
             var urlBuilder_ = new System.Text.StringBuilder();
-            urlBuilder_.Append("api/board/{boardId}/activites");
+            urlBuilder_.Append("api/board/{boardId}/activities");
             urlBuilder_.Replace("{boardId}", System.Uri.EscapeDataString(ConvertToString(boardId, System.Globalization.CultureInfo.InvariantCulture)));
 
             var client_ = _httpClient;
@@ -1925,7 +1925,7 @@ namespace Jobby.Client.Services.Base
 
         /// <returns>Created</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Guid> CreateJobAsync(CreateJobCommand body)
+        public virtual System.Threading.Tasks.Task<CreateJobResponse> CreateJobAsync(CreateJobCommand body)
         {
             return CreateJobAsync(body, System.Threading.CancellationToken.None);
         }
@@ -1933,7 +1933,7 @@ namespace Jobby.Client.Services.Base
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Created</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Guid> CreateJobAsync(CreateJobCommand body, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<CreateJobResponse> CreateJobAsync(CreateJobCommand body, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append("api/job/create");
@@ -1973,7 +1973,7 @@ namespace Jobby.Client.Services.Base
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 201)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Guid>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<CreateJobResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -2323,11 +2323,11 @@ namespace Jobby.Client.Services.Base
         [System.Text.Json.Serialization.JsonPropertyName("title")]
         public string Title { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("activityName")]
-        public string ActivityName { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        public string Name { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("activityType")]
-        public int ActivityType { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("type")]
+        public int Type { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("startDate")]
         public System.DateTime StartDate { get; set; }
@@ -2419,6 +2419,21 @@ namespace Jobby.Client.Services.Base
     }
 
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.15.10.0 (NJsonSchema v10.6.10.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CreateBoardResponse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("id")]
+        public System.Guid Id { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        public string Name { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("createdDate")]
+        public System.DateTime CreatedDate { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.15.10.0 (NJsonSchema v10.6.10.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class CreateContactCommand
     {
 
@@ -2469,6 +2484,27 @@ namespace Jobby.Client.Services.Base
 
         [System.Text.Json.Serialization.JsonPropertyName("jobListId")]
         public System.Guid JobListId { get; set; }
+
+    }
+
+    [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.15.10.0 (NJsonSchema v10.6.10.0 (Newtonsoft.Json v13.0.0.0))")]
+    public partial class CreateJobResponse
+    {
+
+        [System.Text.Json.Serialization.JsonPropertyName("id")]
+        public System.Guid Id { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("createdDate")]
+        public string CreatedDate { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("lastUpdated")]
+        public System.DateTime LastUpdated { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("company")]
+        public string Company { get; set; }
+
+        [System.Text.Json.Serialization.JsonPropertyName("title")]
+        public string Title { get; set; }
 
     }
 
@@ -2621,16 +2657,16 @@ namespace Jobby.Client.Services.Base
         public System.Guid Id { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("createdDate")]
-        public System.DateTime CreatedDate { get; set; }
+        public string CreatedDate { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("title")]
         public string Title { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("activityName")]
-        public string ActivityName { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("name")]
+        public string Name { get; set; }
 
-        [System.Text.Json.Serialization.JsonPropertyName("activityType")]
-        public int ActivityType { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("type")]
+        public int Type { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("startDate")]
         public System.DateTime StartDate { get; set; }
@@ -2792,7 +2828,7 @@ namespace Jobby.Client.Services.Base
         public System.Guid Id { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("createdDate")]
-        public System.DateTime CreatedDate { get; set; }
+        public string CreatedDate { get; set; }
 
         [System.Text.Json.Serialization.JsonPropertyName("lastUpdated")]
         public System.DateTime LastUpdated { get; set; }

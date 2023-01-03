@@ -24,7 +24,7 @@ public class BoardFeaturesService : BaseDataService, IBoardFeaturesService
                 Name = Name,
             };
             var newBoardId = await _client.CreateBoardAsync(command);
-            return new ApiResponse<Guid>() { Data = newBoardId, Success = true };
+            return new ApiResponse<Guid>() { Data = newBoardId.Id, Success = true };
         }
         catch (ApiException ex)
         {

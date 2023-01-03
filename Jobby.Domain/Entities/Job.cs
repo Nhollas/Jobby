@@ -19,6 +19,7 @@ public class Job : Entity
         string ownerId,
         string company,
         string jobTitle,
+        int index,
         JobList jobList,
         Board board)
         : base(id, createdDate, ownerId)
@@ -26,6 +27,7 @@ public class Job : Entity
     {
         Company = company;
         Title = jobTitle;
+        Index = index;
         JobList = jobList;
         Board = board;
     }
@@ -45,6 +47,8 @@ public class Job : Entity
     public string Description { get; private set; }
 
     public DateTime Deadline { get; private set; }
+
+    public int Index { get; private set; }
 
     public IReadOnlyCollection<Note> Notes => _notes;
 
@@ -67,6 +71,7 @@ public class Job : Entity
         string ownerId,
         string company,
         string jobTitle,
+        int index,
         JobList jobList,
         Board board)
     {
@@ -76,6 +81,7 @@ public class Job : Entity
             ownerId,
             company,
             jobTitle,
+            index,
             jobList,
             board);
 
@@ -100,5 +106,15 @@ public class Job : Entity
     public void AddNote(Note note)
     {
         _notes.Add(note);
+    }
+
+    public void SetJobList(Guid jobListId)
+    {
+        JobListId = jobListId;
+    }
+
+    public void SetIndex(int index)
+    {
+        Index = index;
     }
 }

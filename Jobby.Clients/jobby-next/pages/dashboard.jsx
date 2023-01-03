@@ -1,100 +1,118 @@
-import Link from 'next/link';
-import { useState } from 'react';
-import { CreateBoardModal } from '../components/Modals/Dashboard/CreateBoardModal';
-import { DeleteBoardModal } from '../components/Modals/Dashboard/DeleteBoardModal';
-import { EditBoardModal } from '../components/Modals/Dashboard/EditBoardModal';
-import { boardList } from '/services/board/boardService'
+import { getToken } from "next-auth/jwt";
+import Link from "next/link";
+import { useState } from "react";
+import { PageContainer } from "../components/Common/PageContainer";
+import { CreateBoardModal } from "../components/Modals/Dashboard/CreateBoardModal";
+import { DeleteBoardModal } from "../components/Modals/Dashboard/DeleteBoardModal";
+import { EditBoardModal } from "../components/Modals/Dashboard/EditBoardModal";
+import ActionButton from "../components/Common/ActionButton";
+import { boardList } from "/services/boardService";
 
-export async function getServerSideProps() {
+export async function getServerSideProps({ req }) {
+  const token = await getToken({ req });
 
-  var boards = await boardList();
+  if (!token) {
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
+    };
+  }
 
-  return { props: { boards }}
+  const { accessToken } = token;
+
+  var boards = await boardList(token.accessToken);
+
+  return { props: { boards, accessToken } };
 }
 
-export default function Dashboard ({ boards }) {
-  const [currentBoardList, setCurrentBoardList] = useState(boards)
+export default function Dashboard({ boards, accessToken }) {
+  const [currentBoardList, setCurrentBoardList] = useState(boards);
 
   const [showCreateModal, setShowCreateModal] = useState({
-    visible: false
-  })
+    visible: false,
+  });
 
   const [showEditModal, setShowEditModal] = useState({
     visible: false,
-    board: null
-  })
+    board: null,
+  });
 
   const [showDeleteModal, setShowDeleteModal] = useState({
     visible: false,
-    board: null
-  })
+    boardId: null,
+  });
 
   return (
-    <div className='flex flex-col relative bg-white/90 p-8 w-full max-w-5xl gap-y-8'>
-      <button 
+    <PageContainer small title={"Dashboard"}>
+      <CreateBoardModal
+        setCurrentBoardList={setCurrentBoardList}
+        setShowCreateModal={setShowCreateModal}
+        visible={showCreateModal.visible}
+        accessToken={accessToken}
+      />
+      <DeleteBoardModal
+        setCurrentBoardList={setCurrentBoardList}
+        setShowDeleteModal={setShowDeleteModal}
+        boardId={showDeleteModal.boardId}
+        visible={showDeleteModal.visible}
+        accessToken={accessToken}
+      />
+      <EditBoardModal
+        setCurrentBoardList={setCurrentBoardList}
+        setShowEditModal={setShowEditModal}
+        board={showEditModal.board}
+        visible={showEditModal.visible}
+        accessToken={accessToken}
+      />
+      <ActionButton
+        variant='primary'
+        text='Create Board'
+        rounded
         onClick={() => setShowCreateModal({ visible: true })}
-        className="text-white font-raleway font-medium text-base bg-main-blue hover:bg-gray-50 hover:text-black hover:border-main-blue border-1 py-2 px-8 w-max !rounded-full">
-        Create Board
-      </button>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 w-full">
+      />
+      <div className='grid w-full grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3'>
         {currentBoardList.map((board) => (
-          <div 
+          <div
             key={board.id}
-            className='w-full sm:max-w-none p-4 border-1 border-gray-300 flex flex-col bg-gray-50 h-max overflow-hidden delay-100 transition-all relative'>
+            className='relative flex h-max w-full max-w-xs flex-col overflow-hidden border border-gray-300 bg-gray-50 transition-all delay-100'
+          >
             <Link href={`/board/${board.id}`}>
-              <a>
-                <div className="flex flex-col gap-y-4 h-24">
-                    <p className="text-base font-medium overflow-hidden whitespace-nowrap">{board.name}</p>
-                    <p className="text-sm -mt-2">{board.createdDate}</p>
+              <a className='p-4'>
+                <div className='flex h-28 flex-col gap-y-4'>
+                  <p className='overflow-hidden whitespace-nowrap text-base font-medium'>
+                    {board.name}
+                  </p>
+                  <p className='-mt-2 text-sm'>{board.createdDate}</p>
                 </div>
               </a>
             </Link>
-            <div className='absolute bottom-4 flex flex-row gap-x-4'>
-              <button
-                onClick={() => setShowEditModal({ 
-                  visible: true, 
-                  board: board
-                })} 
-                className='px-5 py-1.5 text-sm font-medium outline outline-1 outline-gray-300 bg-white'>
-                Edit
-              </button>
-              <button 
-                onClick={() => setShowDeleteModal({ 
-                  visible: true, 
-                  board: board
-                })} 
-                className='text-sm text-white font-medium bg-main-red px-5 py-1.5 rounded-lg'>
-                Remove
-              </button>
+            <div className='absolute bottom-4 left-4 flex flex-row gap-x-4'>
+              <ActionButton
+                variant='secondary'
+                text='Edit'
+                onClick={() =>
+                  setShowEditModal({
+                    visible: true,
+                    board: board,
+                  })
+                }
+              />
+              <ActionButton
+                variant='danger'
+                text='Remove'
+                onClick={() =>
+                  setShowDeleteModal({
+                    visible: true,
+                    boardId: board.id,
+                  })
+                }
+              />
             </div>
           </div>
-          )
-        )}
-
-        <CreateBoardModal
-          boardListState={setCurrentBoardList}
-          parentState={setShowCreateModal}
-          boardList={currentBoardList}
-          visible={showCreateModal.visible}
-        />
-
-        <DeleteBoardModal
-          boardListState={setCurrentBoardList}
-          parentState={setShowDeleteModal}
-          boardList={currentBoardList}
-          board={showDeleteModal.board}
-          visible={showDeleteModal.visible}
-        />
-
-        <EditBoardModal
-          boardListState={setCurrentBoardList}
-          parentState={setShowEditModal}
-          boardList={currentBoardList}
-          board={showEditModal.board}
-          visible={showEditModal.visible}
-        />
+        ))}
       </div>
-    </div>
-  )
+    </PageContainer>
+  );
 }
-  

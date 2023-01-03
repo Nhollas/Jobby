@@ -13,8 +13,7 @@ public class AuthenticationService : IAuthenticationService
     private ApplicationUser _user;
 
     public AuthenticationService(
-        UserManager<ApplicationUser> userManager,
-        IJwtTokenGenerator jwtTokenGenerator)
+        UserManager<ApplicationUser> userManager, IJwtTokenGenerator jwtTokenGenerator)
     {
         _userManager = userManager;
         _jwtTokenGenerator = jwtTokenGenerator;
@@ -32,7 +31,7 @@ public class AuthenticationService : IAuthenticationService
             {
                 string token = _jwtTokenGenerator.GenerateToken(_user);
 
-                return new AuthenticateResponse(token, _user.Id, _user.NormalizedUserName);
+                return new AuthenticateResponse(_user.FullName, _user.Email, token);
             }
 
             throw new NotImplementedException();
@@ -52,6 +51,8 @@ public class AuthenticationService : IAuthenticationService
             {
                 Email = request.Email,
                 UserName = request.Username,
+                FirstName = request.FirstName,
+                LastName = request.LastName
             };
 
             IdentityResult result = await _userManager.CreateAsync(newUser, request.Password);

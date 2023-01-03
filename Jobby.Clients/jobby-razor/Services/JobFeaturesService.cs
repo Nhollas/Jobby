@@ -23,7 +23,7 @@ public class JobFeaturesService : BaseDataService, IJobFeaturesService
 
             var newJobId = await _client.CreateJobAsync(command);
 
-            return new ApiResponse<Guid>() { Data = newJobId, Success = true };
+            return new ApiResponse<Guid>() { Data = newJobId.Id, Success = true };
         }
         catch (ApiException ex)
         {

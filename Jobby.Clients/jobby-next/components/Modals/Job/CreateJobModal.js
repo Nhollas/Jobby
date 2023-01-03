@@ -1,9 +1,14 @@
-import { createJob } from "../../../services/job/jobService"
+import { createJob } from "../../../services/jobService";
+import ModalContainer from "../../Common/ModalContainer";
 
 export const CreateJobModal = (props) => {
+  const { setCurrentBoard, setShowCreateModal, showCreateModal, accessToken } =
+    props;
+
+  const { visible, jobList, board } = showCreateModal;
 
   const handleSubmit = async (event) => {
-    event.preventDefault()
+    event.preventDefault();
 
     //TODO: Validation with YUP package.
 
@@ -11,71 +16,95 @@ export const CreateJobModal = (props) => {
       company: event.target.company.value,
       title: event.target.title.value,
       boardId: event.target.boardId.value,
-      jobListId: event.target.jobListId.value
-    }
-    
-    var createdJob = await createJob(job)
+      jobListId: event.target.jobListId.value,
+    };
 
-    const selectedJobListItem = props.board.jobList.find((obj) => obj.id == props.jobList.id)
+    var createdJob = await createJob(job, accessToken);
 
-    selectedJobListItem.jobs.push(createdJob);
+    setCurrentBoard((prevBoard) => {
+      const selectedJobListItem = prevBoard.jobList.find(
+        (obj) => obj.id == jobList.id
+      );
+      selectedJobListItem.jobs = [...selectedJobListItem.jobs, createdJob];
+      return prevBoard;
+    });
 
-    props.boardState(props.board)
+    setShowCreateModal({
+      visible: false,
+      board: null,
+      jobList: null,
+    });
+  };
 
-    closeModal()
-  }
-
-  const closeModal = () => {
-    props.parentState({
-      visible: false
-    })
-  }
-
-  if (props.visible == true) {
+  if (visible) {
     return (
-      <div className="absolute inset-0 w-full h-full flex justify-center bg-white/90">
-        <div className="w-full max-w-md border-1 h-max border-gray-300 p-6 bg-gray-50">
-          <form
-            onSubmit={handleSubmit} 
-            className="flex flex-col gap-y-8" 
-            method="post">
-            <h1 className="text-xl font-medium">Create Job</h1>
-            <p className="flex flex-col gap-y-2">
-              <label htmlFor="title">Title</label>
-              <input id="title" name="title"></input>
-            </p>
-            <p className="flex flex-col gap-y-2">
-              <label htmlFor="company">Company</label>
-              <input id="company" name="company"></input>
-            </p>
-            <p className="flex flex-col gap-y-2">
-              <label htmlFor="boardName">Board</label>
-              <input disabled id="boardName" name="boardName" defaultValue={props.board.name}></input>
-            </p>
-            <p className="flex flex-col gap-y-2">
-              <label htmlFor="jobListName">JobList</label>
-              <input disabled id="jobListName" name="jobListName" defaultValue={props.jobList.name}></input>
-            </p>
-            <input id="boardId" name="boardId" defaultValue={props.board.id} type="hidden"></input>
-            <input id="jobListId" name="jobListId" defaultValue={props.jobList.id} type="hidden"></input>
-            <p className="flex flex-row gap-4 justify-center">
-              <button
-                onClick={closeModal} 
-                className="font-medium border-1 border-gray-300 bg-white font-raleway py-2 px-4">
-                Cancel
-              </button>
-              <button 
-                type="submit" 
-                className="text-white font-raleway font-medium text-base bg-main-blue hover:bg-gray-50 hover:text-black hover:border-main-blue border-1 w-full py-2">
-                Create
-              </button>
-            </p>
-          </form>
-        </div>
-      </div>
-    )
-  } else {
-    return null
+      <ModalContainer>
+        <form
+          onSubmit={handleSubmit}
+          className='flex flex-col gap-y-8'
+          method='post'
+        >
+          <h1 className='text-xl font-medium'>Create Job</h1>
+          <p className='flex flex-col gap-y-2'>
+            <label htmlFor='title'>Title</label>
+            <input id='title' name='title'></input>
+          </p>
+          <p className='flex flex-col gap-y-2'>
+            <label htmlFor='company'>Company</label>
+            <input id='company' name='company'></input>
+          </p>
+          <p className='flex flex-col gap-y-2'>
+            <label htmlFor='boardName'>Board</label>
+            <input
+              disabled
+              id='boardName'
+              name='boardName'
+              defaultValue={board.name}
+            ></input>
+          </p>
+          <p className='flex flex-col gap-y-2'>
+            <label htmlFor='jobListName'>JobList</label>
+            <input
+              disabled
+              id='jobListName'
+              name='jobListName'
+              defaultValue={jobList.name}
+            ></input>
+          </p>
+          <input
+            id='boardId'
+            name='boardId'
+            defaultValue={board.id}
+            type='hidden'
+          ></input>
+          <input
+            id='jobListId'
+            name='jobListId'
+            defaultValue={jobList.id}
+            type='hidden'
+          ></input>
+          <p className='flex flex-row justify-center gap-4'>
+            <button
+              onClick={() =>
+                setShowCreateModal({
+                  visible: false,
+                  board: null,
+                  jobList: null,
+                })
+              }
+              className='font-raleway border border-gray-300 bg-white py-2 px-4 font-medium'
+            >
+              Cancel
+            </button>
+            <button
+              type='submit'
+              className='font-raleway w-full border bg-main-blue py-2 text-base font-medium text-white hover:border-main-blue hover:bg-gray-50 hover:text-black'
+            >
+              Create
+            </button>
+          </p>
+        </form>
+      </ModalContainer>
+    );
   }
-
-}
+};

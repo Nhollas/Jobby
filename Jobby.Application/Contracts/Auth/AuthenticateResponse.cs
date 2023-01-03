@@ -2,14 +2,14 @@
 
 public class AuthenticateResponse
 {
-    public string Token { get; }
-    public string Id { get; }
-    public string Username { get; }
+    public string Name { get; }
+    public string Email { get; set; }
+    public string AccessToken { get; set; }
 
-    public AuthenticateResponse(string token, string id, string username)
+    public AuthenticateResponse(string name, string email, string accessToken)
     {
-        Token = token;
-        Id = id;
-        Username = username;
+        Name = name;
+        Email = email;
+        AccessToken = accessToken;
     }
 }

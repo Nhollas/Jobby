@@ -97,7 +97,7 @@ public class BoardController : ApiController
 
     [ProducesResponseType(typeof(List<ListActivitiesResponse>), StatusCodes.Status200OK)]
     [ProducesDefaultResponseType]
-    [HttpGet("{boardId:guid}/Activites", Name = "ListActivities")]
+    [HttpGet("{boardId:guid}/Activities", Name = "ListActivities")]
     public async Task<IActionResult> ListActivities(Guid boardId)
     {
         var dtos = await Sender.Send(new GetBoardActivityListQuery(boardId));

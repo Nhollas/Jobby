@@ -1,7 +1,6 @@
 ﻿using Jobby.Application.Abstractions.Specification;
 using Jobby.Application.Exceptions.Base;
 using Jobby.Application.Interfaces.Services;
-using Jobby.Application.Specifications;
 using Jobby.Domain.Entities;
 using MediatR;
 
@@ -28,11 +27,11 @@ internal sealed class UpdateActivityCommandHandler : IRequestHandler<UpdateActiv
 
     public async Task<Unit> Handle(UpdateActivityCommand request, CancellationToken cancellationToken)
     {
-        Activity activityToUpdate = await _activityRepository.GetByIdAsync(request.ActivityId, cancellationToken);
+        Activity activityToUpdate = await _activityRepository.GetByIdAsync(request.Id, cancellationToken);
 
         if (activityToUpdate is null)
         {
-            throw new NotFoundException($"An activity with id {request.ActivityId} could not be found.");
+            throw new NotFoundException($"An activity with id {request.Id} could not be found.");
         }
 
         if (activityToUpdate.OwnerId != _userId)
@@ -42,7 +41,7 @@ internal sealed class UpdateActivityCommandHandler : IRequestHandler<UpdateActiv
 
         activityToUpdate.Update(
             request.Title,
-            request.ActivityType,
+            request.Type,
             request.StartDate,
             request.EndDate,
             request.Note,

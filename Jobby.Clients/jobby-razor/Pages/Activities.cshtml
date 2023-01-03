@@ -20,7 +20,7 @@
                 method="post"
               class="activityForm flex flex-col gap-y-4 relative z-10 outline outline-1 h-16 md:h-9 outline-gray-900 overflow-y-hidden w-full cursor-pointer p-2 px-3 transition-height duration-200 ease-out bg-gray-50">
                 <input type="hidden" value="@activity.Id" name="ActivityId">
-                <input type="hidden" value="@activity.ActivityType" name="ActivityType">
+                <input type="hidden" value="@activity.Type" name="ActivityType">
                 <div class="grid grid-cols-[minmax(100px,1fr)_1fr_1fr] md:grid-cols-[minmax(100px,175px)_1fr_1fr] w-full items-center h-12 md:h-5 gap-x-4">
                     <div class="flex flex-row items-center w-full gap-x-4">
                         <input type="checkbox" @setCheckbox(activity.Completed) name="Completed">
@@ -31,8 +31,8 @@
                         <p class="bg-blue-50 text-blue-600 text-xs rounded-md px-3 py-0.5 font-medium truncate inline-block w-max">@activity.Job.Company</p>
                     </div>
                     <div class="flex flex-col md:flex-row gap-2 justify-self-end">
-                        <p class="text-xs rounded-md px-3 py-0.5 truncate inline-block w-max ml-auto font-semibold @ActivityTypeExtension.ToCssClass(activity.ActivityType)">@activity.ActivityName</p>
-                        <p class="text-xs bg-gray-100 text-gray-600 rounded-md px-3 py-0.5 text-center font-medium truncate inline-block w-max ml-auto">@activity.CreatedDate.Humanize(utcDate:false)</p>
+                        <p class="text-xs rounded-md px-3 py-0.5 truncate inline-block w-max ml-auto font-semibold @ActivityTypeExtension.ToCssClass(activity.Type)">@activity.Name</p>
+                        <p class="text-xs bg-gray-100 text-gray-600 rounded-md px-3 py-0.5 text-center font-medium truncate inline-block w-max ml-auto">@activity.CreatedDate</p>
                     </div>
                 </div>
                 <textarea class="border-1 border-gray-300 min-h-[8rem] w-full p-3" name="Note" placeholder="Note">@activity.Note</textarea>

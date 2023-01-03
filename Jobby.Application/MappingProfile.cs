@@ -7,6 +7,7 @@ using Jobby.Application.Dtos;
 using Jobby.Application.Features.ActivityFeatures.Commands.Create;
 using Jobby.Application.Features.ActivityFeatures.Commands.Update;
 using Jobby.Application.Features.JobFeatures.Commands.Update;
+using Jobby.Application.Static;
 using Jobby.Domain.Entities;
 
 namespace Jobby.Application;
@@ -18,20 +19,23 @@ public class MappingProfile : Profile
         // Board Maps
         CreateMap<Board, GetBoardResponse>();
         CreateMap<Board, PreviewBoardDto>();
-        CreateMap<Board, ListBoardsResponse>();
+        CreateMap<Board, ListBoardsResponse>()
+            .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(x => x.CreatedDate.ToString("f")));
 
         // JobList Maps
         CreateMap<JobList, JobListDto>();
 
         // Job Maps
-        CreateMap<Job, PreviewJobDto>();
+        CreateMap<Job, PreviewJobDto>()
+            .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(x => DateTimeFormatter.FormatDateTime(x.CreatedDate)));
         CreateMap<Job, GetJobResponse>();
         CreateMap<Job, JobDto>();
         CreateMap<Note, NoteDto>();
         CreateMap<UpdateJobCommand, Job>();
 
         // Activity Maps
-        CreateMap<Activity, ListActivitiesResponse>();
+        CreateMap<Activity, ListActivitiesResponse>()
+            .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(x => DateTimeFormatter.FormatDateTime(x.CreatedDate)));
         CreateMap<Activity, ActivityDto>();
         CreateMap<CreateActivityCommand, Activity>();
         CreateMap<UpdateActivityCommand, Activity>();

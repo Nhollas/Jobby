@@ -3,6 +3,7 @@ using Jobby.Application.Contracts.Job;
 using Jobby.Application.Exceptions.Base;
 using Jobby.Application.Interfaces.Services;
 using Jobby.Application.Specifications;
+using Jobby.Application.Static;
 using Jobby.Domain.Entities;
 using MediatR;
 
@@ -52,12 +53,24 @@ internal sealed class CreateJobCommandHandler : IRequestHandler<CreateJobCommand
 
         JobList selectedJobList = board.JobList.Where(x => x.Id == request.JobListId).First();
 
+        int newIndex;
+
+        if (selectedJobList.Jobs.Count == 0)
+        {
+            newIndex = 0;
+        }
+        else
+        {
+            newIndex = selectedJobList.Jobs.Count;
+        }
+
         var createdJob = Job.Create(
             Guid.NewGuid(),
             _dateTimeProvider.UtcNow,
             _userId,
             request.Company,
             request.Title,
+            newIndex,
             selectedJobList,
             board);
 
@@ -65,10 +78,11 @@ internal sealed class CreateJobCommandHandler : IRequestHandler<CreateJobCommand
 
         return new CreateJobResponse(
             createdJob.Id,
-            createdJob.CreatedDate,
+            DateTimeFormatter.FormatDateTime(createdJob.CreatedDate),
             createdJob.LastUpdated,
             createdJob.Company,
-            createdJob.Title);
+            createdJob.Title,
+            createdJob.Index);
     }
 
     private static bool BoardOwnsJobList(Board board, Guid jobListId)

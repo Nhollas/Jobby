@@ -9,7 +9,11 @@ public class GetBoardWithJobsSpec : Specification<Board>
     {
         Query
             .Where(b => b.Id == BoardId)
-            .Include(x => x.JobList)
-                .ThenInclude(x => x.Jobs);
+            .Include(x => x.JobList
+                .OrderBy(list => list.Index)
+                )
+                .ThenInclude(x => x.Jobs
+                    .OrderBy(job => job.Index)
+                    );
     }
 }

@@ -1,68 +1,110 @@
-import { updateBoard } from "../../../services/board/boardService"
+import { useReducer } from "react";
+import { updateBoard } from "../../../services/boardService";
+import ActionButton from "../../Common/ActionButton";
+import ModalContainer from "../../Common/ModalContainer";
+import Input from "../../Form/Input";
 
 export const EditBoardModal = (props) => {
+  const { setCurrentBoardList, setShowEditModal, visible, accessToken, board } =
+    props;
+
+  const reducer = (state, action) => {
+    const { name, value } = action;
+    switch (action.type) {
+      case "HANDLE_INPUT_CHANGE":
+        return {
+          ...state,
+          [name]: value,
+        };
+      default:
+        return state;
+    }
+  };
+
+  const [state, dispatch] = useReducer(reducer, { board });
+
+  const handleChange = (event) => {
+    dispatch({
+      type: "HANDLE_INPUT_CHANGE",
+      name: event.target.name,
+      value: event.target.value,
+    });
+  };
 
   const handleSubmit = async (event) => {
-    event.preventDefault()
+    event.preventDefault();
 
     //TODO: Validation with YUP package.
 
-    var name = event.target.name.value
-    
-    
-    await updateBoard(props.board.id, name)
+    var name = event.target.name.value;
 
-    // Update the board from the BoardList rather than having to do another fetch.
-    const selectedBoard = props.boardList.findIndex((obj) => obj.id == props.board.id)
+    await updateBoard(board.id, name, accessToken);
 
     var updatedBoard = {
-      id:props.board.id,
-      createdDate: props.board.createdDate,
-      name: name
-    }
-    
-    // Replace existing board with its updated info in the array order it was originally in.
-    props.boardList.splice(selectedBoard, 1, updatedBoard)
+      id: board.id,
+      createdDate: board.createdDate,
+      name: name,
+    };
 
-    props.boardListState(props.boardList)
+    setCurrentBoardList((prev) =>
+      prev.map((board) => {
+        if (board.id === updatedBoard.id) {
+          return updatedBoard;
+        }
+        return board;
+      })
+    );
 
-    closeModal()
-  }
+    setShowEditModal({
+      visible: false,
+      board: null,
+    });
+  };
 
-  const closeModal = () => {
-    props.parentState({
-      visible: false
-    })
-  }
-
-  if (props.visible == true) {
+  if (visible) {
     return (
-      <div className="absolute inset-0 w-full h-full flex justify-center bg-white/90">
-        <div className="w-full max-w-md border-1 h-max border-gray-300 p-6 bg-gray-50">
-          <form className="flex flex-col gap-6" method="post" onSubmit={handleSubmit}>
-            <input id="BoardId" name="BoardId" type="hidden" defaultValue={props.board.id}></input>
-            <h1 className="text-xl font-medium text-ellipsis overflow-hidden whitespace-nowrap">Edit Board - {props.board.name}</h1>
-            <p className="flex flex-col gap-y-3">
-              <label htmlFor="name">Name</label>
-              <input type="text" id="name" name="name" defaultValue={props.board.name}></input>
-            </p>
-            <p className="flex flex-row gap-4 justify-center">
-              <button 
-                onClick={closeModal} 
-                className="font-medium border-1 border-gray-300 bg-white font-raleway py-2 px-4">
-                Cancel
-              </button>
-              <button
-                type="submit" 
-                className="text-white font-raleway font-medium text-base bg-main-blue hover:bg-gray-50 hover:text-black hover:border-main-blue border-1 w-full py-2">
-                Update
-              </button>
-            </p>
-          </form>
-        </div>
-      </div>
-    )
-  } else {
-    return null
+      <ModalContainer>
+        <form
+          className='flex flex-col gap-6'
+          method='post'
+          onSubmit={handleSubmit}
+        >
+          <h1 className='overflow-hidden text-ellipsis whitespace-nowrap text-xl font-medium'>
+            Edit Board - {board.name}
+          </h1>
+          <Input
+            type='hidden'
+            className='hidden'
+            value={board.id}
+            name='boardId'
+          />
+          <Input
+            type='text'
+            name='name'
+            value={state.name}
+            label='Name'
+            onChange={(e) => handleChange(e)}
+          />
+          <div className='flex flex-row justify-center gap-4'>
+            <ActionButton
+              variant='secondary'
+              text='Cancel'
+              onClick={() =>
+                setShowEditModal({
+                  visible: false,
+                  board: null,
+                })
+              }
+            />
+            <ActionButton
+              variant='primary'
+              text='Update'
+              type='submit'
+              extended
+            />
+          </div>
+        </form>
+      </ModalContainer>
+    );
   }
-}
+};

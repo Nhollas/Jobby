@@ -14,7 +14,7 @@ public class Activity : Entity
         DateTime createdDate,
         string ownerId,
         string title,
-        int activityType,
+        int type,
         DateTime startDate,
         DateTime endDate,
         string note,
@@ -23,7 +23,7 @@ public class Activity : Entity
         : base(id, createdDate, ownerId)
     {
         Title = title;
-        ActivityType = activityType;
+        Type = type;
         StartDate = startDate;
         EndDate = endDate;
         Note = note;
@@ -32,8 +32,8 @@ public class Activity : Entity
     }
 
     public string Title { get; private set; }
-    public int ActivityType { get; private set; }
-    public string ActivityName => activityNamesDict[ActivityType];
+    public int Type { get; private set; }
+    public string Name => activityNamesDict[Type];
     public DateTime StartDate { get; private set; }
     public DateTime EndDate { get; private set; }
     public string Note { get; private set; }
@@ -75,14 +75,14 @@ public class Activity : Entity
 
     public void Update(
         string title,
-        int activityType,
+        int type,
         DateTime startDate,
         DateTime endDate,
         string note,
         bool completed)
     {
         Title = title;
-        ActivityType = activityType;
+        Type = type;
         StartDate = startDate;
         EndDate = endDate;
         Note = note;

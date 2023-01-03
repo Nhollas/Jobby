@@ -67,7 +67,7 @@
                 {
                     <form asp-page-handler="UpdateActivity" method="post" class="activityForm z-10 border-1 border-gray-300 px-4 h-full max-h-10 overflow-hidden w-full max-w-xxs cursor-pointer">
                         <input type="hidden" value="@Model.Job.AppliedActivity.Id" name="ActivityId">
-                        <input type="hidden" value="@Model.Job.AppliedActivity.ActivityType" name="ActivityType">
+                        <input type="hidden" value="@Model.Job.AppliedActivity.Type" name="ActivityType">
                         <div class="flex flex-row gap-x-2 h-10 items-center">
                             <input type="checkbox" @setCheckbox(Model.Job.AppliedActivity.Completed) value="true" name="Completed">
                             <input class="border-0 w-full cursor-pointer" type="text" value="@Model.Job.AppliedActivity.Title" name="Title">
@@ -101,7 +101,7 @@
                             {
                                 <form asp-page-handler="UpdateActivity" method="post" class="activityForm border-1 border-gray-300 px-4 max-h-10 min-h-[2.5rem] overflow-hidden w-full max-w-xxs cursor-pointer">
                                     <input type="hidden" value="@activity.Id" name="ActivityId">
-                                    <input type="hidden" value="@activity.ActivityType" name="ActivityType">
+                                    <input type="hidden" value="@activity.Type" name="ActivityType">
                                     <div class="flex flex-row gap-x-2 h-10 items-center">
                                         <input type="checkbox" @setCheckbox(@activity.Completed) value="true" name="Completed">
                                         <input class="border-0 w-full cursor-pointer" type="text" value="@activity.Title" name="Title">
@@ -150,7 +150,7 @@
                     {
                         <form asp-page-handler="UpdateActivity" method="post" class="activityForm z-10 border-1 border-gray-300 px-4 h-full max-h-10 overflow-hidden w-full max-w-xxs cursor-pointer">
                             <input type="hidden" value="@activity.Id" name="ActivityId">
-                            <input type="hidden" value="@activity.ActivityType" name="ActivityType">
+                            <input type="hidden" value="@activity.Type" name="ActivityType">
                             <div class="flex flex-row gap-x-2 h-10 items-center">
                                 <input type="checkbox" @setCheckbox(@activity.Completed) value="true" name="Completed">
                                 <input class="border-0 w-full cursor-pointer" type="text" value="@activity.Title" name="Title">
@@ -192,7 +192,7 @@
                 {
                     <form asp-page-handler="UpdateActivity" method="post" class="activityForm z-10 border-1 border-gray-300 px-4 h-full max-h-10 overflow-hidden w-full max-w-xxs cursor-pointer">
                         <input type="hidden" value="@Model.Job.AcceptedOfferActivity.Id" name="ActivityId">
-                        <input type="hidden" value="@Model.Job.AcceptedOfferActivity.ActivityType" name="ActivityType">
+                        <input type="hidden" value="@Model.Job.AcceptedOfferActivity.Type" name="ActivityType">
                         <div class="flex flex-row gap-x-2 h-10 items-center">
                             <input type="checkbox" @setCheckbox(Model.Job.AcceptedOfferActivity.Completed) value="true" name="Completed">
                             <input class="border-0 w-full cursor-pointer" type="text" value="@Model.Job.AcceptedOfferActivity.Title" name="Title">

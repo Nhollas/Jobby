@@ -23,8 +23,8 @@ public class ViewJobVM
     public BoardPreview Board { get; set; }
 
     // Additional View Model Properties.
-    public Activity AppliedActivity => Activities.Find(x => x.ActivityType == 1);
-    public List<Activity> InterviewActivities => Activities.FindAll(x => x.ActivityType == 2 || x.ActivityType == 3 || x.ActivityType == 4);
-    public List<Activity> OfferActivities => Activities.FindAll(x => x.ActivityType == 5);
-    public Activity AcceptedOfferActivity => Activities.Find(x => x.ActivityType == 6);
+    public Activity AppliedActivity => Activities.Find(x => x.Type == 1);
+    public List<Activity> InterviewActivities => Activities.FindAll(x => x.Type == 2 || x.Type == 3 || x.Type == 4);
+    public List<Activity> OfferActivities => Activities.FindAll(x => x.Type == 5);
+    public Activity AcceptedOfferActivity => Activities.Find(x => x.Type == 6);
 }
