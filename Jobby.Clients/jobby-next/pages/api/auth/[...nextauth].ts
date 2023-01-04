@@ -1,6 +1,6 @@
-import NextAuth from "next-auth";
+import NextAuth, { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-export const authOptions = {
+export const authOptions : AuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
   providers: [
     CredentialsProvider({
@@ -52,15 +52,14 @@ export const authOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.accessToken = user.accessToken;
-        token.user = user;
       }
       return token;
     },
     async session({ session, token }) {
-      session.user = {
-        email: token.user.email,
-        name: token.user.name,
-      };
+      console.log(session);
+
+      session.accessToken = token.accessToken;
+
       return session;
     },
   },

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Jobby.Persistence.Data.Migrations
 {
     [DbContext(typeof(JobbyContext))]
-    [Migration("20221024112029_Test")]
-    partial class Test
+    [Migration("20230104093753_Init")]
+    partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -29,9 +29,6 @@ namespace Jobby.Persistence.Data.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("ActivityType")
-                        .HasColumnType("int");
 
                     b.Property<Guid>("BoardId")
                         .HasColumnType("uniqueidentifier");
@@ -62,6 +59,9 @@ namespace Jobby.Persistence.Data.Migrations
 
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -192,6 +192,9 @@ namespace Jobby.Persistence.Data.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("Index")
+                        .HasColumnType("int");
+
                     b.Property<Guid>("JobListId")
                         .HasColumnType("uniqueidentifier");
 
@@ -248,6 +251,9 @@ namespace Jobby.Persistence.Data.Migrations
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("Index")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("LastUpdated")
                         .HasColumnType("datetime2");

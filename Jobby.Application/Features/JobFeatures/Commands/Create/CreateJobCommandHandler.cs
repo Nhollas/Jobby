@@ -69,6 +69,7 @@ internal sealed class CreateJobCommandHandler : IRequestHandler<CreateJobCommand
             _dateTimeProvider.UtcNow,
             _userId,
             request.Company,
+            request.Colour,
             request.Title,
             newIndex,
             selectedJobList,

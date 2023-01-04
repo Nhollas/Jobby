@@ -2,7 +2,7 @@ import Head from "next/head";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 
-export default function Layout({ children }) {
+export const Layout = ({ children }) => {
   return (
     <div className='w-full'>
       <Head>
@@ -20,3 +20,5 @@ export default function Layout({ children }) {
     </div>
   );
 }
+
+export default Layout;

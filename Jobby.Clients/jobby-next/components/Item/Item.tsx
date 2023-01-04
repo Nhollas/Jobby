@@ -3,7 +3,7 @@ import classNames from "classnames";
 import type { Transform } from "@dnd-kit/utilities";
 
 import styles from "./Item.module.css";
-import { Job } from "../../types/MultipleContainers";
+import { Job } from "../../types";
 import { DraggableSyntheticListeners } from "@dnd-kit/core";
 
 export interface Props {

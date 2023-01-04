@@ -1,36 +1,28 @@
 import Link from "next/link";
+import { serverClient } from '../../client';
 import { useState } from "react";
-import { PageContainer } from "../../components/Common/PageContainer";
+import { PageContainer } from "../../components/Common";
 import { CreateJobModal } from "../../components/Modals/Job/CreateJobModal";
-import { getBoardById } from "/services/boardService";
-import { getToken } from "next-auth/jwt";
 import { MultipleContainers } from "../../components";
+import { Board, JobList } from "../../types";
+import { GetServerSideProps, NextPage } from "next";
 
-export async function getServerSideProps({ query, req }) {
-  const token = await getToken({ req });
+export const getServerSideProps : GetServerSideProps = async ({ query, req }) => {
+  const board = await serverClient.get<Board>(`/board/${query.boardId}`, req);
 
-  if (!token) {
-    return {
-      redirect: {
-        destination: "/login",
-        permanent: false,
-      },
-    };
-  }
-
-  const { accessToken } = token;
-
-  const board = await getBoardById(query.boardId, accessToken);
-
-  return { props: { board, accessToken } };
+  return { props: { board } };
 }
 
-export default function Page({ board, accessToken }) {
+export const Page : NextPage<{ board: Board }> = ({ board }) => {
   const [currentBoard, setCurrentBoard] = useState(board);
 
   const { jobList, name, activitiesCount, contactsCount } = currentBoard;
 
-  const [showCreateModal, setShowCreateModal] = useState({
+  const [showCreateModal, setShowCreateModal] = useState<{
+    visible: boolean;
+    board: Board | null;
+    jobList: JobList[] | null
+  }>({
     visible: false,
     board: null,
     jobList: null,
@@ -42,7 +34,6 @@ export default function Page({ board, accessToken }) {
         setCurrentBoard={setCurrentBoard}
         setShowCreateModal={setShowCreateModal}
         showCreateModal={showCreateModal}
-        accessToken={accessToken}
       />
       <div className='flex w-full flex-col gap-y-4'>
         <h1 className='text-2xl font-medium'>{name}</h1>
@@ -76,3 +67,5 @@ export default function Page({ board, accessToken }) {
     </PageContainer>
   );
 }
+
+export default Page;

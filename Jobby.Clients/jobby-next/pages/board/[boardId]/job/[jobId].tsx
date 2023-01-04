@@ -1,28 +1,20 @@
 import Link from "next/link";
 import { useState } from "react";
-import { PageContainer } from "../../../../components/Common/PageContainer";
+import { PageContainer } from "../../../../components/Common";
 import Input from "../../../../components/Form/Input";
-import { getJobById } from "/services/jobService";
-import { getToken } from "next-auth/jwt";
+import { GetServerSideProps, NextPage } from "next";
+import { serverClient } from "../../../../client";
+import { Job } from "../../../../types";
 
-export async function getServerSideProps({ query, req }) {
-  const token = await getToken({ req });
+export const getServerSideProps : GetServerSideProps = async ({ req, query }) => {
+  const { boardId, jobId } = query;
 
-  if (!token) {
-    return {
-      redirect: {
-        destination: "/login",
-        permanent: false,
-      },
-    };
-  }
+  const job = await serverClient.get<Job>(`/board/${boardId}/job/${jobId}`, req)
 
-  const job = await getJobById(query.boardId, query.jobId, token.accessToken);
-
-  return { props: { jobProp: job } };
+  return { props: { job } };
 }
 
-const formatViewModel = (job) => {
+const formatViewModel = (job : Job) => {
   const { activities } = job;
   const appliedActivity = activities.find((activity) => activity.type === 1);
 
@@ -38,7 +30,6 @@ const formatViewModel = (job) => {
   );
 
   return {
-    job,
     appliedActivity,
     interviewActivities,
     offerActivities,
@@ -46,11 +37,10 @@ const formatViewModel = (job) => {
   };
 };
 
-export default function Job({ jobProp }) {
-  const [model, setModel] = useState(formatViewModel(jobProp));
+export const Page : NextPage<{ job: Job }> = ({ job }) => {
+  const [model, setModel] = useState(formatViewModel(job));
 
   const {
-    job,
     appliedActivity,
     interviewActivities,
     offerActivities,
@@ -99,30 +89,29 @@ export default function Job({ jobProp }) {
           )}
         </button>
       </section>
-      <section class='flex flex-col justify-center gap-y-8 border-x border-b border-gray-300 p-5'>
-        <div class='activityFormToggle fixed inset-0'></div>
-        <div class='flex flex-col gap-y-5'>
-          <div class='flex flex-col gap-y-2'>
-            <p class='text-sm font-medium'>Application</p>
+      <section className='flex flex-col justify-center gap-y-8 border-x border-b border-gray-300 p-5'>
+        <div className='activityFormToggle fixed inset-0'></div>
+        <div className='flex flex-col gap-y-5'>
+          <div className='flex flex-col gap-y-2'>
+            <p className='text-sm font-medium'>Application</p>
             {appliedActivity === null ? (
               <button
-                onclick='showElement("create-activity-parent")'
-                class='border-1 z-10 flex flex-row justify-start rounded-lg border-gray-300 bg-white px-5 py-1 text-sm'
+                className='border-1 z-10 flex flex-row justify-start rounded-lg border-gray-300 bg-white px-5 py-1 text-sm'
               >
-                <div class='flex w-full flex-row gap-x-4'>
-                  <i class='bi bi-plus-square'></i>
-                  <p class='text-sm'>Log Application</p>
+                <div className='flex w-full flex-row gap-x-4'>
+                  <i className='bi bi-plus-square'></i>
+                  <p className='text-sm'>Log Application</p>
                 </div>
               </button>
             ) : (
               <form
                 asp-page-handler='UpdateActivity'
                 method='post'
-                class='activityForm border-1 max-w-xxs z-10 h-full max-h-10 w-full cursor-pointer overflow-hidden border-gray-300 px-4'
+                className='activityForm border-1 max-w-xxs z-10 h-full max-h-10 w-full cursor-pointer overflow-hidden border-gray-300 px-4'
               >
                 <Input type='hidden' value={appliedActivity.id} name='id' />
                 <Input type='hidden' value={appliedActivity.type} name='type' />
-                <div class='flex h-10 flex-row items-center gap-x-2'>
+                <div className='flex h-10 flex-row items-center gap-x-2'>
                   <Input
                     type='checkbox'
                     name='completed'
@@ -139,9 +128,9 @@ export default function Job({ jobProp }) {
                   name='note'
                   placeholder='Note'
                   value={appliedActivity.note}
-                  class='min-h-[10rem] w-full border-0 pl-0'
+                  className='min-h-[10rem] w-full border-0 pl-0'
                 />
-                <button class='btn-primary mb-3 rounded-sm px-5 py-0.5'>
+                <button className='btn-primary mb-3 rounded-sm px-5 py-0.5'>
                   Save
                 </button>
               </form>
@@ -152,3 +141,5 @@ export default function Job({ jobProp }) {
     </PageContainer>
   );
 }
+
+export default Page;

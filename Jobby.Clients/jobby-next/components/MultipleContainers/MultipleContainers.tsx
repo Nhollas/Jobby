@@ -26,7 +26,7 @@ import {
 import { DroppableContainer, SortableItem } from "./components";
 import { coordinateGetter } from "./multipleContainersKeyboardCoordinates";
 import { Item, Container } from "../../components";
-import { Job, JobLists } from "../../types/MultipleContainers";
+import { Job, JobList } from "../../types";
 
 const dropAnimation: DropAnimation = {
   sideEffects: defaultDropAnimationSideEffects({
@@ -39,13 +39,13 @@ const dropAnimation: DropAnimation = {
 };
 
 interface Props {
-  lists?: JobLists[];
+  lists?: JobList[];
 }
 
 const PLACEHOLDER_ID = "placeholder";
 
 export function MultipleContainers({ lists }: Props) {
-  const [containerDict, setContainerDict] = useState<Record<string, JobLists>>(
+  const [containerDict, setContainerDict] = useState<Record<string, JobList>>(
     lists
       ? lists.reduce((acc, list) => {
           acc[list.id] = list;

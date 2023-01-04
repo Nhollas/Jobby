@@ -1,5 +1,3 @@
-import ClassNames from "../../utility/classNames";
-
 export const PageContainer = (props) => {
   const { children, extended, small, title } = props;
   return (

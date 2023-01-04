@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { Item } from "../../../Item";
-import { Job } from "../../../../types/MultipleContainers";
+import { Job } from "../../../../types";
 
 function useMountStatus() {
   const [isMounted, setIsMounted] = useState(false);

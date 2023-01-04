@@ -1,5 +1,5 @@
 import { createJob } from "../../../services/jobService";
-import ModalContainer from "../../Common/ModalContainer";
+import { ModalContainer } from "../../Common";
 
 export const CreateJobModal = (props) => {
   const { setCurrentBoard, setShowCreateModal, showCreateModal, accessToken } =
@@ -41,49 +41,49 @@ export const CreateJobModal = (props) => {
       <ModalContainer>
         <form
           onSubmit={handleSubmit}
-          className='flex flex-col gap-y-8'
-          method='post'
+          className="flex flex-col gap-y-8"
+          method="post"
         >
-          <h1 className='text-xl font-medium'>Create Job</h1>
-          <p className='flex flex-col gap-y-2'>
-            <label htmlFor='title'>Title</label>
-            <input id='title' name='title'></input>
+          <h1 className="text-xl font-medium">Create Job</h1>
+          <p className="flex flex-col gap-y-2">
+            <label htmlFor="title">Title</label>
+            <input id="title" name="title"></input>
           </p>
-          <p className='flex flex-col gap-y-2'>
-            <label htmlFor='company'>Company</label>
-            <input id='company' name='company'></input>
+          <p className="flex flex-col gap-y-2">
+            <label htmlFor="company">Company</label>
+            <input id="company" name="company"></input>
           </p>
-          <p className='flex flex-col gap-y-2'>
-            <label htmlFor='boardName'>Board</label>
+          <p className="flex flex-col gap-y-2">
+            <label htmlFor="boardName">Board</label>
             <input
               disabled
-              id='boardName'
-              name='boardName'
+              id="boardName"
+              name="boardName"
               defaultValue={board.name}
             ></input>
           </p>
-          <p className='flex flex-col gap-y-2'>
-            <label htmlFor='jobListName'>JobList</label>
+          <p className="flex flex-col gap-y-2">
+            <label htmlFor="jobListName">JobList</label>
             <input
               disabled
-              id='jobListName'
-              name='jobListName'
+              id="jobListName"
+              name="jobListName"
               defaultValue={jobList.name}
             ></input>
           </p>
           <input
-            id='boardId'
-            name='boardId'
+            id="boardId"
+            name="boardId"
             defaultValue={board.id}
-            type='hidden'
+            type="hidden"
           ></input>
           <input
-            id='jobListId'
-            name='jobListId'
+            id="jobListId"
+            name="jobListId"
             defaultValue={jobList.id}
-            type='hidden'
+            type="hidden"
           ></input>
-          <p className='flex flex-row justify-center gap-4'>
+          <p className="flex flex-row justify-center gap-4">
             <button
               onClick={() =>
                 setShowCreateModal({
@@ -92,13 +92,13 @@ export const CreateJobModal = (props) => {
                   jobList: null,
                 })
               }
-              className='font-raleway border border-gray-300 bg-white py-2 px-4 font-medium'
+              className="font-raleway border border-gray-300 bg-white py-2 px-4 font-medium"
             >
               Cancel
             </button>
             <button
-              type='submit'
-              className='font-raleway w-full border bg-main-blue py-2 text-base font-medium text-white hover:border-main-blue hover:bg-gray-50 hover:text-black'
+              type="submit"
+              className="font-raleway w-full border bg-main-blue py-2 text-base font-medium text-white hover:border-main-blue hover:bg-gray-50 hover:text-black"
             >
               Create
             </button>

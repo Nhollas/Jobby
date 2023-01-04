@@ -1,11 +1,18 @@
 import { useReducer } from "react";
-import { updateBoard } from "../../../services/boardService";
-import ActionButton from "../../Common/ActionButton";
-import ModalContainer from "../../Common/ModalContainer";
+import { client } from "../../../client";
+import { Board } from "../../../types";
+import { ActionButton, ModalContainer } from "../../Common";
 import Input from "../../Form/Input";
 
-export const EditBoardModal = (props) => {
-  const { setCurrentBoardList, setShowEditModal, visible, accessToken, board } =
+interface Props {
+  setCurrentBoardList: (boards : any) => void;
+  setShowEditModal: ({ visible, board } : { visible: boolean, board: Board}) => void;
+  visible: boolean;
+  board: Board;
+}
+
+export const EditBoardModal = (props : Props) => {
+  const { setCurrentBoardList, setShowEditModal, visible, board } =
     props;
 
   const reducer = (state, action) => {
@@ -36,9 +43,12 @@ export const EditBoardModal = (props) => {
 
     //TODO: Validation with YUP package.
 
-    var name = event.target.name.value;
+    const board = {
+      boardId: board.id,
+      boardName: event.target.name.value
+    }
 
-    await updateBoard(board.id, name, accessToken);
+    await client.put("/board/update", board);
 
     var updatedBoard = {
       id: board.id,
@@ -46,7 +56,7 @@ export const EditBoardModal = (props) => {
       name: name,
     };
 
-    setCurrentBoardList((prev) =>
+    setCurrentBoardList((prev : Board[]) =>
       prev.map((board) => {
         if (board.id === updatedBoard.id) {
           return updatedBoard;
@@ -65,30 +75,30 @@ export const EditBoardModal = (props) => {
     return (
       <ModalContainer>
         <form
-          className='flex flex-col gap-6'
-          method='post'
+          className="flex flex-col gap-6"
+          method="post"
           onSubmit={handleSubmit}
         >
-          <h1 className='overflow-hidden text-ellipsis whitespace-nowrap text-xl font-medium'>
+          <h1 className="overflow-hidden text-ellipsis whitespace-nowrap text-xl font-medium">
             Edit Board - {board.name}
           </h1>
           <Input
-            type='hidden'
-            className='hidden'
+            type="hidden"
+            className="hidden"
             value={board.id}
-            name='boardId'
+            name="boardId"
           />
           <Input
-            type='text'
-            name='name'
+            type="text"
+            name="name"
             value={state.name}
-            label='Name'
+            label="Name"
             onChange={(e) => handleChange(e)}
           />
-          <div className='flex flex-row justify-center gap-4'>
+          <div className="flex flex-row justify-center gap-4">
             <ActionButton
-              variant='secondary'
-              text='Cancel'
+              variant="secondary"
+              text="Cancel"
               onClick={() =>
                 setShowEditModal({
                   visible: false,
@@ -97,9 +107,9 @@ export const EditBoardModal = (props) => {
               }
             />
             <ActionButton
-              variant='primary'
-              text='Update'
-              type='submit'
+              variant="primary"
+              text="Update"
+              type="submit"
               extended
             />
           </div>

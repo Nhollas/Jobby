@@ -5,7 +5,7 @@ import {
   defaultAnimateLayoutChanges
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Job } from "../../../../types/MultipleContainers";
+import { Job } from "../../../../types";
 
 const animateLayoutChanges: AnimateLayoutChanges = (args) =>
   defaultAnimateLayoutChanges({ ...args, wasDragging: true });

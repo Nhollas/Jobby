@@ -1,4 +1,6 @@
-const ModalContainer = (props) => {
+import { ReactNode } from "react";
+
+export const ModalContainer = (props : { children: ReactNode }) => {
   const { children } = props;
 
   return (

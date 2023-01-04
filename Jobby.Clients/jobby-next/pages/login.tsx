@@ -10,8 +10,6 @@ export default function Page() {
       redirect: true,
       callbackUrl: "/dashboard",
     });
-
-    console.log({ result });
   }
 
   return (

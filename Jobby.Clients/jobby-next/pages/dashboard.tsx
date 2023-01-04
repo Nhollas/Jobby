@@ -1,45 +1,38 @@
-import { getToken } from "next-auth/jwt";
+import { serverClient } from '../client';
 import Link from "next/link";
 import { useState } from "react";
-import { PageContainer } from "../components/Common/PageContainer";
-import { CreateBoardModal } from "../components/Modals/Dashboard/CreateBoardModal";
-import { DeleteBoardModal } from "../components/Modals/Dashboard/DeleteBoardModal";
-import { EditBoardModal } from "../components/Modals/Dashboard/EditBoardModal";
-import ActionButton from "../components/Common/ActionButton";
-import { boardList } from "/services/boardService";
+import { PageContainer, ActionButton } from "../components/Common";
+import { CreateBoardModal, DeleteBoardModal, EditBoardModal } from "../components/Modals/Dashboard";
+import { GetServerSideProps, NextPage } from 'next'
+import { Board } from '../types';
 
-export async function getServerSideProps({ req }) {
-  const token = await getToken({ req });
+export const getServerSideProps : GetServerSideProps = async ({ req }) => {
+  const boards = await serverClient.get<Board[]>("/boards", req);
 
-  if (!token) {
-    return {
-      redirect: {
-        destination: "/login",
-        permanent: false,
-      },
-    };
-  }
-
-  const { accessToken } = token;
-
-  var boards = await boardList(token.accessToken);
-
-  return { props: { boards, accessToken } };
+  return { props: { boards } };
 }
 
-export default function Dashboard({ boards, accessToken }) {
+export const Page : NextPage<{ boards: Board[]}> = ({ boards }) => {
   const [currentBoardList, setCurrentBoardList] = useState(boards);
 
-  const [showCreateModal, setShowCreateModal] = useState({
+  const [showCreateModal, setShowCreateModal] = useState<{
+    visible: boolean;
+  }>({
     visible: false,
   });
 
-  const [showEditModal, setShowEditModal] = useState({
+  const [showEditModal, setShowEditModal] = useState<{
+    visible: boolean;
+    board: Board | null;
+  }>({
     visible: false,
     board: null,
   });
 
-  const [showDeleteModal, setShowDeleteModal] = useState({
+  const [showDeleteModal, setShowDeleteModal] = useState<{
+    visible: boolean;
+    boardId: string | null;
+  }>({
     visible: false,
     boardId: null,
   });
@@ -50,21 +43,18 @@ export default function Dashboard({ boards, accessToken }) {
         setCurrentBoardList={setCurrentBoardList}
         setShowCreateModal={setShowCreateModal}
         visible={showCreateModal.visible}
-        accessToken={accessToken}
       />
       <DeleteBoardModal
         setCurrentBoardList={setCurrentBoardList}
         setShowDeleteModal={setShowDeleteModal}
         boardId={showDeleteModal.boardId}
         visible={showDeleteModal.visible}
-        accessToken={accessToken}
       />
       <EditBoardModal
         setCurrentBoardList={setCurrentBoardList}
         setShowEditModal={setShowEditModal}
         board={showEditModal.board}
         visible={showEditModal.visible}
-        accessToken={accessToken}
       />
       <ActionButton
         variant='primary'
@@ -116,3 +106,5 @@ export default function Dashboard({ boards, accessToken }) {
     </PageContainer>
   );
 }
+
+export default Page;

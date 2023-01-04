@@ -18,10 +18,12 @@ public class Job : Entity
         DateTime createdDate,
         string ownerId,
         string company,
+        string colour,
         string jobTitle,
         int index,
         JobList jobList,
-        Board board)
+        Board board
+        )
         : base(id, createdDate, ownerId)
 
     {
@@ -30,6 +32,7 @@ public class Job : Entity
         Index = index;
         JobList = jobList;
         Board = board;
+        Colour = colour ?? "rgb(255 255 255)";
     }
 
     public string Company { get; private set; }
@@ -70,6 +73,7 @@ public class Job : Entity
         DateTime createdDate,
         string ownerId,
         string company,
+        string colour,
         string jobTitle,
         int index,
         JobList jobList,
@@ -80,6 +84,7 @@ public class Job : Entity
             createdDate,
             ownerId,
             company,
+            colour,
             jobTitle,
             index,
             jobList,

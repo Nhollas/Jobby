@@ -1,37 +1,23 @@
 import Link from "next/link";
-import { PageContainer } from "../../../components/Common/PageContainer";
-import {
-  activityList,
-  updateActivity,
-} from "../../../services/activityService";
-import { useReducer } from "react";
+import { PageContainer, ActionButton } from "../../../components/Common";
+import { Reducer, useReducer } from "react";
 import reducer from "../../../reducers/ActivityListReducer";
 import Input from "../../../components/Form/Input";
-import ActionButton from "../../../components/Common/ActionButton";
-import { getToken } from "next-auth/jwt";
+import { GetServerSideProps, NextPage } from "next";
+import { serverClient } from "../../../client";
+import { Activity } from "../../../types";
+import { client } from '../../../client';
 
-export async function getServerSideProps({ query, req }) {
-  const token = await getToken({ req });
-
-  if (!token) {
-    return {
-      redirect: {
-        destination: "/login",
-        permanent: false,
-      },
-    };
-  }
-
-  const { accessToken } = token;
-
+export const getServerSideProps : GetServerSideProps = async ({ req, query }) => {
   const { boardId } = query;
-  const activities = await activityList(boardId, accessToken);
+
+  const activities = await serverClient.get<Activity[]>(`/board/${boardId}/activities`, req)
 
   return { props: { activities, boardId } };
 }
 
-const activityTypeToCssClass = (type) => {
-  const activityTypeCssClasses = {
+const activityTypeToCssClass = (type : number) => {
+  const activityTypeCssClasses : Record<number, string> = {
     1: "bg-red-50 text-red-500",
     2: "bg-orange-50 text-orange-500",
     3: "bg-amber-50 text-amber-500",
@@ -59,25 +45,16 @@ const activityTypeToCssClass = (type) => {
   return activityTypeCssClasses[type];
 };
 
-export default function Activities({ activities, boardId }) {
-  const [state, dispatch] = useReducer(reducer, { activities });
+export const Page : NextPage<{ activities: Activity[], boardId: string}> = ({ activities, boardId }) => {
+  const [state, dispatch] = useReducer<Reducer<{ activities: Activity[]}, any>>(reducer, { activities });
 
-  const handleChange = (event, activityId) => {
-    if (event.target.type === "checkbox") {
-      dispatch({
-        type: "HANDLE_CHECKBOX_INPUT_CHANGE",
-        name: event.target.name,
-        activityId,
-        value: event.target.checked,
-      });
-    } else {
+  const handleChange = (event, activityId: string) => {
       dispatch({
         type: "HANDLE_INPUT_CHANGE",
         name: event.target.name,
         activityId,
-        value: event.target.value,
+        value: event.target.type === "checkbox" ? event.target.checked : event.target.value
       });
-    }
   };
 
   const showActivity = (e) => {
@@ -85,7 +62,7 @@ export default function Activities({ activities, boardId }) {
     e.target.classList.add("h-full");
   };
 
-  const handleSubmit = async (e, activityId) => {
+  const handleSubmit = async (e, activityId : string) => {
     e.preventDefault();
 
     //TODO: Validation with YUP package.
@@ -94,7 +71,7 @@ export default function Activities({ activities, boardId }) {
       (activity) => activity.id === activityId
     );
 
-    await updateActivity(activity);
+    await client.post<Activity, any>("/activity/update", activity);
   };
 
   return (
@@ -105,7 +82,7 @@ export default function Activities({ activities, boardId }) {
         </a>
       </Link>
       <section className='grid grid-cols-1 gap-4'>
-        {state.activities.map((activity) => (
+        {state.activities.map((activity : Activity) => (
           <div
             className='transition-height relative flex h-14 w-full cursor-pointer flex-col gap-y-5 overflow-y-hidden  border border-gray-300 bg-gray-50 p-4 duration-200 ease-out'
             onClick={showActivity}
@@ -170,3 +147,5 @@ export default function Activities({ activities, boardId }) {
     </PageContainer>
   );
 }
+
+export default Page;

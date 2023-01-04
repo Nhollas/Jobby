@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Jobby.Persistence.Data.Migrations
 {
-    public partial class Test : Migration
+    public partial class Init : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -58,6 +58,7 @@ namespace Jobby.Persistence.Data.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Index = table.Column<int>(type: "int", nullable: false),
                     BoardId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LastUpdated = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -145,6 +146,7 @@ namespace Jobby.Persistence.Data.Migrations
                     Colour = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Deadline = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Index = table.Column<int>(type: "int", nullable: false),
                     JobListId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     BoardId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -173,7 +175,7 @@ namespace Jobby.Persistence.Data.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ActivityType = table.Column<int>(type: "int", nullable: false),
+                    Type = table.Column<int>(type: "int", nullable: false),
                     StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Note = table.Column<string>(type: "nvarchar(max)", nullable: true),

@@ -1,4 +1,13 @@
-const ActionButton = (props) => {
+interface Props {
+ type?: "button" | "submit" | "reset";
+ text?: string;
+ onClick?(): void;
+ variant?: string;
+ rounded?: boolean;
+ extended?: boolean; 
+}
+
+export const ActionButton = (props : Props) => {
   const { type, text, onClick, variant, rounded, extended } = props;
 
   const classNameMap = {
