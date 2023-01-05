@@ -15,13 +15,13 @@ import {
   useSensor,
   closestCenter,
   MeasuringStrategy,
-  defaultDropAnimationSideEffects
+  defaultDropAnimationSideEffects,
 } from "@dnd-kit/core";
 import {
   SortableContext,
   arrayMove,
   verticalListSortingStrategy,
-  horizontalListSortingStrategy
+  horizontalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { DroppableContainer, SortableItem } from "./components";
 import { coordinateGetter } from "./multipleContainersKeyboardCoordinates";
@@ -32,10 +32,10 @@ const dropAnimation: DropAnimation = {
   sideEffects: defaultDropAnimationSideEffects({
     styles: {
       active: {
-        opacity: "0.5"
-      }
-    }
-  })
+        opacity: "0.5",
+      },
+    },
+  }),
 };
 
 interface Props {
@@ -66,14 +66,14 @@ export function MultipleContainers({ lists }: Props) {
     ? containerKeys.includes(activeId)
     : false;
 
-    useEffect(() => {
-      const element = document.createElement('div');
-      document.body.appendChild(element);
-      setPortalElement(element);
-      return () => {
-        document.body.removeChild(element);
-      }
-    }, []);
+  useEffect(() => {
+    const element = document.createElement("div");
+    document.body.appendChild(element);
+    setPortalElement(element);
+    return () => {
+      document.body.removeChild(element);
+    };
+  }, []);
 
   const collisionDetectionStrategy: CollisionDetection = useCallback(
     (args) => {
@@ -82,7 +82,7 @@ export function MultipleContainers({ lists }: Props) {
           ...args,
           droppableContainers: args.droppableContainers.filter(
             (container) => container.id in containerDict
-          )
+          ),
         });
       }
 
@@ -108,7 +108,7 @@ export function MultipleContainers({ lists }: Props) {
                 (container) =>
                   container.id !== overId &&
                   containerJobs.some((job) => job.id === container.id)
-              )
+              ),
             })[0]?.id;
           }
         }
@@ -135,7 +135,7 @@ export function MultipleContainers({ lists }: Props) {
     useSensor(MouseSensor),
     useSensor(TouchSensor),
     useSensor(KeyboardSensor, {
-      coordinateGetter
+      coordinateGetter,
     })
   );
 
@@ -165,14 +165,13 @@ export function MultipleContainers({ lists }: Props) {
   function renderContainerDragOverlay(containerId: string) {
     return (
       <Container
-        label={containerDict[containerId].name}
+        list={containerDict[containerId]}
         style={{
-          height: "100%"
+          height: "100%",
         }}
         shadow
-        unstyled={false}
       >
-        {containerDict[containerId].jobs.map((job, index) => (
+        {containerDict[containerId].jobs.map((job) => (
           <Item key={job.id} job={job} />
         ))}
       </Container>
@@ -200,8 +199,8 @@ export function MultipleContainers({ lists }: Props) {
       collisionDetection={collisionDetectionStrategy}
       measuring={{
         droppable: {
-          strategy: MeasuringStrategy.Always
-        }
+          strategy: MeasuringStrategy.Always,
+        },
       }}
       onDragStart={({ active }) => {
         setActiveId(active.id as string);
@@ -248,7 +247,7 @@ export function MultipleContainers({ lists }: Props) {
                 ...containerDict[activeContainer],
                 jobs: containerDict[activeContainer].jobs.filter(
                   (job) => job.id !== active.id
-                )
+                ),
               },
               [overContainer]: {
                 ...containerDict[overContainer],
@@ -258,9 +257,9 @@ export function MultipleContainers({ lists }: Props) {
                   ...containerDict[overContainer].jobs.slice(
                     newIndex,
                     containerDict[overContainer].jobs.length
-                  )
-                ]
-              }
+                  ),
+                ],
+              },
             };
           });
         }
@@ -314,8 +313,8 @@ export function MultipleContainers({ lists }: Props) {
                   containerDict[overContainer].jobs,
                   activeIndex,
                   overIndex
-                )
-              }
+                ),
+              },
             }));
           }
         }
@@ -323,15 +322,7 @@ export function MultipleContainers({ lists }: Props) {
         setActiveId(null);
       }}
     >
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          gap: "0 2rem",
-          boxSizing: "border-box",
-          gridAutoFlow: "column"
-        }}
-      >
+      <div className='flex h-full divide-x'>
         <SortableContext
           items={[...containerKeys, PLACEHOLDER_ID]}
           strategy={horizontalListSortingStrategy}
@@ -340,10 +331,9 @@ export function MultipleContainers({ lists }: Props) {
             <DroppableContainer
               key={containerId}
               id={containerId}
-              label={containerDict[containerId].name}
+              list={containerDict[containerId]}
               items={containerDict[containerId].jobs}
               onRemove={() => handleRemove(containerId)}
-              setContainerDict={setContainerDict}
             >
               <SortableContext
                 items={containerDict[containerId].jobs}
@@ -369,22 +359,22 @@ export function MultipleContainers({ lists }: Props) {
             items={[]}
             onClick={handleAddColumn}
             placeholder
-            setContainerDict={setContainerDict}
           >
             + Add column
           </DroppableContainer>
         </SortableContext>
       </div>
-      {portalElement && createPortal(
-        <DragOverlay dropAnimation={dropAnimation}>
-          {activeId
-            ? containerKeys.includes(activeId)
-              ? renderContainerDragOverlay(activeId)
-              : renderSortableItemDragOverlay(activeId)
-            : null}
-        </DragOverlay>,
-        portalElement
-      )}
+      {portalElement &&
+        createPortal(
+          <DragOverlay dropAnimation={dropAnimation}>
+            {activeId
+              ? containerKeys.includes(activeId)
+                ? renderContainerDragOverlay(activeId)
+                : renderSortableItemDragOverlay(activeId)
+              : null}
+          </DragOverlay>,
+          portalElement
+        )}
     </DndContext>
   );
 }

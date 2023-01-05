@@ -1,46 +1,35 @@
-import React, { Dispatch, forwardRef } from "react";
+import React, { forwardRef } from "react";
 import classNames from "classnames";
 
 import { Handle, Remove } from "../Item";
 
 import styles from "./container.module.css";
-import { Job, JobList } from "../../types";
+import { JobList } from "../../types";
 
 export interface Props {
   children: React.ReactNode;
-  columns?: number;
-  label?: string;
   style?: React.CSSProperties;
-  horizontal?: boolean;
   hover?: boolean;
   handleProps?: React.HTMLAttributes<any>;
-  scrollable?: boolean;
   shadow?: boolean;
   placeholder?: boolean;
-  unstyled?: boolean;
+  list?: JobList;
   onClick?(): void;
   onRemove?(): void;
-  setContainerDict?: (value: Record<string, JobList>) => void;
-  items: Job[];
 }
 
-export const Container = forwardRef<HTMLDivElement, Props>(
+export const Container = forwardRef<HTMLDivElement & HTMLButtonElement, Props>(
   (
     {
       children,
-      columns = 1,
-      handleProps,
-      horizontal,
+      style,
       hover,
+      handleProps,
+      shadow,
+      placeholder,
+      list,
       onClick,
       onRemove,
-      setContainerDict,
-      label,
-      placeholder,
-      style,
-      scrollable,
-      shadow,
-      unstyled,
       ...props
     }: Props,
     ref
@@ -54,31 +43,32 @@ export const Container = forwardRef<HTMLDivElement, Props>(
         style={
           {
             ...style,
-            "--columns": columns,
+            "--columns": 1,
           } as React.CSSProperties
         }
         className={classNames(
           styles.Container,
-          unstyled && styles.unstyled,
-          horizontal && styles.horizontal,
           hover && styles.hover,
           placeholder && styles.placeholder,
-          scrollable && styles.scrollable,
           shadow && styles.shadow
         )}
         onClick={onClick}
-        tabIndex={onClick ? 0 : undefined}
+        tabIndex={onClick && 0}
       >
-        {label ? (
+        {list ? (
           <div className={styles.Header}>
-            {label}
+            {list.name}
             <div className={styles.Actions}>
-              {onRemove ? <Remove onClick={onRemove} /> : undefined}
+              {onRemove && <Remove onClick={onRemove} />}
               <Handle {...handleProps} />
             </div>
           </div>
         ) : null}
-        {placeholder ? children : <ul>{children}</ul>}
+        {placeholder ? (
+          children
+        ) : (
+          <ul className='flex h-full flex-col gap-y-4 p-4'>{children}</ul>
+        )}
       </Component>
     );
   }

@@ -2,11 +2,10 @@ import { Container, ContainerProps } from "../../../../components";
 import {
   useSortable,
   AnimateLayoutChanges,
-  defaultAnimateLayoutChanges
+  defaultAnimateLayoutChanges,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Job, JobList } from "../../../../types";
-import { Dispatch } from "react";
+import { Job } from "../../../../types";
 
 const animateLayoutChanges: AnimateLayoutChanges = (args) =>
   defaultAnimateLayoutChanges({ ...args, wasDragging: true });
@@ -17,14 +16,12 @@ export function DroppableContainer({
   id,
   items,
   style,
-  setContainerDict,
   ...props
 }: ContainerProps & {
   disabled?: boolean;
   id: string;
   items: Job[];
   style?: React.CSSProperties;
-  setContainerDict?: Dispatch<Record<string, JobList>>
 }) {
   const {
     active,
@@ -34,14 +31,14 @@ export function DroppableContainer({
     over,
     setNodeRef,
     transition,
-    transform
+    transform,
   } = useSortable({
     id,
     data: {
       type: "container",
-      children: items
+      children: items,
     },
-    animateLayoutChanges
+    animateLayoutChanges,
   });
   const isOverContainer = over
     ? (id === over.id && active?.data.current?.type !== "container") ||
@@ -55,14 +52,12 @@ export function DroppableContainer({
         ...style,
         transition,
         transform: CSS.Translate.toString(transform),
-        opacity: isDragging ? 0.5 : undefined
+        opacity: isDragging ? 0.5 : undefined,
       }}
       hover={isOverContainer}
-      items={items}
-      setContainerDict={setContainerDict}
       handleProps={{
         ...attributes,
-        ...listeners
+        ...listeners,
       }}
       {...props}
     >

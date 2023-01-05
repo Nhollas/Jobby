@@ -1,19 +1,21 @@
 import Link from "next/link";
-import { serverClient } from '../../client';
+import { serverClient } from "../../client";
 import { useState } from "react";
 import { PageContainer } from "../../components/Common";
-import { CreateJobModal } from "../../components/Modals/Job/CreateJobModal";
 import { MultipleContainers } from "../../components";
 import { Board, JobList } from "../../types";
 import { GetServerSideProps, NextPage } from "next";
 
-export const getServerSideProps : GetServerSideProps = async ({ query, req }) => {
+export const getServerSideProps: GetServerSideProps = async ({
+  query,
+  req,
+}) => {
   const board = await serverClient.get<Board>(`/board/${query.boardId}`, req);
 
   return { props: { board } };
-}
+};
 
-export const Page : NextPage<{ board: Board }> = ({ board }) => {
+export const Page: NextPage<{ board: Board }> = ({ board }) => {
   const [currentBoard, setCurrentBoard] = useState(board);
 
   const { jobList, name, activitiesCount, contactsCount } = currentBoard;
@@ -21,7 +23,7 @@ export const Page : NextPage<{ board: Board }> = ({ board }) => {
   const [showCreateModal, setShowCreateModal] = useState<{
     visible: boolean;
     board: Board | null;
-    jobList: JobList[] | null
+    jobList: JobList[] | null;
   }>({
     visible: false,
     board: null,
@@ -30,11 +32,6 @@ export const Page : NextPage<{ board: Board }> = ({ board }) => {
 
   return (
     <PageContainer extended>
-      <CreateJobModal
-        setCurrentBoard={setCurrentBoard}
-        setShowCreateModal={setShowCreateModal}
-        showCreateModal={showCreateModal}
-      />
       <div className='flex w-full flex-col gap-y-4'>
         <h1 className='text-2xl font-medium'>{name}</h1>
         <div className='flex flex-row gap-x-4'>
@@ -66,6 +63,6 @@ export const Page : NextPage<{ board: Board }> = ({ board }) => {
       <MultipleContainers lists={jobList} />
     </PageContainer>
   );
-}
+};
 
 export default Page;

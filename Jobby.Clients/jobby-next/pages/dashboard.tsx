@@ -5,7 +5,6 @@ import { PageContainer, ActionButton } from "../components/Common";
 import {
   CreateBoardModal,
   DeleteBoardModal,
-  EditBoardModal,
 } from "../components/Modals/Dashboard";
 import { GetServerSideProps, NextPage } from "next";
 import { Board } from "../types";
@@ -23,14 +22,6 @@ export const Page: NextPage<{ boards: Board[] }> = ({ boards }) => {
     visible: boolean;
   }>({
     visible: false,
-  });
-
-  const [showEditModal, setShowEditModal] = useState<{
-    visible: boolean;
-    board: Board | null;
-  }>({
-    visible: false,
-    board: null,
   });
 
   const [showDeleteModal, setShowDeleteModal] = useState<{
@@ -52,11 +43,6 @@ export const Page: NextPage<{ boards: Board[] }> = ({ boards }) => {
         setCurrentBoardList={setCurrentBoardList}
         setShowDeleteModal={setShowDeleteModal}
         showDeleteModal={showDeleteModal}
-      />
-      <EditBoardModal
-        setCurrentBoardList={setCurrentBoardList}
-        setShowEditModal={setShowEditModal}
-        showEditModal={showEditModal}
       />
       <ActionButton
         variant='primary'
@@ -81,16 +67,6 @@ export const Page: NextPage<{ boards: Board[] }> = ({ boards }) => {
               </a>
             </Link>
             <div className='absolute bottom-4 left-4 flex flex-row gap-x-4'>
-              <ActionButton
-                variant='secondary'
-                text='Edit'
-                onClick={() =>
-                  setShowEditModal({
-                    visible: true,
-                    board: board,
-                  })
-                }
-              />
               <ActionButton
                 variant='danger'
                 text='Remove'
