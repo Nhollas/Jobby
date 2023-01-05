@@ -73,11 +73,10 @@ export const client = {
 
     }
   },
-  delete: async <R = any>(url: string): Promise<R> => {
+  delete: async (url: string) => {
     await clientSideHeaders();
     try {
-      const { data } = await instance.delete<R>(url, options);
-      return data;
+      await instance.delete(url, options);
     } catch (err) {
 
     }
@@ -117,11 +116,10 @@ export const serverClient = {
 
     }
   },
-  delete: async <R = any>(url: string, req: any): Promise<R> => {
+  delete: async (url: string, req: any) => {
     await serverSideHeaders(req);
     try {
-      const { data } = await instance.delete<R>(url, options);
-      return data;
+      await instance.delete(url, options);
     } catch (err) {
 
     }

@@ -343,6 +343,7 @@ export function MultipleContainers({ lists }: Props) {
               label={containerDict[containerId].name}
               items={containerDict[containerId].jobs}
               onRemove={() => handleRemove(containerId)}
+              setContainerDict={setContainerDict}
             >
               <SortableContext
                 items={containerDict[containerId].jobs}
@@ -368,6 +369,7 @@ export function MultipleContainers({ lists }: Props) {
             items={[]}
             onClick={handleAddColumn}
             placeholder
+            setContainerDict={setContainerDict}
           >
             + Add column
           </DroppableContainer>

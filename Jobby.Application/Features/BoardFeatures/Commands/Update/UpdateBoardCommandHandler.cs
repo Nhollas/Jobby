@@ -26,11 +26,11 @@ internal sealed class UpdateBoardCommandHandler : IRequestHandler<UpdateBoardCom
 
     public async Task<Unit> Handle(UpdateBoardCommand request, CancellationToken cancellationToken)
     {
-        Board boardToUpdate = await _repository.GetByIdAsync(request.BoardId, cancellationToken);
+        Board boardToUpdate = await _repository.GetByIdAsync(request.Id, cancellationToken);
 
         if (boardToUpdate == null)
         {
-            throw new NotFoundException($"A board with id {request.BoardId} could not be found.");
+            throw new NotFoundException($"A board with id {request.Id} could not be found.");
         }
 
         if (boardToUpdate.OwnerId != _userId)
@@ -38,7 +38,7 @@ internal sealed class UpdateBoardCommandHandler : IRequestHandler<UpdateBoardCom
             throw new NotAuthorisedException(_userId);
         }
 
-        boardToUpdate.SetBoardName(request.BoardName);
+        boardToUpdate.SetBoardName(request.Name);
 
         boardToUpdate.UpdateEntity(_timeProvider.UtcNow);
 

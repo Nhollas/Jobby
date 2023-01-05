@@ -1,34 +1,34 @@
-import { useReducer } from "react";
+import { Reducer, useReducer } from "react";
 import { client } from "../../../client";
 import { Board } from "../../../types";
 import { ActionButton, ModalContainer } from "../../Common";
 import Input from "../../Form/Input";
+import { Dispatch, SetStateAction } from "react";
+import reducer from "../../../reducers/EditBoardModalReducer";
 
 interface Props {
-  setCurrentBoardList: (boards : any) => void;
-  setShowEditModal: ({ visible, board } : { visible: boolean, board: Board}) => void;
-  visible: boolean;
-  board: Board;
+  setCurrentBoardList: Dispatch<SetStateAction<Board[]>>;
+  setShowEditModal: ({
+    visible,
+    board,
+  }: {
+    visible: boolean;
+    board: Board;
+  }) => void;
+  showEditModal: { visible: boolean; board: Board | null };
 }
 
-export const EditBoardModal = (props : Props) => {
-  const { setCurrentBoardList, setShowEditModal, visible, board } =
-    props;
+export const EditBoardModal = ({
+  setCurrentBoardList,
+  setShowEditModal,
+  showEditModal,
+}: Props) => {
+  const { visible, board } = showEditModal;
 
-  const reducer = (state, action) => {
-    const { name, value } = action;
-    switch (action.type) {
-      case "HANDLE_INPUT_CHANGE":
-        return {
-          ...state,
-          [name]: value,
-        };
-      default:
-        return state;
-    }
-  };
-
-  const [state, dispatch] = useReducer(reducer, { board });
+  const [state, dispatch] = useReducer<Reducer<{ board: Board }, any>>(
+    reducer,
+    { board }
+  );
 
   const handleChange = (event) => {
     dispatch({
@@ -41,64 +41,53 @@ export const EditBoardModal = (props : Props) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    //TODO: Validation with YUP package.
-
-    const board = {
-      boardId: board.id,
-      boardName: event.target.name.value
-    }
-
-    await client.put("/board/update", board);
-
-    var updatedBoard = {
+    const boardModal = {
       id: board.id,
-      createdDate: board.createdDate,
-      name: name,
+      name: event.target.name.value as string,
     };
 
-    setCurrentBoardList((prev : Board[]) =>
-      prev.map((board) => {
-        if (board.id === updatedBoard.id) {
-          return updatedBoard;
+    await client.put("/board/update", {
+      id: board.id,
+      name: event.target.name.value,
+    });
+
+    setCurrentBoardList((prev: Board[]) =>
+      prev.map((prevBoard) => {
+        if (prevBoard.id === board.id) {
+          return {
+            ...prevBoard,
+            name: boardModal.name,
+          };
         }
-        return board;
+        return prevBoard;
       })
     );
 
-    setShowEditModal({
-      visible: false,
-      board: null,
-    });
+    setShowEditModal({ visible: false, board: null });
   };
 
   if (visible) {
     return (
       <ModalContainer>
         <form
-          className="flex flex-col gap-6"
-          method="post"
+          className='flex flex-col gap-6'
+          method='post'
           onSubmit={handleSubmit}
         >
-          <h1 className="overflow-hidden text-ellipsis whitespace-nowrap text-xl font-medium">
+          <h1 className='overflow-hidden text-ellipsis whitespace-nowrap text-xl font-medium'>
             Edit Board - {board.name}
           </h1>
           <Input
-            type="hidden"
-            className="hidden"
-            value={board.id}
-            name="boardId"
-          />
-          <Input
-            type="text"
-            name="name"
-            value={state.name}
-            label="Name"
+            type='text'
+            name='name'
+            value={state.board.name}
+            label='Name'
             onChange={(e) => handleChange(e)}
           />
-          <div className="flex flex-row justify-center gap-4">
+          <div className='flex flex-row justify-center gap-4'>
             <ActionButton
-              variant="secondary"
-              text="Cancel"
+              variant='secondary'
+              text='Cancel'
               onClick={() =>
                 setShowEditModal({
                   visible: false,
@@ -107,9 +96,9 @@ export const EditBoardModal = (props : Props) => {
               }
             />
             <ActionButton
-              variant="primary"
-              text="Update"
-              type="submit"
+              variant='primary'
+              text='Update'
+              type='submit'
               extended
             />
           </div>

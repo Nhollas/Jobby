@@ -1,9 +1,10 @@
-import React, { forwardRef } from "react";
+import React, { Dispatch, forwardRef } from "react";
 import classNames from "classnames";
 
 import { Handle, Remove } from "../Item";
 
 import styles from "./container.module.css";
+import { Job, JobList } from "../../types";
 
 export interface Props {
   children: React.ReactNode;
@@ -19,6 +20,8 @@ export interface Props {
   unstyled?: boolean;
   onClick?(): void;
   onRemove?(): void;
+  setContainerDict?: (value: Record<string, JobList>) => void;
+  items: Job[];
 }
 
 export const Container = forwardRef<HTMLDivElement, Props>(
@@ -31,6 +34,7 @@ export const Container = forwardRef<HTMLDivElement, Props>(
       hover,
       onClick,
       onRemove,
+      setContainerDict,
       label,
       placeholder,
       style,
@@ -50,7 +54,7 @@ export const Container = forwardRef<HTMLDivElement, Props>(
         style={
           {
             ...style,
-            "--columns": columns
+            "--columns": columns,
           } as React.CSSProperties
         }
         className={classNames(

@@ -1,18 +1,22 @@
-import { serverClient } from '../client';
+import { serverClient } from "../client";
 import Link from "next/link";
 import { useState } from "react";
 import { PageContainer, ActionButton } from "../components/Common";
-import { CreateBoardModal, DeleteBoardModal, EditBoardModal } from "../components/Modals/Dashboard";
-import { GetServerSideProps, NextPage } from 'next'
-import { Board } from '../types';
+import {
+  CreateBoardModal,
+  DeleteBoardModal,
+  EditBoardModal,
+} from "../components/Modals/Dashboard";
+import { GetServerSideProps, NextPage } from "next";
+import { Board } from "../types";
 
-export const getServerSideProps : GetServerSideProps = async ({ req }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req }) => {
   const boards = await serverClient.get<Board[]>("/boards", req);
 
   return { props: { boards } };
-}
+};
 
-export const Page : NextPage<{ boards: Board[]}> = ({ boards }) => {
+export const Page: NextPage<{ boards: Board[] }> = ({ boards }) => {
   const [currentBoardList, setCurrentBoardList] = useState(boards);
 
   const [showCreateModal, setShowCreateModal] = useState<{
@@ -42,19 +46,17 @@ export const Page : NextPage<{ boards: Board[]}> = ({ boards }) => {
       <CreateBoardModal
         setCurrentBoardList={setCurrentBoardList}
         setShowCreateModal={setShowCreateModal}
-        visible={showCreateModal.visible}
+        showCreateModal={showCreateModal}
       />
       <DeleteBoardModal
         setCurrentBoardList={setCurrentBoardList}
         setShowDeleteModal={setShowDeleteModal}
-        boardId={showDeleteModal.boardId}
-        visible={showDeleteModal.visible}
+        showDeleteModal={showDeleteModal}
       />
       <EditBoardModal
         setCurrentBoardList={setCurrentBoardList}
         setShowEditModal={setShowEditModal}
-        board={showEditModal.board}
-        visible={showEditModal.visible}
+        showEditModal={showEditModal}
       />
       <ActionButton
         variant='primary'
@@ -105,6 +107,6 @@ export const Page : NextPage<{ boards: Board[]}> = ({ boards }) => {
       </div>
     </PageContainer>
   );
-}
+};
 
 export default Page;
