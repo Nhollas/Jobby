@@ -72,7 +72,7 @@ export const Item = React.memo(
               "--scale-y": transform?.scaleY
                 ? `${transform.scaleY}`
                 : undefined,
-              "--index": index
+              "--index": index,
             } as React.CSSProperties
           }
           ref={ref}
@@ -80,19 +80,19 @@ export const Item = React.memo(
           <div
             className={classNames(
               styles.Item,
-              "flex flex-col gap-y-2 w-full",
+              "flex w-full flex-col gap-y-2",
               dragging && styles.dragging,
               dragOverlay && styles.dragOverlay,
               disabled && styles.disabled
             )}
-            data-cypress="draggable-item"
+            data-cypress='draggable-item'
             {...listeners}
             {...props}
             tabIndex={0}
           >
-            <h1 className="text-lg font-medium">{job.title}</h1>
+            <h1 className='text-lg font-medium'>{job.title}</h1>
             <h2>{job.company}</h2>
-            <p className="text-sm ml-auto">{job.createdDate}</p>
+            <p className='ml-auto text-sm'>{job.createdDate}</p>
           </div>
         </li>
       );

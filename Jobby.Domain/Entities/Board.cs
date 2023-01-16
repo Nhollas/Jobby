@@ -59,13 +59,14 @@ public class Board : Entity
         Name = name;
     }
 
-    public void ChangeJobListPosition(Guid jobListId, int targetIndex)
+    public void ArrangeJobLists(Dictionary<Guid, int> jobListIndexes)
     {
-        JobList jobListToMove = _jobLists.FirstOrDefault(i => i.Id == jobListId);
-
-        int startIndex = _jobLists.IndexOf(jobListToMove);
-
-        _jobLists[startIndex].Index = targetIndex;
-        _jobLists[targetIndex].Index = startIndex;
+        foreach (var jobList in _jobLists)
+        {
+            if (jobListIndexes.ContainsKey(jobList.Id))
+            {
+                jobList.SetIndex(jobListIndexes[jobList.Id]);
+            }
+        }
     }
 }

@@ -34,6 +34,7 @@ export type Job = {
   activities: Activity[]
   notes: Note[]
   contacts: Contact[]
+  jobListId: string;
 } & Entity
 
 export type Note = {

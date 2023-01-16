@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import {
   pointerWithin,
@@ -27,6 +27,7 @@ import { DroppableContainer, SortableItem } from "./components";
 import { coordinateGetter } from "./multipleContainersKeyboardCoordinates";
 import { Item, Container } from "../../components";
 import { Job, JobList } from "../../types";
+import { client } from "../../client";
 
 const dropAnimation: DropAnimation = {
   sideEffects: defaultDropAnimationSideEffects({
@@ -40,11 +41,12 @@ const dropAnimation: DropAnimation = {
 
 interface Props {
   lists?: JobList[];
+  boardId: string;
 }
 
 const PLACEHOLDER_ID = "placeholder";
 
-export function MultipleContainers({ lists }: Props) {
+export function MultipleContainers({ lists, boardId }: Props) {
   const [containerDict, setContainerDict] = useState<Record<string, JobList>>(
     lists
       ? lists.reduce((acc, list) => {
@@ -54,7 +56,7 @@ export function MultipleContainers({ lists }: Props) {
       : {}
   );
 
-  const [containerKeys, setContainerKeys] = useState(
+  const [containerKeys, setContainerKeys] = useState<string[]>(
     lists ? Object.keys(lists).map((key) => lists[key].id) : []
   );
 
@@ -178,10 +180,12 @@ export function MultipleContainers({ lists }: Props) {
     );
   }
 
-  function handleRemove(containerID: string) {
+  async function handleRemove(containerId: string) {
     setContainerKeys((containerKeys) =>
-      containerKeys.filter((id) => id !== containerID)
+      containerKeys.filter((id) => id !== containerId)
     );
+
+    await client.delete(`/JobList/Delete/${containerId}`);
   }
 
   // TODO this will need to be server side.
@@ -194,187 +198,272 @@ export function MultipleContainers({ lists }: Props) {
   }, [containerDict]);
 
   return (
-    <DndContext
-      sensors={sensors}
-      collisionDetection={collisionDetectionStrategy}
-      measuring={{
-        droppable: {
-          strategy: MeasuringStrategy.Always,
-        },
-      }}
-      onDragStart={({ active }) => {
-        setActiveId(active.id as string);
-      }}
-      onDragOver={({ active, over }) => {
-        const overId = over?.id as string;
+    <div className='h-full overflow-x-scroll'>
+      <DndContext
+        sensors={sensors}
+        collisionDetection={collisionDetectionStrategy}
+        measuring={{
+          droppable: {
+            strategy: MeasuringStrategy.Always,
+          },
+        }}
+        onDragStart={({ active }) => {
+          setActiveId(active.id as string);
+        }}
+        onDragOver={async ({ active, over }) => {
+          const overId = over?.id as string;
 
-        // 1. If we are not moving anything over.
-        // 2. Moving a container logic happens in OnDragEnd.
-        if (overId == null || active.id in containerDict) {
-          return;
-        }
-
-        const overContainer = findContainer(overId);
-        const activeContainer = findContainer(active.id as string);
-
-        if (!overContainer || !activeContainer) {
-          return;
-        }
-
-        if (activeContainer !== overContainer) {
-          setContainerDict((containerDict) => {
-            const activeJobs = containerDict[activeContainer].jobs;
-            const overJobs = containerDict[overContainer].jobs;
-            const overIndex = overJobs.findIndex((j) => j.id === overId);
-            const activeIndex = activeJobs.findIndex((j) => j.id === active.id);
-            let newIndex: number;
-            if (overId in containerDict[overContainer].jobs) {
-              newIndex = overJobs.length + 1;
-            } else {
-              const isBelowOverItem =
-                over &&
-                active.rect.current.translated &&
-                active.rect.current.translated.top >
-                  over.rect.top + over.rect.height;
-              const modifier = isBelowOverItem ? 1 : 0;
-              newIndex =
-                overIndex >= 0 ? overIndex + modifier : overJobs.length + 1;
-            }
-            recentlyMovedToNewContainer.current = true;
-            return {
-              ...containerDict,
-              [activeContainer]: {
-                ...containerDict[activeContainer],
-                jobs: containerDict[activeContainer].jobs.filter(
-                  (job) => job.id !== active.id
-                ),
-              },
-              [overContainer]: {
-                ...containerDict[overContainer],
-                jobs: [
-                  ...containerDict[overContainer].jobs.slice(0, newIndex),
-                  containerDict[activeContainer].jobs[activeIndex],
-                  ...containerDict[overContainer].jobs.slice(
-                    newIndex,
-                    containerDict[overContainer].jobs.length
-                  ),
-                ],
-              },
-            };
-          });
-        }
-      }}
-      onDragEnd={({ active, over }) => {
-        // We are moving a container.
-        if (active.id in containerDict && over?.id) {
-          setContainerKeys((containerKeys) => {
-            const activeIndex = containerKeys.indexOf(active.id);
-            const overIndex = containerKeys.indexOf(over.id);
-
-            return arrayMove(containerKeys, activeIndex, overIndex);
-          });
-        }
-
-        const activeContainer = findContainer(active.id as string);
-
-        if (!activeContainer) {
-          setActiveId(null);
-          return;
-        }
-
-        const overId = over?.id as string;
-
-        if (overId == null) {
-          setActiveId(null);
-          return;
-        }
-
-        // TODO: Will need to be server side.
-        if (overId === PLACEHOLDER_ID) {
-          return;
-        }
-
-        const overContainer = findContainer(overId);
-
-        if (overContainer) {
-          const activeIndex = containerDict[activeContainer].jobs.findIndex(
-            (j) => j.id === active.id
-          );
-          const overIndex = containerDict[overContainer].jobs.findIndex(
-            (j) => j.id === overId
-          );
-
-          if (activeIndex !== overIndex) {
-            setContainerDict((containerDict) => ({
-              ...containerDict,
-              [overContainer]: {
-                ...containerDict[overContainer],
-                jobs: arrayMove(
-                  containerDict[overContainer].jobs,
-                  activeIndex,
-                  overIndex
-                ),
-              },
-            }));
+          // 1. If we are not moving anything over.
+          // 2. Moving a container logic happens in OnDragEnd.
+          if (overId == null || active.id in containerDict) {
+            return;
           }
-        }
 
-        setActiveId(null);
-      }}
-    >
-      <div className='flex h-full divide-x'>
-        <SortableContext
-          items={[...containerKeys, PLACEHOLDER_ID]}
-          strategy={horizontalListSortingStrategy}
-        >
-          {containerKeys.map((containerId) => (
-            <DroppableContainer
-              key={containerId}
-              id={containerId}
-              list={containerDict[containerId]}
-              items={containerDict[containerId].jobs}
-              onRemove={() => handleRemove(containerId)}
-            >
-              <SortableContext
-                items={containerDict[containerId].jobs}
-                strategy={verticalListSortingStrategy}
-              >
-                {containerDict[containerId].jobs.map((job, index) => {
-                  return (
-                    <SortableItem
-                      key={job.id}
-                      id={job.id}
-                      index={index}
-                      disabled={isSortingContainer}
-                      job={job}
-                    />
+          const overContainer = findContainer(overId);
+          const activeContainer = findContainer(active.id as string);
+
+          if (!overContainer || !activeContainer) {
+            return;
+          }
+          let newIndex: number;
+
+          if (activeContainer !== overContainer) {
+            setContainerDict((containerDict) => {
+              const activeJobs = containerDict[activeContainer].jobs;
+              const overJobs = containerDict[overContainer].jobs;
+              const overIndex = overJobs.findIndex((j) => j.id === overId);
+              const activeIndex = activeJobs.findIndex(
+                (j) => j.id === active.id
+              );
+
+              if (overId in containerDict[overContainer].jobs) {
+                newIndex = overJobs.length + 1;
+              } else {
+                const middleTranslated =
+                  (active.rect.current.translated.top +
+                    active.rect.current.translated.bottom) /
+                  2;
+
+                const middleOver = over.rect.top + over.rect.height;
+
+                const isBelowOverItem = middleTranslated >= middleOver;
+
+                const modifier = isBelowOverItem ? 1 : 0;
+
+                if (overJobs.length === 0) {
+                  newIndex = 0;
+                } else {
+                  newIndex =
+                    overIndex >= 0 ? overIndex + modifier : overJobs.length + 1;
+                }
+              }
+              recentlyMovedToNewContainer.current = true;
+              return {
+                ...containerDict,
+                [activeContainer]: {
+                  ...containerDict[activeContainer],
+                  jobs: containerDict[activeContainer].jobs.filter(
+                    (job) => job.id !== active.id
+                  ),
+                },
+                [overContainer]: {
+                  ...containerDict[overContainer],
+                  jobs: [
+                    ...containerDict[overContainer].jobs.slice(0, newIndex),
+                    containerDict[activeContainer].jobs[activeIndex],
+                    ...containerDict[overContainer].jobs.slice(
+                      newIndex,
+                      containerDict[overContainer].jobs.length
+                    ),
+                  ].map((job, i) => ({
+                    ...job,
+                    index: i,
+                    jobListId: overContainer,
+                  })),
+                },
+              };
+            });
+
+            var model = {
+              jobId: active.id,
+              targetJobListId: overContainer,
+            };
+
+            client.put("/Job/Move", model);
+          }
+        }}
+        onDragEnd={({ active, over }) => {
+          // We are moving a container.
+          if (active.id in containerDict && over?.id) {
+            setContainerKeys((containerKeys) => {
+              const activeIndex = containerKeys.indexOf(active.id as string);
+              const overIndex = containerKeys.indexOf(over.id as string);
+
+              const updatedJobLists = arrayMove(
+                containerKeys,
+                activeIndex,
+                overIndex
+              );
+
+              const jobListIndexes = updatedJobLists.reduce((acc, list) => {
+                acc[list] = updatedJobLists.indexOf(list);
+                return acc;
+              }, {});
+
+              var model = {
+                boardId,
+                jobListIndexes,
+              };
+
+              client.put("/Board/ArrangeJobLists", model);
+
+              return updatedJobLists;
+            });
+          }
+
+          const activeContainer = findContainer(active.id as string);
+
+          if (!activeContainer) {
+            setActiveId(null);
+            return;
+          }
+
+          const overId = over?.id as string;
+
+          if (overId == null) {
+            setActiveId(null);
+            return;
+          }
+
+          // TODO: Will need to be server side.
+          if (overId === PLACEHOLDER_ID) {
+            return;
+          }
+
+          const overContainer = findContainer(overId);
+
+          if (overContainer) {
+            const activeIndex = containerDict[activeContainer].jobs.findIndex(
+              (j) => j.id === active.id
+            );
+            const overIndex = containerDict[overContainer].jobs.findIndex(
+              (j) => j.id === overId
+            );
+
+            if (activeIndex !== overIndex) {
+              setContainerDict((containerDict) => {
+                {
+                  const updatedJobs = arrayMove(
+                    containerDict[overContainer].jobs,
+                    activeIndex,
+                    overIndex
                   );
-                })}
-              </SortableContext>
-            </DroppableContainer>
-          ))}
-          <DroppableContainer
-            id={PLACEHOLDER_ID}
-            disabled={isSortingContainer}
-            items={[]}
-            onClick={handleAddColumn}
-            placeholder
+
+                  const jobIndexes = updatedJobs.reduce((acc, job) => {
+                    acc[job.id] = updatedJobs.indexOf(job);
+                    return acc;
+                  }, {});
+
+                  var model = {
+                    jobListId: overContainer,
+                    jobIndexes,
+                  };
+
+                  client.put("/JobList/ArrangeJobs", model);
+
+                  return {
+                    ...containerDict,
+                    [overContainer]: {
+                      ...containerDict[overContainer],
+                      jobs: updatedJobs,
+                    },
+                  };
+                }
+              });
+            } else {
+              setContainerDict((containerDict) => {
+                const jobIndexes = containerDict[overContainer].jobs.reduce(
+                  (acc, job) => {
+                    acc[job.id] =
+                      containerDict[overContainer].jobs.indexOf(job);
+                    return acc;
+                  },
+                  {}
+                );
+
+                var model = {
+                  jobListId: overContainer,
+                  jobIndexes,
+                };
+
+                client.put("/JobList/ArrangeJobs", model);
+
+                return containerDict;
+              });
+            }
+          }
+
+          setActiveId(null);
+        }}
+      >
+        <div className='flex h-full divide-x'>
+          <SortableContext
+            items={[...containerKeys, PLACEHOLDER_ID]}
+            strategy={horizontalListSortingStrategy}
           >
-            + Add column
-          </DroppableContainer>
-        </SortableContext>
-      </div>
-      {portalElement &&
-        createPortal(
-          <DragOverlay dropAnimation={dropAnimation}>
-            {activeId
-              ? containerKeys.includes(activeId)
-                ? renderContainerDragOverlay(activeId)
-                : renderSortableItemDragOverlay(activeId)
-              : null}
-          </DragOverlay>,
-          portalElement
-        )}
-    </DndContext>
+            {containerKeys.map((containerId) => (
+              <DroppableContainer
+                key={containerId}
+                id={containerId}
+                list={containerDict[containerId]}
+                items={containerDict[containerId].jobs}
+                onRemove={
+                  containerDict[containerId].jobs.length === 0
+                    ? () => handleRemove(containerId)
+                    : null
+                }
+              >
+                <SortableContext
+                  items={containerDict[containerId].jobs}
+                  strategy={verticalListSortingStrategy}
+                >
+                  {containerDict[containerId].jobs.map((job, index) => {
+                    return (
+                      <SortableItem
+                        key={job.id}
+                        id={job.id}
+                        index={index}
+                        disabled={isSortingContainer}
+                        job={job}
+                      />
+                    );
+                  })}
+                </SortableContext>
+              </DroppableContainer>
+            ))}
+            <DroppableContainer
+              id={PLACEHOLDER_ID}
+              disabled={isSortingContainer}
+              items={[]}
+              onClick={handleAddColumn}
+              placeholder
+            >
+              + Add column
+            </DroppableContainer>
+          </SortableContext>
+        </div>
+        {portalElement &&
+          createPortal(
+            <DragOverlay dropAnimation={dropAnimation}>
+              {activeId
+                ? containerKeys.includes(activeId)
+                  ? renderContainerDragOverlay(activeId)
+                  : renderSortableItemDragOverlay(activeId)
+                : null}
+            </DragOverlay>,
+            portalElement
+          )}
+      </DndContext>
+    </div>
   );
 }

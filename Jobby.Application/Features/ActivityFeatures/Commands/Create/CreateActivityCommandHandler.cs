@@ -13,6 +13,7 @@ internal sealed class CreateActivityCommandHandler : IRequestHandler<CreateActiv
     private readonly IRepository<Board> _boardRepository;
     private readonly IRepository<Activity> _activityRepository;
     private readonly IDateTimeProvider _dateTimeProvider;
+    private readonly IGuidProvider _guidProvider;
     private readonly IUserService _userService;
     private readonly string _userId;
 
@@ -20,12 +21,14 @@ internal sealed class CreateActivityCommandHandler : IRequestHandler<CreateActiv
         IRepository<Board> repository,
         IUserService userService,
         IDateTimeProvider dateTimeProvider,
+        IGuidProvider guidProvider,
         IRepository<Activity> activityRepository)
     {
         _boardRepository = repository;
         _userService = userService;
         _userId = _userService.UserId();
         _dateTimeProvider = dateTimeProvider;
+        _guidProvider = guidProvider;
         _activityRepository = activityRepository;
     }
 
@@ -50,7 +53,7 @@ internal sealed class CreateActivityCommandHandler : IRequestHandler<CreateActiv
         }
 
         var createdActivity = Activity.Create(
-            Guid.NewGuid(),
+            _guidProvider.Id,
             _dateTimeProvider.UtcNow,
             _userId,
             request.Title,

@@ -12,6 +12,8 @@ export const getServerSideProps: GetServerSideProps = async ({
 }) => {
   const board = await serverClient.get<Board>(`/board/${query.boardId}`, req);
 
+  console.log(board);
+
   return { props: { board } };
 };
 
@@ -60,7 +62,7 @@ export const Page: NextPage<{ board: Board }> = ({ board }) => {
           </button>
         </div>
       </div>
-      <MultipleContainers lists={jobList} />
+      <MultipleContainers lists={jobList} boardId={board.id} />
     </PageContainer>
   );
 };

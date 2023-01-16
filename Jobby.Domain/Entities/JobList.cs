@@ -11,16 +11,18 @@ public class JobList : Entity
         // required by EF
     }
 
-    public JobList(
+    private JobList(
         Guid id,
         DateTime createdDate,
         string ownerId,
         string listName, 
-        int index)
+        int index,
+        Guid boardId)
         : base(id, createdDate, ownerId)
     {
         Name = listName;
         Index = index;
+        BoardId = boardId;
     }
 
     public string Name { get; set; }
@@ -30,27 +32,44 @@ public class JobList : Entity
     public Board Board { get; set; }
     public Guid BoardId { get; set; }
 
-    public void AddJob(Job job)
+    public static JobList Create(
+        Guid id,
+        DateTime createdDate,
+        string ownerId,
+        string name,
+        int index,
+        Guid boardId)
     {
-        _jobs.Add(job);
+        return new JobList(
+            id,
+            createdDate,
+            ownerId,
+            name,
+            index,
+            boardId);
     }
 
-    public void RemoveJob(Job job)
+    public void UpdateJobIndexes()
     {
-        _jobs.Remove(job);
-    }
-
-    public void ChangeJobPosition(Guid jobId, int targetIndex)
-    {
-        Job jobToMove = _jobs.FirstOrDefault(job => job.Id == jobId);
-
-        _jobs.Remove(jobToMove);
-        _jobs.Insert(targetIndex, jobToMove);
-
-        // Update the index property of the items after the inserted item
-        for (int i = targetIndex + 1; i < _jobs.Count; i++)
+        foreach(Job job in _jobs)
         {
-            _jobs[i].SetIndex(i);
+            job.SetIndex(job.Index - 1);
         }
+    }
+
+    public void ArrangeJobs(Dictionary<Guid, int> jobIndexes)
+    {
+        foreach (var job in _jobs)
+        {
+            if (jobIndexes.ContainsKey(job.Id))
+            {
+                job.SetIndex(jobIndexes[job.Id]);
+            }
+        }
+    }
+
+    public void SetIndex(int index)
+    {
+        Index = index;
     }
 }

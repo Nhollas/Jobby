@@ -6,7 +6,7 @@ using Jobby.Application.Contracts.Job;
 using Jobby.Application.Dtos;
 using Jobby.Application.Features.ActivityFeatures.Commands.Create;
 using Jobby.Application.Features.ActivityFeatures.Commands.Update;
-using Jobby.Application.Features.JobFeatures.Commands.Update;
+using Jobby.Application.Features.JobFeatures.Commands.Update.UpdateDetails;
 using Jobby.Application.Static;
 using Jobby.Domain.Entities;
 

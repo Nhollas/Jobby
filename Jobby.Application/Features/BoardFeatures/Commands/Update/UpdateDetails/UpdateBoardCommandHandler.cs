@@ -4,7 +4,7 @@ using Jobby.Application.Interfaces.Services;
 using Jobby.Domain.Entities;
 using MediatR;
 
-namespace Jobby.Application.Features.BoardFeatures.Commands.Update;
+namespace Jobby.Application.Features.BoardFeatures.Commands.Update.UpdateDetails;
 
 internal sealed class UpdateBoardCommandHandler : IRequestHandler<UpdateBoardCommand, Unit>
 {

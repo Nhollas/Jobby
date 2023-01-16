@@ -5,12 +5,14 @@ using Jobby.Application.Contracts.Job;
 using Jobby.Application.Features.ActivityFeatures.Queries.ListBoardActivities;
 using Jobby.Application.Features.BoardFeatures.Commands.Create;
 using Jobby.Application.Features.BoardFeatures.Commands.Delete;
-using Jobby.Application.Features.BoardFeatures.Commands.Update;
+using Jobby.Application.Features.BoardFeatures.Commands.Update.ArrangeJobLists;
+using Jobby.Application.Features.BoardFeatures.Commands.Update.UpdateDetails;
 using Jobby.Application.Features.BoardFeatures.Queries.GetById;
 using Jobby.Application.Features.BoardFeatures.Queries.GetList;
 using Jobby.Application.Features.ContactFeatures.Queries.GetById;
 using Jobby.Application.Features.ContactFeatures.Queries.GetList;
 using Jobby.Application.Features.JobFeatures.Queries.GetById;
+using Jobby.Application.Features.JobListFeatures.Commands.Update.ArrangeJobs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -111,5 +113,16 @@ public class BoardController : ApiController
     {
         var dtos = await Sender.Send(new GetBoardContactListQuery(boardId));
         return Ok(dtos);
+    }
+
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesDefaultResponseType]
+    [HttpPut("ArrangeJobLists", Name = "ArrangeJobLists")]
+    public async Task<IActionResult> ArrangeJobLists([FromBody] ArrangeJobListsCommand command)
+    {
+        await Sender.Send(command);
+        return NoContent();
     }
 }

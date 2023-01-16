@@ -5,7 +5,7 @@ using Jobby.Application.Interfaces.Services;
 using Jobby.Domain.Entities;
 using MediatR;
 
-namespace Jobby.Application.Features.JobFeatures.Commands.Update;
+namespace Jobby.Application.Features.JobFeatures.Commands.Update.UpdateDetails;
 internal sealed class UpdateJobCommandHandler : IRequestHandler<UpdateJobCommand, Unit>
 {
     private readonly IRepository<Job> _repository;

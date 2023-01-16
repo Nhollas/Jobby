@@ -26,17 +26,19 @@ internal sealed class CreateBoardCommandHandler : ICommandHandler<CreateBoardCom
 
     public async Task<CreateBoardResponse> Handle(CreateBoardCommand request, CancellationToken cancellationToken)
     {
+        Guid BoardId = Guid.NewGuid();
+
         List<JobList> defaultJobLists = new()
         {
-            new JobList(Guid.NewGuid(), _dateTimeProvider.UtcNow, _userId, "Applied", 0),
-            new JobList(Guid.NewGuid(), _dateTimeProvider.UtcNow, _userId, "Wishlist", 1),
-            new JobList(Guid.NewGuid(), _dateTimeProvider.UtcNow, _userId, "Interview", 2),
-            new JobList(Guid.NewGuid(), _dateTimeProvider.UtcNow, _userId, "Offer", 3),
-            new JobList(Guid.NewGuid(), _dateTimeProvider.UtcNow, _userId, "Rejected", 4),
+            JobList.Create(Guid.NewGuid(), _dateTimeProvider.UtcNow, _userId, "Applied", 0, BoardId),
+            JobList.Create(Guid.NewGuid(), _dateTimeProvider.UtcNow, _userId, "Wishlist", 1, BoardId),
+            JobList.Create(Guid.NewGuid(), _dateTimeProvider.UtcNow, _userId, "Interview", 2, BoardId),
+            JobList.Create(Guid.NewGuid(), _dateTimeProvider.UtcNow, _userId, "Offer", 3, BoardId),
+            JobList.Create(Guid.NewGuid(), _dateTimeProvider.UtcNow, _userId, "Rejected", 4, BoardId),
         };
 
         var board = Board.Create(
-            Guid.NewGuid(),
+            BoardId,
             _dateTimeProvider.UtcNow,
             _userId,
             request.Name,

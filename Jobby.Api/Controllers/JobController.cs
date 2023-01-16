@@ -1,8 +1,8 @@
 ﻿using Jobby.Application.Contracts.Job;
 using Jobby.Application.Features.JobFeatures.Commands.Create;
 using Jobby.Application.Features.JobFeatures.Commands.Delete;
-using Jobby.Application.Features.JobFeatures.Commands.Update;
 using Jobby.Application.Features.JobFeatures.Commands.Update.MoveJob;
+using Jobby.Application.Features.JobFeatures.Commands.Update.UpdateDetails;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Jobby.Api.Controllers;

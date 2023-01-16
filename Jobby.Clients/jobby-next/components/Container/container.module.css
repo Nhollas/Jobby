@@ -8,6 +8,7 @@
   outline: none;
   width: 100%;
   max-width: 300px;
+  min-width: 300px;
   min-height: 200px;
   transition: background-color 350ms ease;
   background-color: #f6f6f6;
@@ -57,8 +58,6 @@
   align-items: center;
   justify-content: space-between;
   background-color: #fff;
-  border-top-left-radius: 5px;
-  border-top-right-radius: 5px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 }
 .Header:hover .Actions > * {
