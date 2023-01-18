@@ -3,7 +3,7 @@ import { serverClient } from "../../client";
 import { useState } from "react";
 import { PageContainer } from "../../components/Common";
 import { MultipleContainers } from "../../components";
-import { Board, JobList } from "../../types";
+import { Board } from "../../types";
 import { GetServerSideProps, NextPage } from "next";
 
 export const getServerSideProps: GetServerSideProps = async ({
@@ -12,8 +12,6 @@ export const getServerSideProps: GetServerSideProps = async ({
 }) => {
   const board = await serverClient.get<Board>(`/board/${query.boardId}`, req);
 
-  console.log(board);
-
   return { props: { board } };
 };
 
@@ -21,16 +19,6 @@ export const Page: NextPage<{ board: Board }> = ({ board }) => {
   const [currentBoard, setCurrentBoard] = useState(board);
 
   const { jobList, name, activitiesCount, contactsCount } = currentBoard;
-
-  const [showCreateModal, setShowCreateModal] = useState<{
-    visible: boolean;
-    board: Board | null;
-    jobList: JobList[] | null;
-  }>({
-    visible: false,
-    board: null,
-    jobList: null,
-  });
 
   return (
     <PageContainer extended>

@@ -21,6 +21,7 @@ public static class CoreServiceRegistration
         services.AddScoped<IAuthenticationService, AuthenticationService>();
         services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
         services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
+        services.AddSingleton<IGuidProvider, GuidProvider>();
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
         services.AddMediatR(applicationAssembly);
         services.AddValidatorsFromAssembly(applicationAssembly);

@@ -1,4 +1,5 @@
-﻿using Jobby.Application.Features.BoardFeatures.Commands.Delete;
+﻿using Jobby.Application.Contracts.JobList;
+using Jobby.Application.Features.JobListFeatures.Commands.Create;
 using Jobby.Application.Features.JobListFeatures.Commands.Delete;
 using Jobby.Application.Features.JobListFeatures.Commands.Update.ArrangeJobs;
 using Microsoft.AspNetCore.Mvc;
@@ -28,5 +29,14 @@ public class JobListController : ApiController
     {
         await Sender.Send(command);
         return NoContent();
+    }
+
+    [ProducesResponseType(typeof(CreateJobListResponse), StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [HttpPost("Create", Name = "CreateJobList")]
+    public async Task<IActionResult> CreateJobList([FromBody] CreateJobListCommand command)
+    {
+        var jobList = await Sender.Send(command);
+        return CreatedAtAction(nameof(CreateJobList), jobList);
     }
 }

@@ -6,7 +6,7 @@ interface Entity {
 
 export type JobList = {
   name: string;
-  count: number;
+  index: number;
   jobs: Job[];
 } & Entity
 

@@ -8,16 +8,19 @@ namespace Jobby.Application.Features.JobListFeatures.Commands.Create;
 internal sealed class CreateJobListCommandHandler : IRequestHandler<CreateJobListCommand, CreateJobListResponse>
 {
     private readonly IRepository<JobList> _repository;
+    private readonly IRepository<Job> _jobRepository;
     private readonly IUserService _userService;
     private readonly IDateTimeProvider _dateTimeProvider;
     private readonly string _userId;
 
     public CreateJobListCommandHandler(
         IRepository<JobList> repository,
+        IRepository<Job> jobRepository,
         IUserService userService,
         IDateTimeProvider dateTimeProvider)
     {
         _repository = repository;
+        _jobRepository = jobRepository;
         _userService = userService;
         _userId = _userService.UserId();
         _dateTimeProvider = dateTimeProvider;
@@ -30,11 +33,25 @@ internal sealed class CreateJobListCommandHandler : IRequestHandler<CreateJobLis
             _dateTimeProvider.UtcNow,
             _userId,
             request.Name,
-            0,
+            request.Index,
             request.BoardId);
 
         await _repository.AddAsync(createdJobList, cancellationToken);
 
-        return new CreateJobListResponse(createdJobList.Id, createdJobList.Name);
+        if (request.InitJobId != Guid.Empty)
+        {
+            var jobToUpdate = await _jobRepository.GetByIdAsync(request.InitJobId, cancellationToken);
+
+            jobToUpdate.SetJobList(createdJobList.Id);
+        }
+
+        return new CreateJobListResponse
+        {
+            Id = createdJobList.Id,
+            CreatedDate = createdJobList.CreatedDate,
+            Index = createdJobList.Index,
+            LastUpdated = createdJobList.LastUpdated,
+            Name = createdJobList.Name  
+        };
     }
 }

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { createPortal } from "react-dom";
+import { createPortal, unstable_batchedUpdates } from "react-dom";
 import {
   pointerWithin,
   rectIntersection,
@@ -28,6 +28,7 @@ import { coordinateGetter } from "./multipleContainersKeyboardCoordinates";
 import { Item, Container } from "../../components";
 import { Job, JobList } from "../../types";
 import { client } from "../../client";
+import { CreateJobListRequest } from "../../types/requests/JobList";
 
 const dropAnimation: DropAnimation = {
   sideEffects: defaultDropAnimationSideEffects({
@@ -76,6 +77,12 @@ export function MultipleContainers({ lists, boardId }: Props) {
       document.body.removeChild(element);
     };
   }, []);
+
+  useEffect(() => {
+    requestAnimationFrame(() => {
+      recentlyMovedToNewContainer.current = false;
+    });
+  }, [containerDict]);
 
   const collisionDetectionStrategy: CollisionDetection = useCallback(
     (args) => {
@@ -191,12 +198,6 @@ export function MultipleContainers({ lists, boardId }: Props) {
   // TODO this will need to be server side.
   function handleAddColumn() {}
 
-  useEffect(() => {
-    requestAnimationFrame(() => {
-      recentlyMovedToNewContainer.current = false;
-    });
-  }, [containerDict]);
-
   return (
     <div className='h-full overflow-x-scroll'>
       <DndContext
@@ -292,7 +293,7 @@ export function MultipleContainers({ lists, boardId }: Props) {
             client.put("/Job/Move", model);
           }
         }}
-        onDragEnd={({ active, over }) => {
+        onDragEnd={async ({ active, over }) => {
           // We are moving a container.
           if (active.id in containerDict && over?.id) {
             setContainerKeys((containerKeys) => {
@@ -335,8 +336,75 @@ export function MultipleContainers({ lists, boardId }: Props) {
             return;
           }
 
-          // TODO: Will need to be server side.
           if (overId === PLACEHOLDER_ID) {
+            const tempId = crypto.randomUUID();
+            setContainerDict((prevDict) => {
+              const jobToMove = Object.values(prevDict)
+                .flatMap((list) => list.jobs)
+                .find((j) => j.id === active.id);
+
+              const tempJobList: JobList = {
+                id: tempId,
+                createdDate: new Date().toDateString(),
+                name: "Loading...",
+                index: containerKeys.length,
+                lastUpdated: new Date().toDateString(),
+                jobs: [{ ...jobToMove, jobListId: tempId }],
+              };
+
+              return {
+                ...prevDict,
+                [jobToMove.jobListId]: {
+                  ...prevDict[jobToMove.jobListId],
+                  jobs: [
+                    ...prevDict[jobToMove.jobListId].jobs.filter(
+                      (j) => j.id !== jobToMove.id
+                    ),
+                  ],
+                },
+                [tempJobList.id]: tempJobList,
+              };
+            });
+
+            setContainerKeys((prevKeys) => [...prevKeys, tempId]);
+
+            // TODO: Display modal and then send post request to create the Real JobList.
+
+            // const request: CreateJobListRequest = {
+            //   boardId,
+            //   name: "Test",
+            //   index: containerKeys.length + 1,
+            //   initJobId: active.id as string,
+            // };
+
+            // const createdJobList = await client.post<
+            //   CreateJobListRequest,
+            //   JobList
+            // >("/JobList/Create", request);
+
+            // setContainerKeys((prevKeys) => [...prevKeys, createdJobList.id]);
+            // setContainerDict((prevDict) => {
+            //   const jobToMove = Object.values(prevDict)
+            //     .flatMap((list) => list.jobs)
+            //     .find((j) => j.id === active.id);
+
+            //   return {
+            //     ...prevDict,
+            //     [jobToMove.jobListId]: {
+            //       ...prevDict[jobToMove.jobListId],
+            //       jobs: [
+            //         ...prevDict[jobToMove.jobListId].jobs.filter(
+            //           (j) => j.id !== jobToMove.id
+            //         ),
+            //       ],
+            //     },
+            //     [createdJobList.id]: {
+            //       ...createdJobList,
+            //       jobs: [{ ...jobToMove, jobListId: createdJobList.id }],
+            //     },
+            //   };
+            // });
+            // setActiveId(null);
             return;
           }
 
@@ -411,36 +479,38 @@ export function MultipleContainers({ lists, boardId }: Props) {
             items={[...containerKeys, PLACEHOLDER_ID]}
             strategy={horizontalListSortingStrategy}
           >
-            {containerKeys.map((containerId) => (
-              <DroppableContainer
-                key={containerId}
-                id={containerId}
-                list={containerDict[containerId]}
-                items={containerDict[containerId].jobs}
-                onRemove={
-                  containerDict[containerId].jobs.length === 0
-                    ? () => handleRemove(containerId)
-                    : null
-                }
-              >
-                <SortableContext
+            {containerKeys.map((containerId) => {
+              return (
+                <DroppableContainer
+                  key={containerId}
+                  id={containerId}
+                  list={containerDict[containerId]}
                   items={containerDict[containerId].jobs}
-                  strategy={verticalListSortingStrategy}
+                  onRemove={
+                    containerDict[containerId].jobs.length === 0
+                      ? () => handleRemove(containerId)
+                      : null
+                  }
                 >
-                  {containerDict[containerId].jobs.map((job, index) => {
-                    return (
-                      <SortableItem
-                        key={job.id}
-                        id={job.id}
-                        index={index}
-                        disabled={isSortingContainer}
-                        job={job}
-                      />
-                    );
-                  })}
-                </SortableContext>
-              </DroppableContainer>
-            ))}
+                  <SortableContext
+                    items={containerDict[containerId].jobs}
+                    strategy={verticalListSortingStrategy}
+                  >
+                    {containerDict[containerId].jobs.map((job, index) => {
+                      return (
+                        <SortableItem
+                          key={job.id}
+                          id={job.id}
+                          index={index}
+                          disabled={isSortingContainer}
+                          job={job}
+                        />
+                      );
+                    })}
+                  </SortableContext>
+                </DroppableContainer>
+              );
+            })}
             <DroppableContainer
               id={PLACEHOLDER_ID}
               disabled={isSortingContainer}
