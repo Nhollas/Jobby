@@ -13,12 +13,12 @@ export const Layout = ({ children }) => {
         />
       </Head>
       <Navbar />
-      <main className='flex min-h-screen w-full justify-center bg-white'>
+      <main className='flex min-h-[calc(100vh-4rem)] w-full justify-center bg-white'>
         {children}
       </main>
       <Footer />
     </div>
   );
-}
+};
 
 export default Layout;

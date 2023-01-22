@@ -1,5 +1,12 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { createPortal, unstable_batchedUpdates } from "react-dom";
+import {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import { createPortal } from "react-dom";
 import {
   pointerWithin,
   rectIntersection,
@@ -24,11 +31,12 @@ import {
   horizontalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { DroppableContainer, SortableItem } from "./components";
-import { coordinateGetter } from "./multipleContainersKeyboardCoordinates";
-import { Item, Container } from "../../components";
+import { coordinateGetter } from "./kanbanKeyboardCoordinates";
+import { Item, Container } from "..";
 import { Job, JobList } from "../../types";
-import { client } from "../../client";
-import { CreateJobListRequest } from "../../types/requests/JobList";
+import { client } from "../../clients";
+import { CreateJobListModal } from "../Modals/Board/CreateJobListModal";
+import { CreateJobModal } from "../Modals/Board/CreateJobModal";
 
 const dropAnimation: DropAnimation = {
   sideEffects: defaultDropAnimationSideEffects({
@@ -47,7 +55,7 @@ interface Props {
 
 const PLACEHOLDER_ID = "placeholder";
 
-export function MultipleContainers({ lists, boardId }: Props) {
+export const Kanban = ({ lists, boardId }: Props) => {
   const [containerDict, setContainerDict] = useState<Record<string, JobList>>(
     lists
       ? lists.reduce((acc, list) => {
@@ -68,6 +76,38 @@ export function MultipleContainers({ lists, boardId }: Props) {
   const isSortingContainer = activeId
     ? containerKeys.includes(activeId)
     : false;
+
+  const [showCreateJobListModal, setShowCreateJobListModal] = useState<{
+    visible: boolean;
+    boardId?: string | null;
+    setContainerDict?: Dispatch<SetStateAction<Record<string, JobList>>>;
+    setContainerKeys?: Dispatch<SetStateAction<string[]>>;
+    setActiveId?: Dispatch<SetStateAction<string>>;
+    activeId?: string | null;
+    containerKeys?: string[] | null;
+    tempId?: string | null;
+  }>({
+    visible: false,
+    boardId: null,
+    setContainerDict: () => {},
+    setContainerKeys: () => {},
+    setActiveId: () => {},
+    activeId: null,
+    containerKeys: null,
+    tempId: null,
+  });
+
+  const [showCreateJobModal, setShowCreateJobModal] = useState<{
+    visible: boolean;
+    boardId?: string | null;
+    jobListId: string | null;
+    setContainerDict?: Dispatch<SetStateAction<Record<string, JobList>>>;
+  }>({
+    visible: false,
+    boardId,
+    jobListId: null,
+    setContainerDict: () => {},
+  });
 
   useEffect(() => {
     const element = document.createElement("div");
@@ -179,6 +219,9 @@ export function MultipleContainers({ lists, boardId }: Props) {
           height: "100%",
         }}
         shadow
+        setShowCreateJobModal={setShowCreateJobModal}
+        boardId={boardId}
+        setContainerDict={setContainerDict}
       >
         {containerDict[containerId].jobs.map((job) => (
           <Item key={job.id} job={job} />
@@ -196,10 +239,28 @@ export function MultipleContainers({ lists, boardId }: Props) {
   }
 
   // TODO this will need to be server side.
-  function handleAddColumn() {}
+  function handleAddColumn() {
+    setShowCreateJobListModal({
+      visible: true,
+      boardId,
+      setContainerDict,
+      setContainerKeys,
+      setActiveId,
+      activeId,
+      containerKeys,
+    });
+  }
 
   return (
-    <div className='h-full overflow-x-scroll'>
+    <div className='h-full overflow-x-auto border border-gray-300'>
+      <CreateJobListModal
+        setShowCreateJobListModal={setShowCreateJobListModal}
+        showCreateJobListModal={showCreateJobListModal}
+      />
+      <CreateJobModal
+        setShowCreateJobModal={setShowCreateJobModal}
+        showCreateJobModal={showCreateJobModal}
+      />
       <DndContext
         sensors={sensors}
         collisionDetection={collisionDetectionStrategy}
@@ -293,7 +354,7 @@ export function MultipleContainers({ lists, boardId }: Props) {
             client.put("/Job/Move", model);
           }
         }}
-        onDragEnd={async ({ active, over }) => {
+        onDragEnd={({ active, over }) => {
           // We are moving a container.
           if (active.id in containerDict && over?.id) {
             setContainerKeys((containerKeys) => {
@@ -320,6 +381,7 @@ export function MultipleContainers({ lists, boardId }: Props) {
 
               return updatedJobLists;
             });
+            return;
           }
 
           const activeContainer = findContainer(active.id as string);
@@ -350,6 +412,7 @@ export function MultipleContainers({ lists, boardId }: Props) {
                 index: containerKeys.length,
                 lastUpdated: new Date().toDateString(),
                 jobs: [{ ...jobToMove, jobListId: tempId }],
+                count: 1,
               };
 
               return {
@@ -368,43 +431,19 @@ export function MultipleContainers({ lists, boardId }: Props) {
 
             setContainerKeys((prevKeys) => [...prevKeys, tempId]);
 
-            // TODO: Display modal and then send post request to create the Real JobList.
+            setShowCreateJobListModal({
+              visible: true,
+              boardId,
+              setContainerDict,
+              setContainerKeys,
+              setActiveId,
+              activeId,
+              containerKeys,
+              tempId,
+            });
 
-            // const request: CreateJobListRequest = {
-            //   boardId,
-            //   name: "Test",
-            //   index: containerKeys.length + 1,
-            //   initJobId: active.id as string,
-            // };
+            // TODO set up cloned items, incase we cancel the creation of the new Joblist.
 
-            // const createdJobList = await client.post<
-            //   CreateJobListRequest,
-            //   JobList
-            // >("/JobList/Create", request);
-
-            // setContainerKeys((prevKeys) => [...prevKeys, createdJobList.id]);
-            // setContainerDict((prevDict) => {
-            //   const jobToMove = Object.values(prevDict)
-            //     .flatMap((list) => list.jobs)
-            //     .find((j) => j.id === active.id);
-
-            //   return {
-            //     ...prevDict,
-            //     [jobToMove.jobListId]: {
-            //       ...prevDict[jobToMove.jobListId],
-            //       jobs: [
-            //         ...prevDict[jobToMove.jobListId].jobs.filter(
-            //           (j) => j.id !== jobToMove.id
-            //         ),
-            //       ],
-            //     },
-            //     [createdJobList.id]: {
-            //       ...createdJobList,
-            //       jobs: [{ ...jobToMove, jobListId: createdJobList.id }],
-            //     },
-            //   };
-            // });
-            // setActiveId(null);
             return;
           }
 
@@ -486,6 +525,9 @@ export function MultipleContainers({ lists, boardId }: Props) {
                   id={containerId}
                   list={containerDict[containerId]}
                   items={containerDict[containerId].jobs}
+                  setShowCreateJobModal={setShowCreateJobModal}
+                  boardId={boardId}
+                  setContainerDict={setContainerDict}
                   onRemove={
                     containerDict[containerId].jobs.length === 0
                       ? () => handleRemove(containerId)
@@ -517,6 +559,9 @@ export function MultipleContainers({ lists, boardId }: Props) {
               items={[]}
               onClick={handleAddColumn}
               placeholder
+              setShowCreateJobModal={setShowCreateJobModal}
+              boardId={boardId}
+              setContainerDict={setContainerDict}
             >
               + Add column
             </DroppableContainer>
@@ -536,4 +581,4 @@ export function MultipleContainers({ lists, boardId }: Props) {
       </DndContext>
     </div>
   );
-}
+};

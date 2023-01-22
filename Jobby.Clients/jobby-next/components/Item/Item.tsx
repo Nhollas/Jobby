@@ -5,6 +5,7 @@ import type { Transform } from "@dnd-kit/utilities";
 import styles from "./Item.module.css";
 import { Job } from "../../types";
 import { DraggableSyntheticListeners } from "@dnd-kit/core";
+import { contrastChecker } from "../../helpers/contrastChecker";
 
 export interface Props {
   dragOverlay?: boolean;
@@ -73,6 +74,7 @@ export const Item = React.memo(
                 ? `${transform.scaleY}`
                 : undefined,
               "--index": index,
+              backgroundColor: "white",
             } as React.CSSProperties
           }
           ref={ref}

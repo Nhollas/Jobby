@@ -1,4 +1,4 @@
-import { serverClient } from "../client";
+import { serverClient } from "../clients";
 import Link from "next/link";
 import { useState } from "react";
 import { PageContainer, ActionButton } from "../components/Common";

@@ -7,6 +7,7 @@ interface Entity {
 export type JobList = {
   name: string;
   index: number;
+  count: number;
   jobs: Job[];
 } & Entity
 
@@ -30,11 +31,11 @@ export type Job = {
   description: string;
   deadline: string;
   index: number;
-  board: Board
   activities: Activity[]
   notes: Note[]
   contacts: Contact[]
   jobListId: string;
+  boardId: string;
 } & Entity
 
 export type Note = {

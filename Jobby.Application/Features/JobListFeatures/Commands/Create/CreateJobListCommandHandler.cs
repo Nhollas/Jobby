@@ -43,6 +43,9 @@ internal sealed class CreateJobListCommandHandler : IRequestHandler<CreateJobLis
             var jobToUpdate = await _jobRepository.GetByIdAsync(request.InitJobId, cancellationToken);
 
             jobToUpdate.SetJobList(createdJobList.Id);
+            jobToUpdate.SetIndex(0);
+
+            await _jobRepository.UpdateAsync(jobToUpdate, cancellationToken);
         }
 
         return new CreateJobListResponse

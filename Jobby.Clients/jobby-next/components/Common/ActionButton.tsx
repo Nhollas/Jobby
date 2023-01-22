@@ -1,14 +1,15 @@
 interface Props {
- type?: "button" | "submit" | "reset";
- text?: string;
- onClick?(): void;
- variant?: string;
- rounded?: boolean;
- extended?: boolean; 
+  type?: "button" | "submit" | "reset";
+  text?: string;
+  onClick?(): void;
+  variant?: "primary" | "secondary" | "danger";
+  rounded?: boolean;
+  extended?: boolean;
+  className?: string;
 }
 
-export const ActionButton = (props : Props) => {
-  const { type, text, onClick, variant, rounded, extended } = props;
+export const ActionButton = (props: Props) => {
+  const { type, text, onClick, variant, rounded, extended, className } = props;
 
   const classNameMap = {
     primary:
@@ -18,25 +19,34 @@ export const ActionButton = (props : Props) => {
     default: "default-button",
   };
 
-  const generateClassName = (rounded, extended, variant) => {
-    let className = classNameMap[variant] || classNameMap.default;
+  const generateClassName = (rounded, extended, variant, className) => {
+    let result = classNameMap[variant] || classNameMap.default;
 
     if (rounded) {
-      className += " rounded-full";
+      result += " rounded-full";
     }
     if (extended) {
-      className += " w-full";
+      result += " w-full";
     } else {
-      className += " w-max";
+      result += " w-max";
     }
 
-    return className;
+    if (className) {
+      result += ` ${className}`;
+    }
+
+    return result;
   };
 
-  const className = generateClassName(rounded, extended, variant);
+  const generatedClassName = generateClassName(
+    rounded,
+    extended,
+    variant,
+    className
+  );
 
   return (
-    <button type={type} className={className} onClick={onClick}>
+    <button type={type} className={generatedClassName} onClick={onClick}>
       {text}
     </button>
   );

@@ -1,5 +1,5 @@
 import { ActionButton, ModalContainer } from "../../Common";
-import { client } from "../../../client";
+import { client } from "../../../clients";
 import { Board } from "../../../types";
 import { Dispatch, SetStateAction } from "react";
 

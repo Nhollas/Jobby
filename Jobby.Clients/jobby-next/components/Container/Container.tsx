@@ -1,10 +1,11 @@
-import React, { forwardRef } from "react";
+import React, { Dispatch, forwardRef, SetStateAction } from "react";
 import classNames from "classnames";
 
 import { Handle, Remove } from "../Item";
 
 import styles from "./container.module.css";
 import { JobList } from "../../types";
+import { ActionButton } from "../Common";
 
 export interface Props {
   children: React.ReactNode;
@@ -13,9 +14,19 @@ export interface Props {
   handleProps?: React.HTMLAttributes<any>;
   shadow?: boolean;
   placeholder?: boolean;
-  list?: JobList;
+  list: JobList;
   onClick?(): void;
   onRemove?(): void;
+  setShowCreateJobModal: Dispatch<
+    SetStateAction<{
+      visible: boolean;
+      boardId?: string | null;
+      jobListId: string | null;
+      setContainerDict?: Dispatch<SetStateAction<Record<string, JobList>>>;
+    }>
+  >;
+  setContainerDict: Dispatch<SetStateAction<Record<string, JobList>>>;
+  boardId: string;
 }
 
 export const Container = forwardRef<HTMLDivElement & HTMLButtonElement, Props>(
@@ -30,6 +41,9 @@ export const Container = forwardRef<HTMLDivElement & HTMLButtonElement, Props>(
       list,
       onClick,
       onRemove,
+      setShowCreateJobModal,
+      setContainerDict,
+      boardId,
       ...props
     }: Props,
     ref
@@ -56,9 +70,26 @@ export const Container = forwardRef<HTMLDivElement & HTMLButtonElement, Props>(
         tabIndex={onClick && 0}
       >
         {list ? (
-          <div className={styles.Header}>
-            {list.name}
-            <div className={styles.Actions}>
+          <div className='flex w-full flex-col gap-y-4 bg-white p-4'>
+            <p className='truncate whitespace-nowrap text-base font-medium'>
+              {list.name}
+            </p>
+            <p>{list.count} Jobs</p>
+            <ActionButton
+              variant='primary'
+              text='Add Job'
+              rounded
+              className='ml-auto'
+              onClick={() =>
+                setShowCreateJobModal({
+                  visible: true,
+                  jobListId: list.id,
+                  boardId,
+                  setContainerDict,
+                })
+              }
+            />
+            <div className='ml-auto flex w-max flex-row gap-x-2'>
               {onRemove && <Remove onClick={onRemove} />}
               <Handle {...handleProps} />
             </div>

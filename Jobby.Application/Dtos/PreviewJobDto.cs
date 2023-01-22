@@ -7,5 +7,6 @@ public sealed record PreviewJobDto
     public string Company { get; set; }
     public string Title { get; set; }
     public int Index { get; set; }
+    public string Colour { get; set; }
     public Guid JobListId { get; set; }
 }

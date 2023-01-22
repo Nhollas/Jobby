@@ -1,4 +1,4 @@
 export { Container } from "./Container";
 export type { ContainerProps } from "./Container";
 export { Item, Action, Handle, Remove } from "./Item";
-export { MultipleContainers } from "./MultipleContainers";
+export { Kanban } from "./Kanban";
