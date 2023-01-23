@@ -11,7 +11,7 @@ namespace Jobby.Application.Features.BoardFeatures.Queries.GetById;
 
 internal sealed class GetBoardDetailQueryHandler : IRequestHandler<GetBoardDetailQuery, GetBoardResponse>
 {
-    private readonly IResource<Board> _fetchResource;
+    private readonly IResourceProvider<Board> _resourceProvider;
     private readonly IRepository<Board> _repository;
     private readonly IMapper _mapper;
     private readonly IUserService _userService;
@@ -21,23 +21,21 @@ internal sealed class GetBoardDetailQueryHandler : IRequestHandler<GetBoardDetai
         IRepository<Board> repository,
         IUserService userService,
         IMapper mapper,
-        IResource<Board> fetchResource)
+        IResourceProvider<Board> resourceProvider)
     {
         _repository = repository;
         _userService = userService;
         _userId = _userService.UserId();
         _mapper = mapper;
-        _fetchResource = fetchResource;
+        _resourceProvider = resourceProvider;
     }
 
     public async Task<GetBoardResponse> Handle(GetBoardDetailQuery request, CancellationToken cancellationToken)
     {
-        Board board = await _fetchResource
-            .WithUser(_userId)
-            .TargetResourceId(request.BoardId)
-            .FindWith(_repository.FirstOrDefaultAsync)
+        Board board = await _resourceProvider
+            .GetBySpec(_repository.FirstOrDefaultAsync)
             .ApplySpecification(new BoardDetailSpecification(request.BoardId))
-            .Check();
+            .Check(_userId, request.BoardId);
 
         return _mapper.Map<GetBoardResponse>(board);
 

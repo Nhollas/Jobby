@@ -39,11 +39,9 @@ internal sealed class CreateActivityCommandHandler : IRequestHandler<CreateActiv
     public async Task<Guid> Handle(CreateActivityCommand request, CancellationToken cancellationToken)
     {
         var boardToLink = await _resourceChecker
-            .WithUser(_userId)
-            .TargetResourceId(request.BoardId)
-            .FindWith(_boardRepository.FirstOrDefaultAsync)
+            .GetBy(_boardRepository.FirstOrDefaultAsync)
             .ApplySpecification(new GetBoardByIdSpec(request.BoardId))
-            .Check();
+            .Check(_userId, request.BoardId);
 
         var createdActivity = Activity.Create(
             _guidProvider.Create(),

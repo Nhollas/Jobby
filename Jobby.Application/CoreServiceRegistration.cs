@@ -24,7 +24,7 @@ public static class CoreServiceRegistration
         services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
         services.AddSingleton<IGuidProvider, GuidProvider>();
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
-        services.AddScoped(typeof(IResource<>), typeof(ResourceService<>));
+        services.AddScoped(typeof(IResource<>), typeof(ResourceProvider<>));
         services.AddMediatR(applicationAssembly);
         services.AddValidatorsFromAssembly(applicationAssembly);
 
