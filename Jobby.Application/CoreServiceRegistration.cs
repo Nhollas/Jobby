@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Jobby.Application.Abstractions.Authorization;
 using Jobby.Application.Behaviours;
 using Jobby.Application.Interfaces.Services;
 using Jobby.Application.Services;
@@ -23,6 +24,7 @@ public static class CoreServiceRegistration
         services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
         services.AddSingleton<IGuidProvider, GuidProvider>();
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+        services.AddScoped(typeof(IResource<>), typeof(ResourceService<>));
         services.AddMediatR(applicationAssembly);
         services.AddValidatorsFromAssembly(applicationAssembly);
 

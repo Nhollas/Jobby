@@ -23,6 +23,7 @@ public class Company
     public Guid Id { get; set; }
     public string Name { get; set; }
 
+    // Database Relationship Properties
     public Contact Contact { get; set; }
     public Guid ContactId { get; set; }
 }

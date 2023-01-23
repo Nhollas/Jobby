@@ -14,6 +14,7 @@ internal sealed class CreateJobCommandHandler : IRequestHandler<CreateJobCommand
     private readonly IRepository<Board> _boardRepository;
     private readonly IRepository<Job> _jobRepository;
     private readonly IDateTimeProvider _dateTimeProvider;
+    private readonly IGuidProvider _guidProvider;
     private readonly IUserService _userService;
     private readonly string _userId;
 
@@ -21,13 +22,15 @@ internal sealed class CreateJobCommandHandler : IRequestHandler<CreateJobCommand
         IRepository<Board> repository,
         IUserService userService,
         IDateTimeProvider dateTimeProvider,
-        IRepository<Job> jobRepository)
+        IRepository<Job> jobRepository,
+        IGuidProvider guidProvider)
     {
         _boardRepository = repository;
         _userService = userService;
         _userId = _userService.UserId();
         _dateTimeProvider = dateTimeProvider;
         _jobRepository = jobRepository;
+        _guidProvider = guidProvider;
     }
 
     public async Task<CreateJobResponse> Handle(CreateJobCommand request, CancellationToken cancellationToken)
@@ -65,7 +68,7 @@ internal sealed class CreateJobCommandHandler : IRequestHandler<CreateJobCommand
         }
 
         var createdJob = Job.Create(
-            Guid.NewGuid(),
+            _guidProvider.Create(),
             _dateTimeProvider.UtcNow,
             _userId,
             request.Company,

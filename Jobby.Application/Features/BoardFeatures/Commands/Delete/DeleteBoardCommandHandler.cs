@@ -1,4 +1,5 @@
-﻿using Jobby.Application.Abstractions.Specification;
+﻿using Jobby.Application.Abstractions.Authorization;
+using Jobby.Application.Abstractions.Specification;
 using Jobby.Application.Exceptions.Base;
 using Jobby.Application.Interfaces.Services;
 using Jobby.Application.Specifications;
@@ -9,6 +10,7 @@ namespace Jobby.Application.Features.BoardFeatures.Commands.Delete;
 
 internal sealed class DeleteBoardCommandHandler : IRequestHandler<DeleteBoardCommand, Unit>
 {
+    private readonly IResource<Board> _resourceProvider;
     private readonly IRepository<Board> _repository;
     private readonly IRepository<Contact> _contactRepository;
     private readonly IUserService _userService;
@@ -17,36 +19,22 @@ internal sealed class DeleteBoardCommandHandler : IRequestHandler<DeleteBoardCom
     public DeleteBoardCommandHandler(
         IRepository<Board> repository,
         IUserService userService,
-        IRepository<Contact> contactRepository)
+        IRepository<Contact> contactRepository,
+        IResource<Board> resourceProvider)
     {
         _repository = repository;
         _userService = userService;
         _userId = _userService.UserId();
         _contactRepository = contactRepository;
+        _resourceProvider = resourceProvider;
     }
 
     public async Task<Unit> Handle(DeleteBoardCommand request, CancellationToken cancellationToken)
     {
-        Board boardToDelete = await _repository.GetByIdAsync(request.BoardId, cancellationToken);
-
-        if (boardToDelete is null)
-        {
-            throw new NotFoundException($"A board with id {request.BoardId} could not be found.");
-        }
-
-        if (boardToDelete.OwnerId != _userId)
-        {
-            throw new NotAuthorisedException(_userId);
-        }
-
-        var contactSpec = new ListBoardContactsMiniSpec(request.BoardId);
-
-        var contacts = await _contactRepository.ListAsync(contactSpec, cancellationToken);
-
-        if (contacts.Count > 0)
-        {
-            await _contactRepository.DeleteRangeAsync(contacts, cancellationToken);
-        }
+        Board boardToDelete = await _resourceProvider
+            .WithUser(_userId)
+            .TargetResourceId(request.BoardId)
+            .Check();  
 
         await _repository.DeleteAsync(boardToDelete, cancellationToken);
 

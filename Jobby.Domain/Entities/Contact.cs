@@ -41,21 +41,13 @@ public class Contact : Entity
     }
 
     public string FirstName { get; private set; }
-
     public string LastName { get; private set; }
-
     public string JobTitle { get; private set; }
-
     public string Location { get; private set; }
-
     public Social Socials { get; private set; }
-
     public IReadOnlyCollection<Job> Jobs => _jobs;
-
     public IReadOnlyCollection<Company> Companies => _companies;
-
     public IReadOnlyCollection<Email> Emails => _emails;
-
     public IReadOnlyCollection<Phone> Phones => _phones;
 
 
@@ -63,6 +55,7 @@ public class Contact : Entity
     public List<JobContact> JobContacts { get; set; }
     public Board Board { get; private set; }
     public Guid BoardId { get; private set; }
+
 
     public static Contact Create(
         Guid id,

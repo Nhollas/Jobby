@@ -29,8 +29,11 @@ public class JobList : Entity
     public int Index { get; set; }
     public IReadOnlyCollection<Job> Jobs => _jobs;
 
+
+    // Database Relationship Properties
     public Board Board { get; set; }
     public Guid BoardId { get; set; }
+
 
     public static JobList Create(
         Guid id,
@@ -47,14 +50,6 @@ public class JobList : Entity
             name,
             index,
             boardId);
-    }
-
-    public void UpdateJobIndexes()
-    {
-        foreach(Job job in _jobs)
-        {
-            job.SetIndex(job.Index - 1);
-        }
     }
 
     public void ArrangeJobs(Dictionary<Guid, int> jobIndexes)

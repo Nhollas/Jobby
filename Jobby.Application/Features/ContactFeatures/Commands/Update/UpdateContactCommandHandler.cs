@@ -4,6 +4,7 @@ using Jobby.Application.Interfaces.Services;
 using Jobby.Application.Specifications;
 using Jobby.Domain.Entities;
 using MediatR;
+using static Jobby.Domain.Static.ContactConstants;
 
 namespace Jobby.Application.Features.ContactFeatures.Commands.Update;
 

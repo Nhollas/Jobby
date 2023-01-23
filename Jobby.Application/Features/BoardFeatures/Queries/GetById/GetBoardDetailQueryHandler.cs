@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
+using Jobby.Application.Abstractions.Authorization;
 using Jobby.Application.Abstractions.Specification;
 using Jobby.Application.Contracts.Board;
-using Jobby.Application.Exceptions.Base;
 using Jobby.Application.Interfaces.Services;
 using Jobby.Application.Specifications;
 using Jobby.Domain.Entities;
@@ -11,6 +11,7 @@ namespace Jobby.Application.Features.BoardFeatures.Queries.GetById;
 
 internal sealed class GetBoardDetailQueryHandler : IRequestHandler<GetBoardDetailQuery, GetBoardResponse>
 {
+    private readonly IResource<Board> _fetchResource;
     private readonly IRepository<Board> _repository;
     private readonly IMapper _mapper;
     private readonly IUserService _userService;
@@ -19,30 +20,26 @@ internal sealed class GetBoardDetailQueryHandler : IRequestHandler<GetBoardDetai
     public GetBoardDetailQueryHandler(
         IRepository<Board> repository,
         IUserService userService,
-        IMapper mapper)
+        IMapper mapper,
+        IResource<Board> fetchResource)
     {
         _repository = repository;
         _userService = userService;
         _userId = _userService.UserId();
         _mapper = mapper;
+        _fetchResource = fetchResource;
     }
 
     public async Task<GetBoardResponse> Handle(GetBoardDetailQuery request, CancellationToken cancellationToken)
     {
-        var boardSpec = new BoardDetailSpecification(request.BoardId);
+        Board board = await _fetchResource
+            .WithUser(_userId)
+            .TargetResourceId(request.BoardId)
+            .FindWith(_repository.FirstOrDefaultAsync)
+            .ApplySpecification(new BoardDetailSpecification(request.BoardId))
+            .Check();
 
-        var boardToGet = await _repository.FirstOrDefaultAsync(boardSpec, cancellationToken);
+        return _mapper.Map<GetBoardResponse>(board);
 
-        if (boardToGet == null)
-        {
-            throw new NotFoundException($"A board with id {request.BoardId} could not be found.");
-        }
-
-        if (boardToGet.OwnerId != _userId)
-        {
-            throw new NotAuthorisedException(_userId);
-        }
-
-        return _mapper.Map<GetBoardResponse>(boardToGet);
     }
 }

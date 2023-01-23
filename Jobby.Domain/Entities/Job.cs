@@ -36,27 +36,16 @@ public class Job : Entity
     }
 
     public string Company { get; private set; }
-
     public string Title { get; private set; }
-
     public string PostUrl { get; private set; }
-
     public double Salary { get; private set; }
-
     public string Location { get; private set; }
-
     public string Colour { get; private set; }
-
     public string Description { get; private set; }
-
     public DateTime Deadline { get; private set; }
-
     public int Index { get; private set; }
-
     public IReadOnlyCollection<Note> Notes => _notes;
-
     public IReadOnlyCollection<Activity> Activities => _activities;
-
     public IReadOnlyCollection<Contact> Contacts => _contacts;
 
 
@@ -64,9 +53,9 @@ public class Job : Entity
     public List<JobContact> JobContacts { get; set; }
     public JobList JobList { get; set; }
     public Guid JobListId { get; set; }
-
     public Board Board { get; private set; }
     public Guid BoardId { get; private set; }
+
 
     public static Job Create(
         Guid id,

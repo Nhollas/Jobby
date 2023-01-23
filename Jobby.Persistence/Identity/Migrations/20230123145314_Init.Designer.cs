@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Jobby.Persistence.Identity.Migrations
 {
     [DbContext(typeof(JobbyIdentityContext))]
-    [Migration("20230104093853_Init")]
+    [Migration("20230123145314_Init")]
     partial class Init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

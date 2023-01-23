@@ -5,12 +5,14 @@ using Jobby.Application.Interfaces.Services;
 using Jobby.Application.Specifications;
 using Jobby.Domain.Entities;
 using MediatR;
+using static Jobby.Domain.Static.ContactConstants;
 
 namespace Jobby.Application.Features.ContactFeatures.Commands.Create;
 
 internal sealed class CreateContactCommandHandler : IRequestHandler<CreateContactCommand, Guid>
 {
     private readonly IDateTimeProvider _dateTimeProvider;
+    private readonly IGuidProvider _guidProvider;
     private readonly IRepository<Board> _boardRepository;
     private readonly IRepository<Contact> _contactRepository;
     private readonly IUserService _userService;
@@ -20,13 +22,15 @@ internal sealed class CreateContactCommandHandler : IRequestHandler<CreateContac
     IUserService userService,
     IRepository<Board> boardRepository,
     IDateTimeProvider dateTimeProvider,
-    IRepository<Contact> contactRepository)
+    IRepository<Contact> contactRepository,
+    IGuidProvider guidProvider)
     {
         _userService = userService;
         _userId = _userService.UserId();
         _boardRepository = boardRepository;
         _dateTimeProvider = dateTimeProvider;
         _contactRepository = contactRepository;
+        _guidProvider = guidProvider;
     }
 
     public async Task<Guid> Handle(CreateContactCommand request, CancellationToken cancellationToken)
@@ -46,7 +50,7 @@ internal sealed class CreateContactCommandHandler : IRequestHandler<CreateContac
         }
 
         var createdContact = Contact.Create(
-            Guid.NewGuid(),
+            _guidProvider.Create(),
             _dateTimeProvider.UtcNow,
             _userId,
             request.FirstName,

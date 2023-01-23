@@ -1,4 +1,6 @@
-﻿namespace Jobby.Domain.Entities;
+﻿using static Jobby.Domain.Static.ContactConstants;
+
+namespace Jobby.Domain.Entities;
 public class Phone
 {
     public Phone(
@@ -28,6 +30,7 @@ public class Phone
     public string Number { get; set; }
     public PhoneType Type { get; set; }
 
+    // Database Relationship Properties
     public Contact Contact { get; set; }
     public Guid ContactId { get; set; }
 }

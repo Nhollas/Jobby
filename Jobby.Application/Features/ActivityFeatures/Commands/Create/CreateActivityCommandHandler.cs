@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Jobby.Application.Abstractions.Authorization;
 using Jobby.Application.Abstractions.Specification;
 using Jobby.Application.Exceptions.Base;
 using Jobby.Application.Interfaces.Services;
@@ -10,6 +11,7 @@ namespace Jobby.Application.Features.ActivityFeatures.Commands.Create;
 
 internal sealed class CreateActivityCommandHandler : IRequestHandler<CreateActivityCommand, Guid>
 {
+    private readonly IResource<Board> _resourceChecker;
     private readonly IRepository<Board> _boardRepository;
     private readonly IRepository<Activity> _activityRepository;
     private readonly IDateTimeProvider _dateTimeProvider;
@@ -22,7 +24,8 @@ internal sealed class CreateActivityCommandHandler : IRequestHandler<CreateActiv
         IUserService userService,
         IDateTimeProvider dateTimeProvider,
         IGuidProvider guidProvider,
-        IRepository<Activity> activityRepository)
+        IRepository<Activity> activityRepository,
+        IResource<Board> resourceChecker)
     {
         _boardRepository = repository;
         _userService = userService;
@@ -30,51 +33,41 @@ internal sealed class CreateActivityCommandHandler : IRequestHandler<CreateActiv
         _dateTimeProvider = dateTimeProvider;
         _guidProvider = guidProvider;
         _activityRepository = activityRepository;
+        _resourceChecker = resourceChecker;
     }
 
-    /*
-        An Activity is created by it being added to a board entity (parent).
-        The Activity can be added to a specific job on the board as well if it's not null.
-    */
     public async Task<Guid> Handle(CreateActivityCommand request, CancellationToken cancellationToken)
     {
-        var boardSpec = new GetBoardByIdSpec(request.BoardId);
-
-        Board BoardToLink = await _boardRepository.FirstOrDefaultAsync(boardSpec, cancellationToken);
-
-        if (BoardToLink is null)
-        {
-            throw new NotFoundException($"A board with id {request.BoardId} could not be found.");
-        }
-
-        if (BoardToLink.OwnerId != _userId)
-        {
-            throw new NotAuthorisedException(_userId);
-        }
+        var boardToLink = await _resourceChecker
+            .WithUser(_userId)
+            .TargetResourceId(request.BoardId)
+            .FindWith(_boardRepository.FirstOrDefaultAsync)
+            .ApplySpecification(new GetBoardByIdSpec(request.BoardId))
+            .Check();
 
         var createdActivity = Activity.Create(
-            _guidProvider.Id,
+            _guidProvider.Create(),
             _dateTimeProvider.UtcNow,
             _userId,
             request.Title,
-            request.ActivityType,
+            request.Type,
             request.StartDate,
             request.EndDate,
             request.Note,
             request.Completed,
-            BoardToLink);
+            boardToLink);
 
         if (request.JobId != Guid.Empty)
         {
-            if (!BoardOwnsJob(BoardToLink, request.JobId))
+            if (!BoardOwnsJob(boardToLink, request.JobId))
             {
                 throw new NotFoundException($"The {nameof(Job)} {request.JobId} you wanted to link doesn't exist in the Board {request.BoardId}.");
             }
 
-            Job jobToLink = BoardToLink.JobList
-                                .SelectMany(x => x.Jobs)
-                                .Where(x => x.Id == request.JobId)
-                                .First();
+            Job jobToLink = boardToLink.JobList
+                .SelectMany(x => x.Jobs)
+                .Where(x => x.Id == request.JobId)
+                .First();
 
             createdActivity.SetJob(jobToLink);  
         }

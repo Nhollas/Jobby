@@ -1,4 +1,5 @@
 ﻿using Jobby.Domain.Primitives;
+using Jobby.Domain.Static;
 
 namespace Jobby.Domain.Entities;
 
@@ -33,7 +34,18 @@ public class Activity : Entity
 
     public string Title { get; private set; }
     public int Type { get; private set; }
-    public string Name => activityNamesDict[Type];
+    public string Name
+    {
+        get
+        {
+            if (!ActivityConstants.TypeNameDictionary.TryGetValue(Type, out string name))
+            {
+                name = ActivityConstants.TypeNameDictionary[23];
+            }
+            return name;
+        }
+    }
+
     public DateTime StartDate { get; private set; }
     public DateTime EndDate { get; private set; }
     public string Note { get; private set; }
@@ -41,10 +53,11 @@ public class Activity : Entity
 
 
     // Database Relationship Properties
-    public virtual Board Board { get; set; }
-    public virtual Job Job { get; set; }
+    public Board Board { get; set; }
+    public Job Job { get; set; }
     public Guid? JobId { get; set; }
     public Guid BoardId { get; set; }
+
 
     public static Activity Create(
         Guid id,
@@ -93,36 +106,4 @@ public class Activity : Entity
     {
         Job = job;
     }
-
-    public void ClearJob()
-    {
-        Job = null;
-    }
-
-    private readonly Dictionary<int, string> activityNamesDict = new()
-    {
-        {1, "Apply"},
-        {2, "Phone Screen"},
-        {3, "Phone Interview"},
-        {4, "On Site Interview"},
-        {5, "Offer Received"},
-        {6, "Accept Offer"},
-        {7, "Prep Cover Letter"},
-        {8, "Prep Resume"},
-        {9, "Reach Out"},
-        {10, "Get Reference"},
-        {11, "Follow Up"},
-        {12, "Prep For Interview"},
-        {13, "Decline Offer"},
-        {14, "Rejected"},
-        {15, "Send Thank You"},
-        {16, "Email"},
-        {17, "Meeting"},
-        {18, "Phone Call"},
-        {19, "Send Availability"},
-        {20, "Assignment"},
-        {21, "Networking Event"},
-        {22, "Application Withdrawn"},
-        {23, "Other"}
-    };
 }

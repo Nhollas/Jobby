@@ -8,7 +8,7 @@ public sealed class CreateActivityCommandValidator : AbstractValidator<CreateAct
         RuleFor(e => e.Title)
             .NotEmpty().WithMessage("{PropertyName} is required.")
             .NotNull();
-        RuleFor(e => e.ActivityType)
+        RuleFor(e => e.Type)
             .NotEmpty().WithMessage("{PropertyName} is required.")
             .NotNull();
         RuleFor(e => e.BoardId)
