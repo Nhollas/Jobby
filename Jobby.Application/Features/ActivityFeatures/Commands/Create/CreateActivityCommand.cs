@@ -1,8 +1,9 @@
-﻿using MediatR;
+﻿using Jobby.Application.Dtos;
+using MediatR;
 
 namespace Jobby.Application.Features.ActivityFeatures.Commands.Create;
 
-public sealed record CreateActivityCommand : IRequest<Guid>
+public sealed record CreateActivityCommand : IRequest<ActivityDto>
 {
     public Guid BoardId { get; set; }
     public Guid JobId { get; set; }

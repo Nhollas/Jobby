@@ -19,23 +19,20 @@ public class MappingProfile : Profile
         // Board Maps
         CreateMap<Board, GetBoardResponse>();
         CreateMap<Board, PreviewBoardDto>();
-        CreateMap<Board, ListBoardsResponse>()
-            .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(x => x.CreatedDate.ToString("f")));
+        CreateMap<Board, ListBoardsResponse>();
 
         // JobList Maps
         CreateMap<JobList, JobListDto>();
 
         // Job Maps
-        CreateMap<Job, PreviewJobDto>()
-            .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(x => DateTimeFormatter.FormatDateTime(x.CreatedDate)));
+        CreateMap<Job, PreviewJobDto>();
         CreateMap<Job, GetJobResponse>();
         CreateMap<Job, JobDto>();
         CreateMap<Note, NoteDto>();
         CreateMap<UpdateJobCommand, Job>();
 
         // Activity Maps
-        CreateMap<Activity, ListActivitiesResponse>()
-            .ForMember(dest => dest.CreatedDate, opt => opt.MapFrom(x => DateTimeFormatter.FormatDateTime(x.CreatedDate)));
+        CreateMap<Activity, ListActivitiesResponse>();
         CreateMap<Activity, ActivityDto>();
         CreateMap<CreateActivityCommand, Activity>();
         CreateMap<UpdateActivityCommand, Activity>();

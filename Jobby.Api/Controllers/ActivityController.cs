@@ -1,4 +1,5 @@
 ﻿using Jobby.Api.Controllers.Base;
+using Jobby.Application.Dtos;
 using Jobby.Application.Features.ActivityFeatures.Commands.Create;
 using Jobby.Application.Features.ActivityFeatures.Commands.Delete;
 using Jobby.Application.Features.ActivityFeatures.Commands.Update.LinkJob;
@@ -14,11 +15,11 @@ namespace Jobby.Api.Controllers;
 public class ActivityController : ApiController
 {
     [HttpPost("Create", Name = "CreateActivity")]
-    public async Task<ActionResult<Guid>> CreateActivity([FromBody] CreateActivityCommand command)
+    public async Task<ActionResult<ActivityDto>> CreateActivity([FromBody] CreateActivityCommand command)
     {
-        Guid activityId = await Sender.Send(command);
+        var createdActivity = await Sender.Send(command);
 
-        return CreatedAtAction(nameof(CreateActivity), activityId);
+        return CreatedAtAction(nameof(CreateActivity), createdActivity);
     }
 
     [HttpDelete("Delete/{activityId:guid}", Name = "DeleteActivity")]

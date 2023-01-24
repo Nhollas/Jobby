@@ -11,7 +11,7 @@ public sealed record GetBoardResponse
 
     public Guid Id { get; set; }
     public string Name { get; set; }
-    public List<JobListDto> JobList { get; set; }
+    public List<JobListDto> JobLists { get; set; }
     public int ActivitiesCount => Activities.Count;
     public int ContactsCount => Contacts.Count;
 }

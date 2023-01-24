@@ -73,7 +73,7 @@ public class BoardController : ApiController
         return Ok(await Sender.Send(contactQuery));
     }
 
-    [HttpGet("{boardId:guid}/Activities", Name = "ListActivities")]
+    [HttpGet("{boardId:guid}/activities", Name = "ListActivities")]
     public async Task<ActionResult<List<ListActivitiesResponse>>> ListActivities(Guid boardId)
     {
         var dtos = await Sender.Send(new GetBoardActivityListQuery(boardId));

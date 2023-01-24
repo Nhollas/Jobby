@@ -24,7 +24,7 @@ public class ResourceProvider<TEntity> :
         };
 
         return provider;
-    } 
+    }
 
     public static IGetById<TEntity> GetById(Func<Guid, CancellationToken, Task<TEntity>> getById) 
     {

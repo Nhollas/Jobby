@@ -4,7 +4,7 @@ namespace Jobby.Application.Contracts.Activity;
 public sealed record ListActivitiesResponse
 {
     public Guid Id { get; set; }
-    public string CreatedDate { get; set; }
+    public DateTime CreatedDate { get; set; }
     public string Title { get; set; }
     public string Name { get; set; }
     public int Type { get; set; }
