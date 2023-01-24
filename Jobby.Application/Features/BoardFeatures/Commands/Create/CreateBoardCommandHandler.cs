@@ -8,19 +8,19 @@ namespace Jobby.Application.Features.BoardFeatures.Commands.Create;
 
 internal sealed class CreateBoardCommandHandler : ICommandHandler<CreateBoardCommand, CreateBoardResponse>
 {
-    private readonly IRepository<Board> _repository;
+    private readonly IRepository<Board> _boardRepository;
     private readonly IGuidProvider _guidProvider;
     private readonly IDateTimeProvider _dateTimeProvider;
     private readonly IUserService _userService;
     private readonly string _userId;
 
     public CreateBoardCommandHandler(
-        IRepository<Board> repository,
+        IRepository<Board> boardRepository,
         IUserService userService,
         IDateTimeProvider dateTimeProvider,
         IGuidProvider guidProvider)
     {
-        _repository = repository;
+        _boardRepository = boardRepository;
         _userService = userService;
         _userId = _userService.UserId();
         _dateTimeProvider = dateTimeProvider;
@@ -47,7 +47,7 @@ internal sealed class CreateBoardCommandHandler : ICommandHandler<CreateBoardCom
             request.Name,
             defaultJobLists);
 
-        await _repository.AddAsync(board, cancellationToken);
+        await _boardRepository.AddAsync(board, cancellationToken);
 
         return new CreateBoardResponse(
             board.Id,

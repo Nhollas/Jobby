@@ -1,10 +1,10 @@
 ﻿using Ardalis.Specification;
 using Jobby.Domain.Entities;
 
-namespace Jobby.Application.Specifications;
-public class ListBoardContactsSpec : Specification<Contact>
+namespace Jobby.Application.Features.ContactFeatures.Specifications;
+public class GetContactsFromBoardSpecification : Specification<Contact>
 {
-    public ListBoardContactsSpec(Guid BoardId, string UserId)
+    public GetContactsFromBoardSpecification(Guid BoardId, string UserId)
     {
         Query
             .Include(x => x.Companies)

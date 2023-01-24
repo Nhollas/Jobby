@@ -1,6 +1,7 @@
 ﻿using Jobby.Application.Abstractions.Specification;
 using Jobby.Application.Exceptions.Base;
 using Jobby.Application.Interfaces.Services;
+using Jobby.Application.Services;
 using Jobby.Domain.Entities;
 using MediatR;
 
@@ -8,17 +9,17 @@ namespace Jobby.Application.Features.BoardFeatures.Commands.Update.UpdateDetails
 
 internal sealed class UpdateBoardCommandHandler : IRequestHandler<UpdateBoardCommand, Unit>
 {
-    private readonly IRepository<Board> _repository;
+    private readonly IRepository<Board> _boardRepository;
     private readonly IDateTimeProvider _timeProvider;
     private readonly IUserService _userService;
     private readonly string _userId;
 
     public UpdateBoardCommandHandler(
-        IRepository<Board> repository,
+        IRepository<Board> boardRepository,
         IUserService userService,
         IDateTimeProvider timeProvider)
     {
-        _repository = repository;
+        _boardRepository = boardRepository;
         _userService = userService;
         _userId = _userService.UserId();
         _timeProvider = timeProvider;
@@ -26,23 +27,15 @@ internal sealed class UpdateBoardCommandHandler : IRequestHandler<UpdateBoardCom
 
     public async Task<Unit> Handle(UpdateBoardCommand request, CancellationToken cancellationToken)
     {
-        Board boardToUpdate = await _repository.GetByIdAsync(request.Id, cancellationToken);
-
-        if (boardToUpdate == null)
-        {
-            throw new NotFoundException($"A board with id {request.Id} could not be found.");
-        }
-
-        if (boardToUpdate.OwnerId != _userId)
-        {
-            throw new NotAuthorisedException(_userId);
-        }
+        Board boardToUpdate = await ResourceProvider<Board>
+            .GetById(_boardRepository.GetByIdAsync)
+            .Check(_userId, request.Id);
 
         boardToUpdate.SetBoardName(request.Name);
 
         boardToUpdate.UpdateEntity(_timeProvider.UtcNow);
 
-        await _repository.UpdateAsync(boardToUpdate, cancellationToken);
+        await _boardRepository.UpdateAsync(boardToUpdate, cancellationToken);
 
         return Unit.Value;
     }

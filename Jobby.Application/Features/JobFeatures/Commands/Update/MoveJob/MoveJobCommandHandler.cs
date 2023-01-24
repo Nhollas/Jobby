@@ -1,6 +1,6 @@
 ﻿using Jobby.Application.Abstractions.Specification;
-using Jobby.Application.Exceptions.Base;
 using Jobby.Application.Interfaces.Services;
+using Jobby.Application.Services;
 using Jobby.Domain.Entities;
 using MediatR;
 
@@ -25,17 +25,9 @@ internal sealed class MoveJobCommandHandler : IRequestHandler<MoveJobCommand, Un
 
     public async Task<Unit> Handle(MoveJobCommand request, CancellationToken cancellationToken)
     {
-        Job jobToMove = await _jobRepository.GetByIdAsync(request.JobId, cancellationToken);
-
-        if (jobToMove == null)
-        {
-            throw new NotFoundException($"A job with id {request.JobId} could not be found.");
-        }
-
-        if (jobToMove.OwnerId != _userId)
-        {
-            throw new NotAuthorisedException(_userId);
-        }
+        Job jobToMove = await ResourceProvider<Job>
+            .GetById(_jobRepository.GetByIdAsync)
+            .Check(_userId, request.JobId);
 
         jobToMove.SetJobList(request.TargetJobListId);
         jobToMove.UpdateEntity(_timeProvider.UtcNow);

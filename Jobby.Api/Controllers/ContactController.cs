@@ -1,6 +1,7 @@
-﻿using Jobby.Application.Features.ContactFeatures.Commands.Create;
+﻿using Jobby.Api.Controllers.Base;
+using Jobby.Application.Features.ContactFeatures.Commands.Create;
 using Jobby.Application.Features.ContactFeatures.Commands.Delete;
-using Jobby.Application.Features.ContactFeatures.Commands.Update;
+using Jobby.Application.Features.ContactFeatures.Commands.Update.UpdateDetails;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

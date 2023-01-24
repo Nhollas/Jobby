@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using Jobby.Application.Abstractions.Specification;
 using Jobby.Application.Contracts.Contact;
-using Jobby.Application.Exceptions.Base;
+using Jobby.Application.Features.ContactFeatures.Specifications;
 using Jobby.Application.Interfaces.Services;
-using Jobby.Application.Specifications;
+using Jobby.Application.Services;
 using Jobby.Domain.Entities;
 using MediatR;
 
@@ -28,19 +28,10 @@ internal sealed class GetContactDetailQueryHandler : IRequestHandler<GetContactD
 
     public async Task<GetContactResponse> Handle(GetContactDetailQuery request, CancellationToken cancellationToken)
     {
-        var contactSpec = new GetContactByIdSpec(request.ContactId, request.BoardId);
-
-        var contact = await _contactRepository.FirstOrDefaultAsync(contactSpec, cancellationToken);
-
-        if (contact is null)
-        {
-            throw new NotFoundException($"The Contact {request.ContactId} could not be found.");
-        }
-
-        if (contact.OwnerId != _userId)
-        {
-            throw new NotAuthorisedException(_userId);
-        }
+        Contact contact = await ResourceProvider<Contact>
+            .GetBySpec(_contactRepository.FirstOrDefaultAsync)
+            .ApplySpecification(new GetContactWithRelationshipsSpecification(request.ContactId, request.BoardId))
+            .Check(_userId);
 
         return _mapper.Map<GetContactResponse>(contact);
     }

@@ -1,13 +1,14 @@
 ﻿using Jobby.Application.Abstractions.Specification;
 using Jobby.Application.Contracts.JobList;
 using Jobby.Application.Interfaces.Services;
+using Jobby.Application.Services;
 using Jobby.Domain.Entities;
 using MediatR;
 
 namespace Jobby.Application.Features.JobListFeatures.Commands.Create;
 internal sealed class CreateJobListCommandHandler : IRequestHandler<CreateJobListCommand, CreateJobListResponse>
 {
-    private readonly IRepository<JobList> _repository;
+    private readonly IRepository<JobList> _jobListRepository;
     private readonly IRepository<Job> _jobRepository;
     private readonly IUserService _userService;
     private readonly IGuidProvider _guidProvider;
@@ -15,13 +16,13 @@ internal sealed class CreateJobListCommandHandler : IRequestHandler<CreateJobLis
     private readonly string _userId;
 
     public CreateJobListCommandHandler(
-        IRepository<JobList> repository,
+        IRepository<JobList> jobListRepository,
         IRepository<Job> jobRepository,
         IUserService userService,
         IDateTimeProvider dateTimeProvider,
         IGuidProvider guidProvider)
     {
-        _repository = repository;
+        _jobListRepository = jobListRepository;
         _jobRepository = jobRepository;
         _userService = userService;
         _userId = _userService.UserId();
@@ -39,11 +40,13 @@ internal sealed class CreateJobListCommandHandler : IRequestHandler<CreateJobLis
             request.Index,
             request.BoardId);
 
-        await _repository.AddAsync(createdJobList, cancellationToken);
+        await _jobListRepository.AddAsync(createdJobList, cancellationToken);
 
         if (request.InitJobId != Guid.Empty)
         {
-            var jobToUpdate = await _jobRepository.GetByIdAsync(request.InitJobId, cancellationToken);
+            Job jobToUpdate = await ResourceProvider<Job>
+                .GetById(_jobRepository.GetByIdAsync)
+                .Check(_userId, request.InitJobId);
 
             jobToUpdate.SetJobList(createdJobList.Id);
             jobToUpdate.SetIndex(0);

@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace Jobby.Application.Features.ActivityFeatures.Commands.Update;
+namespace Jobby.Application.Features.ActivityFeatures.Commands.Update.UpdateDetails;
 
 public sealed record UpdateActivityCommand : IRequest
 {

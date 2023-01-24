@@ -1,26 +1,26 @@
 ﻿using AutoMapper;
 using Jobby.Application.Abstractions.Specification;
-using Jobby.Application.Exceptions.Base;
 using Jobby.Application.Interfaces.Services;
+using Jobby.Application.Services;
 using Jobby.Domain.Entities;
 using MediatR;
 
 namespace Jobby.Application.Features.JobFeatures.Commands.Update.UpdateDetails;
 internal sealed class UpdateJobCommandHandler : IRequestHandler<UpdateJobCommand, Unit>
 {
-    private readonly IRepository<Job> _repository;
+    private readonly IRepository<Job> _jobRepository;
     private readonly IDateTimeProvider _timeProvider;
     private readonly IUserService _userService;
     private readonly IMapper _mapper;
     private readonly string _userId;
 
     public UpdateJobCommandHandler(
-        IRepository<Job> repository,
+        IRepository<Job> jobRepository,
         IUserService userService,
         IMapper mapper,
         IDateTimeProvider timeProvider)
     {
-        _repository = repository;
+        _jobRepository = jobRepository;
         _userService = userService;
         _userId = _userService.UserId();
         _mapper = mapper;
@@ -29,23 +29,15 @@ internal sealed class UpdateJobCommandHandler : IRequestHandler<UpdateJobCommand
 
     public async Task<Unit> Handle(UpdateJobCommand request, CancellationToken cancellationToken)
     {
-        Job jobToUpdate = await _repository.GetByIdAsync(request.JobId, cancellationToken);
-
-        if (jobToUpdate is null)
-        {
-            throw new NotFoundException($"The Job {request.JobId} could not be found.");
-        }
-
-        if (jobToUpdate.OwnerId != _userId)
-        {
-            throw new NotAuthorisedException(_userId);
-        }
+        Job jobToUpdate = await ResourceProvider<Job>
+            .GetById(_jobRepository.GetByIdAsync)
+            .Check(_userId, request.JobId);
 
         _mapper.Map(request, jobToUpdate, typeof(UpdateJobCommand), typeof(Job));
 
         jobToUpdate.UpdateEntity(_timeProvider.UtcNow);
 
-        await _repository.UpdateAsync(jobToUpdate, cancellationToken);
+        await _jobRepository.UpdateAsync(jobToUpdate, cancellationToken);
 
         return Unit.Value;
     }

@@ -1,8 +1,9 @@
 ﻿using Jobby.Application.Abstractions.Specification;
 using Jobby.Application.Contracts.Job;
 using Jobby.Application.Exceptions.Base;
+using Jobby.Application.Features.BoardFeatures.Specifications;
 using Jobby.Application.Interfaces.Services;
-using Jobby.Application.Specifications;
+using Jobby.Application.Services;
 using Jobby.Application.Static;
 using Jobby.Domain.Entities;
 using MediatR;
@@ -11,7 +12,7 @@ namespace Jobby.Application.Features.JobFeatures.Commands.Create;
 
 internal sealed class CreateJobCommandHandler : IRequestHandler<CreateJobCommand, CreateJobResponse>
 {
-    private readonly IRepository<Board> _boardRepository;
+    private readonly IReadRepository<Board> _boardRepository;
     private readonly IRepository<Job> _jobRepository;
     private readonly IDateTimeProvider _dateTimeProvider;
     private readonly IGuidProvider _guidProvider;
@@ -19,13 +20,13 @@ internal sealed class CreateJobCommandHandler : IRequestHandler<CreateJobCommand
     private readonly string _userId;
 
     public CreateJobCommandHandler(
-        IRepository<Board> repository,
+        IReadRepository<Board> boardRepository,
         IUserService userService,
         IDateTimeProvider dateTimeProvider,
         IRepository<Job> jobRepository,
         IGuidProvider guidProvider)
     {
-        _boardRepository = repository;
+        _boardRepository = boardRepository;
         _userService = userService;
         _userId = _userService.UserId();
         _dateTimeProvider = dateTimeProvider;
@@ -35,26 +36,17 @@ internal sealed class CreateJobCommandHandler : IRequestHandler<CreateJobCommand
 
     public async Task<CreateJobResponse> Handle(CreateJobCommand request, CancellationToken cancellationToken)
     {
-        var boardSpec = new GetBoardWithJobsSpec(request.BoardId);
+        Board board = await ResourceProvider<Board>
+            .GetBySpec(_boardRepository.FirstOrDefaultAsync)
+            .ApplySpecification(new GetBoardWithJobsSpecification(request.BoardId))
+            .Check(_userId);
 
-        var board = await _boardRepository.FirstOrDefaultAsync(boardSpec, cancellationToken);
-
-        if (board is null)
+        if (!board.BoardOwnsJoblist(request.JobListId))
         {
-            throw new NotFoundException($"The Board {request.BoardId} could not be found.");
+            throw new NotFoundException($"The Board {request.BoardId} does not contain the JobList {request.JobListId}.");
         }
 
-        if (board.OwnerId != _userId)
-        {
-            throw new NotAuthorisedException(_userId);
-        }
-
-        if (!BoardOwnsJobList(board, request.JobListId))
-        {
-            throw new NotFoundException($"The board {request.BoardId} does not contain the JobList {request.JobListId}.");
-        }
-
-        JobList selectedJobList = board.JobList.Where(x => x.Id == request.JobListId).First();
+        JobList selectedJobList = board.JobLists.First(x => x.Id == request.JobListId);
 
         int newIndex;
 
@@ -87,12 +79,5 @@ internal sealed class CreateJobCommandHandler : IRequestHandler<CreateJobCommand
             createdJob.Company,
             createdJob.Title,
             createdJob.Index);
-    }
-
-    private static bool BoardOwnsJobList(Board board, Guid jobListId)
-    {
-        return board.JobList
-            .Select(x => x.Id == jobListId)
-            .Any();
     }
 }

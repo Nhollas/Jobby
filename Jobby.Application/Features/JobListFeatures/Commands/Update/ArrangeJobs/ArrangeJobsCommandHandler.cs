@@ -1,24 +1,24 @@
 ﻿using Jobby.Application.Abstractions.Specification;
-using Jobby.Application.Exceptions.Base;
+using Jobby.Application.Features.JobListFeatures.Specifications;
 using Jobby.Application.Interfaces.Services;
-using Jobby.Application.Specifications;
+using Jobby.Application.Services;
 using Jobby.Domain.Entities;
 using MediatR;
 
 namespace Jobby.Application.Features.JobListFeatures.Commands.Update.ArrangeJobs;
 internal sealed class ArrangeJobsCommandHandler : IRequestHandler<ArrangeJobsCommand, Unit>
 {
-    private readonly IRepository<JobList> _repository;
+    private readonly IRepository<JobList> _jobListRepository;
     private readonly IDateTimeProvider _timeProvider;
     private readonly IUserService _userService;
     private readonly string _userId;
 
     public ArrangeJobsCommandHandler(
-        IRepository<JobList> repository,
+        IRepository<JobList> jobListRepository,
         IUserService userService,
         IDateTimeProvider timeProvider)
     {
-        _repository = repository;
+        _jobListRepository = jobListRepository;
         _userService = userService;
         _userId = _userService.UserId();
         _timeProvider = timeProvider;
@@ -26,24 +26,15 @@ internal sealed class ArrangeJobsCommandHandler : IRequestHandler<ArrangeJobsCom
 
     public async Task<Unit> Handle(ArrangeJobsCommand request, CancellationToken cancellationToken)
     {
-        var spec = new ListWithJobsSpec(request.JobListId);
-
-        JobList jobList = await _repository.FirstOrDefaultAsync(spec, cancellationToken);
-
-        if (jobList == null)
-        {
-            throw new NotFoundException($"A jobList with id {request.JobListId} could not be found.");
-        }
-
-        if (jobList.OwnerId != _userId)
-        {
-            throw new NotAuthorisedException(_userId);
-        }
+        JobList jobList = await ResourceProvider<JobList>
+            .GetBySpec(_jobListRepository.FirstOrDefaultAsync)
+            .ApplySpecification(new GetJobListWithJobsSpecification(request.JobListId))
+            .Check(_userId);
 
         jobList.ArrangeJobs(request.JobIndexes);
         jobList.UpdateEntity(_timeProvider.UtcNow);
 
-        await _repository.UpdateAsync(jobList, cancellationToken);
+        await _jobListRepository.UpdateAsync(jobList, cancellationToken);
 
         return Unit.Value;
     }

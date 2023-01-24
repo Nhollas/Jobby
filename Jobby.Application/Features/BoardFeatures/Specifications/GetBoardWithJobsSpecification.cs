@@ -1,15 +1,15 @@
 ﻿using Ardalis.Specification;
 using Jobby.Domain.Entities;
 
-namespace Jobby.Application.Specifications;
+namespace Jobby.Application.Features.BoardFeatures.Specifications;
 
-public class GetBoardWithJobsSpec : Specification<Board>
+public class GetBoardWithJobsSpecification : Specification<Board>
 {
-    public GetBoardWithJobsSpec(Guid BoardId)
+    public GetBoardWithJobsSpecification(Guid BoardId)
     {
         Query
             .Where(b => b.Id == BoardId)
-            .Include(x => x.JobList
+            .Include(x => x.JobLists
                 .OrderBy(list => list.Index)
                 )
                 .ThenInclude(x => x.Jobs

@@ -1,4 +1,5 @@
-﻿using Jobby.Application.Contracts.JobList;
+﻿using Jobby.Api.Controllers.Base;
+using Jobby.Application.Contracts.JobList;
 using Jobby.Application.Features.JobListFeatures.Commands.Create;
 using Jobby.Application.Features.JobListFeatures.Commands.Delete;
 using Jobby.Application.Features.JobListFeatures.Commands.Update.ArrangeJobs;

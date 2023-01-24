@@ -1,7 +1,8 @@
-﻿using Jobby.Application.Features.ActivityFeatures.Commands.Create;
+﻿using Jobby.Api.Controllers.Base;
+using Jobby.Application.Features.ActivityFeatures.Commands.Create;
 using Jobby.Application.Features.ActivityFeatures.Commands.Delete;
-using Jobby.Application.Features.ActivityFeatures.Commands.LinkJob;
-using Jobby.Application.Features.ActivityFeatures.Commands.Update;
+using Jobby.Application.Features.ActivityFeatures.Commands.Update.LinkJob;
+using Jobby.Application.Features.ActivityFeatures.Commands.Update.UpdateDetails;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,22 +13,14 @@ namespace Jobby.Api.Controllers;
 [Authorize]
 public class ActivityController : ApiController
 {
-    [ProducesResponseType(typeof(Guid), StatusCodes.Status201Created)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [HttpPost("Create", Name = "CreateActivity")]
-    public async Task<IActionResult> CreateActivity([FromBody] CreateActivityCommand command)
+    public async Task<ActionResult<Guid>> CreateActivity([FromBody] CreateActivityCommand command)
     {
-        var activityId = await Sender.Send(command);
+        Guid activityId = await Sender.Send(command);
 
         return CreatedAtAction(nameof(CreateActivity), activityId);
     }
 
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    [ProducesDefaultResponseType]
     [HttpDelete("Delete/{activityId:guid}", Name = "DeleteActivity")]
     public async Task<IActionResult> DeleteActivity(Guid activityId)
     {
@@ -35,10 +28,6 @@ public class ActivityController : ApiController
         return NoContent();
     }
 
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    [ProducesDefaultResponseType]
     [HttpPut("Update", Name = "UpdateActivity")]
     public async Task<IActionResult> UpdateActivity([FromBody] UpdateActivityCommand command)
     {
@@ -46,10 +35,6 @@ public class ActivityController : ApiController
         return NoContent();
     }
 
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    [ProducesDefaultResponseType]
     [HttpPut("{activityId:guid}/LinkJob/{jobId:guid}", Name = "LinkJob")]
     public async Task<IActionResult> LinkJob([FromRoute] Guid activityId, [FromRoute] Guid jobId)
     {

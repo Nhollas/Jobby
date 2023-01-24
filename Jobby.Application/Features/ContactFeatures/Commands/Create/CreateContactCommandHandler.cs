@@ -1,8 +1,9 @@
 ﻿using Jobby.Application.Abstractions.Specification;
 using Jobby.Application.Dtos;
 using Jobby.Application.Exceptions.Base;
+using Jobby.Application.Features.BoardFeatures.Specifications;
 using Jobby.Application.Interfaces.Services;
-using Jobby.Application.Specifications;
+using Jobby.Application.Services;
 using Jobby.Domain.Entities;
 using MediatR;
 using static Jobby.Domain.Static.ContactConstants;
@@ -35,19 +36,10 @@ internal sealed class CreateContactCommandHandler : IRequestHandler<CreateContac
 
     public async Task<Guid> Handle(CreateContactCommand request, CancellationToken cancellationToken)
     {
-        var boardSpec = new GetBoardWithJobsSpec(request.BoardId);
-
-        Board board = await _boardRepository.FirstOrDefaultAsync(boardSpec, cancellationToken);
-
-        if (board is null)
-        {
-            throw new NotFoundException($"A board with id {request.BoardId} could not be found.");
-        }
-
-        if (board.OwnerId != _userId)
-        {
-            throw new NotAuthorisedException(_userId);
-        }
+        Board board = await ResourceProvider<Board>
+            .GetBySpec(_boardRepository.FirstOrDefaultAsync)
+            .ApplySpecification(new GetBoardWithJobsSpecification(request.BoardId))
+            .Check(_userId);
 
         var createdContact = Contact.Create(
             _guidProvider.Create(),
@@ -70,12 +62,12 @@ internal sealed class CreateContactCommandHandler : IRequestHandler<CreateContac
 
         if (request.JobIds != null)  
         {
-            var ownedJobIds = board.JobList
+            var ownedJobIds = board.JobLists
                 .SelectMany(x => x.Jobs)
                 .Select(x => x.Id)
                 .ToList();
 
-            var requestJobList = board.JobList
+            var requestJobList = board.JobLists
                 .SelectMany(x => x.Jobs)
                 .Where(x => request.JobIds.Contains(x.Id))
                 .ToList();
@@ -96,37 +88,37 @@ internal sealed class CreateContactCommandHandler : IRequestHandler<CreateContac
         return createdContact.Id;
     }
 
-    private static List<Company> GetCompanies(List<CompanyDto> companies)
+    private List<Company> GetCompanies(List<CompanyDto> companies)
     {
         List<Company> companyList = new();
 
         foreach (CompanyDto company in companies)
         {
-            companyList.Add(new Company(Guid.NewGuid(), company.Name));
+            companyList.Add(new Company(_guidProvider.Create(), company.Name));
         }
 
         return companyList;
     }
 
-    private static List<Email> GetEmails(List<EmailDto> emails)
+    private List<Email> GetEmails(List<EmailDto> emails)
     {
         List<Email> emailList = new();
 
         foreach (EmailDto email in emails)
         {
-            emailList.Add(new Email(Guid.NewGuid(), email.Name));
+            emailList.Add(new Email(_guidProvider.Create(), email.Name));
         }
 
         return emailList;
     }
 
-    private static List<Phone> GetPhones(List<PhoneDto> phones)
+    private List<Phone> GetPhones(List<PhoneDto> phones)
     {
         List<Phone> phoneList = new();
 
         foreach (PhoneDto phone in phones)
         {
-            phoneList.Add(new Phone(Guid.NewGuid(), phone.Number, (PhoneType)phone.Type));
+            phoneList.Add(new Phone(_guidProvider.Create(), phone.Number, (PhoneType)phone.Type));
         }
 
         return phoneList;

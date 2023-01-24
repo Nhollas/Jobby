@@ -1,10 +1,10 @@
 ﻿using Ardalis.Specification;
 using Jobby.Domain.Entities;
 
-namespace Jobby.Application.Specifications;
-public class ListOwnedBoardsSpec : Specification<Board>
+namespace Jobby.Application.Features.BoardFeatures.Specifications;
+public class GetBoardsFromUserSpecification : Specification<Board>
 {
-    public ListOwnedBoardsSpec(string userId)
+    public GetBoardsFromUserSpecification(string userId)
     {
         Query
             .AsNoTracking()

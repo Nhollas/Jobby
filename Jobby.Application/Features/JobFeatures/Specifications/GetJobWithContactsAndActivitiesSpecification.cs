@@ -1,10 +1,10 @@
 ﻿using Ardalis.Specification;
 using Jobby.Domain.Entities;
 
-namespace Jobby.Application.Specifications;
-public sealed class GetBoardWithJobsAndContactsSpec : Specification<Job>
+namespace Jobby.Application.Features.JobFeatures.Specifications;
+public sealed class GetJobWithContactsAndActivitiesSpecification : Specification<Job>
 {
-    public GetBoardWithJobsAndContactsSpec(Guid BoardId, Guid JobId)
+    public GetJobWithContactsAndActivitiesSpecification(Guid BoardId, Guid JobId)
     {
         Query
             .Include(x => x.Contacts)
@@ -14,7 +14,6 @@ public sealed class GetBoardWithJobsAndContactsSpec : Specification<Job>
             .Include(x => x.Contacts)
                 .ThenInclude(x => x.Phones)
             .Include(x => x.Activities)
-            .Include(x => x.Board)
             .AsNoTracking()
             .Where(b => b.BoardId == BoardId && b.Id == JobId);
     }

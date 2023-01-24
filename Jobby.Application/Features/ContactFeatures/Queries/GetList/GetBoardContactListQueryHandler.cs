@@ -1,25 +1,25 @@
 ﻿using AutoMapper;
 using Jobby.Application.Abstractions.Specification;
 using Jobby.Application.Contracts.Contact;
+using Jobby.Application.Features.ContactFeatures.Specifications;
 using Jobby.Application.Interfaces.Services;
-using Jobby.Application.Specifications;
 using Jobby.Domain.Entities;
 using MediatR;
 
 namespace Jobby.Application.Features.ContactFeatures.Queries.GetList;
 internal sealed class GetBoardContactListQueryHandler : IRequestHandler<GetBoardContactListQuery, List<ListContactsResponse>>
 {
-    private readonly IRepository<Contact> _repository;
+    private readonly IReadRepository<Contact> _contactRepository;
     private readonly IMapper _mapper;
     private readonly IUserService _userService;
     private readonly string _userId;
 
     public GetBoardContactListQueryHandler(
-        IRepository<Contact> repository,
+        IReadRepository<Contact> contactRepository,
         IUserService userService,
         IMapper mapper)
     {
-        _repository = repository;
+        _contactRepository = contactRepository;
         _userService = userService;
         _userId = _userService.UserId();
         _mapper = mapper;
@@ -27,9 +27,9 @@ internal sealed class GetBoardContactListQueryHandler : IRequestHandler<GetBoard
 
     public async Task<List<ListContactsResponse>> Handle(GetBoardContactListQuery request, CancellationToken cancellationToken)
     {
-        var contactSpec = new ListBoardContactsSpec(request.BoardId, _userId);
+        var contactSpec = new GetContactsFromBoardSpecification(request.BoardId, _userId);
 
-        var contactList = await _repository.ListAsync(contactSpec, cancellationToken);
+        var contactList = await _contactRepository.ListAsync(contactSpec, cancellationToken);
 
         if (contactList is null)
         {

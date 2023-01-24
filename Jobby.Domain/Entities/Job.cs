@@ -82,26 +82,6 @@ public class Job : Entity
         return job;
     }
 
-    public void RemoveActivity(Activity activity)
-    {
-        _activities.Remove(activity);
-    }
-
-    public void AddActivity(Activity activity)
-    {
-        _activities.Add(activity);
-    }
-
-    public void AddContact(Contact contact)
-    {
-        _contacts.Add(contact);
-    }
-
-    public void AddNote(Note note)
-    {
-        _notes.Add(note);
-    }
-
     public void SetJobList(Guid jobListId)
     {
         JobListId = jobListId;

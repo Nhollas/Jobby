@@ -1,13 +1,14 @@
 ﻿using Ardalis.Specification;
 using Jobby.Domain.Entities;
 
-namespace Jobby.Application.Specifications;
-public sealed class BoardDetailSpecification : Specification<Board>
+namespace Jobby.Application.Features.BoardFeatures.Specifications;
+
+public sealed class GetBoardWithRelationshipsSpecification : Specification<Board>
 {
-    public BoardDetailSpecification(Guid boardId)
+    public GetBoardWithRelationshipsSpecification(Guid boardId)
     {
         Query
-            .Include(board => board.JobList
+            .Include(board => board.JobLists
                 .OrderBy(list => list.Index)
                 )
                 .ThenInclude(

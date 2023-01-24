@@ -1,5 +1,4 @@
 ﻿using Jobby.Domain.Primitives;
-using Jobby.Domain.Static;
 
 namespace Jobby.Domain.Entities;
 
@@ -29,7 +28,7 @@ public class Board : Entity
 
     public string Name { get; private set; }
 
-    public IReadOnlyCollection<JobList> JobList => _jobLists;
+    public IReadOnlyCollection<JobList> JobLists => _jobLists;
 
     public IReadOnlyCollection<Activity> Activities => _activities;
 
@@ -68,5 +67,28 @@ public class Board : Entity
                 jobList.SetIndex(jobListIndexes[jobList.Id]);
             }
         }
+    }
+
+    public bool BoardOwnsJob(Guid jobId)
+    {
+        return JobLists
+            .SelectMany(x => x.Jobs
+            .Where(x => x.Id == jobId))
+            .Any();
+    }
+
+    public bool BoardOwnsJoblist(Guid jobListId)
+    {
+        return JobLists
+            .Select(x => x.Id == jobListId)
+            .Any();
+    }
+
+    public bool BoardOwnsJobs(List<Guid> jobIds)
+    {
+        return JobLists
+            .SelectMany(x => x.Jobs
+            .Where(x => jobIds.Contains(x.Id)))
+            .Any();
     }
 }

@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using Jobby.Application.Abstractions.Specification;
 using Jobby.Application.Contracts.Job;
-using Jobby.Application.Exceptions.Base;
+using Jobby.Application.Features.JobFeatures.Specifications;
 using Jobby.Application.Interfaces.Services;
-using Jobby.Application.Specifications;
+using Jobby.Application.Services;
 using Jobby.Domain.Entities;
 using MediatR;
 
@@ -28,19 +28,10 @@ internal sealed class GetJobDetailQueryHandler : IRequestHandler<GetJobDetailQue
 
     public async Task<GetJobResponse> Handle(GetJobDetailQuery request, CancellationToken cancellationToken)
     {
-        var jobSpec = new GetBoardWithJobsAndContactsSpec(request.BoardId, request.JobId);
-
-        var job = await _jobRepository.FirstOrDefaultAsync(jobSpec, cancellationToken);
-
-        if (job is null)
-        {
-            throw new NotFoundException($"The Job {request.JobId} could not be found.");
-        }
-
-        if (job.OwnerId != _userId)
-        {
-            throw new NotAuthorisedException(_userId);
-        }
+        Job job = await ResourceProvider<Job>
+            .GetBySpec(_jobRepository.FirstOrDefaultAsync)
+            .ApplySpecification(new GetJobWithContactsAndActivitiesSpecification(request.BoardId, request.JobId))
+            .Check(_userId);
 
         return _mapper.Map<GetJobResponse>(job);
     }
