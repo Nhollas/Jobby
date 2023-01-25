@@ -1,9 +1,8 @@
-﻿namespace Jobby.Application.Dtos;
-public sealed record PreviewJobDto
+﻿using Jobby.Application.Dtos.Base;
+
+namespace Jobby.Application.Dtos;
+public sealed record PreviewJobDto : EntityDto
 {
-    public Guid Id { get; set; }
-    public DateTime CreatedDate { get; set; }
-    public DateTime LastUpdated { get; set; }
     public string Company { get; set; }
     public string Title { get; set; }
     public int Index { get; set; }

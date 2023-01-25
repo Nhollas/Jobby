@@ -1,5 +1,4 @@
-﻿using Jobby.Application.Contracts.Job;
-using Jobby.Application.Contracts.JobList;
+﻿using Jobby.Application.Contracts.JobList;
 using MediatR;
 
 namespace Jobby.Application.Features.JobListFeatures.Commands.Create;

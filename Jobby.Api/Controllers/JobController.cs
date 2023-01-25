@@ -1,5 +1,4 @@
 ﻿using Jobby.Api.Controllers.Base;
-using Jobby.Application.Contracts.Job;
 using Jobby.Application.Features.JobFeatures.Commands.Create;
 using Jobby.Application.Features.JobFeatures.Commands.Delete;
 using Jobby.Application.Features.JobFeatures.Commands.Update.MoveJob;
@@ -12,8 +11,6 @@ namespace Jobby.Api.Controllers;
 [ApiController]
 public class JobController : ApiController
 {
-    [ProducesResponseType(typeof(CreateJobResponse), StatusCodes.Status201Created)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [HttpPost("Create", Name = "CreateJob")]
     public async Task<IActionResult> CreateJob([FromBody] CreateJobCommand command)
     {
@@ -22,10 +19,6 @@ public class JobController : ApiController
         return CreatedAtAction(nameof(CreateJob), job);
     }
 
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    [ProducesDefaultResponseType]
     [HttpDelete("Delete/{jobId:guid}", Name = "DeleteJob")]
     public async Task<IActionResult> DeleteJob(Guid jobId)
     {
@@ -33,10 +26,6 @@ public class JobController : ApiController
         return NoContent();
     }
 
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    [ProducesDefaultResponseType]
     [HttpPut("Update", Name = "UpdateJob")]
     public async Task<IActionResult> UpdateJob([FromBody] UpdateJobCommand command)
     {
@@ -44,10 +33,6 @@ public class JobController : ApiController
         return NoContent();
     }
 
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    [ProducesDefaultResponseType]
     [HttpPut("Move", Name = "MoveJob")]
     public async Task<IActionResult> MoveJob([FromBody] MoveJobCommand command)
     {

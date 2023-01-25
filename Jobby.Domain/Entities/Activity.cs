@@ -38,9 +38,9 @@ public class Activity : Entity
     {
         get
         {
-            if (!ActivityConstants.TypeNameDictionary.TryGetValue(Type, out string name))
+            if (!ActivityConstants.Types.TryGetValue(Type, out string name))
             {
-                name = ActivityConstants.TypeNameDictionary[23];
+                name = ActivityConstants.Types[23];
             }
             return name;
         }

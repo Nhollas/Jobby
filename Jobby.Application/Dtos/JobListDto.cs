@@ -1,9 +1,10 @@
-﻿namespace Jobby.Application.Dtos;
+﻿using Jobby.Application.Dtos.Base;
 
-public sealed record JobListDto
+namespace Jobby.Application.Dtos;
+
+public sealed record JobListDto : EntityDto
 {
-    public Guid Id { get; set; }
-    public DateTime CreatedDate { get; set; }
     public string Name { get; set; }
     public List<PreviewJobDto> Jobs { get; set; }
+    public Guid BoardId { get; set; }
 }

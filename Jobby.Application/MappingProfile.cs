@@ -4,11 +4,12 @@ using Jobby.Application.Contracts.Board;
 using Jobby.Application.Contracts.Contact;
 using Jobby.Application.Contracts.Job;
 using Jobby.Application.Dtos;
+using Jobby.Application.Dtos.Base;
 using Jobby.Application.Features.ActivityFeatures.Commands.Create;
 using Jobby.Application.Features.ActivityFeatures.Commands.Update.UpdateDetails;
 using Jobby.Application.Features.JobFeatures.Commands.Update.UpdateDetails;
-using Jobby.Application.Static;
 using Jobby.Domain.Entities;
+using Jobby.Domain.Primitives;
 
 namespace Jobby.Application;
 
@@ -16,6 +17,8 @@ public class MappingProfile : Profile
 {
     public MappingProfile()
     {
+        CreateMap<Entity, EntityDto>();
+
         // Board Maps
         CreateMap<Board, GetBoardResponse>();
         CreateMap<Board, PreviewBoardDto>();

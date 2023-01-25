@@ -12,21 +12,13 @@ namespace Jobby.Api.Controllers;
 [Authorize]
 public class ContactController : ApiController
 {
-    [ProducesResponseType(typeof(Guid), StatusCodes.Status201Created)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [HttpPost("Create", Name = "CreateContact")]
     public async Task<IActionResult> CreateContact([FromBody] CreateContactCommand command)
     {
-        var contactId = await Sender.Send(command);
-        return CreatedAtAction(nameof(CreateContact), contactId);
+        var createdContact = await Sender.Send(command);
+        return CreatedAtAction(nameof(CreateContact), createdContact);
     }
 
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    [ProducesDefaultResponseType]
     [HttpDelete("Delete/{contactId:guid}", Name = "DeleteContact")]
     public async Task<IActionResult> DeleteContact(Guid contactId)
     {
@@ -34,10 +26,6 @@ public class ContactController : ApiController
         return NoContent();
     }
 
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    [ProducesDefaultResponseType]
     [HttpPut("Update", Name = "UpdateContact")]
     public async Task<IActionResult> UpdateContact([FromBody] UpdateContactCommand command)
     {

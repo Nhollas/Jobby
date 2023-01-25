@@ -2,7 +2,7 @@
 
 public static class ActivityConstants
 {
-    public static readonly Dictionary<int, string> TypeNameDictionary = new()
+    public static readonly Dictionary<int, string> Types = new()
     {
         {1, "Apply"},
         {2, "Phone Screen"},

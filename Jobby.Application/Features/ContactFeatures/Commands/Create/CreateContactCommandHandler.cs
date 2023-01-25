@@ -1,6 +1,6 @@
-﻿using Jobby.Application.Abstractions.Specification;
+﻿using AutoMapper;
+using Jobby.Application.Abstractions.Specification;
 using Jobby.Application.Dtos;
-using Jobby.Application.Exceptions.Base;
 using Jobby.Application.Features.BoardFeatures.Specifications;
 using Jobby.Application.Interfaces.Services;
 using Jobby.Application.Services;
@@ -10,13 +10,14 @@ using static Jobby.Domain.Static.ContactConstants;
 
 namespace Jobby.Application.Features.ContactFeatures.Commands.Create;
 
-internal sealed class CreateContactCommandHandler : IRequestHandler<CreateContactCommand, Guid>
+internal sealed class CreateContactCommandHandler : IRequestHandler<CreateContactCommand, ContactDto>
 {
     private readonly IDateTimeProvider _dateTimeProvider;
     private readonly IGuidProvider _guidProvider;
     private readonly IRepository<Board> _boardRepository;
     private readonly IRepository<Contact> _contactRepository;
     private readonly IUserService _userService;
+    private readonly IMapper _mapper;
     private readonly string _userId;
 
     public CreateContactCommandHandler(
@@ -24,7 +25,8 @@ internal sealed class CreateContactCommandHandler : IRequestHandler<CreateContac
     IRepository<Board> boardRepository,
     IDateTimeProvider dateTimeProvider,
     IRepository<Contact> contactRepository,
-    IGuidProvider guidProvider)
+    IGuidProvider guidProvider,
+    IMapper mapper)
     {
         _userService = userService;
         _userId = _userService.UserId();
@@ -32,16 +34,17 @@ internal sealed class CreateContactCommandHandler : IRequestHandler<CreateContac
         _dateTimeProvider = dateTimeProvider;
         _contactRepository = contactRepository;
         _guidProvider = guidProvider;
+        _mapper = mapper;
     }
 
-    public async Task<Guid> Handle(CreateContactCommand request, CancellationToken cancellationToken)
+    public async Task<ContactDto> Handle(CreateContactCommand request, CancellationToken cancellationToken)
     {
         Board board = await ResourceProvider<Board>
             .GetBySpec(_boardRepository.FirstOrDefaultAsync)
             .ApplySpecification(new GetBoardWithJobsSpecification(request.BoardId))
             .Check(_userId);
 
-        var createdContact = Contact.Create(
+        Contact createdContact = Contact.Create(
             _guidProvider.Create(),
             _dateTimeProvider.UtcNow,
             _userId,
@@ -62,30 +65,17 @@ internal sealed class CreateContactCommandHandler : IRequestHandler<CreateContac
 
         if (request.JobIds != null)  
         {
-            var ownedJobIds = board.JobLists
-                .SelectMany(x => x.Jobs)
-                .Select(x => x.Id)
-                .ToList();
-
-            var requestJobList = board.JobLists
+            List<Job> jobsToLink = board.JobLists
                 .SelectMany(x => x.Jobs)
                 .Where(x => request.JobIds.Contains(x.Id))
                 .ToList();
 
-            foreach (var job in requestJobList)
-            {
-                if (!ownedJobIds.Contains(job.Id))
-                {
-                    throw new NotAuthorisedException(_userId);
-                }
-            }
-
-            createdContact.SetJobs(requestJobList);
+            createdContact.SetJobs(jobsToLink);
         }
 
-        await _contactRepository.AddAsync(createdContact, cancellationToken); 
+        await _contactRepository.AddAsync(createdContact, cancellationToken);
 
-        return createdContact.Id;
+        return _mapper.Map<ContactDto>(createdContact);
     }
 
     private List<Company> GetCompanies(List<CompanyDto> companies)

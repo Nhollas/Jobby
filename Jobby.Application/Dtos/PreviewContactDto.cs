@@ -2,7 +2,6 @@
 public sealed record PreviewContactDto
 {
     public Guid Id { get; set; }
-    public PreviewBoardDto Board { get; set; }
     public string FirstName { get; set; }
     public string LastName { get; set; }
     public string JobTitle { get; set; }
@@ -11,4 +10,5 @@ public sealed record PreviewContactDto
     public List<PhoneDto> Phones { get; set; }
     public List<EmailDto> Emails { get; set; }
     public List<CompanyDto> Companies { get; set; }
+    public Guid BoardId { get; set; }
 }

@@ -1,5 +1,4 @@
 ﻿using Jobby.Api.Controllers.Base;
-using Jobby.Application.Contracts.JobList;
 using Jobby.Application.Features.JobListFeatures.Commands.Create;
 using Jobby.Application.Features.JobListFeatures.Commands.Delete;
 using Jobby.Application.Features.JobListFeatures.Commands.Update.ArrangeJobs;
@@ -10,10 +9,6 @@ namespace Jobby.Api.Controllers;
 [Route("api/[controller]")]
 public class JobListController : ApiController
 {
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    [ProducesDefaultResponseType]
     [HttpDelete("Delete/{jobListId:guid}", Name = "DeleteJobList")]
     public async Task<IActionResult> DeleteJobList(Guid jobListId)
     {
@@ -21,10 +16,6 @@ public class JobListController : ApiController
         return NoContent();
     }
 
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    [ProducesDefaultResponseType]
     [HttpPut("ArrangeJobs", Name = "ArrangeJobs")]
     public async Task<IActionResult> ArrangeJobs([FromBody] ArrangeJobsCommand command)
     {
@@ -32,8 +23,6 @@ public class JobListController : ApiController
         return NoContent();
     }
 
-    [ProducesResponseType(typeof(CreateJobListResponse), StatusCodes.Status201Created)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [HttpPost("Create", Name = "CreateJobList")]
     public async Task<IActionResult> CreateJobList([FromBody] CreateJobListCommand command)
     {
