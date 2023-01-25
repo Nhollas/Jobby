@@ -13,7 +13,6 @@ internal sealed class GetBoardDetailQueryHandler : IRequestHandler<GetBoardDetai
 {
     private readonly IReadRepository<Board> _repository;
     private readonly IMapper _mapper;
-    private readonly IUserService _userService;
     private readonly string _userId;
 
     public GetBoardDetailQueryHandler(
@@ -22,8 +21,7 @@ internal sealed class GetBoardDetailQueryHandler : IRequestHandler<GetBoardDetai
         IMapper mapper)
     {
         _repository = repository;
-        _userService = userService;
-        _userId = _userService.UserId();
+        _userId = userService.UserId();
         _mapper = mapper;
     }
 
@@ -32,7 +30,7 @@ internal sealed class GetBoardDetailQueryHandler : IRequestHandler<GetBoardDetai
         Board board = await ResourceProvider<Board>
             .GetBySpec(_repository.FirstOrDefaultAsync)
             .ApplySpecification(new GetBoardWithRelationshipsSpecification(request.BoardId))
-            .Check(_userId);
+            .Check(_userId, cancellationToken);
 
         return _mapper.Map<GetBoardResponse>(board);
 

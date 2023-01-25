@@ -11,7 +11,6 @@ internal sealed class CreateBoardCommandHandler : ICommandHandler<CreateBoardCom
     private readonly IRepository<Board> _boardRepository;
     private readonly IGuidProvider _guidProvider;
     private readonly IDateTimeProvider _dateTimeProvider;
-    private readonly IUserService _userService;
     private readonly string _userId;
 
     public CreateBoardCommandHandler(
@@ -21,27 +20,26 @@ internal sealed class CreateBoardCommandHandler : ICommandHandler<CreateBoardCom
         IGuidProvider guidProvider)
     {
         _boardRepository = boardRepository;
-        _userService = userService;
-        _userId = _userService.UserId();
+        _userId = userService.UserId();
         _dateTimeProvider = dateTimeProvider;
         _guidProvider = guidProvider;
     }
 
     public async Task<CreateBoardResponse> Handle(CreateBoardCommand request, CancellationToken cancellationToken)
     {
-        Guid BoardId = _guidProvider.Create();
+        Guid boardId = _guidProvider.Create();
 
         List<JobList> defaultJobLists = new()
         {
-            JobList.Create(_guidProvider.Create(), _dateTimeProvider.UtcNow, _userId, "Applied", 0, BoardId),
-            JobList.Create(_guidProvider.Create(), _dateTimeProvider.UtcNow, _userId, "Wishlist", 1, BoardId),
-            JobList.Create(_guidProvider.Create(), _dateTimeProvider.UtcNow, _userId, "Interview", 2, BoardId),
-            JobList.Create(_guidProvider.Create(), _dateTimeProvider.UtcNow, _userId, "Offer", 3, BoardId),
-            JobList.Create(_guidProvider.Create(), _dateTimeProvider.UtcNow, _userId, "Rejected", 4, BoardId),
+            JobList.Create(_guidProvider.Create(), _dateTimeProvider.UtcNow, _userId, "Applied", 0, boardId),
+            JobList.Create(_guidProvider.Create(), _dateTimeProvider.UtcNow, _userId, "Wishlist", 1, boardId),
+            JobList.Create(_guidProvider.Create(), _dateTimeProvider.UtcNow, _userId, "Interview", 2, boardId),
+            JobList.Create(_guidProvider.Create(), _dateTimeProvider.UtcNow, _userId, "Offer", 3, boardId),
+            JobList.Create(_guidProvider.Create(), _dateTimeProvider.UtcNow, _userId, "Rejected", 4, boardId),
         };
 
         var board = Board.Create(
-            BoardId,
+            boardId,
             _dateTimeProvider.UtcNow,
             _userId,
             request.Name,

@@ -9,7 +9,6 @@ internal sealed class MoveJobCommandHandler : IRequestHandler<MoveJobCommand, Un
 {
     private readonly IRepository<Job> _jobRepository;
     private readonly IDateTimeProvider _timeProvider;
-    private readonly IUserService _userService;
     private readonly string _userId;
 
     public MoveJobCommandHandler(
@@ -18,8 +17,7 @@ internal sealed class MoveJobCommandHandler : IRequestHandler<MoveJobCommand, Un
         IDateTimeProvider timeProvider)
     {
         _jobRepository = jobRepository;
-        _userService = userService;
-        _userId = _userService.UserId();
+        _userId = userService.UserId();
         _timeProvider = timeProvider;
     }
 
@@ -27,7 +25,7 @@ internal sealed class MoveJobCommandHandler : IRequestHandler<MoveJobCommand, Un
     {
         Job jobToMove = await ResourceProvider<Job>
             .GetById(_jobRepository.GetByIdAsync)
-            .Check(_userId, request.JobId);
+            .Check(_userId, request.JobId, cancellationToken);
 
         jobToMove.SetJobList(request.TargetJobListId);
         jobToMove.UpdateEntity(_timeProvider.UtcNow);

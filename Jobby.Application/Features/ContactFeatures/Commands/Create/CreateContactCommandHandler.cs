@@ -16,8 +16,11 @@ internal sealed class CreateContactCommandHandler : IRequestHandler<CreateContac
     private readonly IGuidProvider _guidProvider;
     private readonly IRepository<Board> _boardRepository;
     private readonly IRepository<Contact> _contactRepository;
+<<<<<<< Updated upstream
     private readonly IUserService _userService;
     private readonly IMapper _mapper;
+=======
+>>>>>>> Stashed changes
     private readonly string _userId;
 
     public CreateContactCommandHandler(
@@ -28,8 +31,7 @@ internal sealed class CreateContactCommandHandler : IRequestHandler<CreateContac
     IGuidProvider guidProvider,
     IMapper mapper)
     {
-        _userService = userService;
-        _userId = _userService.UserId();
+        _userId = userService.UserId();
         _boardRepository = boardRepository;
         _dateTimeProvider = dateTimeProvider;
         _contactRepository = contactRepository;
@@ -42,7 +44,7 @@ internal sealed class CreateContactCommandHandler : IRequestHandler<CreateContac
         Board board = await ResourceProvider<Board>
             .GetBySpec(_boardRepository.FirstOrDefaultAsync)
             .ApplySpecification(new GetBoardWithJobsSpecification(request.BoardId))
-            .Check(_userId);
+            .Check(_userId, cancellationToken);
 
         Contact createdContact = Contact.Create(
             _guidProvider.Create(),

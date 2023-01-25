@@ -17,7 +17,6 @@ internal sealed class CreateActivityCommandHandler : IRequestHandler<CreateActiv
     private readonly IRepository<Activity> _activityRepository;
     private readonly IDateTimeProvider _dateTimeProvider;
     private readonly IGuidProvider _guidProvider;
-    private readonly IUserService _userService;
     private readonly IMapper _mapper;
     private readonly string _userId;
 
@@ -30,8 +29,7 @@ internal sealed class CreateActivityCommandHandler : IRequestHandler<CreateActiv
         IMapper mapper)
     {
         _boardRepository = repository;
-        _userService = userService;
-        _userId = _userService.UserId();
+        _userId = userService.UserId();
         _dateTimeProvider = dateTimeProvider;
         _guidProvider = guidProvider;
         _activityRepository = activityRepository;
@@ -43,7 +41,7 @@ internal sealed class CreateActivityCommandHandler : IRequestHandler<CreateActiv
         var boardToLink = await ResourceProvider<Board>
             .GetBySpec(_boardRepository.FirstOrDefaultAsync)
             .ApplySpecification(new GetBoardWithJobsSpecification(request.BoardId))
-            .Check(_userId);
+            .Check(_userId, cancellationToken);
 
         var createdActivity = Activity.Create(
             _guidProvider.Create(),
@@ -66,8 +64,7 @@ internal sealed class CreateActivityCommandHandler : IRequestHandler<CreateActiv
 
             Job jobToLink = boardToLink.JobLists
                 .SelectMany(x => x.Jobs)
-                .Where(x => x.Id == request.JobId)
-                .First();
+                .First(x => x.Id == request.JobId);
 
             createdActivity.SetJob(jobToLink);  
         }

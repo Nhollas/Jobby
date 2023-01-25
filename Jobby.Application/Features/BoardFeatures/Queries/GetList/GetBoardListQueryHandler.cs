@@ -12,7 +12,6 @@ internal sealed class GetBoardListQueryHandler : IRequestHandler<GetBoardListQue
 {
     private readonly IReadRepository<Board> _repository;
     private readonly IMapper _mapper;
-    private readonly IUserService _userService;
     private readonly string _userId;
 
     public GetBoardListQueryHandler(
@@ -21,8 +20,7 @@ internal sealed class GetBoardListQueryHandler : IRequestHandler<GetBoardListQue
         IMapper mapper)
     {
         _repository = repository;
-        _userService = userService;
-        _userId = _userService.UserId();
+        _userId = userService.UserId();
         _mapper = mapper;
     }
 
@@ -31,11 +29,6 @@ internal sealed class GetBoardListQueryHandler : IRequestHandler<GetBoardListQue
         var boardSpec = new GetBoardsFromUserSpecification(_userId);
 
         var boardList = await _repository.ListAsync(boardSpec, cancellationToken);
-
-        if (boardList is null)
-        {
-            return new List<ListBoardsResponse>();
-        }
 
         return _mapper.Map<List<ListBoardsResponse>>(boardList);
     }

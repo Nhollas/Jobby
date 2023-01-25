@@ -9,7 +9,6 @@ namespace Jobby.Application.Features.ActivityFeatures.Commands.Update.UpdateDeta
 internal sealed class UpdateActivityCommandHandler : IRequestHandler<UpdateActivityCommand, Unit>
 {
     private readonly IRepository<Activity> _activityRepository;
-    private readonly IUserService _userService;
     private readonly IDateTimeProvider _timeProvider;
     private readonly string _userId;
 
@@ -19,8 +18,7 @@ internal sealed class UpdateActivityCommandHandler : IRequestHandler<UpdateActiv
         IDateTimeProvider timeProvider,
         IRepository<Activity> activityRepository)
     {
-        _userService = userService;
-        _userId = _userService.UserId();
+        _userId = userService.UserId();
         _timeProvider = timeProvider;
         _activityRepository = activityRepository;
     }
@@ -29,7 +27,7 @@ internal sealed class UpdateActivityCommandHandler : IRequestHandler<UpdateActiv
     {
         Activity activityToUpdate = await ResourceProvider<Activity>
             .GetById(_activityRepository.GetByIdAsync)
-            .Check(_userId, request.Id);
+            .Check(_userId, request.Id, cancellationToken);
 
         activityToUpdate.Update(
             request.Title,

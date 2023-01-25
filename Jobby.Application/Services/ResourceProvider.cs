@@ -12,10 +12,9 @@ public class ResourceProvider<TEntity> :
     where TEntity : Entity
 {
     private ISpecification<TEntity> _spec;
-    private readonly CancellationToken _cancellationToken = default;
     private Func<ISpecification<TEntity>, CancellationToken, Task<TEntity>> _getBySpec;
     private Func<Guid, CancellationToken, Task<TEntity>> _getById;
-
+    
     public static IGetBySpec<TEntity> GetBySpec(Func<ISpecification<TEntity>, CancellationToken, Task<TEntity>> getBySpec) 
     {
         var provider = new ResourceProvider<TEntity>
@@ -42,9 +41,9 @@ public class ResourceProvider<TEntity> :
         return this;
     }
 
-    public async Task<TEntity> Check(string userId, Guid resourceId)
+    public async Task<TEntity> Check(string userId, Guid resourceId, CancellationToken cancellationToken = default)
     {
-        var resource = await _getById(resourceId, _cancellationToken);
+        var resource = await _getById(resourceId, cancellationToken);
 
         if (resource is null)
         {
@@ -59,9 +58,9 @@ public class ResourceProvider<TEntity> :
         return resource;
     }
 
-    public async Task<TEntity> Check(string userId)
+    public async Task<TEntity> Check(string userId, CancellationToken cancellationToken = default)
     {
-        var resource = await _getBySpec(_spec, _cancellationToken);
+        var resource = await _getBySpec(_spec, cancellationToken);
 
         if (resource is null)
         {

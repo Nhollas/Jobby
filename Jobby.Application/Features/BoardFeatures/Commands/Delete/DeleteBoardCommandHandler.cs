@@ -9,7 +9,6 @@ namespace Jobby.Application.Features.BoardFeatures.Commands.Delete;
 internal sealed class DeleteBoardCommandHandler : IRequestHandler<DeleteBoardCommand, Unit>
 {
     private readonly IRepository<Board> _boardRepository;
-    private readonly IUserService _userService;
     private readonly string _userId;
 
     public DeleteBoardCommandHandler(
@@ -17,15 +16,14 @@ internal sealed class DeleteBoardCommandHandler : IRequestHandler<DeleteBoardCom
         IUserService userService)
     {
         _boardRepository = boardRepository;
-        _userService = userService;
-        _userId = _userService.UserId();
+        _userId = userService.UserId();
     }
 
     public async Task<Unit> Handle(DeleteBoardCommand request, CancellationToken cancellationToken)
     {
         Board boardToDelete = await ResourceProvider<Board>
             .GetById(_boardRepository.GetByIdAsync)
-            .Check(_userId, request.BoardId);  
+            .Check(_userId, request.BoardId, cancellationToken);  
 
         await _boardRepository.DeleteAsync(boardToDelete, cancellationToken);
 

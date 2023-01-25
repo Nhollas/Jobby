@@ -9,7 +9,6 @@ namespace Jobby.Application.Features.ContactFeatures.Commands.Delete;
 internal sealed class DeleteContactCommandHandler : IRequestHandler<DeleteContactCommand, Unit>
 {
     private readonly IRepository<Contact> _contactRepository;
-    private readonly IUserService _userService;
     private readonly string _userId;
 
     public DeleteContactCommandHandler(
@@ -17,15 +16,14 @@ internal sealed class DeleteContactCommandHandler : IRequestHandler<DeleteContac
         IUserService userService)
     {
         _contactRepository = contactRepository;
-        _userService = userService;
-        _userId = _userService.UserId();
+        _userId = userService.UserId();
     }
 
     public async Task<Unit> Handle(DeleteContactCommand request, CancellationToken cancellationToken)
     {
         Contact contactToDelete = await ResourceProvider<Contact>
             .GetById(_contactRepository.GetByIdAsync)
-            .Check(_userId, request.ContactId);
+            .Check(_userId, request.ContactId, cancellationToken);
 
         await _contactRepository.DeleteAsync(contactToDelete, cancellationToken);
 

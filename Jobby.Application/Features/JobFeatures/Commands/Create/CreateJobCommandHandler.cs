@@ -17,8 +17,11 @@ internal sealed class CreateJobCommandHandler : IRequestHandler<CreateJobCommand
     private readonly IRepository<Job> _jobRepository;
     private readonly IDateTimeProvider _dateTimeProvider;
     private readonly IGuidProvider _guidProvider;
+<<<<<<< Updated upstream
     private readonly IMapper _mapper;
     private readonly IUserService _userService;
+=======
+>>>>>>> Stashed changes
     private readonly string _userId;
 
     public CreateJobCommandHandler(
@@ -30,8 +33,7 @@ internal sealed class CreateJobCommandHandler : IRequestHandler<CreateJobCommand
         IMapper mapper)
     {
         _boardRepository = boardRepository;
-        _userService = userService;
-        _userId = _userService.UserId();
+        _userId = userService.UserId();
         _dateTimeProvider = dateTimeProvider;
         _jobRepository = jobRepository;
         _guidProvider = guidProvider;
@@ -43,7 +45,7 @@ internal sealed class CreateJobCommandHandler : IRequestHandler<CreateJobCommand
         Board board = await ResourceProvider<Board>
             .GetBySpec(_boardRepository.FirstOrDefaultAsync)
             .ApplySpecification(new GetBoardWithJobsSpecification(request.BoardId))
-            .Check(_userId);
+            .Check(_userId, cancellationToken);
 
         if (!board.BoardOwnsJoblist(request.JobListId))
         {
@@ -54,14 +56,7 @@ internal sealed class CreateJobCommandHandler : IRequestHandler<CreateJobCommand
 
         int newIndex;
 
-        if (selectedJobList.Jobs.Count == 0)
-        {
-            newIndex = 0;
-        }
-        else
-        {
-            newIndex = selectedJobList.Jobs.Count;
-        }
+        newIndex = selectedJobList.Jobs.Count == 0 ? 0 : selectedJobList.Jobs.Count;
 
         var createdJob = Job.Create(
             _guidProvider.Create(),

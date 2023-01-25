@@ -8,7 +8,6 @@ namespace Jobby.Application.Features.JobListFeatures.Commands.Delete;
 internal sealed class DeleteJobListCommandHandler : IRequestHandler<DeleteJobListCommand, Unit>
 {
     private readonly IRepository<JobList> _jobListRepository;
-    private readonly IUserService _userService;
     private readonly string _userId;
 
     public DeleteJobListCommandHandler(
@@ -16,15 +15,14 @@ internal sealed class DeleteJobListCommandHandler : IRequestHandler<DeleteJobLis
         IUserService userService)
     {
         _jobListRepository = jobListRepository;
-        _userService = userService;
-        _userId = _userService.UserId();
+        _userId = userService.UserId();
     }
 
     public async Task<Unit> Handle(DeleteJobListCommand request, CancellationToken cancellationToken)
     {
         JobList jobListToDelete = await ResourceProvider<JobList>
             .GetById(_jobListRepository.GetByIdAsync)
-            .Check(_userId, request.Id);
+            .Check(_userId, request.Id, cancellationToken);
 
         await _jobListRepository.DeleteAsync(jobListToDelete, cancellationToken);
 

@@ -15,7 +15,6 @@ internal sealed class UpdateContactCommandHandler : IRequestHandler<UpdateContac
     private readonly IRepository<Contact> _contactRepository;
     private readonly IRepository<Board> _boardRepository;
     private readonly IDateTimeProvider _timeProvider;
-    private readonly IUserService _userService;
     private readonly string _userId;
 
     public UpdateContactCommandHandler(
@@ -24,8 +23,7 @@ internal sealed class UpdateContactCommandHandler : IRequestHandler<UpdateContac
         IRepository<Contact> contactRepository,
         IRepository<Board> boardRepository)
     {
-        _userService = userService;
-        _userId = _userService.UserId();
+        _userId = userService.UserId();
         _timeProvider = timeProvider;
         _contactRepository = contactRepository;
         _boardRepository = boardRepository;
@@ -36,7 +34,7 @@ internal sealed class UpdateContactCommandHandler : IRequestHandler<UpdateContac
         Contact contactToUpdate = await ResourceProvider<Contact>
             .GetBySpec(_contactRepository.FirstOrDefaultAsync)
             .ApplySpecification(new GetContactWithSocialsSpecification(request.ContactId))
-            .Check(_userId);
+            .Check(_userId, cancellationToken);
 
         contactToUpdate.Update(
             request.FirstName,
@@ -54,14 +52,14 @@ internal sealed class UpdateContactCommandHandler : IRequestHandler<UpdateContac
             Board board = await ResourceProvider<Board>
                 .GetBySpec(_boardRepository.FirstOrDefaultAsync)
                 .ApplySpecification(new GetBoardWithJobsSpecification(contactToUpdate.BoardId))
-                .Check(_userId);
+                .Check(_userId, cancellationToken);
 
             if (!board.BoardOwnsJobs(request.JobIds))
             {
                 throw new NotFoundException($"The {nameof(List<Job>)} {request.JobIds} you wanted to link doesn't exist in the Board {contactToUpdate.Board.Id}.");
             }
 
-            List<Job> jobsToLink = board.JobLists
+            var jobsToLink = board.JobLists
                 .SelectMany(x => x.Jobs)
                 .Where(x => request.JobIds.Contains(x.Id))
                 .ToList();

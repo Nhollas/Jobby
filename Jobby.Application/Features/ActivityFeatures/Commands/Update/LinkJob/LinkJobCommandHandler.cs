@@ -9,7 +9,6 @@ internal sealed class LinkJobCommandHandler : IRequestHandler<LinkJobCommand, Un
 {
     private readonly IRepository<Activity> _activityRepository;
     private readonly IRepository<Job> _jobRepository;
-    private readonly IUserService _userService;
     private readonly string _userId;
 
     public LinkJobCommandHandler(
@@ -18,8 +17,7 @@ internal sealed class LinkJobCommandHandler : IRequestHandler<LinkJobCommand, Un
     IRepository<Job> jobRepository)
     {
         _activityRepository = activityRepository;
-        _userService = userService;
-        _userId = _userService.UserId();
+        _userId = userService.UserId();
         _jobRepository = jobRepository;
     }
 
@@ -27,11 +25,11 @@ internal sealed class LinkJobCommandHandler : IRequestHandler<LinkJobCommand, Un
     {
         Activity activity = await ResourceProvider<Activity>
             .GetById(_activityRepository.GetByIdAsync)
-            .Check(_userId, request.ActivityId);
+            .Check(_userId, request.ActivityId, cancellationToken);
 
         Job selectedJob = await ResourceProvider<Job>
             .GetById(_jobRepository.GetByIdAsync)
-            .Check(_userId, request.JobId);
+            .Check(_userId, request.JobId, cancellationToken);
 
         activity.SetJob(selectedJob);
 

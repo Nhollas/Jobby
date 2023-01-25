@@ -11,7 +11,6 @@ internal sealed class GetBoardContactListQueryHandler : IRequestHandler<GetBoard
 {
     private readonly IReadRepository<Contact> _contactRepository;
     private readonly IMapper _mapper;
-    private readonly IUserService _userService;
     private readonly string _userId;
 
     public GetBoardContactListQueryHandler(
@@ -20,8 +19,7 @@ internal sealed class GetBoardContactListQueryHandler : IRequestHandler<GetBoard
         IMapper mapper)
     {
         _contactRepository = contactRepository;
-        _userService = userService;
-        _userId = _userService.UserId();
+        _userId = userService.UserId();
         _mapper = mapper;
     }
 
@@ -30,11 +28,6 @@ internal sealed class GetBoardContactListQueryHandler : IRequestHandler<GetBoard
         var contactSpec = new GetContactsFromBoardSpecification(request.BoardId, _userId);
 
         var contactList = await _contactRepository.ListAsync(contactSpec, cancellationToken);
-
-        if (contactList is null)
-        {
-            return new List<ListContactsResponse>();
-        }
 
         return _mapper.Map<List<ListContactsResponse>>(contactList);
     }

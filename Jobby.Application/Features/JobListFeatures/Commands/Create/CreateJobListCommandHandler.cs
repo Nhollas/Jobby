@@ -10,7 +10,6 @@ internal sealed class CreateJobListCommandHandler : IRequestHandler<CreateJobLis
 {
     private readonly IRepository<JobList> _jobListRepository;
     private readonly IRepository<Job> _jobRepository;
-    private readonly IUserService _userService;
     private readonly IGuidProvider _guidProvider;
     private readonly IDateTimeProvider _dateTimeProvider;
     private readonly string _userId;
@@ -24,8 +23,7 @@ internal sealed class CreateJobListCommandHandler : IRequestHandler<CreateJobLis
     {
         _jobListRepository = jobListRepository;
         _jobRepository = jobRepository;
-        _userService = userService;
-        _userId = _userService.UserId();
+        _userId = userService.UserId();
         _dateTimeProvider = dateTimeProvider;
         _guidProvider = guidProvider;
     }
@@ -46,7 +44,7 @@ internal sealed class CreateJobListCommandHandler : IRequestHandler<CreateJobLis
         {
             Job jobToUpdate = await ResourceProvider<Job>
                 .GetById(_jobRepository.GetByIdAsync)
-                .Check(_userId, request.InitJobId);
+                .Check(_userId, request.InitJobId, cancellationToken);
 
             jobToUpdate.SetJobList(createdJobList.Id);
             jobToUpdate.SetIndex(0);

@@ -11,7 +11,6 @@ internal sealed class GetBoardActivityListQueryHandler : IRequestHandler<GetBoar
 {
     private readonly IReadRepository<Activity> _repository;
     private readonly IMapper _mapper;
-    private readonly IUserService _userService;
     private readonly string _userId;
 
     public GetBoardActivityListQueryHandler(
@@ -20,8 +19,7 @@ internal sealed class GetBoardActivityListQueryHandler : IRequestHandler<GetBoar
         IMapper mapper)
     {
         _repository = repository;
-        _userService = userService;
-        _userId = _userService.UserId();
+        _userId = userService.UserId();
         _mapper = mapper;
     }
 
@@ -30,11 +28,6 @@ internal sealed class GetBoardActivityListQueryHandler : IRequestHandler<GetBoar
         var activitySpec = new GetActivitiesFromBoardSpecification(request.BoardId, _userId);
 
         var activityList = await _repository.ListAsync(activitySpec, cancellationToken);
-
-        if (activityList is null)
-        {
-            return new List<ListActivitiesResponse>();
-        }
 
         return _mapper.Map<List<ListActivitiesResponse>>(activityList);
     }

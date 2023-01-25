@@ -12,7 +12,6 @@ internal sealed class GetJobDetailQueryHandler : IRequestHandler<GetJobDetailQue
 {
     private readonly IReadRepository<Job> _jobRepository;
     private readonly IMapper _mapper;
-    private readonly IUserService _userService;
     private readonly string _userId;
 
     public GetJobDetailQueryHandler(
@@ -20,8 +19,7 @@ internal sealed class GetJobDetailQueryHandler : IRequestHandler<GetJobDetailQue
         IMapper mapper,
         IReadRepository<Job> jobRepository)
     {
-        _userService = userService;
-        _userId = _userService.UserId();
+        _userId = userService.UserId();
         _mapper = mapper;
         _jobRepository = jobRepository;
     }
@@ -31,7 +29,7 @@ internal sealed class GetJobDetailQueryHandler : IRequestHandler<GetJobDetailQue
         Job job = await ResourceProvider<Job>
             .GetBySpec(_jobRepository.FirstOrDefaultAsync)
             .ApplySpecification(new GetJobWithContactsAndActivitiesSpecification(request.BoardId, request.JobId))
-            .Check(_userId);
+            .Check(_userId, cancellationToken);
 
         return _mapper.Map<GetJobResponse>(job);
     }

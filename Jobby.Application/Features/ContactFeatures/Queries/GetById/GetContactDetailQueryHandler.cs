@@ -12,7 +12,6 @@ internal sealed class GetContactDetailQueryHandler : IRequestHandler<GetContactD
 {
     private readonly IReadRepository<Contact> _contactRepository;
     private readonly IMapper _mapper;
-    private readonly IUserService _userService;
     private readonly string _userId;
 
     public GetContactDetailQueryHandler(
@@ -20,8 +19,7 @@ internal sealed class GetContactDetailQueryHandler : IRequestHandler<GetContactD
         IMapper mapper,
         IReadRepository<Contact> contactRepository)
     {
-        _userService = userService;
-        _userId = _userService.UserId();
+        _userId = userService.UserId();
         _mapper = mapper;
         _contactRepository = contactRepository;
     }
@@ -31,7 +29,7 @@ internal sealed class GetContactDetailQueryHandler : IRequestHandler<GetContactD
         Contact contact = await ResourceProvider<Contact>
             .GetBySpec(_contactRepository.FirstOrDefaultAsync)
             .ApplySpecification(new GetContactWithRelationshipsSpecification(request.ContactId, request.BoardId))
-            .Check(_userId);
+            .Check(_userId, cancellationToken);
 
         return _mapper.Map<GetContactResponse>(contact);
     }

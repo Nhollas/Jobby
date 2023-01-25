@@ -3,5 +3,5 @@
 namespace Jobby.Application.Abstractions.Authorization;
 public interface IGetById<TEntity> where TEntity : Entity
 {
-    Task<TEntity> Check(string userId, Guid resourceId);
+    Task<TEntity> Check(string userId, Guid resourceId, CancellationToken cancellationToken = default);
 }

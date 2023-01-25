@@ -10,7 +10,6 @@ internal sealed class ArrangeJobsCommandHandler : IRequestHandler<ArrangeJobsCom
 {
     private readonly IRepository<JobList> _jobListRepository;
     private readonly IDateTimeProvider _timeProvider;
-    private readonly IUserService _userService;
     private readonly string _userId;
 
     public ArrangeJobsCommandHandler(
@@ -19,8 +18,7 @@ internal sealed class ArrangeJobsCommandHandler : IRequestHandler<ArrangeJobsCom
         IDateTimeProvider timeProvider)
     {
         _jobListRepository = jobListRepository;
-        _userService = userService;
-        _userId = _userService.UserId();
+        _userId = userService.UserId();
         _timeProvider = timeProvider;
     }
 
@@ -29,7 +27,7 @@ internal sealed class ArrangeJobsCommandHandler : IRequestHandler<ArrangeJobsCom
         JobList jobList = await ResourceProvider<JobList>
             .GetBySpec(_jobListRepository.FirstOrDefaultAsync)
             .ApplySpecification(new GetJobListWithJobsSpecification(request.JobListId))
-            .Check(_userId);
+            .Check(_userId, cancellationToken);
 
         jobList.ArrangeJobs(request.JobIndexes);
         jobList.UpdateEntity(_timeProvider.UtcNow);

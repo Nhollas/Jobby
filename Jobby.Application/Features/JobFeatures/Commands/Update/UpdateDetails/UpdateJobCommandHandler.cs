@@ -10,7 +10,6 @@ internal sealed class UpdateJobCommandHandler : IRequestHandler<UpdateJobCommand
 {
     private readonly IRepository<Job> _jobRepository;
     private readonly IDateTimeProvider _timeProvider;
-    private readonly IUserService _userService;
     private readonly IMapper _mapper;
     private readonly string _userId;
 
@@ -21,8 +20,7 @@ internal sealed class UpdateJobCommandHandler : IRequestHandler<UpdateJobCommand
         IDateTimeProvider timeProvider)
     {
         _jobRepository = jobRepository;
-        _userService = userService;
-        _userId = _userService.UserId();
+        _userId = userService.UserId();
         _mapper = mapper;
         _timeProvider = timeProvider;
     }
@@ -31,7 +29,7 @@ internal sealed class UpdateJobCommandHandler : IRequestHandler<UpdateJobCommand
     {
         Job jobToUpdate = await ResourceProvider<Job>
             .GetById(_jobRepository.GetByIdAsync)
-            .Check(_userId, request.JobId);
+            .Check(_userId, request.JobId, cancellationToken);
 
         _mapper.Map(request, jobToUpdate, typeof(UpdateJobCommand), typeof(Job));
 
