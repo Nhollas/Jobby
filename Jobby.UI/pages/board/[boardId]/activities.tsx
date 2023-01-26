@@ -4,9 +4,8 @@ import { Reducer, useReducer } from "react";
 import reducer from "../../../reducers/ActivityListReducer";
 import Input from "../../../components/Form/Input";
 import { GetServerSideProps, NextPage } from "next";
-import { serverClient } from "../../../client";
+import { serverClient, client } from "../../../clients";
 import { Activity } from "../../../types";
-import { client } from "../../../client";
 
 export const getServerSideProps: GetServerSideProps = async ({
   req,
@@ -141,7 +140,7 @@ export const Page: NextPage<{ activities: Activity[]; boardId: string }> = ({
                     {activity.name}
                   </p>
                   <p className='ml-auto flex w-max justify-center truncate rounded-md bg-gray-100 px-3 py-1 text-xs font-medium text-gray-600'>
-                    {activity.createdDate}
+                    {new Date(activity.createdDate).toDateString()}
                   </p>
                 </div>
               </div>

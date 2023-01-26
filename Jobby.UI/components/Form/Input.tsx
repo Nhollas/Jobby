@@ -4,7 +4,7 @@ interface Props {
   onChange?: (value) => void;
   placeholder?: string;
   name: string;
-  value: string | number;
+  value?: string | number;
   checked?: boolean;
   label?: string;
   hidden?: boolean;
@@ -40,9 +40,9 @@ const Input = (props: Props) => {
   } else {
     if (label !== undefined) {
       return (
-        <div className="flex flex-col justify-center gap-y-1.5">
+        <div className='flex flex-col justify-center gap-y-1.5'>
           {label !== undefined && (
-            <label className="text-sm font-medium" htmlFor={name}>
+            <label className='text-sm font-medium' htmlFor={name}>
               {label}
             </label>
           )}
