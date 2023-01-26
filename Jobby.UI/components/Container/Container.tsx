@@ -70,16 +70,16 @@ export const Container = forwardRef<HTMLDivElement & HTMLButtonElement, Props>(
         tabIndex={onClick && 0}
       >
         {list ? (
-          <div className='flex w-full flex-col gap-y-4 bg-white p-4'>
-            <p className='truncate whitespace-nowrap text-base font-medium'>
+          <div className="flex w-full flex-col gap-y-4 border-b border-gray-300 bg-white p-4">
+            <p className="truncate whitespace-nowrap text-base font-medium">
               {list.name}
             </p>
-            <p>{list.count} Jobs</p>
+            <p>{list.jobs.length} Jobs</p>
             <ActionButton
-              variant='primary'
-              text='Add Job'
+              variant="primary"
+              text="Add Job"
               rounded
-              className='ml-auto'
+              className="ml-auto"
               onClick={() =>
                 setShowCreateJobModal({
                   visible: true,
@@ -89,7 +89,7 @@ export const Container = forwardRef<HTMLDivElement & HTMLButtonElement, Props>(
                 })
               }
             />
-            <div className='ml-auto flex w-max flex-row gap-x-2'>
+            <div className="ml-auto flex w-max flex-row gap-x-2">
               {onRemove && <Remove onClick={onRemove} />}
               <Handle {...handleProps} />
             </div>
@@ -98,7 +98,7 @@ export const Container = forwardRef<HTMLDivElement & HTMLButtonElement, Props>(
         {placeholder ? (
           children
         ) : (
-          <ul className='flex h-full flex-col gap-y-4 p-4'>{children}</ul>
+          <ul className="flex h-full flex-col gap-y-4 p-4">{children}</ul>
         )}
       </Component>
     );

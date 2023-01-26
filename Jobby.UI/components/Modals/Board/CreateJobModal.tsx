@@ -36,6 +36,7 @@ export const CreateJobModal = ({
     job: {
       title: "",
       company: "",
+      colour: "#2820ca",
       jobListId,
       boardId,
     },
@@ -62,6 +63,7 @@ export const CreateJobModal = ({
   };
 
   const handleChange = (e) => {
+    console.log(e);
     dispatch({
       type: "HANDLE_INPUT_CHANGE",
       name: e.target.name,
@@ -74,44 +76,37 @@ export const CreateJobModal = ({
       <ModalContainer>
         <form
           onSubmit={handleSubmit}
-          className='flex flex-col gap-y-8'
-          method='post'
+          className="flex flex-col gap-y-8"
+          method="post"
         >
-          <h1 className='text-xl font-medium'>Create Job</h1>
+          <h1 className="text-xl font-medium">Create Job</h1>
           <Input
-            name='title'
-            label='Title'
-            className='border px-3 py-1.5'
+            name="title"
+            label="Title"
             onChange={handleChange}
-            type='text'
+            type="text"
             value={state.job.title}
           />
           <Input
-            name='company'
-            label='Company'
-            className='border px-3 py-1.5'
+            name="company"
+            label="Company"
             onChange={handleChange}
-            type='text'
+            type="text"
             value={state.job.company}
           />
           <Input
-            name='boardId'
-            label='Board'
-            className='border px-3 py-1.5'
-            type='text'
-            value={boardId}
+            name="colour"
+            label="Colour"
+            onChange={handleChange}
+            type="color"
+            value={state.job.colour}
           />
-          <Input
-            name='jobListId'
-            label='List'
-            className='border px-3 py-1.5'
-            type='text'
-            value={jobListId}
-          />
-          <p className='flex flex-row justify-center gap-4'>
+          <Input name="boardId" type="text" hidden value={boardId} />
+          <Input name="jobListId" type="text" hidden value={jobListId} />
+          <p className="flex flex-row justify-center gap-4">
             <ActionButton
-              variant='secondary'
-              text='Cancel'
+              variant="secondary"
+              text="Cancel"
               onClick={() =>
                 setShowCreateJobModal({
                   visible: false,
@@ -121,9 +116,9 @@ export const CreateJobModal = ({
               }
             />
             <ActionButton
-              variant='primary'
-              text='Create'
-              type='submit'
+              variant="primary"
+              text="Create"
+              type="submit"
               extended
             />
           </p>

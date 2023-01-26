@@ -1,6 +1,6 @@
 interface Entity {
   id: string;
-  createdDate: string;
+  createdDate: Date;
   lastUpdated: string;
 }
 
@@ -94,5 +94,5 @@ export type Board = {
   lastUpdated: string;
   activitiesCount: number;
   contactsCount: number;
-  jobList: JobList[];
+  jobLists: JobList[];
 } & Entity

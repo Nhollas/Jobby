@@ -1,12 +1,13 @@
 interface Props {
   type: string;
-  className: string;
+  className?: string;
   onChange?: (value) => void;
   placeholder?: string;
   name: string;
   value: string | number;
   checked?: boolean;
-  label: string;
+  label?: string;
+  hidden?: boolean;
 }
 
 const Input = (props: Props) => {
@@ -19,11 +20,12 @@ const Input = (props: Props) => {
     name,
     checked,
     label,
+    hidden,
   } = props;
 
   let formattedClassName = className
     ? className
-    : "px-3 py-1 border border-gray-300";
+    : "px-3 py-1 border border-gray-300 bg-gray-50";
 
   if (type === "textarea") {
     return (
@@ -38,9 +40,9 @@ const Input = (props: Props) => {
   } else {
     if (label !== undefined) {
       return (
-        <div className='flex flex-col justify-center gap-y-1.5'>
+        <div className="flex flex-col justify-center gap-y-1.5">
           {label !== undefined && (
-            <label className='text-sm font-medium' htmlFor={name}>
+            <label className="text-sm font-medium" htmlFor={name}>
               {label}
             </label>
           )}
@@ -54,6 +56,7 @@ const Input = (props: Props) => {
             value={value}
             name={name}
             checked={checked}
+            hidden={hidden}
           ></input>
         </div>
       );
@@ -69,6 +72,7 @@ const Input = (props: Props) => {
           value={value}
           name={name}
           checked={checked}
+          hidden={hidden}
         ></input>
       );
     }

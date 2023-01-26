@@ -16,11 +16,8 @@ internal sealed class CreateContactCommandHandler : IRequestHandler<CreateContac
     private readonly IGuidProvider _guidProvider;
     private readonly IRepository<Board> _boardRepository;
     private readonly IRepository<Contact> _contactRepository;
-<<<<<<< Updated upstream
     private readonly IUserService _userService;
     private readonly IMapper _mapper;
-=======
->>>>>>> Stashed changes
     private readonly string _userId;
 
     public CreateContactCommandHandler(

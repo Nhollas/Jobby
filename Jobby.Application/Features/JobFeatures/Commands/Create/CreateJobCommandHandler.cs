@@ -17,11 +17,7 @@ internal sealed class CreateJobCommandHandler : IRequestHandler<CreateJobCommand
     private readonly IRepository<Job> _jobRepository;
     private readonly IDateTimeProvider _dateTimeProvider;
     private readonly IGuidProvider _guidProvider;
-<<<<<<< Updated upstream
     private readonly IMapper _mapper;
-    private readonly IUserService _userService;
-=======
->>>>>>> Stashed changes
     private readonly string _userId;
 
     public CreateJobCommandHandler(

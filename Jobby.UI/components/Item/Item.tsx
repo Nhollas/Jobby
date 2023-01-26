@@ -74,7 +74,7 @@ export const Item = React.memo(
                 ? `${transform.scaleY}`
                 : undefined,
               "--index": index,
-              backgroundColor: "white",
+              backgroundColor: job.colour,
             } as React.CSSProperties
           }
           ref={ref}
@@ -87,14 +87,16 @@ export const Item = React.memo(
               dragOverlay && styles.dragOverlay,
               disabled && styles.disabled
             )}
-            data-cypress='draggable-item'
+            data-cypress="draggable-item"
             {...listeners}
             {...props}
             tabIndex={0}
           >
-            <h1 className='text-lg font-medium'>{job.title}</h1>
+            <h1 className="text-lg font-medium">{job.title}</h1>
             <h2>{job.company}</h2>
-            <p className='ml-auto text-sm'>{job.createdDate}</p>
+            <p className="ml-auto text-sm">
+              {new Date(job.createdDate).toDateString()}
+            </p>
           </div>
         </li>
       );

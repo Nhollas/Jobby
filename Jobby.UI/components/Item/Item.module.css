@@ -23,6 +23,7 @@
     scaleX(var(--scale-x, 1)) scaleY(var(--scale-y, 1));
   transform-origin: 0 0;
   touch-action: manipulation;
+  border-radius: calc(4px / var(--scale-x, 1));
 }
 .Wrapper.fadeIn {
   animation: fadeIn 500ms ease;
@@ -43,7 +44,6 @@
   box-shadow: 0 0 0 calc(1px / var(--scale-x, 1)) rgba(63, 63, 68, 0.05),
     0 1px calc(3px / var(--scale-x, 1)) 0 rgba(34, 33, 81, 0.15);
   outline: none;
-  border-radius: calc(4px / var(--scale-x, 1));
   box-sizing: border-box;
   list-style: none;
   transform-origin: 50% 50%;

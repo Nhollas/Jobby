@@ -8,7 +8,7 @@ interface Action {
 }
 
 interface State {
-  job: Pick<Job, "company" | "title" | "jobListId" | "boardId">;
+  job: Pick<Job, "company" | "title" | "jobListId" | "boardId" | "colour">;
 }
 
 const reducer: Reducer<State, Action> = (state, action) => {
