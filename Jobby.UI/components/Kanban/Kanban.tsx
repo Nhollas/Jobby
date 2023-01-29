@@ -37,6 +37,7 @@ import { Job, JobList } from "../../types";
 import { client } from "../../clients";
 import { CreateJobListModal } from "../Modals/Board/CreateJobListModal";
 import { CreateJobModal } from "../Modals/Board/CreateJobModal";
+import { BoardDictionaryResponse } from "../../types/responses/Board";
 
 const dropAnimation: DropAnimation = {
   sideEffects: defaultDropAnimationSideEffects({
@@ -51,11 +52,12 @@ const dropAnimation: DropAnimation = {
 interface Props {
   lists?: JobList[];
   boardId: string;
+  boardsDictionary: BoardDictionaryResponse[];
 }
 
 const PLACEHOLDER_ID = "placeholder";
 
-export const Kanban = ({ lists, boardId }: Props) => {
+export const Kanban = ({ lists, boardId, boardsDictionary }: Props) => {
   const [containerDict, setContainerDict] = useState<Record<string, JobList>>(
     lists
       ? lists.reduce((acc, list) => {
@@ -258,6 +260,7 @@ export const Kanban = ({ lists, boardId }: Props) => {
         showCreateJobListModal={showCreateJobListModal}
       />
       <CreateJobModal
+        boardsDictionary={boardsDictionary}
         setShowCreateJobModal={setShowCreateJobModal}
         showCreateJobModal={showCreateJobModal}
       />
@@ -407,10 +410,10 @@ export const Kanban = ({ lists, boardId }: Props) => {
 
               const tempJobList: JobList = {
                 id: tempId,
-                createdDate: new Date().toDateString(),
+                createdDate: new Date(),
                 name: "Loading...",
                 index: containerKeys.length,
-                lastUpdated: new Date().toDateString(),
+                lastUpdated: new Date(),
                 jobs: [{ ...jobToMove, jobListId: tempId }],
                 count: 1,
               };

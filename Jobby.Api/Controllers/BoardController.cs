@@ -8,6 +8,7 @@ using Jobby.Application.Features.BoardFeatures.Commands.Create;
 using Jobby.Application.Features.BoardFeatures.Commands.Delete;
 using Jobby.Application.Features.BoardFeatures.Commands.Update.ArrangeJobLists;
 using Jobby.Application.Features.BoardFeatures.Commands.Update.UpdateDetails;
+using Jobby.Application.Features.BoardFeatures.Queries.GetBoardsDictionary;
 using Jobby.Application.Features.BoardFeatures.Queries.GetById;
 using Jobby.Application.Features.BoardFeatures.Queries.GetList;
 using Jobby.Application.Features.ContactFeatures.Queries.GetById;
@@ -56,6 +57,14 @@ public class BoardController : ApiController
     public async Task<ActionResult<List<ListBoardsResponse>>> ListBoards()
     {
         var dtos = await Sender.Send(new GetBoardListQuery());
+        return Ok(dtos);
+    }
+    
+    [Route("~/api/BoardsDictionary", Name = "BoardsDictionary")]
+    [HttpGet]
+    public async Task<ActionResult<List<BoardDictionaryResponse>>> GetBoardDictionary()
+    {
+        var dtos = await Sender.Send(new GetBoardsDictionaryQuery());
         return Ok(dtos);
     }
 

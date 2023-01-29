@@ -1,9 +1,19 @@
-import { Dispatch, SetStateAction, useReducer } from "react";
+import {
+  Dispatch,
+  SetStateAction,
+  useContext,
+  useReducer,
+  useState,
+} from "react";
 import { client } from "../../../clients";
+import { ModalContext } from "../../../contexts/ModalContext";
 import reducer from "../../../reducers/CreateJobReducer";
 import { Job, JobList } from "../../../types";
+import { BoardDictionaryResponse } from "../../../types/responses/Board";
 import { ActionButton, ModalContainer } from "../../Common";
+import ColourPicker from "../../Form/ColourPicker";
 import Input from "../../Form/Input";
+import Select from "../../Form/Select";
 
 interface Props {
   setShowCreateJobModal: Dispatch<
@@ -20,17 +30,21 @@ interface Props {
     jobListId: string | null;
     setContainerDict?: Dispatch<SetStateAction<Record<string, JobList>>>;
   };
+  boardsDictionary: BoardDictionaryResponse[];
 }
 
 export const CreateJobModal = ({
   setShowCreateJobModal,
   showCreateJobModal,
+  boardsDictionary,
 }: Props) => {
   const { visible, jobListId, boardId, setContainerDict } = showCreateJobModal;
 
   if (!visible) {
     return;
   }
+
+  const { setShowViewJobModal } = useContext(ModalContext);
 
   const [state, dispatch] = useReducer(reducer, {
     job: {
@@ -42,32 +56,65 @@ export const CreateJobModal = ({
     },
   });
 
+  const [selectedBoard, setSelectedBoard] = useState<string>(boardId);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     const createdJob = await client.post<
       Pick<Job, "company" | "title" | "jobListId" | "boardId">,
       Job
     >("/Job/Create", state.job);
 
-    setContainerDict((containerDict) => {
-      return {
-        ...containerDict,
-        [jobListId]: {
-          ...containerDict[jobListId],
-          jobs: [...containerDict[jobListId].jobs, createdJob],
-        },
-      };
+    if (state.job.boardId === boardId) {
+      setContainerDict((containerDict) => {
+        return {
+          ...containerDict,
+          [jobListId]: {
+            ...containerDict[jobListId],
+            jobs: [...containerDict[jobListId].jobs, createdJob],
+          },
+        };
+      });
+    }
+
+    const fetchedJob = await client.get<Job>(
+      `Board/${createdJob.boardId}/Job/${createdJob.id}`
+    );
+
+    setShowCreateJobModal({
+      visible: false,
+      boardId: null,
+      jobListId: null,
     });
 
-    setShowCreateJobModal({ visible: false, jobListId: null, boardId: null });
+    setShowViewJobModal({
+      visible: true,
+      job: fetchedJob,
+    });
   };
 
   const handleChange = (e) => {
-    console.log(e);
     dispatch({
       type: "HANDLE_INPUT_CHANGE",
       name: e.target.name,
       value: e.target.value,
+    });
+  };
+
+  const handleBoardChange = (value) => {
+    setSelectedBoard(value);
+    dispatch({
+      type: "HANDLE_INPUT_CHANGE",
+      name: "boardId",
+      value: value,
+    });
+
+    dispatch({
+      type: "HANDLE_INPUT_CHANGE",
+      name: "jobListId",
+      value: boardsDictionary.find((board) => board.id === value).jobLists[0]
+        .id,
     });
   };
 
@@ -76,37 +123,69 @@ export const CreateJobModal = ({
       <ModalContainer>
         <form
           onSubmit={handleSubmit}
-          className="flex flex-col gap-y-8"
-          method="post"
+          className='flex flex-col gap-y-8'
+          method='post'
         >
-          <h1 className="text-xl font-medium">Create Job</h1>
+          <h1 className='text-xl font-medium'>Create Job</h1>
           <Input
-            name="title"
-            label="Title"
+            name='title'
+            label='Title'
             onChange={handleChange}
-            type="text"
+            type='text'
             value={state.job.title}
           />
           <Input
-            name="company"
-            label="Company"
+            name='company'
+            label='Company'
             onChange={handleChange}
-            type="text"
+            type='text'
             value={state.job.company}
           />
-          <Input
-            name="colour"
-            label="Colour"
-            onChange={handleChange}
-            type="color"
-            value={state.job.colour}
+          <ColourPicker
+            onChange={(value) => {
+              dispatch({
+                type: "HANDLE_INPUT_CHANGE",
+                name: "colour",
+                value: value,
+              });
+            }}
           />
-          <Input name="boardId" type="text" hidden value={boardId} />
-          <Input name="jobListId" type="text" hidden value={jobListId} />
-          <p className="flex flex-row justify-center gap-4">
+          <Input name='boardId' type='hidden' value={selectedBoard} />
+          <Input name='jobListId' type='hidden' value={jobListId} />
+          <div className='flex flex-row gap-4'>
+            <Select
+              name='boardId'
+              label='Board'
+              options={boardsDictionary.map((board) => ({
+                value: board.id,
+                label: board.name,
+              }))}
+              onChange={(value) => {
+                handleBoardChange(value);
+              }}
+            />
+            <Select
+              name='jobListId'
+              label='List'
+              options={boardsDictionary
+                .find((board) => board.id === selectedBoard)
+                ?.jobLists.map((jobList: JobList) => ({
+                  value: jobList.id,
+                  label: jobList.name,
+                }))}
+              onChange={(value) => {
+                dispatch({
+                  type: "HANDLE_INPUT_CHANGE",
+                  name: "jobListId",
+                  value: value,
+                });
+              }}
+            />
+          </div>
+          <div className='flex flex-row justify-center gap-4'>
             <ActionButton
-              variant="secondary"
-              text="Cancel"
+              variant='secondary'
+              text='Cancel'
               onClick={() =>
                 setShowCreateJobModal({
                   visible: false,
@@ -116,12 +195,12 @@ export const CreateJobModal = ({
               }
             />
             <ActionButton
-              variant="primary"
-              text="Create"
-              type="submit"
+              variant='primary'
+              text='Create'
+              type='submit'
               extended
             />
-          </p>
+          </div>
         </form>
       </ModalContainer>
     );

@@ -3,4 +3,4 @@ using MediatR;
 
 namespace Jobby.Application.Features.BoardFeatures.Queries.GetBoardsDictionary;
 
-public sealed record GetBoardsDictionaryCommand : IRequest<List<BoardDictionaryResponse>>;
+public sealed record GetBoardsDictionaryQuery : IRequest<List<BoardDictionaryResponse>>;
