@@ -6,10 +6,12 @@ interface Props {
   rounded?: boolean;
   extended?: boolean;
   className?: string;
+  icon?: React.ReactNode;
 }
 
 export const ActionButton = (props: Props) => {
-  const { type, text, onClick, variant, rounded, extended, className } = props;
+  const { type, text, onClick, variant, rounded, extended, className, icon } =
+    props;
 
   const classNameMap = {
     primary:
@@ -48,6 +50,7 @@ export const ActionButton = (props: Props) => {
   return (
     <button type={type} className={generatedClassName} onClick={onClick}>
       {text}
+      {icon}
     </button>
   );
 };

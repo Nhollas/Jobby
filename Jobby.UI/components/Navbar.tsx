@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import { ActionButton } from "./Common";
@@ -5,15 +7,15 @@ export const Navbar = () => {
   const { data: session } = useSession();
 
   return (
-    <nav className='hidden h-16 w-full justify-center px-6 md:flex lg:px-8'>
+    <nav className='flex h-16 w-full justify-center px-6 lg:px-8'>
       <section className='grid w-full max-w-6xl grid-cols-[max-content_1fr_max-content]'>
-        <Link href='/'>
-          <a className='self-center text-xl font-medium'>Jobby</a>
+        <Link href='/' className='self-center text-xl font-medium'>
+          Jobby
         </Link>
         <ul className='flex flex-row gap-x-8 self-center justify-self-center'>
           <li className='text-sm font-medium'>
-            <Link href='/dashboard'>
-              <a className='text-sm font-medium'>Dashboard</a>
+            <Link href='/dashboard' className='text-sm font-medium'>
+              Dashboard
             </Link>
           </li>
         </ul>
@@ -27,10 +29,11 @@ export const Navbar = () => {
             />
           </div>
         ) : (
-          <Link href='/login'>
-            <a className='rounded-full border bg-main-blue py-1 px-6 text-base font-medium text-white hover:border-main-blue hover:bg-gray-50 hover:text-black'>
-              Sign In
-            </a>
+          <Link
+            href='/login'
+            className='rounded-full border bg-main-blue py-1 px-6 text-base font-medium text-white hover:border-main-blue hover:bg-gray-50 hover:text-black'
+          >
+            Sign In
           </Link>
         )}
       </section>

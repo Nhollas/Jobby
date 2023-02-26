@@ -1,3 +1,5 @@
+import axios from "axios";
+import https from "https";
 import NextAuth, { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 export const authOptions : AuthOptions = {
@@ -12,32 +14,30 @@ export const authOptions : AuthOptions = {
       async authorize(credentials, req) {
         const { username, password } = credentials;
 
-        const https = require("https");
         const agent = new https.Agent({
           rejectUnauthorized: false,
         });
-
-        const options = {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          agent,
-          body: JSON.stringify({
+      
+        const instance = axios.create({
+          baseURL: "https://localhost:6001/api",
+          httpsAgent: agent,
+        });
+      
+        const res = await instance.post(
+          `/auth/login`,
+          JSON.stringify({
             username,
-            password,
+            password
           }),
-        };
-
-        const res = await fetch(
-          `https://localhost:6001/api/auth/login`,
-          options
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
         );
 
-        const user = await res.json();
-
-        if (res.ok && user) {
-          return user;
+        if (res.status == 200 && res.data) {
+          return res.data;
         } else return null;
       },
     }),
@@ -56,8 +56,6 @@ export const authOptions : AuthOptions = {
       return token;
     },
     async session({ session, token }) {
-      console.log(session);
-
       session.accessToken = token.accessToken;
 
       return session;

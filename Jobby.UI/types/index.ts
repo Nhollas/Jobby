@@ -1,7 +1,7 @@
 interface Entity {
   id: string;
   createdDate: Date;
-  lastUpdated: string;
+  lastUpdated: Date;
 }
 
 export type JobList = {

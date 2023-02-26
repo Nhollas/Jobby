@@ -2,4 +2,4 @@
 using MediatR;
 
 namespace Jobby.Application.Features.ContactFeatures.Queries.GetById;
-public sealed record GetContactDetailQuery(Guid BoardId, Guid ContactId) : IRequest<GetContactResponse>;
+public sealed record GetContactDetailQuery(Guid ContactId) : IRequest<GetContactResponse>;

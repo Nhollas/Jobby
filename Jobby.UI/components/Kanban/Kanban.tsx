@@ -1,11 +1,6 @@
-import {
-  Dispatch,
-  SetStateAction,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+"use client";
+
+import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import {
   pointerWithin,
@@ -35,9 +30,8 @@ import { coordinateGetter } from "./kanbanKeyboardCoordinates";
 import { Item, Container } from "..";
 import { Job, JobList } from "../../types";
 import { client } from "../../clients";
-import { CreateJobListModal } from "../Modals/Board/CreateJobListModal";
-import { CreateJobModal } from "../Modals/Board/CreateJobModal";
 import { BoardDictionaryResponse } from "../../types/responses/Board";
+import { ActionButton } from "../Common";
 
 const dropAnimation: DropAnimation = {
   sideEffects: defaultDropAnimationSideEffects({
@@ -78,38 +72,6 @@ export const Kanban = ({ lists, boardId, boardsDictionary }: Props) => {
   const isSortingContainer = activeId
     ? containerKeys.includes(activeId)
     : false;
-
-  const [showCreateJobListModal, setShowCreateJobListModal] = useState<{
-    visible: boolean;
-    boardId?: string | null;
-    setContainerDict?: Dispatch<SetStateAction<Record<string, JobList>>>;
-    setContainerKeys?: Dispatch<SetStateAction<string[]>>;
-    setActiveId?: Dispatch<SetStateAction<string>>;
-    activeId?: string | null;
-    containerKeys?: string[] | null;
-    tempId?: string | null;
-  }>({
-    visible: false,
-    boardId: null,
-    setContainerDict: () => {},
-    setContainerKeys: () => {},
-    setActiveId: () => {},
-    activeId: null,
-    containerKeys: null,
-    tempId: null,
-  });
-
-  const [showCreateJobModal, setShowCreateJobModal] = useState<{
-    visible: boolean;
-    boardId?: string | null;
-    jobListId: string | null;
-    setContainerDict?: Dispatch<SetStateAction<Record<string, JobList>>>;
-  }>({
-    visible: false,
-    boardId,
-    jobListId: null,
-    setContainerDict: () => {},
-  });
 
   useEffect(() => {
     const element = document.createElement("div");
@@ -183,7 +145,12 @@ export const Kanban = ({ lists, boardId, boardsDictionary }: Props) => {
     [activeId, containerDict]
   );
   const sensors = useSensors(
-    useSensor(MouseSensor),
+    useSensor(MouseSensor, {
+      activationConstraint: {
+        delay: 250,
+        tolerance: 5,
+      },
+    }),
     useSensor(TouchSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter,
@@ -221,9 +188,9 @@ export const Kanban = ({ lists, boardId, boardsDictionary }: Props) => {
           height: "100%",
         }}
         shadow
-        setShowCreateJobModal={setShowCreateJobModal}
         boardId={boardId}
         setContainerDict={setContainerDict}
+        boardsDictionary={boardsDictionary}
       >
         {containerDict[containerId].jobs.map((job) => (
           <Item key={job.id} job={job} />
@@ -241,29 +208,10 @@ export const Kanban = ({ lists, boardId, boardsDictionary }: Props) => {
   }
 
   // TODO this will need to be server side.
-  function handleAddColumn() {
-    setShowCreateJobListModal({
-      visible: true,
-      boardId,
-      setContainerDict,
-      setContainerKeys,
-      setActiveId,
-      activeId,
-      containerKeys,
-    });
-  }
+  function handleAddColumn() {}
 
   return (
-    <div className='h-full overflow-x-auto border border-gray-300'>
-      <CreateJobListModal
-        setShowCreateJobListModal={setShowCreateJobListModal}
-        showCreateJobListModal={showCreateJobListModal}
-      />
-      <CreateJobModal
-        boardsDictionary={boardsDictionary}
-        setShowCreateJobModal={setShowCreateJobModal}
-        showCreateJobModal={showCreateJobModal}
-      />
+    <div className='h-full overflow-x-auto border border-gray-300 bg-[#f5f5f4]'>
       <DndContext
         sensors={sensors}
         collisionDetection={collisionDetectionStrategy}
@@ -434,17 +382,6 @@ export const Kanban = ({ lists, boardId, boardsDictionary }: Props) => {
 
             setContainerKeys((prevKeys) => [...prevKeys, tempId]);
 
-            setShowCreateJobListModal({
-              visible: true,
-              boardId,
-              setContainerDict,
-              setContainerKeys,
-              setActiveId,
-              activeId,
-              containerKeys,
-              tempId,
-            });
-
             // TODO set up cloned items, incase we cancel the creation of the new Joblist.
 
             return;
@@ -516,7 +453,7 @@ export const Kanban = ({ lists, boardId, boardsDictionary }: Props) => {
           setActiveId(null);
         }}
       >
-        <div className='flex h-full divide-x'>
+        <div className='flex h-full divide-x divide-x-reverse'>
           <SortableContext
             items={[...containerKeys, PLACEHOLDER_ID]}
             strategy={horizontalListSortingStrategy}
@@ -528,8 +465,8 @@ export const Kanban = ({ lists, boardId, boardsDictionary }: Props) => {
                   id={containerId}
                   list={containerDict[containerId]}
                   items={containerDict[containerId].jobs}
-                  setShowCreateJobModal={setShowCreateJobModal}
                   boardId={boardId}
+                  boardsDictionary={boardsDictionary}
                   setContainerDict={setContainerDict}
                   onRemove={
                     containerDict[containerId].jobs.length === 0
@@ -556,18 +493,6 @@ export const Kanban = ({ lists, boardId, boardsDictionary }: Props) => {
                 </DroppableContainer>
               );
             })}
-            <DroppableContainer
-              id={PLACEHOLDER_ID}
-              disabled={isSortingContainer}
-              items={[]}
-              onClick={handleAddColumn}
-              placeholder
-              setShowCreateJobModal={setShowCreateJobModal}
-              boardId={boardId}
-              setContainerDict={setContainerDict}
-            >
-              + Add column
-            </DroppableContainer>
           </SortableContext>
         </div>
         {portalElement &&

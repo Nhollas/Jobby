@@ -28,7 +28,7 @@ internal sealed class GetContactDetailQueryHandler : IRequestHandler<GetContactD
     {
         Contact contact = await ResourceProvider<Contact>
             .GetBySpec(_contactRepository.FirstOrDefaultAsync)
-            .ApplySpecification(new GetContactWithRelationshipsSpecification(request.ContactId, request.BoardId))
+            .ApplySpecification(new GetContactWithRelationshipsSpecification(request.ContactId))
             .Check(_userId, cancellationToken);
 
         return _mapper.Map<GetContactResponse>(contact);

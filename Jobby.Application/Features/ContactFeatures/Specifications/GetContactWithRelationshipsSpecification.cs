@@ -4,7 +4,7 @@ using Jobby.Domain.Entities;
 namespace Jobby.Application.Features.ContactFeatures.Specifications;
 public sealed class GetContactWithRelationshipsSpecification : Specification<Contact>
 {
-    public GetContactWithRelationshipsSpecification(Guid ContactId, Guid BoardId)
+    public GetContactWithRelationshipsSpecification(Guid contactId)
     {
         Query
             .Include(x => x.Jobs)
@@ -12,6 +12,6 @@ public sealed class GetContactWithRelationshipsSpecification : Specification<Con
             .Include(x => x.Emails)
             .Include(x => x.Companies)
             .AsNoTracking()
-            .Where(contact => contact.Id == ContactId && contact.BoardId == BoardId);
+            .Where(contact => contact.Id == contactId);
     }
 }

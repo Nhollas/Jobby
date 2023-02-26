@@ -68,20 +68,6 @@ public class BoardController : ApiController
         return Ok(dtos);
     }
 
-    [HttpGet("{boardId:guid}/Job/{jobId:guid}", Name = "GetJob")]
-    public async Task<ActionResult<GetJobResponse>> GetJob(Guid boardId, Guid jobId)
-    {
-        var jobQuery = new GetJobDetailQuery(boardId, jobId);
-        return Ok(await Sender.Send(jobQuery));
-    }
-
-    [HttpGet("{boardId:guid}/Contact/{contactId:guid}", Name = "GetContact")]
-    public async Task<ActionResult<GetContactResponse>> GetContact(Guid boardId, Guid contactId)
-    {
-        var contactQuery = new GetContactDetailQuery(boardId, contactId);
-        return Ok(await Sender.Send(contactQuery));
-    }
-
     [HttpGet("{boardId:guid}/activities", Name = "ListActivities")]
     public async Task<ActionResult<List<ListActivitiesResponse>>> ListActivities(Guid boardId)
     {
@@ -89,7 +75,7 @@ public class BoardController : ApiController
         return Ok(dtos);
     }
 
-    [HttpGet("{boardId:guid}/Contacts", Name = "ListContacts")]
+    [HttpGet("{boardId:guid}/contacts", Name = "ListContacts")]
     public async Task<ActionResult<List<ListContactsResponse>>> ListContacts(Guid boardId)
     {
         var dtos = await Sender.Send(new GetBoardContactListQuery(boardId));

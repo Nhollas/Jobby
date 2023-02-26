@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect } from "react";
 import classNames from "classnames";
 import type { Transform } from "@dnd-kit/utilities";
@@ -5,7 +7,7 @@ import type { Transform } from "@dnd-kit/utilities";
 import styles from "./Item.module.css";
 import { Job } from "../../types";
 import { DraggableSyntheticListeners } from "@dnd-kit/core";
-import { contrastChecker } from "../../helpers/contrastChecker";
+import Link from "next/link";
 
 export interface Props {
   dragOverlay?: boolean;
@@ -79,7 +81,8 @@ export const Item = React.memo(
           }
           ref={ref}
         >
-          <div
+          <Link
+            href={`/board/${job.boardId}/job/${job.id}/info`}
             className={classNames(
               styles.Item,
               "flex w-full flex-col gap-y-2",
@@ -87,17 +90,17 @@ export const Item = React.memo(
               dragOverlay && styles.dragOverlay,
               disabled && styles.disabled
             )}
-            data-cypress="draggable-item"
+            data-cypress='draggable-item'
             {...listeners}
             {...props}
             tabIndex={0}
           >
-            <h1 className="text-lg font-medium">{job.title}</h1>
+            <h1 className='text-lg font-medium'>{job.title}</h1>
             <h2>{job.company}</h2>
-            <p className="ml-auto text-sm">
+            <p className='ml-auto text-sm'>
               {new Date(job.createdDate).toDateString()}
             </p>
-          </div>
+          </Link>
         </li>
       );
     }

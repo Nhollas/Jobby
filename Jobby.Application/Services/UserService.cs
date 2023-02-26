@@ -14,6 +14,6 @@ public class UserService : IUserService
 
     public string UserId()
     {
-        return _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+        return _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
     }
 }

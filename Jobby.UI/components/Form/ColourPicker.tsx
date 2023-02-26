@@ -20,7 +20,6 @@ const ColourPicker = (props: Props) => {
   }, []);
 
   const handleClickOutside = (event) => {
-    console.log(event);
     if (pickerRef.current && !pickerRef.current.contains(event.target)) {
       setShowPicker(false);
     }
@@ -50,7 +49,6 @@ const ColourPicker = (props: Props) => {
                 className='h-6 w-6 rounded-md'
                 style={{ backgroundColor: colour }}
                 onClick={() => {
-                  console.log("jews");
                   setSelectedColour(colour);
                   onChange(colour);
                 }}
