@@ -431,7 +431,7 @@ namespace Jobby.Persistence.Data.Migrations
             modelBuilder.Entity("Jobby.Domain.Entities.JobList", b =>
                 {
                     b.HasOne("Jobby.Domain.Entities.Board", "Board")
-                        .WithMany("JobList")
+                        .WithMany("JobLists")
                         .HasForeignKey("BoardId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -467,7 +467,7 @@ namespace Jobby.Persistence.Data.Migrations
 
                     b.Navigation("Contacts");
 
-                    b.Navigation("JobList");
+                    b.Navigation("JobLists");
 
                     b.Navigation("Jobs");
                 });

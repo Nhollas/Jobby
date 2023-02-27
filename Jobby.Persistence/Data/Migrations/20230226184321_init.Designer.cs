@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Jobby.Persistence.Data.Migrations
 {
     [DbContext(typeof(JobbyContext))]
-    [Migration("20230123145236_Init")]
-    partial class Init
+    [Migration("20230226184321_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -433,7 +433,7 @@ namespace Jobby.Persistence.Data.Migrations
             modelBuilder.Entity("Jobby.Domain.Entities.JobList", b =>
                 {
                     b.HasOne("Jobby.Domain.Entities.Board", "Board")
-                        .WithMany("JobList")
+                        .WithMany("JobLists")
                         .HasForeignKey("BoardId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -469,7 +469,7 @@ namespace Jobby.Persistence.Data.Migrations
 
                     b.Navigation("Contacts");
 
-                    b.Navigation("JobList");
+                    b.Navigation("JobLists");
 
                     b.Navigation("Jobs");
                 });

@@ -51,7 +51,7 @@ export type Contact = {
   lastName: string;
   jobTitle: string;
   location: string;
-  socials: Social[]
+  socials: Social;
   jobs: Job[]
   companies: Company[]
   emails: Email[]

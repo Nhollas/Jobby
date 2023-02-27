@@ -7,6 +7,8 @@ async function getContacts(boardId: string) {
     `/board/${boardId}/contacts`
   );
 
+  console.log(contacts);
+
   return contacts;
 }
 
