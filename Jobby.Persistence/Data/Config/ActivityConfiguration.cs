@@ -20,6 +20,5 @@ public class ActivityConfiguration : IEntityTypeConfiguration<Activity>
             .HasForeignKey(x => x.JobId)
             .IsRequired(false)
             .OnDelete(DeleteBehavior.NoAction);
-
     }
 }

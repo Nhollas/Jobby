@@ -3,16 +3,16 @@ using Jobby.Domain.Entities;
 
 namespace Jobby.Application.Features.JobFeatures.Specifications;
 
-public class GetJobContactsSpecification  : Specification<Contact>
+public sealed class GetJobContactsSpecification  : Specification<Contact>
 {
     public GetJobContactsSpecification(Guid jobId, string userId)
     {
         Query
-            .Include(contact => contact.Companies)
-            .Include(contact => contact.Emails)
-            .Include(contact => contact.Phones)
-            .Include(contact => contact.Socials)
+            .Include(x => x.Companies)
+            .Include(x => x.Phones)
+            .Include(x => x.Emails)
+            .AsSplitQuery()    
             .AsNoTracking()
-            .Where(contact => contact.Jobs.Any(j => j.Id == jobId) && contact.OwnerId == userId);
+            .Where(contact=> contact.Jobs.Any(job => job.Id == jobId && job.OwnerId == userId));
     }
 }

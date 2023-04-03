@@ -1,21 +1,5 @@
-import { serverClient } from "../../../clients";
-import { Board } from "../../../types";
-import { Kanban } from "../../../components/Kanban";
-import { BoardDictionaryResponse } from "../../../types/responses/Board";
-
-async function getBoard(boardId: string) {
-  const board = await serverClient.get<Board>(`/board/${boardId}`);
-
-  return board;
-}
-
-async function getBoardsDictionary() {
-  const boardsDictionary = await serverClient.get<BoardDictionaryResponse[]>(
-    `/BoardsDictionary`
-  );
-
-  return boardsDictionary;
-}
+import { Kanban } from "components/Board";
+import { getBoard, getBoardsDictionary } from "lib/board";
 
 export default async function Page({
   params: { boardId },
@@ -25,7 +9,13 @@ export default async function Page({
   const board = await getBoard(boardId);
   const boardsDictionary = await getBoardsDictionary();
 
+  if (!board || !boardsDictionary) {
+    return <div>Board not found</div>;
+  }
+
   const { jobLists } = board;
+
+  console.log("jobLists", JSON.stringify(jobLists));
 
   return (
     <Kanban

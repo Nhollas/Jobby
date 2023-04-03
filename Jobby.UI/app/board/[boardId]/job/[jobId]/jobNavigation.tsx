@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { MenuItem } from "../../../../../components/MenuItem";
+import { MenuItem } from "components";
 
 type NavItem = {
   leaf: string;
@@ -38,7 +38,13 @@ const navItems: NavItem[] = [
   },
 ];
 
-export const JobNavigation = ({ jobId, boardId }) => {
+export const JobNavigation = ({
+  jobId,
+  boardId,
+}: {
+  jobId: string;
+  boardId: string;
+}) => {
   const pathname = usePathname() || "/";
   const pathnameSections = pathname.split("/");
 

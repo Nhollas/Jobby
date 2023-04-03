@@ -1,24 +1,18 @@
 using Jobby.Api.Middleware;
 using Jobby.Application;
-using Jobby.Domain.Primitives;
 using Jobby.Persistence;
-using Jobby.Persistence.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 using System.Text.Json.Serialization;
+using Microsoft.Net.Http.Headers;
 
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
 
 builder.Services.AddApplicationServices();
 builder.Services.AddPersistenceServices(config);
-
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
-    .AddEntityFrameworkStores<JobbyIdentityContext>()
-    .AddDefaultTokenProviders();
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
@@ -71,24 +65,43 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer(options =>
-{
-    var key = Encoding.UTF8.GetBytes(config["Jwt:Key"]);
-    options.TokenValidationParameters = new TokenValidationParameters
     {
-        ValidIssuer = config["Jwt:Issuer"],
-        ValidAudience = config["Jwt:Audience"],
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ClockSkew = TimeSpan.Zero,
-        IssuerSigningKey = new SymmetricSecurityKey(key)
-    };
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(options =>
+    {
+        var key = Encoding.UTF8.GetBytes(config["Jwt:Key"]);
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidIssuer = config["Jwt:Issuer"],
+            ValidAudience = config["Jwt:Audience"],
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ClockSkew = TimeSpan.Zero,
+            IssuerSigningKey = new SymmetricSecurityKey(key)
+        };
+    }
+);
+
+builder.Services.AddHttpClient("Github", client =>
+{
+    client.BaseAddress = new Uri("https://api.github.com/");
+    client.DefaultRequestHeaders.Add(
+        HeaderNames.Accept, "application/vnd.github.v3+json");
+    client.DefaultRequestHeaders.Add(
+        HeaderNames.UserAgent, "HttpRequestsSample");
+});
+
+builder.Services.AddHttpClient("Google", client =>
+{
+    client.BaseAddress = new Uri("https://www.googleapis.com/");
+    client.DefaultRequestHeaders.Add(
+        HeaderNames.Accept, "application/json");
+    client.DefaultRequestHeaders.Add(
+        HeaderNames.UserAgent, "HttpRequestsSample");
 });
 
 var app = builder.Build();

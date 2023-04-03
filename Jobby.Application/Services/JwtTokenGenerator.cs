@@ -21,7 +21,7 @@ public class JwtTokenGenerator : IJwtTokenGenerator
         _configuration = configuration;
     }
 
-    public string GenerateToken(ApplicationUser user)
+    public string GenerateToken(string userId, string username, long expiresAt)
     {
         var signingCredentials = new SigningCredentials(
             new SymmetricSecurityKey(
@@ -30,15 +30,15 @@ public class JwtTokenGenerator : IJwtTokenGenerator
 
         var claims = new[]
         {
-            new Claim(JwtRegisteredClaimNames.Sub, user.Id),
-            new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName),
+            new Claim(JwtRegisteredClaimNames.Sub, userId),
+            new Claim(JwtRegisteredClaimNames.UniqueName, username),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
         };
 
         var securityToken = new JwtSecurityToken(
             issuer: _configuration.GetSection("Jwt:Issuer").Value,
             audience: _configuration.GetSection("Jwt:Audience").Value,
-            expires: _dateTimeProvider.UtcNow.AddDays(10),
+            expires: DateTimeOffset.FromUnixTimeSeconds(expiresAt).UtcDateTime,
             claims: claims,
             signingCredentials: signingCredentials);
 

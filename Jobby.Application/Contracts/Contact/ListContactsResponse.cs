@@ -13,5 +13,6 @@ public sealed record ListContactsResponse
     public List<PhoneDto> Phones { get; set; }
     public List<EmailDto> Emails { get; set; }
     public List<CompanyDto> Companies { get; set; }
+    public List<JobDto> Jobs { get; set; }
     public Guid BoardId { get; set; }
 }

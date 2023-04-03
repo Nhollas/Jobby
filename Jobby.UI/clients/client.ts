@@ -1,6 +1,5 @@
 import axios from "axios";
 import https from "https";
-import { getSession } from "next-auth/react"
 
 const agent = new https.Agent({
   rejectUnauthorized: false,
@@ -14,14 +13,15 @@ const instance = axios.create({
 let options = {};
 
 const clientSideHeaders = async () => {
-  const session = await getSession()
-  const { accessToken } = session;
+  if (localStorage.getItem("access_token")) {
+    const bearerToken = localStorage.getItem("access_token");
 
-  if (accessToken) {
+    console.log(bearerToken)
+
     options = {
       ...options,
       headers: {
-        authorization: `Bearer ${accessToken}`,
+        authorization: `Bearer ${bearerToken}`,
       },
     };
   }
@@ -61,7 +61,7 @@ export const client = {
   delete: async (url: string) => {
     await clientSideHeaders();
     try {
-      await instance.delete(url, options);
+      return await instance.delete(url, options);
     } catch (err) {
 
     }

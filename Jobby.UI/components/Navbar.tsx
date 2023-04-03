@@ -1,10 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { useSession, signOut } from "next-auth/react";
+import { useSession, signOut, signIn } from "next-auth/react";
 import { ActionButton } from "./Common";
 export const Navbar = () => {
   const { data: session } = useSession();
+
+  console.log(session?.bearerToken);
+
+  if (session?.bearerToken) {
+    localStorage.setItem("access_token", session?.bearerToken);
+  }
 
   return (
     <nav className='flex h-16 w-full justify-center px-6 lg:px-8'>
@@ -29,12 +35,11 @@ export const Navbar = () => {
             />
           </div>
         ) : (
-          <Link
-            href='/login'
-            className='rounded-full border bg-main-blue py-1 px-6 text-base font-medium text-white hover:border-main-blue hover:bg-gray-50 hover:text-black'
-          >
-            Sign In
-          </Link>
+          <ActionButton
+            text='Log in'
+            variant='primary'
+            onClick={() => signIn()}
+          />
         )}
       </section>
     </nav>

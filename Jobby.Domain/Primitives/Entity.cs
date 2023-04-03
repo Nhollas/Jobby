@@ -18,7 +18,7 @@ public abstract class Entity
 
     public Guid Id { get; protected set; }
     public DateTime CreatedDate { get; protected set; }
-    public DateTime LastUpdated { get; protected set; }
+    public DateTime LastUpdated { get; private set; }
     public string OwnerId { get; protected set; }
 
     public void UpdateEntity(DateTime updatedDate)

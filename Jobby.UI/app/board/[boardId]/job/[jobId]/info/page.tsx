@@ -1,11 +1,4 @@
-import { serverClient } from "../../../../../../clients";
-import { Job } from "../../../../../../types";
-
-async function getJob(jobId: string) {
-  const job = await serverClient.get<Job>(`/job/${jobId}`);
-
-  return job;
-}
+import { getJob } from "lib/job";
 
 export default async function Page({
   params: { jobId },

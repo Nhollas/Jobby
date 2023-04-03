@@ -1,65 +1,65 @@
-import axios from "axios";
-import https from "https";
 import NextAuth, { AuthOptions } from "next-auth";
-import CredentialsProvider from "next-auth/providers/credentials";
-export const authOptions : AuthOptions = {
-  secret: process.env.NEXTAUTH_SECRET,
-  providers: [
-    CredentialsProvider({
-      name: "Credentials",
-      credentials: {
-        username: { label: "Username", type: "text", placeholder: "jsmith" },
-        password: { label: "Password", type: "password" },
-      },
-      async authorize(credentials, req) {
-        const { username, password } = credentials;
+import GitHubProvider from "next-auth/providers/github";
+import GoogleProvider from "next-auth/providers/google";
+import exchangeToken from 'lib/auth/exchangeToken';
 
-        const agent = new https.Agent({
-          rejectUnauthorized: false,
-        });
-      
-        const instance = axios.create({
-          baseURL: "https://localhost:6001/api",
-          httpsAgent: agent,
-        });
-      
-        const res = await instance.post(
-          `/auth/login`,
-          JSON.stringify({
-            username,
-            password
-          }),
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
+export const authOptions : AuthOptions = {
+  providers: [
+    GitHubProvider({
+      clientId: process.env.GITHUB_CLIENT_ID!,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET!,
+    }),
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      authorization: { params: { access_type: "offline", prompt: "consent" } },
+    })
+  ],
+  secret: process.env.NEXTAUTH_SECRET!,
+  callbacks: {
+    async jwt({ token, account }) {
+      if (account) {
+        const response = await exchangeToken(
+          account.provider, 
+          account.access_token, 
+          account.refresh_token, 
+          account.expires_at
         );
 
-        if (res.status == 200 && res.data) {
-          return res.data;
-        } else return null;
-      },
-    }),
-  ],
-  session: {
-    strategy: "jwt",
-  },
-  pages: {
-    signIn: "/login",
-  },
-  callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.accessToken = user.accessToken;
-      }
-      return token;
-    },
-    async session({ session, token }) {
-      session.accessToken = token.accessToken;
+        return {
+          ...token,
+          accessToken: account.access_token,
+          refreshToken: account.refresh_token,
+          expiresAt: account.expires_at,
+          provider: account.provider,
+          bearerToken: response.bearerToken,
+        }
 
+      } else if (Date.now() < token.expiresAt * 1000) {
+        // If the access token has not expired yet, return it
+        return token
+      } else {
+        // If the access token has expired, refresh it
+        const response = await exchangeToken(
+          token.provider, 
+          token.accessToken, 
+          token.refreshToken, 
+          token.expiresAt
+        );
+
+        return {
+          ...token,
+          bearerToken: response.bearerToken,
+          expiresAt: response.expiresAt,
+        }
+      }
+    },
+    async session({ session, token, user }) {
+      session.bearerToken = token.bearerToken;
       return session;
     },
   },
 };
+
+
 export default NextAuth(authOptions);

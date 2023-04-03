@@ -1,2 +1,2 @@
 ﻿namespace Jobby.Application.Contracts.Board;
-public sealed record ListBoardsResponse(Guid Id, DateTime CreatedDate, string Name);
+public sealed record ListBoardsResponse(Guid Id, string CreatedDate, string Name);

@@ -1,21 +1,17 @@
-import { serverClient } from "../../../../../../clients";
-import { Activity } from "../../../../../../types";
-import { Activities } from "../../../activities/activities";
+import { getJobActivities } from "lib/job";
+import { Activities } from "components";
 
-async function getActivities(jobId: string) {
-  const activities = await serverClient.get<Activity[]>(
-    `/job/${jobId}/activities`
-  );
+// create a delay function to simulate loading for 5 secs.
 
-  return activities;
-}
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export default async function Page({
   params: { jobId },
 }: {
   params: { jobId: string };
 }) {
-  const activities = await getActivities(jobId);
+  const activities = await getJobActivities(jobId);
+  await delay(5000);
 
   return <Activities activities={activities} />;
 }

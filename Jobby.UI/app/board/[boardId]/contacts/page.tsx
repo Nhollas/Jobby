@@ -1,13 +1,11 @@
-import { serverClient } from "../../../../clients";
-import { Contact } from "../../../../types";
-import { Contacts } from "./contacts";
+import { serverClient } from "clients";
+import { Contact } from "types";
+import { Contacts } from "components";
 
 async function getContacts(boardId: string) {
   const contacts = await serverClient.get<Contact[]>(
     `/board/${boardId}/contacts`
   );
-
-  console.log(contacts);
 
   return contacts;
 }

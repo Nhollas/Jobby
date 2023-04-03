@@ -1,6 +1,6 @@
-import { serverClient } from "../../../../clients";
-import { Activity } from "../../../../types";
-import { Activities } from "./activities";
+import { serverClient } from "clients";
+import { Activity } from "types";
+import { Activities } from "components/Activities";
 
 async function getActivities(boardId: string) {
   const activities = await serverClient.get<Activity[]>(

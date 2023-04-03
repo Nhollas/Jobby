@@ -4,5 +4,5 @@ namespace Jobby.Application.Interfaces.Services;
 
 public interface IJwtTokenGenerator
 {
-    string GenerateToken(ApplicationUser user);
+    string GenerateToken(string userId, string username, long expiresAt);
 }

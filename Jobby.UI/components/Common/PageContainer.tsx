@@ -21,8 +21,6 @@ export const PageContainer = (props: Props) => {
     extended = true;
   }
 
-  console.log(paths);
-
   return (
     <div className='flex w-full items-center justify-center'>
       <section

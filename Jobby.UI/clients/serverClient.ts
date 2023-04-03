@@ -1,5 +1,5 @@
 import { authOptions } from "../pages/api/auth/[...nextauth]";
-import axios, { AxiosRequestConfig } from "axios";
+import axios from "axios";
 import https from "https";
 import { getServerSession } from "next-auth";
 
@@ -16,28 +16,27 @@ let options = {};
 
 const serverSideHeaders = async () => {
   const session = await getServerSession(authOptions);
-  if (session) {
+
+  if (session && session.bearerToken ) {
     options = {
       ...options,
       headers: {
-        authorization: `Bearer ${session.accessToken}`,
+        authorization: `Bearer ${session.bearerToken}`,
       },
     };
   }
 };
 
 export const serverClient = {
-  get: async <R>(url: string): Promise<R | null> => {
+  get: async <R>(url: string): Promise<R> => {
     await serverSideHeaders();
     try {
       const { data } = await instance.get<R>(url, options);
 
       return data;
     } catch (err) {
-
     }
-
-    return null;
+    return null as R;
   },
   post: async <B, R = any>(
     url: string,

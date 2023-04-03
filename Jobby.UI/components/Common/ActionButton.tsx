@@ -54,5 +54,3 @@ export const ActionButton = (props: Props) => {
     </button>
   );
 };
-
-export default ActionButton;

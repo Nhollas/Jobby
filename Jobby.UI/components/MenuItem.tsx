@@ -1,3 +1,5 @@
+"use client";
+
 import { motion } from "framer-motion";
 import Link from "next/link";
 
@@ -12,7 +14,6 @@ export const MenuItem = ({
 }) => (
   <motion.div className='relative'>
     <Link
-      key={leaf}
       href={href}
       className={
         "flex flex-row items-center gap-x-2 border border-gray-300 bg-white px-4 py-2 text-base"

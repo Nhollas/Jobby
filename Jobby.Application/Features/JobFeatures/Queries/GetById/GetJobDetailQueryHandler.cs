@@ -27,9 +27,8 @@ internal sealed class GetJobDetailQueryHandler : IRequestHandler<GetJobDetailQue
     public async Task<GetJobResponse> Handle(GetJobDetailQuery request, CancellationToken cancellationToken)
     {
         Job job = await ResourceProvider<Job>
-            .GetBySpec(_jobRepository.FirstOrDefaultAsync)
-            .ApplySpecification(new GetJobWithContactsAndActivitiesSpecification(request.JobId))
-            .Check(_userId, cancellationToken);
+            .GetById(_jobRepository.GetByIdAsync)
+            .Check(_userId, request.JobId, cancellationToken);
 
         return _mapper.Map<GetJobResponse>(job);
     }

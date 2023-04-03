@@ -17,18 +17,18 @@ public class AuthController : Controller
         _authenticationService = authenticationService;
     }
 
-    [HttpPost("register", Name = "Register")]
-    public async Task<ActionResult<RegisterResponse>> Register([FromBody] RegisterRequest request)
+    [HttpPost("exchange-token/google", Name = "ExchangeGoogleToken")]
+    public async Task<ActionResult<ExchangeTokenResponse>> ExchangeGoogleToken([FromBody] ExchangeTokenRequest request)
     {
-        var result = await _authenticationService.Register(request);
+        var result = await _authenticationService.ExchangeGoogleToken(request);
 
         return Ok(result);
     }
-
-    [HttpPost("login", Name = "Login")]
-    public async Task<ActionResult<AuthenticateResponse>> Login([FromBody] AuthenticateRequest request)
+    
+    [HttpPost("exchange-token/github", Name = "ExchangeGithubToken")]
+    public async Task<ActionResult<ExchangeTokenResponse>> ExchangeGithubToken([FromBody] ExchangeTokenRequest request)
     {
-        var result = await _authenticationService.Login(request);
+        var result = await _authenticationService.ExchangeGithubToken(request);
 
         return Ok(result);
     }

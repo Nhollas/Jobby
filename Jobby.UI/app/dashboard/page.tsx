@@ -1,32 +1,14 @@
 import { PageContainer } from "../../components/Common";
-import { getServerSession } from "next-auth";
-import { authOptions } from "../../pages/api/auth/[...nextauth]";
-import axios from "axios";
-import https from "https";
 import { Board } from "../../types";
-import { Boards } from "./boards";
+import { Boards } from "../../components/Board/Boards";
+import { serverClient } from "clients";
 
 async function getBoards() {
-  const session = await getServerSession(authOptions);
+  const boards = await serverClient.get<Board[]>("/boards");
 
-  const agent = new https.Agent({
-    rejectUnauthorized: false,
-  });
+  console.log(boards);
 
-  const instance = axios.create({
-    baseURL: "https://localhost:6001/api",
-    httpsAgent: agent,
-  });
-
-  let options = {
-    headers: {
-      authorization: `Bearer ${session?.accessToken}`,
-    },
-  };
-
-  const { data } = await instance.get<Board[]>("/boards", options);
-
-  return data;
+  return boards;
 }
 
 export default async function Page() {

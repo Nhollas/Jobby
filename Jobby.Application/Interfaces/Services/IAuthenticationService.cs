@@ -4,6 +4,6 @@ namespace Jobby.Application.Interfaces.Services;
 
 public interface IAuthenticationService
 {
-    public Task<AuthenticateResponse> Login(AuthenticateRequest request);
-    public Task<RegisterResponse> Register(RegisterRequest request);
+    public Task<ExchangeTokenResponse> ExchangeGoogleToken(ExchangeTokenRequest request);
+    public Task<ExchangeTokenResponse> ExchangeGithubToken(ExchangeTokenRequest request);
 }

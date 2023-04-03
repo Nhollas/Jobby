@@ -11,8 +11,4 @@
     <None Remove="Entities\Common\**" />
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.8" />
-  </ItemGroup>
-
 </Project>

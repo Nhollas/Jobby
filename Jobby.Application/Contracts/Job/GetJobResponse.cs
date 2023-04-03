@@ -14,7 +14,5 @@ public sealed record GetJobResponse
     public string Description { get; set; }
     public DateTime Deadline { get; set; }
     public PreviewBoardDto Board { get; set; }
-    public List<NoteDto> Notes { get; set; }
-    public List<PreviewContactDto> Contacts { get; set; }
     public List<ActivityDto> Activities { get; set; }
 }

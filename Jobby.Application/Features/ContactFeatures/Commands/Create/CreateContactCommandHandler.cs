@@ -16,7 +16,6 @@ internal sealed class CreateContactCommandHandler : IRequestHandler<CreateContac
     private readonly IGuidProvider _guidProvider;
     private readonly IRepository<Board> _boardRepository;
     private readonly IRepository<Contact> _contactRepository;
-    private readonly IUserService _userService;
     private readonly IMapper _mapper;
     private readonly string _userId;
 

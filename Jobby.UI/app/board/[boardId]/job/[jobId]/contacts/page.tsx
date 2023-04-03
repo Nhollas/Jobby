@@ -1,19 +1,12 @@
-import { serverClient } from "../../../../../../clients";
-import { Contact } from "../../../../../../types";
-import { Contacts } from "../../../contacts/contacts";
-
-async function getContacts(jobId: string) {
-  const contacts = await serverClient.get<Contact[]>(`/job/${jobId}/contacts`);
-
-  return contacts;
-}
+import { getJobContacts } from "lib/job";
+import { Contacts } from "components";
 
 export default async function Page({
   params: { jobId },
 }: {
   params: { jobId: string };
 }) {
-  const contacts = await getContacts(jobId);
+  const contacts = await getJobContacts(jobId);
 
   return <Contacts contacts={contacts} />;
 }
