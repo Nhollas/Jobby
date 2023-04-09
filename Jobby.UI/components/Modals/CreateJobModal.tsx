@@ -10,7 +10,7 @@ import {
 import { client } from "clients";
 import { ModalContext } from "contexts/ModalContext";
 import reducer from "reducers/CreateJobReducer";
-import { Job, JobList } from "../../types";
+import { Job, JobList, JobListPreview } from "../../types";
 import { BoardDictionaryResponse } from "types/responses/Board";
 import { ActionButton } from "../Common";
 import ColourPicker from "../Common/ColourPicker";
@@ -20,7 +20,7 @@ import Select from "../Common/Select";
 interface Props {
   boardId: string;
   jobListId: string;
-  setContainerDict: Dispatch<SetStateAction<Record<string, JobList>>>;
+  setContainerDict: Dispatch<SetStateAction<Record<string, JobListPreview>>>;
   boardsDictionary: BoardDictionaryResponse[];
 }
 

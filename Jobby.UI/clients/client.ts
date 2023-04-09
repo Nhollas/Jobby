@@ -16,8 +16,6 @@ const clientSideHeaders = async () => {
   if (localStorage.getItem("access_token")) {
     const bearerToken = localStorage.getItem("access_token");
 
-    console.log(bearerToken)
-
     options = {
       ...options,
       headers: {

@@ -6,8 +6,6 @@ import { ActionButton } from "./Common";
 export const Navbar = () => {
   const { data: session } = useSession();
 
-  console.log(session?.bearerToken);
-
   if (session?.bearerToken) {
     localStorage.setItem("access_token", session?.bearerToken);
   }

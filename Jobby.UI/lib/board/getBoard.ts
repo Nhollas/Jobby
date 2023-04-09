@@ -4,8 +4,8 @@ import { Board } from '../../types';
 export const getBoard = async (boardId: string) => {
   const board = await serverClient.get<Board>(`/board/${boardId}`);
 
-
-  await new Promise((resolve) => setTimeout(resolve, 5000));
+  // delay to simulate network latency
+  await new Promise((resolve) => setTimeout(resolve, 3000));
 
   return board;
 };

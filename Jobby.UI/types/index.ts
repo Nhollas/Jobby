@@ -12,6 +12,12 @@ export type JobList = {
   count?: number;
 } & Entity
 
+export type JobListPreview = {
+  name: string;
+  jobs: JobPreview[];
+  boardId: string;
+} & Entity
+
 export type Activity = {
   title: string;
   type: number;
@@ -35,6 +41,15 @@ export type Job = {
   activities: Activity[]
   notes: Note[]
   contacts: Contact[]
+  jobListId: string;
+  boardId: string;
+} & Entity
+
+export type JobPreview = {
+  company: string;
+  title: string;
+  index: number;
+  colour: string;
   jobListId: string;
   boardId: string;
 } & Entity

@@ -27,7 +27,7 @@ import {
 } from "@dnd-kit/sortable";
 import { DroppableContainer, SortableItem } from "./components";
 import { coordinateGetter } from "./kanbanKeyboardCoordinates";
-import { Job, JobList } from "types";
+import { Job, JobList, JobListPreview } from "types";
 import { client } from "clients";
 import { BoardDictionaryResponse } from "types/responses/Board";
 import { Item, Container } from "components/Board";
@@ -43,7 +43,7 @@ const dropAnimation: DropAnimation = {
 };
 
 interface Props {
-  lists: JobList[];
+  lists: JobListPreview[];
   boardId: string;
   boardsDictionary: BoardDictionaryResponse[];
   loading?: boolean;
@@ -52,8 +52,10 @@ interface Props {
 const PLACEHOLDER_ID = "placeholder";
 
 export function Kanban({ lists, boardId, boardsDictionary, loading }: Props) {
-  const [containerDict, setContainerDict] = useState<Record<string, JobList>>(
-    lists.reduce((acc: Record<string, JobList>, list) => {
+  const [containerDict, setContainerDict] = useState<
+    Record<string, JobListPreview>
+  >(
+    lists.reduce((acc: Record<string, JobListPreview>, list) => {
       acc[list.id] = list;
       return acc;
     }, {})
@@ -359,15 +361,13 @@ export function Kanban({ lists, boardId, boardsDictionary, loading }: Props) {
                 return prevDict;
               }
 
-              const tempJobList: JobList = {
+              const tempJobList: JobListPreview = {
                 id: tempId,
                 createdDate: new Date(),
                 boardId: boardId,
                 name: "Loading...",
-                index: containerKeys.length,
                 lastUpdated: new Date(),
                 jobs: [{ ...jobToMove, jobListId: tempId }],
-                count: 1,
               };
 
               return {

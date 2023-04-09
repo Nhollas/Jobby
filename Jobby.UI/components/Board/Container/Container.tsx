@@ -5,7 +5,7 @@ import classNames from "classnames";
 
 import styles from "./Container.module.css";
 import { Handle, Remove } from "../Item";
-import { JobList } from "types";
+import { JobListPreview } from "types";
 import { ActionButton } from "../../Common";
 import { ModalContext } from "contexts/ModalContext";
 import { CreateJobModal } from "../../Modals/CreateJobModal";
@@ -18,10 +18,10 @@ export interface Props {
   handleProps?: React.HTMLAttributes<any>;
   shadow?: boolean;
   placeholder?: boolean;
-  list?: JobList;
+  list?: JobListPreview;
   onClick?(): void;
   onRemove?: () => Promise<void>;
-  setContainerDict: Dispatch<SetStateAction<Record<string, JobList>>>;
+  setContainerDict: Dispatch<SetStateAction<Record<string, JobListPreview>>>;
   boardId: string;
   boardsDictionary: BoardDictionaryResponse[];
 }

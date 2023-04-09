@@ -6,8 +6,6 @@ import { serverClient } from "clients";
 async function getBoards() {
   const boards = await serverClient.get<Board[]>("/boards");
 
-  console.log(boards);
-
   return boards;
 }
 

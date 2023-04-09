@@ -15,8 +15,6 @@ export default async function Page({
 
   const { jobLists } = board;
 
-  console.log("jobLists", JSON.stringify(jobLists));
-
   return (
     <Kanban
       lists={jobLists}

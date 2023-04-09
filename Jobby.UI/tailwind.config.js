@@ -14,8 +14,10 @@ module.exports = {
     extend: {
       fontFamily: {},
       colors: {
-        "main-red": "#ff1330",
+        "main-red": "#F51720",
         "main-blue": "#471cff",
+        "main-gold": "#ffd600",
+        "main-green": "#00FF00",
       },
       maxWidth: {
         "8xl": "92rem",
