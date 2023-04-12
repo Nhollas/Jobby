@@ -5,6 +5,7 @@ import { client } from "clients";
 import { Board } from "types";
 import { Dispatch, SetStateAction, useContext } from "react";
 import { ModalContext } from "contexts/ModalContext";
+import BoardsAndJobsContext from "contexts/BoardsAndJobsContext";
 
 interface Props {
   setCurrentBoardList: Dispatch<SetStateAction<Board[]>>;
@@ -13,8 +14,9 @@ interface Props {
 
 export const DeleteBoardModal = ({ setCurrentBoardList, boardId }: Props) => {
   const { closeModal } = useContext(ModalContext);
+  const { setBoards } = useContext(BoardsAndJobsContext);
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = async (event: any) => {
     event.preventDefault();
 
     await client.delete(`/board/delete/${boardId}`);
@@ -23,6 +25,10 @@ export const DeleteBoardModal = ({ setCurrentBoardList, boardId }: Props) => {
       prev.filter((board) => board.id !== boardId)
     );
 
+    setBoards((prev: Board[]) =>
+      prev.filter((board) => board.id !== boardId)
+    );
+    
     closeModal();
   };
 

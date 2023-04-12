@@ -176,30 +176,22 @@ export const Item = React.memo(
             <h1
               className={clsx(
                 "w-full truncate text-lg font-medium",
-                loading && "rounded-lg bg-gray-300 text-gray-300"
+                loading && "rounded-lg bg-gray-300 !text-gray-300"
               )}
-              style={{
-                color:
-                  defaultColours[job.colour]?.title ??
-                  defaultColours["#ffffff"].title,
-              }}
+
             >
               {job.title}
             </h1>
             <h2
-              className={clsx("w-max", loading && "rounded-lg bg-gray-100")}
-              style={{
-                color:
-                  defaultColours[job.colour]?.company ??
-                  defaultColours["#ffffff"].company,
-              }}
+              className={clsx("w-max", loading && "rounded-lg bg-gray-100 !text-gray-100")}
+ 
             >
               {job.company}
             </h2>
             <p
               className={clsx(
                 "ml-auto w-max text-sm",
-                loading && "rounded-lg bg-gray-100 text-gray-100"
+                loading && "rounded-lg bg-gray-100 !text-gray-100"
               )}
             >
               {new Date(job.createdDate).toDateString()}

@@ -1,10 +1,10 @@
 "use client";
 
-import "./globals.css";
+import "../globals.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import { Poppins } from "@next/font/google";
-import Navbar from "../../components/Navbar";
 import Providers from "../providers";
+import Navbar from "components/Navbar";
 
 const poppins = Poppins({
   display: "swap",
@@ -12,18 +12,16 @@ const poppins = Poppins({
   subsets: ["latin", "latin-ext", "devanagari"],
 });
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang='en' className={poppins.className}>
+    <html lang="en" className={poppins.className}>
       <head />
       <body>
         <Providers>
           <Navbar />
-          <main>{children}</main>
+          <main>
+          {children}
+          </main>
         </Providers>
       </body>
     </html>

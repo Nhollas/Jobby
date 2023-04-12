@@ -11,17 +11,12 @@ export const Navbar = () => {
   }
 
   return (
-    <nav className='flex h-16 w-full justify-center px-6 lg:px-8'>
-      <section className='grid w-full max-w-6xl grid-cols-[max-content_1fr_max-content]'>
+    <nav className='flex h-20 w-full p-4 border-b border-gray-300'>
+      <section className='grid w-full grid-cols-[max-content_1fr_max-content]'>
         <Link href='/' className='self-center text-xl font-medium'>
           Jobby
         </Link>
         <ul className='flex flex-row gap-x-8 self-center justify-self-center'>
-          <li className='text-sm font-medium'>
-            <Link href='/dashboard' className='text-sm font-medium'>
-              Dashboard
-            </Link>
-          </li>
         </ul>
         {session ? (
           <div className='flex flex-row items-center gap-x-6'>

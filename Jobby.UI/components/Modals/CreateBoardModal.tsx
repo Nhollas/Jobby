@@ -6,6 +6,7 @@ import { Board } from "types";
 import { Dispatch, SetStateAction, useContext, useState } from "react";
 import { ModalContext } from "contexts/ModalContext";
 import Input from "../Common/Input";
+import BoardsAndJobsContext from "contexts/BoardsAndJobsContext";
 
 interface Props {
   setCurrentBoardList: Dispatch<SetStateAction<Board[]>>;
@@ -13,6 +14,8 @@ interface Props {
 
 export const CreateBoardModal = ({ setCurrentBoardList }: Props) => {
   const { closeModal } = useContext(ModalContext);
+  const { setBoards } = useContext(BoardsAndJobsContext);
+
   const [name, setName] = useState("");
 
   const handleSubmit = async (event: any) => {
@@ -25,7 +28,8 @@ export const CreateBoardModal = ({ setCurrentBoardList }: Props) => {
     const createdBoard = await client.post<any, Board>("/board/create", board);
 
     setCurrentBoardList((prev: Board[]) => [...prev, createdBoard]);
-
+    setBoards((prev: Board[]) => [...prev, createdBoard]);
+    
     closeModal();
   };
 

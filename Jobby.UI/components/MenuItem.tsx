@@ -24,7 +24,7 @@ export const MenuItem = ({
     </Link>
     {selected && (
       <motion.div
-        className={`absolute -bottom-1 z-10 h-1 w-full ${colour}`}
+        className={`absolute -bottom-1 h-1 w-full ${colour}`}
         layoutId={layoutId}
       />
     )}

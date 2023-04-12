@@ -12,7 +12,7 @@ public sealed record CreateContactCommand : IRequest<ContactDto>
     public string JobTitle { get; set; }
     public string Location { get; set; }
     public SocialDto Socials { get; set; }
-    public List<EmailDto> Emails { get; set; }
+    public List<string> Emails { get; set; }
     public List<PhoneDto> Phones { get; set; }
-    public List<CompanyDto> Companies { get; set; }
+    public List<string> Companies { get; set; }
 }

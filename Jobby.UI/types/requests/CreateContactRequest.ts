@@ -1,40 +1,40 @@
 export type CreateContactRequest = {
     "boardId": string,
-    "jobIds": [
-      string
-    ],
+    "jobIds": string[],
     "firstName": string,
     "lastName": string,
     "jobTitle": string,
     "location": string,
-    "socials": {
-      "twitterUrl": string,
-      "facebookUrl": string,
-      "linkedInUrl": string,
-      "githubUrl": string
-    },
+    "socials": Social,
     "emails": Email[],
     "phones": Phone[],
     "companies": Company[]
-  }
-
-type Company = {
-    "id": string,
-    "name": string,
-    "contactId": string
 }
 
-type Email = {
+export interface Base {
     "id": string,
-    "name": string,
-    "contactId": string
+    "value": string
 }
 
-type Phone = {
-    "id": string,
+type Company = Base & {
+    "name": string
+}
+
+type Email = Base & {
+    "name": string,
+    "type": string,
+}
+
+type Phone = Base & {
     "number": string,
-    "type": number,
-    "contactId": string
+    "type": string
+}
+
+type Social = {
+    "twitterUrl": string,
+    "facebookUrl": string,
+    "linkedInUrl": string,
+    "githubUrl": string
 }
 
 

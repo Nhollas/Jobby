@@ -74,7 +74,7 @@ export type Contact = {
   phones: Phone[]
 } & Entity;
 
-type Social = {
+export type Social = {
   twitterUrl: string;
   facebookUrl: string;
   linkedInUrl: string;

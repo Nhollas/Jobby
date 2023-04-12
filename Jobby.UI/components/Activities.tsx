@@ -77,7 +77,9 @@ export const Activities = ({ activities }: Props) => {
     }
   };
 
-  return (
+  return state.activities.length === 0 ? (
+    <h1>No Activities Found.</h1>
+  ) : (
     <section className='grid grid-cols-1 gap-4'>
       {state.activities.map((activity: Activity) => (
         <div
@@ -141,5 +143,4 @@ export const Activities = ({ activities }: Props) => {
         </div>
       ))}
     </section>
-  );
-};
+  )}

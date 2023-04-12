@@ -45,8 +45,7 @@ export const BoardNavigation = () => {
   }, [leaf]);
 
   return (
-    <div className='relative flex flex-col gap-y-2'>
-      <div className='flex flex-row flex-wrap gap-4'>
+      <div className='relative flex flex-row flex-wrap gap-4 p-4'>
         {navItems.map(({ icon, leaf, name }) => (
           <MenuItem
             selected={selected === leaf}
@@ -60,6 +59,5 @@ export const BoardNavigation = () => {
           />
         ))}
       </div>
-    </div>
   );
 };

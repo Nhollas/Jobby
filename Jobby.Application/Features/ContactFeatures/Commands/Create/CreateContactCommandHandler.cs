@@ -76,39 +76,21 @@ internal sealed class CreateContactCommandHandler : IRequestHandler<CreateContac
         return _mapper.Map<ContactDto>(createdContact);
     }
 
-    private List<Company> GetCompanies(List<CompanyDto> companies)
+    private List<Company> GetCompanies(List<string> companies)
     {
-        List<Company> companyList = new();
-
-        foreach (CompanyDto company in companies)
-        {
-            companyList.Add(new Company(_guidProvider.Create(), company.Name));
-        }
-
-        return companyList;
+        return (from string company in companies select new Company(_guidProvider.Create(), company))
+            .ToList();
     }
 
-    private List<Email> GetEmails(List<EmailDto> emails)
+    private List<Email> GetEmails(List<string> emails)
     {
-        List<Email> emailList = new();
-
-        foreach (EmailDto email in emails)
-        {
-            emailList.Add(new Email(_guidProvider.Create(), email.Name));
-        }
-
-        return emailList;
+        return (from string email in emails select new Email(_guidProvider.Create(), email))
+            .ToList();
     }
 
     private List<Phone> GetPhones(List<PhoneDto> phones)
     {
-        List<Phone> phoneList = new();
-
-        foreach (PhoneDto phone in phones)
-        {
-            phoneList.Add(new Phone(_guidProvider.Create(), phone.Number, (PhoneType)phone.Type));
-        }
-
-        return phoneList;
+        return (from PhoneDto phone in phones select new Phone(_guidProvider.Create(), phone.Number, (PhoneType)phone.Type))
+            .ToList();
     }
 }

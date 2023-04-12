@@ -209,7 +209,7 @@ export function Kanban({ lists, boardId, boardsDictionary, loading }: Props) {
   }
 
   return (
-    <div className='relative h-full overflow-x-auto border border-gray-300 bg-[#f5f5f4]'>
+    <div className='relative h-full flex flex-row w-full overflow-x-scroll border border-l-0 border-gray-300 bg-[#f5f5f4] divide-x'>
       <DndContext
         sensors={sensors}
         collisionDetection={collisionDetectionStrategy}
@@ -460,7 +460,6 @@ export function Kanban({ lists, boardId, boardsDictionary, loading }: Props) {
           setActiveId(null);
         }}
       >
-        <div className='flex h-full divide-x divide-x-reverse'>
           <SortableContext
             items={[...containerKeys, PLACEHOLDER_ID]}
             strategy={horizontalListSortingStrategy}
@@ -502,7 +501,6 @@ export function Kanban({ lists, boardId, boardsDictionary, loading }: Props) {
               );
             })}
           </SortableContext>
-        </div>
         {portalElement &&
           createPortal(
             <DragOverlay dropAnimation={dropAnimation}>

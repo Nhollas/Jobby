@@ -20,7 +20,7 @@ const ColourPicker = (props: Props) => {
   const { onChange } = props;
   const [selectedColour, setSelectedColour] = useState(defaultColours[0]);
   const [showPicker, setShowPicker] = useState(false);
-  const pickerRef = useRef(null);
+  const pickerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
