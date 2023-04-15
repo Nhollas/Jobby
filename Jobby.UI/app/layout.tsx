@@ -1,5 +1,3 @@
-"use client";
-
 import "./globals.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import { Poppins } from "@next/font/google";
@@ -11,10 +9,13 @@ const poppins = Poppins({
 });
 
 export default function Layout({ children }: { children: React.ReactNode }) {
+  
   return (
     <html lang="en" className={poppins.className}>
       <head />
-      <body>{children}</body>
+      <body>
+        {children}
+      </body>
     </html>
   );
 }

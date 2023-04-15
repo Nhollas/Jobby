@@ -4,10 +4,9 @@ import { serverClient } from "clients";
 import { Board } from "types";
 
 export default async function Layout({
-  children,
+  children
 }: {
-  children: React.ReactNode;
-}) {
+  children: React.ReactNode;}) {
   const boards = await serverClient.get<Board[]>("/boards");
 
   return (

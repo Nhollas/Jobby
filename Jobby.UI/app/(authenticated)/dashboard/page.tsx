@@ -15,7 +15,7 @@ export default async function Page() {
 
   return (
     <PageContainer small title={"Dashboard"}>
-      <Link href="/dashboard/create">Go To Modal...</Link>
+      <Link href="/dashboard/cart/create">Go To Modal...</Link>
       <Boards boards={boards} />
     </PageContainer>
   );

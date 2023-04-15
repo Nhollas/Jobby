@@ -8,14 +8,14 @@ import { useState } from "react";
 import { Board } from "types";
 import { ModalProvider } from "../contexts/ModalContext";
 
-export default function Providers({
+const Providers = ({
   children,
   boards: initialBoards,
 }: {
   children: React.ReactNode;
-  boards: Board[];
-}) {
-  const [boards, setBoards] = useState<Board[]>(initialBoards);
+  boards?: Board[];
+}) => {
+  const [boards, setBoards] = useState<Board[]>(initialBoards || []);
   const [isOpen, toggleOpen] = useCycle(false, true);
 
   return (
@@ -28,3 +28,5 @@ export default function Providers({
     </SessionProvider>
   );
 }
+
+export default Providers;
