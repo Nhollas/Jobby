@@ -79,7 +79,7 @@ internal sealed class UpdateContactCommandHandler : IRequestHandler<UpdateContac
         if (request.Emails.Count > 0)
         {
             var updatedEmails = request.Emails
-                .Select(x => new Email(Guid.NewGuid(), x.Name))
+                .Select(x => new Email(Guid.NewGuid(), x.Name, (EmailType)x.Type))
                 .ToList();
 
             contactToUpdate.UpdateEmails(updatedEmails);

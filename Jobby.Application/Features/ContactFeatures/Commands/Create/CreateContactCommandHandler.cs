@@ -61,7 +61,7 @@ internal sealed class CreateContactCommandHandler : IRequestHandler<CreateContac
             GetEmails(request.Emails),
             GetPhones(request.Phones));
 
-        if (request.JobIds != null)  
+        if (request.JobIds.Count > 0)  
         {
             List<Job> jobsToLink = board.JobLists
                 .SelectMany(x => x.Jobs)
@@ -82,15 +82,15 @@ internal sealed class CreateContactCommandHandler : IRequestHandler<CreateContac
             .ToList();
     }
 
-    private List<Email> GetEmails(List<string> emails)
+    private List<Email> GetEmails(List<EmailRequest> emails)
     {
-        return (from string email in emails select new Email(_guidProvider.Create(), email))
+        return (from EmailRequest email in emails select new Email(_guidProvider.Create(), email.Name, (EmailType)email.Type))
             .ToList();
     }
 
-    private List<Phone> GetPhones(List<PhoneDto> phones)
+    private List<Phone> GetPhones(List<PhoneRequest> phones)
     {
-        return (from PhoneDto phone in phones select new Phone(_guidProvider.Create(), phone.Number, (PhoneType)phone.Type))
+        return (from PhoneRequest phone in phones select new Phone(_guidProvider.Create(), phone.Number, (PhoneType)phone.Type))
             .ToList();
     }
 }

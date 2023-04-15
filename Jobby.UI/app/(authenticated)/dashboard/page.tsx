@@ -1,7 +1,8 @@
-import { PageContainer } from "../../../components/Common";
-import { Board } from "../../../types";
-import { Boards } from "../../../components/Board/Boards";
+import { PageContainer } from "components/Common";
+import { Board } from "types";
+import { Boards } from "components/Board/Boards";
 import { serverClient } from "clients";
+import Link from "next/link";
 
 async function getBoards() {
   const boards = await serverClient.get<Board[]>("/boards");
@@ -14,7 +15,9 @@ export default async function Page() {
 
   return (
     <PageContainer small title={"Dashboard"}>
+      <Link href="/dashboard/create">Go To Modal...</Link>
       <Boards boards={boards} />
     </PageContainer>
   );
 }
+

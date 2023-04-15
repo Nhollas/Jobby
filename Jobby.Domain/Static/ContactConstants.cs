@@ -7,5 +7,11 @@ public static class ContactConstants
         Work = 1,
         Personal = 2
     }
+    
+    public enum EmailType
+    {
+        Work = 1,
+        Personal = 2
+    }
 
 }

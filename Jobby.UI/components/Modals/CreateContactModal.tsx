@@ -8,7 +8,6 @@ import Input from "components/Common/Input";
 import MultiInput from "components/Common/MultiInput";
 import { client } from "clients";
 import { Contact } from "types";
-import { CreateContactRequest } from "types/requests/CreateContactRequest";
 
 interface Props {
   boardId: string;
@@ -21,7 +20,7 @@ export const CreateContactModal = ({ boardId, setContacts }: Props) => {
   const [state, dispatch] = useReducer(reducer, {
     body: {
       boardId: boardId,
-      jobIds: ["2108a37c-e2d8-ccbe-c5bb-3a0a7e401001"],
+      jobIds: ["96bb40dc-b9a8-c790-385f-3a0a8ba8a9be"],
       firstName: "",
       lastName: "",
       jobTitle: "",
@@ -65,9 +64,17 @@ export const CreateContactModal = ({ boardId, setContacts }: Props) => {
         return company.value;
       }),
       emails: body.emails.map((email) => {
-        return email.value;
+        return {
+          name: email.value,
+          type: email.type
+        }
       }),
-      phones: [],
+      phones: body.phones.map((phone) => {
+        return {
+          number: phone.value,
+          type: phone.type
+        }
+      }),
     };
 
     const createdContact = await client.post<any, Contact>(

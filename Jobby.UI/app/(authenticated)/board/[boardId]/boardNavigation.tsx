@@ -1,7 +1,9 @@
 "use client";
 
+import { MenuToggle } from "app/(authenticated)/MenuToggle";
+import NavigationContext from "contexts/NavigationContext";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { MenuItem } from "../../../../components/MenuItem";
 
 type NavItem = {
@@ -39,13 +41,17 @@ export const BoardNavigation = () => {
   }
 
   const [selected, setSelected] = useState(leaf);
+  const { toggleOpen } = useContext(NavigationContext);
 
   useEffect(() => {
     setSelected(leaf);
   }, [leaf]);
 
   return (
-      <div className='relative flex flex-row flex-wrap gap-4 p-4'>
+      <div className='relative flex flex-row flex-wrap gap-4 p-4 lg:px-8 w-full'>
+        <button className="flex items-center gap-x-2 border border-gray-300 bg-white px-4 py-1 text-xl z-20 md:hidden" onClick={() => toggleOpen()}>
+        <i className="bi bi-list"></i>
+        </button>
         {navItems.map(({ icon, leaf, name }) => (
           <MenuItem
             selected={selected === leaf}

@@ -13,6 +13,8 @@ interface State {
 
 const reducer: Reducer<State, Action> = (state, action) => {
   const { name, value } = action;
+  console.log(value);
+
   switch (action.type) {
     case "HANDLE_INPUT_CHANGE":
       if (!name) return state;
@@ -68,6 +70,8 @@ const reducer: Reducer<State, Action> = (state, action) => {
               return {
                 ...email,
                 value: value.value,
+                name: value.value,
+                type: value.type,
               };
             }
             return email;
@@ -100,6 +104,8 @@ const reducer: Reducer<State, Action> = (state, action) => {
               return {
                 ...phone,
                 value: value.value,
+                number: value.value,
+                type: value.type,
               };
             }
             return phone;

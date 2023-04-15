@@ -36,14 +36,14 @@ const MultiInput = (props: Props) => {
             {chooseType && (
               <select
                 className="w-max bg-gray-50 px-2 text-xs border border-gray-300 rounded-lg"
-                onChange={(e) =>
-                  onChange({ ...item, type: e.target.value as Base["type"] })
+                onChange={(e) => {
+                  console.log(e.target.value);
+                  return onChange({ ...item, type: +e.target.value })
                 }
-                value={item.type}
-                name={name}
+                }
               >
-                <option value="work">Work</option>
-                <option value="home">Home</option>
+                <option value={0}>Work</option>
+                <option value={1}>Personal</option>
               </select>
             )}
             <button
@@ -56,8 +56,8 @@ const MultiInput = (props: Props) => {
           </div>
         ))}
         <button
-            type="button"
-          onClick={() => addItem({ value: "", id: uuid()})}
+          type="button"
+          onClick={() => addItem({ value: "", id: uuid(), type: chooseType ? 0 : undefined })}
           className={clsx(list.length === 0 ? "w-full py-2" : "w-max", "px-6 rounded-md bg-blue-100 p-1 text-xs")}
         >
           <span>Add {placeholder}</span>

@@ -13,7 +13,8 @@ export type CreateContactRequest = {
 
 export interface Base {
     "id": string,
-    "value": string
+    "value": string,
+    "type"?: number
 }
 
 type Company = Base & {
@@ -22,12 +23,10 @@ type Company = Base & {
 
 type Email = Base & {
     "name": string,
-    "type": string,
 }
 
 type Phone = Base & {
     "number": string,
-    "type": string
 }
 
 type Social = {

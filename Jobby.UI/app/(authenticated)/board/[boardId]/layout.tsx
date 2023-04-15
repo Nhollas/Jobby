@@ -1,4 +1,3 @@
-import { BoardsBar } from "app/(authenticated)/BoardsBar";
 import { PageContainer } from "../../../../components/Common";
 import { BoardNavigation } from "./boardNavigation";
 

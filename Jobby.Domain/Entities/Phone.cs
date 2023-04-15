@@ -6,19 +6,6 @@ public class Phone
     public Phone(
     Guid id,
     string number,
-    PhoneType type,
-    Contact contact)
-    {
-        Id = id;
-        Number = number;
-        Type = type;
-        Contact = contact;
-        ContactId = contact.Id;
-    }
-
-        public Phone(
-    Guid id,
-    string number,
     PhoneType type)
     {
         Id = id;
@@ -30,6 +17,7 @@ public class Phone
     public string Number { get; set; }
     public PhoneType Type { get; set; }
 
+    
     // Database Relationship Properties
     public Contact Contact { get; set; }
     public Guid ContactId { get; set; }

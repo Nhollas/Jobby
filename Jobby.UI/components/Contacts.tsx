@@ -14,20 +14,29 @@ type Props = {
 export function Contacts({ contacts, boardId }: Props) {
   const [stateContacts, setStateContacts] = useState<Contact[]>(contacts);
 
+  console.log(stateContacts);
+
   const { handleModal } = useContext(ModalContext);
 
   return (
-    <div className="flex flex-col gap-y-8">
+    <div className="flex flex-col gap-y-4 border-t border-gray-300 p-4 lg:px-8">
       <ActionButton
         variant="primary"
         text="Create Contact"
         rounded
-        onClick={() => handleModal(<CreateContactModal boardId={boardId} setContacts={setStateContacts} />)}
+        onClick={() =>
+          handleModal(
+            <CreateContactModal
+              boardId={boardId}
+              setContacts={setStateContacts}
+            />
+          )
+        }
       />
       {stateContacts.length === 0 ? (
         <h1>No Contacts Found.</h1>
       ) : (
-        <section className="grid grid-cols-3 gap-4">
+        <section className="grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-8">
           {stateContacts.map((contact) => {
             const socials = [];
 
@@ -38,23 +47,33 @@ export function Contacts({ contacts, boardId }: Props) {
               githubUrl: <i className="bi bi-github text-gray-800"></i>,
             };
 
-            for (const property in contact.socials) {
-              if (contact.socials[property as keyof Social] === "") continue;
+            const disabledSocialDict = {
+              twitterUrl: <i className="bi bi-twitter text-gray-300"></i>,
+              facebookUrl: <i className="bi bi-facebook text-gray-300"></i>,
+              linkedInUrl: <i className="bi bi-linkedin text-gray-300"></i>,
+              githubUrl: <i className="bi bi-github text-gray-300"></i>,
+            };
 
-              socials.push({ name: property, url: contact.socials[property as keyof Social] });
+            for (const property in contact.socials) {
+              socials.push({
+                name: property,
+                url: contact.socials[property as keyof Social],
+              });
             }
 
             return (
               <div
-                className="w-full max-w-md border border-gray-300 bg-gray-50"
+                className="w-full max-w-xs border border-gray-300 bg-gray-50"
                 key={contact.id}
               >
                 <div className="p-4">
                   <p className="text-lg font-medium text-gray-900">
                     {contact.firstName} {contact.lastName}
                   </p>
-                  <p className="text-base mt-1">{contact.jobTitle}</p>
-                  <p className="text-sm font-light">
+                  <p className="mt-1.5 mb-0.5 text-gray-800">
+                    {contact.jobTitle}
+                  </p>
+                  <p className="text-sm text-gray-700">
                     {contact.companies
                       .map((company) => {
                         return company.name;
@@ -65,30 +84,37 @@ export function Contacts({ contacts, boardId }: Props) {
                 <div className="flex flex-col gap-y-2 border-y border-gray-300 bg-white p-4">
                   <div className="flex flex-row items-center gap-x-2">
                     <i className="bi bi-geo-alt text-gray-900"></i>
-                    <p className="text-sm text-gray-600">{contact.location ? contact.location : "Location"}</p>
+                    <p className="text-sm text-gray-700">
+                      {contact.location ? contact.location : "Location"}
+                    </p>
                   </div>
                   <div className="flex flex-row items-center gap-x-2">
                     <i className="bi bi-envelope text-gray-900"></i>
-                    <p className="text-sm text-gray-600">
-                      {contact.emails.length === 0 ? "Email" : contact.emails
-                        .map((email) => {
-                          return email.name;
-                        })
-                        .join(", ")}
+                    <p className="text-sm text-gray-700 truncate">
+                      {contact.emails.length === 0
+                        ? "Email"
+                        : contact.emails
+                            .slice(0, 2)
+                            .map((email) => {
+                              return email.name;
+                            })
+                            .join(", ")}
                     </p>
                   </div>
                   <div className="flex flex-row items-center gap-x-2">
                     <i className="bi bi-telephone text-gray-900"></i>
-                    <p className="text-sm text-gray-600">
-                      {contact.phones.length === 0 ? "Phone" : contact.phones
-                        .map((phone) => {
-                          return phone.number;
-                        })
-                        .join(", ")}
+                    <p className="text-sm text-gray-700 truncate">
+                      {contact.phones.length === 0
+                        ? "Phone"
+                        : contact.phones
+                            .map((phone) => {
+                              return phone.number;
+                            })
+                            .join(", ")}
                     </p>
                   </div>
                 </div>
-                <div className="flex flex-row gap-x-4 p-4 text-xl">
+                <div className="flex flex-row items-center gap-x-4 p-4 text-xl">
                   {socials.map((social) => {
                     return (
                       <a
@@ -96,11 +122,24 @@ export function Contacts({ contacts, boardId }: Props) {
                         href={social.url}
                         target="_blank"
                         rel="noreferrer"
+                        className={
+                          social.url === "" ? "pointer-events-none" : ""
+                        }
                       >
-                        {socialDict[social.name as keyof typeof socialDict]}
+                        {social.url === ""
+                          ? disabledSocialDict[
+                              social.name as keyof typeof disabledSocialDict
+                            ]
+                          : socialDict[social.name as keyof typeof socialDict]}
                       </a>
                     );
                   })}
+                  <ActionButton
+                    text="View"
+                    variant="secondary"
+                    rounded
+                    className="ml-auto text-base"
+                  />
                 </div>
               </div>
             );

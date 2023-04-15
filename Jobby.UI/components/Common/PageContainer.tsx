@@ -30,7 +30,7 @@ export const PageContainer = (props: Props) => {
         )}
       >
         <div className='relative flex w-full flex-col'>
-          <div className='flex h-full flex-col'>
+          <div className='flex h-full flex-col w-full'>
             {title && (
               <div className='flex flex-row'>
                 <h1 className='text-2xl font-medium'>{title}</h1>

@@ -16,7 +16,7 @@ export const MenuItem = ({
     <Link
       href={href}
       className={
-        "flex flex-row items-center gap-x-2 border border-gray-300 bg-white px-4 py-2 text-base"
+        "flex flex-row items-center gap-x-2 border border-gray-300 bg-white px-3 py-1 text-sm"
       }
     >
       {icon}
