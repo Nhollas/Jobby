@@ -117,7 +117,7 @@ namespace Jobby.Persistence.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("BoardId")
+                    b.Property<Guid?>("BoardId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedDate")
@@ -370,8 +370,7 @@ namespace Jobby.Persistence.Data.Migrations
                     b.HasOne("Jobby.Domain.Entities.Board", "Board")
                         .WithMany("Contacts")
                         .HasForeignKey("BoardId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.OwnsOne("Jobby.Domain.Entities.Social", "Socials", b1 =>
                         {

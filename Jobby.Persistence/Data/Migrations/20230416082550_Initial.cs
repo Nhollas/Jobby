@@ -51,7 +51,7 @@ namespace Jobby.Persistence.Data.Migrations
                     Socials_FacebookUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Socials_LinkedInUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Socials_GithubUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    BoardId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    BoardId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LastUpdated = table.Column<DateTime>(type: "datetime2", nullable: false),
                     OwnerId = table.Column<string>(type: "nvarchar(max)", nullable: true)
@@ -114,6 +114,7 @@ namespace Jobby.Persistence.Data.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Type = table.Column<int>(type: "int", nullable: false),
                     ContactId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>

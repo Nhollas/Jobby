@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Jobby.Persistence.Data.Migrations
 {
     [DbContext(typeof(JobbyDbContext))]
-    [Migration("20230414183549_ContactEntityChanges")]
-    partial class ContactEntityChanges
+    [Migration("20230416082550_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -119,7 +119,7 @@ namespace Jobby.Persistence.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("BoardId")
+                    b.Property<Guid?>("BoardId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedDate")
@@ -372,8 +372,7 @@ namespace Jobby.Persistence.Data.Migrations
                     b.HasOne("Jobby.Domain.Entities.Board", "Board")
                         .WithMany("Contacts")
                         .HasForeignKey("BoardId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.OwnsOne("Jobby.Domain.Entities.Social", "Socials", b1 =>
                         {
