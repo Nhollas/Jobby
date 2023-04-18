@@ -2,18 +2,14 @@
 using Jobby.Application.Contracts.Activity;
 using Jobby.Application.Contracts.Board;
 using Jobby.Application.Contracts.Contact;
-using Jobby.Application.Contracts.Job;
 using Jobby.Application.Features.ActivityFeatures.Queries.ListBoardActivities;
 using Jobby.Application.Features.BoardFeatures.Commands.Create;
 using Jobby.Application.Features.BoardFeatures.Commands.Delete;
 using Jobby.Application.Features.BoardFeatures.Commands.Update.ArrangeJobLists;
 using Jobby.Application.Features.BoardFeatures.Commands.Update.UpdateDetails;
-using Jobby.Application.Features.BoardFeatures.Queries.GetBoardsDictionary;
 using Jobby.Application.Features.BoardFeatures.Queries.GetById;
 using Jobby.Application.Features.BoardFeatures.Queries.GetList;
-using Jobby.Application.Features.ContactFeatures.Queries.GetById;
 using Jobby.Application.Features.ContactFeatures.Queries.GetList;
-using Jobby.Application.Features.JobFeatures.Queries.GetById;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -57,14 +53,6 @@ public class BoardController : ApiController
     public async Task<ActionResult<List<ListBoardsResponse>>> ListBoards()
     {
         var dtos = await Sender.Send(new GetBoardListQuery());
-        return Ok(dtos);
-    }
-    
-    [Route("~/api/BoardsDictionary", Name = "BoardsDictionary")]
-    [HttpGet]
-    public async Task<ActionResult<List<BoardDictionaryResponse>>> GetBoardDictionary()
-    {
-        var dtos = await Sender.Send(new GetBoardsDictionaryQuery());
         return Ok(dtos);
     }
 

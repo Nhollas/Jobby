@@ -1,13 +1,9 @@
 ﻿using System.Net.Http.Headers;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using Jobby.Application.Abstractions.Specification;
 using Jobby.Application.Contracts.Auth;
-using Jobby.Application.Exceptions.Base;
 using Jobby.Application.Interfaces.Services;
 using Jobby.Domain.Entities;
-using Jobby.Domain.Primitives;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 
 namespace Jobby.Application.Services;

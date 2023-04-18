@@ -37,11 +37,18 @@ internal sealed class CreateContactCommandHandler : IRequestHandler<CreateContac
 
     public async Task<ContactDto> Handle(CreateContactCommand request, CancellationToken cancellationToken)
     {
-        Board board = await ResourceProvider<Board>
-            .GetBySpec(_boardRepository.FirstOrDefaultAsync)
-            .ApplySpecification(new GetBoardWithJobsSpecification(request.BoardId))
-            .Check(_userId, cancellationToken);
+        Board board = null; // initialize board to null
 
+        if (request.BoardId.HasValue)
+        {
+            Guid boardId = request.BoardId.Value;
+            
+            board = await ResourceProvider<Board>
+                .GetBySpec(_boardRepository.FirstOrDefaultAsync)
+                .ApplySpecification(new GetBoardWithJobsSpecification(boardId))
+                .Check(_userId, cancellationToken);
+        }
+        
         Contact createdContact = Contact.Create(
             _guidProvider.Create(),
             _dateTimeProvider.UtcNow,
@@ -55,13 +62,13 @@ internal sealed class CreateContactCommandHandler : IRequestHandler<CreateContac
                 request.Socials.FacebookUrl,
                 request.Socials.LinkedInUrl,
                 request.Socials.GithubUrl
-                ),
-            board,
-            GetCompanies(request.Companies),
-            GetEmails(request.Emails),
-            GetPhones(request.Phones));
+            ),
+            board, // pass in the board if it's not null
+            FormatCompanies(request.Companies),
+            FormatEmails(request.Emails),
+            FormatPhones(request.Phones));
 
-        if (request.JobIds.Count > 0)  
+        if (board != null && request.JobIds.Count > 0) // only link jobs to the contact if a board was retrieved
         {
             List<Job> jobsToLink = board.JobLists
                 .SelectMany(x => x.Jobs)
@@ -76,19 +83,20 @@ internal sealed class CreateContactCommandHandler : IRequestHandler<CreateContac
         return _mapper.Map<ContactDto>(createdContact);
     }
 
-    private List<Company> GetCompanies(List<string> companies)
+
+    private List<Company> FormatCompanies(List<string> companies)
     {
         return (from string company in companies select new Company(_guidProvider.Create(), company))
             .ToList();
     }
 
-    private List<Email> GetEmails(List<EmailRequest> emails)
+    private List<Email> FormatEmails(List<EmailRequest> emails)
     {
         return (from EmailRequest email in emails select new Email(_guidProvider.Create(), email.Name, (EmailType)email.Type))
             .ToList();
     }
 
-    private List<Phone> GetPhones(List<PhoneRequest> phones)
+    private List<Phone> FormatPhones(List<PhoneRequest> phones)
     {
         return (from PhoneRequest phone in phones select new Phone(_guidProvider.Create(), phone.Number, (PhoneType)phone.Type))
             .ToList();

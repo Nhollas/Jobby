@@ -45,13 +45,12 @@ const dropAnimation: DropAnimation = {
 interface Props {
   lists: JobListPreview[];
   boardId: string;
-  boardsDictionary: BoardDictionaryResponse[];
   loading?: boolean;
 }
 
 const PLACEHOLDER_ID = "placeholder";
 
-export function Kanban({ lists, boardId, boardsDictionary, loading }: Props) {
+export function Kanban({ lists, boardId, loading }: Props) {
   const [containerDict, setContainerDict] = useState<
     Record<string, JobListPreview>
   >(
@@ -189,7 +188,6 @@ export function Kanban({ lists, boardId, boardsDictionary, loading }: Props) {
         shadow
         boardId={boardId}
         setContainerDict={setContainerDict}
-        boardsDictionary={boardsDictionary}
       >
         {containerDict[containerId].jobs.map((job) => (
           <Item key={job.id} job={job} />
@@ -209,7 +207,7 @@ export function Kanban({ lists, boardId, boardsDictionary, loading }: Props) {
   }
 
   return (
-    <div className='relative h-full flex flex-row w-full overflow-x-scroll border border-l-0 border-gray-300 bg-[#f5f5f4] divide-x'>
+    <div className="relative flex h-full w-full flex-row divide-x overflow-x-scroll border border-l-0 border-gray-300 bg-[#f5f5f4]">
       <DndContext
         sensors={sensors}
         collisionDetection={collisionDetectionStrategy}
@@ -460,47 +458,46 @@ export function Kanban({ lists, boardId, boardsDictionary, loading }: Props) {
           setActiveId(null);
         }}
       >
-          <SortableContext
-            items={[...containerKeys, PLACEHOLDER_ID]}
-            strategy={horizontalListSortingStrategy}
-          >
-            {containerKeys.map((containerId) => {
-              return (
-                <DroppableContainer
-                  key={containerId}
-                  id={containerId}
-                  list={containerDict[containerId]}
+        <SortableContext
+          items={[...containerKeys, PLACEHOLDER_ID]}
+          strategy={horizontalListSortingStrategy}
+        >
+          {containerKeys.map((containerId) => {
+            return (
+              <DroppableContainer
+                key={containerId}
+                id={containerId}
+                list={containerDict[containerId]}
+                items={containerDict[containerId].jobs}
+                boardId={boardId}
+                setContainerDict={setContainerDict}
+                onRemove={
+                  containerDict[containerId].jobs.length === 0
+                    ? () => handleRemove(containerId)
+                    : undefined
+                }
+              >
+                <SortableContext
                   items={containerDict[containerId].jobs}
-                  boardId={boardId}
-                  boardsDictionary={boardsDictionary}
-                  setContainerDict={setContainerDict}
-                  onRemove={
-                    containerDict[containerId].jobs.length === 0
-                      ? () => handleRemove(containerId)
-                      : undefined
-                  }
+                  strategy={verticalListSortingStrategy}
                 >
-                  <SortableContext
-                    items={containerDict[containerId].jobs}
-                    strategy={verticalListSortingStrategy}
-                  >
-                    {containerDict[containerId].jobs.map((job, index) => {
-                      return (
-                        <SortableItem
-                          key={job.id}
-                          id={job.id}
-                          index={index}
-                          disabled={isSortingContainer}
-                          job={job}
-                          loading={loading}
-                        />
-                      );
-                    })}
-                  </SortableContext>
-                </DroppableContainer>
-              );
-            })}
-          </SortableContext>
+                  {containerDict[containerId].jobs.map((job, index) => {
+                    return (
+                      <SortableItem
+                        key={job.id}
+                        id={job.id}
+                        index={index}
+                        disabled={isSortingContainer}
+                        job={job}
+                        loading={loading}
+                      />
+                    );
+                  })}
+                </SortableContext>
+              </DroppableContainer>
+            );
+          })}
+        </SortableContext>
         {portalElement &&
           createPortal(
             <DragOverlay dropAnimation={dropAnimation}>

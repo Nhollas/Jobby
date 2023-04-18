@@ -1,5 +1,5 @@
 export type CreateContactRequest = {
-    "boardId": string,
+    "boardId": string | null,
     "jobIds": string[],
     "firstName": string,
     "lastName": string,

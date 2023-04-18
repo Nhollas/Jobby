@@ -1,43 +1,28 @@
 "use client";
 
-import { ModalContext } from "contexts/ModalContext";
-import { useContext, useState } from "react";
+import Link from "next/link";
 import { Contact, Social } from "types";
 import { ActionButton } from "./Common";
-import { CreateContactModal } from "./Modals/CreateContactModal";
 
 type Props = {
   contacts: Contact[];
-  boardId: string;
+  boardId?: string;
 };
 
 export function Contacts({ contacts, boardId }: Props) {
-  const [stateContacts, setStateContacts] = useState<Contact[]>(contacts);
-
-  console.log(stateContacts);
-
-  const { handleModal } = useContext(ModalContext);
-
   return (
     <div className="flex flex-col gap-y-4 border-t border-gray-300 p-4 lg:px-8">
-      <ActionButton
-        variant="primary"
-        text="Create Contact"
-        rounded
-        onClick={() =>
-          handleModal(
-            <CreateContactModal
-              boardId={boardId}
-              setContacts={setStateContacts}
-            />
-          )
-        }
-      />
-      {stateContacts.length === 0 ? (
+      <Link
+        href={!boardId ? "/create-contact" : `/create-contact?boardId=${boardId}`}
+        className="w-max rounded-full border bg-main-blue py-2 px-8 text-base font-medium text-white hover:border-main-blue hover:bg-gray-50 hover:text-black"
+      >
+        Create Contact
+      </Link>
+      {contacts.length === 0 ? (
         <h1>No Contacts Found.</h1>
       ) : (
         <section className="grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-8">
-          {stateContacts.map((contact) => {
+          {contacts.map((contact) => {
             const socials = [];
 
             const socialDict = {
@@ -90,7 +75,7 @@ export function Contacts({ contacts, boardId }: Props) {
                   </div>
                   <div className="flex flex-row items-center gap-x-2">
                     <i className="bi bi-envelope text-gray-900"></i>
-                    <p className="text-sm text-gray-700 truncate">
+                    <p className="truncate text-sm text-gray-700">
                       {contact.emails.length === 0
                         ? "Email"
                         : contact.emails
@@ -103,7 +88,7 @@ export function Contacts({ contacts, boardId }: Props) {
                   </div>
                   <div className="flex flex-row items-center gap-x-2">
                     <i className="bi bi-telephone text-gray-900"></i>
-                    <p className="text-sm text-gray-700 truncate">
+                    <p className="truncate text-sm text-gray-700">
                       {contact.phones.length === 0
                         ? "Phone"
                         : contact.phones

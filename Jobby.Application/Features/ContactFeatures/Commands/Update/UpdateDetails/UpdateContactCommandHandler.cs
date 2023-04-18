@@ -47,11 +47,13 @@ internal sealed class UpdateContactCommandHandler : IRequestHandler<UpdateContac
                 request.Socials.LinkedInUrl,
                 request.Socials.GithubUrl));
 
-        if (request.JobIds.Count > 0)
+        if (request.JobIds.Count > 0 && contactToUpdate.BoardId.HasValue)
         {
+            Guid boardId = contactToUpdate.BoardId.Value;
+            
             Board board = await ResourceProvider<Board>
                 .GetBySpec(_boardRepository.FirstOrDefaultAsync)
-                .ApplySpecification(new GetBoardWithJobsSpecification(contactToUpdate.BoardId))
+                .ApplySpecification(new GetBoardWithJobsSpecification(boardId))
                 .Check(_userId, cancellationToken);
 
             if (!board.BoardOwnsJobs(request.JobIds))

@@ -1,5 +1,4 @@
 ﻿using Jobby.Application.Abstractions.Specification;
-using Jobby.Application.Exceptions.Base;
 using Jobby.Application.Interfaces.Services;
 using Jobby.Application.Services;
 using Jobby.Domain.Entities;

@@ -26,4 +26,10 @@
     <ProjectReference Include="..\Jobby.Domain\Jobby.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="Dtos\PreviewContactDto.cs">
+      <DependentUpon>PreviewBoardDto.cs</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
 </Project>

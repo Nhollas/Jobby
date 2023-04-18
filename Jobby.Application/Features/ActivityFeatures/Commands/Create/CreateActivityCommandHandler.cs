@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using FluentValidation;
 using Jobby.Application.Abstractions.Specification;
 using Jobby.Application.Dtos;
 using Jobby.Application.Exceptions.Base;

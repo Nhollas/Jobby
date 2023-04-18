@@ -54,7 +54,7 @@ public class Contact : Entity
     // Database Relationship Properties
     public List<JobContact> JobContacts { get; set; }
     public Board Board { get; private set; }
-    public Guid BoardId { get; private set; }
+    public Guid? BoardId { get; private set; }
 
 
     public static Contact Create(

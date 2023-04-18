@@ -1,6 +1,6 @@
+using Jobby.Application.Contracts.Contact;
+using MediatR;
+
 namespace Jobby.Application.Features.ContactFeatures.Queries.ListContacts;
 
-public class GetContactsQuery
-{
-    
-}
+public sealed record GetContactsQuery() : IRequest<List<GetContactResponse>>;

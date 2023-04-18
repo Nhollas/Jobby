@@ -1,6 +1,4 @@
-﻿using Jobby.Domain.Primitives;
-
-namespace Jobby.Application.Interfaces.Services;
+﻿namespace Jobby.Application.Interfaces.Services;
 
 public interface IJwtTokenGenerator
 {

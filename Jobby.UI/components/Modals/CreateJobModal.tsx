@@ -8,7 +8,6 @@ import {
   useState,
 } from "react";
 import { client } from "clients";
-import { ModalContext } from "contexts/ModalContext";
 import reducer from "reducers/CreateJobReducer";
 import { Job, JobList, JobListPreview } from "../../types";
 import { BoardDictionaryResponse } from "types/responses/Board";
@@ -30,8 +29,6 @@ export const CreateJobModal = ({
   setContainerDict,
   boardsDictionary,
 }: Props) => {
-  const { handleModal, closeModal } = useContext(ModalContext);
-
   const [state, dispatch] = useReducer(reducer, {
     job: {
       title: "",
@@ -63,8 +60,6 @@ export const CreateJobModal = ({
         };
       });
     }
-
-    closeModal();
   };
 
   const handleChange = (e: any) => {
@@ -182,7 +177,7 @@ export const CreateJobModal = ({
         <ActionButton
           variant='secondary'
           text='Cancel'
-          onClick={() => closeModal()}
+          onClick={() => console.log("cancel")}
         />
         <ActionButton variant='primary' text='Create' type='submit' extended />
       </div>

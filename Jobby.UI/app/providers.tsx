@@ -6,7 +6,6 @@ import { useCycle } from "framer-motion";
 import { SessionProvider } from "next-auth/react";
 import { useState } from "react";
 import { Board } from "types";
-import { ModalProvider } from "../contexts/ModalContext";
 
 const Providers = ({
   children,
@@ -22,7 +21,7 @@ const Providers = ({
     <SessionProvider>
       <NavigationContext.Provider value={{ isOpen, toggleOpen }}>
         <BoardsAndJobsContext.Provider value={{ boards, setBoards }}>
-          <ModalProvider>{children}</ModalProvider>
+          {children}
         </BoardsAndJobsContext.Provider>
       </NavigationContext.Provider>
     </SessionProvider>

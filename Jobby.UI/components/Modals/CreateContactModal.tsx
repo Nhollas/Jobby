@@ -1,26 +1,25 @@
 "use client";
 
-import { Dispatch, SetStateAction, useContext, useReducer } from "react";
-import { ModalContext } from "contexts/ModalContext";
+import { useReducer } from "react";
 import reducer from "reducers/CreateContactReducer";
 import { ActionButton } from "../Common";
 import Input from "components/Common/Input";
 import MultiInput from "components/Common/MultiInput";
 import { client } from "clients";
 import { Contact } from "types";
+import { useSearchParams } from 'next/navigation';
 
-interface Props {
-  boardId: string;
-  setContacts: Dispatch<SetStateAction<Contact[]>>;
-}
-
-export const CreateContactModal = ({ boardId, setContacts }: Props) => {
-  const { handleModal, closeModal } = useContext(ModalContext);
+export const CreateContactModal = () => {
+      // instead of param we can use query
+  const searchParams = useSearchParams();
+  
+  // @ts-ignore: SearchParams will never be null here.
+  const boardId = searchParams.get('boardId');
 
   const [state, dispatch] = useReducer(reducer, {
     body: {
-      boardId: boardId,
-      jobIds: ["96bb40dc-b9a8-c790-385f-3a0a8ba8a9be"],
+      boardId: boardId || null,
+      jobIds: [],
       firstName: "",
       lastName: "",
       jobTitle: "",
@@ -82,11 +81,9 @@ export const CreateContactModal = ({ boardId, setContacts }: Props) => {
       formattedBody
     );
 
-    setContacts((contacts) => {
-      return [...contacts, createdContact];
-    });
-
-    closeModal();
+    // setContacts((contacts) => {
+    //   return [...contacts, createdContact];
+    // });
   };
 
   return (
@@ -242,7 +239,7 @@ export const CreateContactModal = ({ boardId, setContacts }: Props) => {
             <ActionButton
               variant="secondary"
               text="Cancel"
-              onClick={() => closeModal()}
+              onClick={() => console.log("cancel")}
             />
             <ActionButton
               variant="primary"

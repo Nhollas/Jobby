@@ -5,7 +5,7 @@ namespace Jobby.Application.Features.ContactFeatures.Commands.Create;
 
 public sealed record CreateContactCommand : IRequest<ContactDto>
 {
-    public Guid BoardId { get; set; }
+    public Guid? BoardId { get; set; }
     public List<Guid> JobIds { get; set; } = new();
     public string FirstName { get; set; }
     public string LastName { get; set; }

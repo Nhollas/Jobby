@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Jobby.Application.Abstractions.Specification;
-using Jobby.Application.Contracts.Job;
 using Jobby.Application.Dtos;
 using Jobby.Application.Exceptions.Base;
 using Jobby.Application.Features.BoardFeatures.Specifications;

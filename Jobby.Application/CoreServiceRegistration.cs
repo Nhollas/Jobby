@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using Jobby.Application.Abstractions.Authorization;
 using Jobby.Application.Behaviours;
 using Jobby.Application.Interfaces.Services;
 using Jobby.Application.Services;
