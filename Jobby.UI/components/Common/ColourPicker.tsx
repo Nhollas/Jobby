@@ -35,16 +35,14 @@ const ColourPicker = (props: Props) => {
     }
   };
 
-  console.log(selectedColour);
-
   return (
     <div
-      className='flex flex-col gap-y-4'
+      className="flex flex-col gap-y-4"
       ref={pickerRef}
       onClick={() => setShowPicker((prev) => !prev)}
     >
-      <div className='flex flex-col justify-center gap-y-1.5'>
-        <label className='text-sm font-medium' htmlFor='colour'>
+      <div className="flex flex-col justify-center gap-y-1.5">
+        <label className="text-sm font-medium" htmlFor="colour">
           Colour
         </label>
         <input
@@ -52,19 +50,19 @@ const ColourPicker = (props: Props) => {
             backgroundColor: selectedColour,
             outlineColor: selectedColour,
           }}
-          type='text'
+          type="text"
           disabled
-          className='max-w-[7rem] cursor-pointer bg-gray-50 px-3 py-1 outline outline-1'
-          name='colour'
+          className="max-w-[7rem] cursor-pointer bg-gray-50 px-3 py-1 outline outline-1"
+          name="colour"
         ></input>
       </div>
       {showPicker && (
-        <div className='flex w-max flex-wrap gap-1 bg-white p-1.5 outline outline-1 outline-gray-300'>
+        <div className="flex w-max flex-wrap gap-1 bg-white p-1.5 outline outline-1 outline-gray-300">
           {defaultColours.map((colour, index) => (
             <button
-              type='button'
+              type="button"
               key={index}
-              className='h-8 w-8 rounded-md'
+              className="h-8 w-8 rounded-md"
               style={{ backgroundColor: colour }}
               onClick={() => {
                 setSelectedColour(colour);

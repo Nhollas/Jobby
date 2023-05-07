@@ -1,11 +1,18 @@
-import { PageContainer } from "../../../../components/Common";
+import { PageContainer } from "components/Common";
 import { BoardNavigation } from "./boardNavigation";
 
-export default async function BoardLayout({ children }: { children: React.ReactNode }) {
+export default async function BoardLayout({
+  children,
+  modal,
+}: {
+  children: React.ReactNode;
+  modal?: React.ReactNode;
+}) {
   return (
     <PageContainer>
-          <BoardNavigation />
-          {children}
+      <BoardNavigation />
+      {children}
+      {modal}
     </PageContainer>
   );
 }

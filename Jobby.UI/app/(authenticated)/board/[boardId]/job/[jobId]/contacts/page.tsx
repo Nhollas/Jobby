@@ -1,12 +1,20 @@
-import { getJobContacts } from "lib/job";
 import { Contacts } from "components";
+import { getAsync } from "app/serverClient";
+import { Contact } from "types";
+import { auth } from "@clerk/nextjs";
 
 export default async function Page({
   params: { jobId, boardId },
 }: {
-  params: { jobId: string, boardId: string };
+  params: { jobId: string; boardId: string };
 }) {
-  const contacts = await getJobContacts(jobId);
+  const { getToken } = auth();
+
+  const contacts = await getAsync<Contact[]>(`/job/${jobId}/contacts`, {
+    headers: {
+      Authorization: `Bearer ${await getToken()}`,
+    },
+  });
 
   return <Contacts contacts={contacts} boardId={boardId} />;
 }

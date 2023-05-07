@@ -1,14 +1,13 @@
 "use client";
 
-import React, { Dispatch, forwardRef, SetStateAction, useContext } from "react";
+import React, { Dispatch, forwardRef, SetStateAction } from "react";
 import classNames from "classnames";
 
 import styles from "./Container.module.css";
 import { Handle, Remove } from "../Item";
 import { JobListPreview } from "types";
 import { ActionButton } from "../../Common";
-import { CreateJobModal } from "../../Modals/CreateJobModal";
-import { BoardDictionaryResponse } from "types/responses/Board";
+import Link from "next/link";
 
 export interface Props {
   children: React.ReactNode;
@@ -71,14 +70,13 @@ export const Container = forwardRef<HTMLDivElement & HTMLButtonElement, Props>(
               {list.name}
             </p>
             <p>{list.jobs.length} Jobs</p>
-            <ActionButton
-              variant="primary"
-              text="Add Job"
-              rounded
-              className="ml-auto flex items-center gap-x-2"
-              icon={<i className="bi bi-plus-lg flex text-xl"></i>}
-              onClick={() => console.log("add job")}
-            />
+            <Link
+              href={`/create-job/${boardId}/${list.id}`}
+              className="ml-auto flex w-max flex-row gap-x-2 rounded-full border bg-main-blue py-2 px-8 text-base font-medium text-white hover:border-main-blue hover:bg-gray-50 hover:text-black"
+            >
+              Add Job
+              <i className="bi bi-plus-lg flex text-xl"></i>
+            </Link>
             <div className="ml-auto flex w-max flex-row gap-x-2">
               {onRemove && <Remove onClick={onRemove} />}
               <Handle {...handleProps} />

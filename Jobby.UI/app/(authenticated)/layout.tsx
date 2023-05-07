@@ -1,13 +1,18 @@
 import Providers from "../providers";
 import { BoardsBar } from "./BoardsBar";
-import { serverClient } from "clients";
+import { getAsync } from "app/serverClient";
 import { Board } from "types";
+import { auth } from "@clerk/nextjs";
 
 export default async function Layout({
-  children
+  children,
 }: {
-  children: React.ReactNode;}) {
-  const boards = await serverClient.get<Board[]>("/boards");
+  children: React.ReactNode;
+}) {
+  const { getToken } = auth();
+  const boards = await getAsync<Board[]>("/boards", {
+    headers: { Authorization: `Bearer ${await getToken()}` },
+  });
 
   return (
     <Providers boards={boards}>

@@ -14,8 +14,16 @@ interface Props {
 }
 
 const MultiInput = (props: Props) => {
-  const { list, name, label, onChange, placeholder, addItem, removeItem, chooseType } =
-    props;
+  const {
+    list,
+    name,
+    label,
+    onChange,
+    placeholder,
+    addItem,
+    removeItem,
+    chooseType,
+  } = props;
 
   return (
     <div className="flex w-full flex-col justify-center gap-y-1.5">
@@ -23,7 +31,11 @@ const MultiInput = (props: Props) => {
         {label}
       </label>
       <div
-      className={clsx(list.length === 0 ? "p-1" : "p-3", "border border-gray-300 bg-gray-50 gap-y-3 flex flex-col")}>
+        className={clsx(
+          list.length === 0 ? "p-1" : "p-3",
+          "flex flex-col gap-y-3 border border-gray-300 bg-gray-50"
+        )}
+      >
         {list.map((item, index) => (
           <div key={index} className="flex flex-row gap-x-2">
             <input
@@ -35,12 +47,10 @@ const MultiInput = (props: Props) => {
             />
             {chooseType && (
               <select
-                className="w-max bg-gray-50 px-2 text-xs border border-gray-300 rounded-lg"
+                className="w-max rounded-lg border border-gray-300 bg-gray-50 px-2 text-xs"
                 onChange={(e) => {
-                  console.log(e.target.value);
-                  return onChange({ ...item, type: +e.target.value })
-                }
-                }
+                  return onChange({ ...item, type: +e.target.value });
+                }}
               >
                 <option value={0}>Work</option>
                 <option value={1}>Personal</option>
@@ -57,8 +67,13 @@ const MultiInput = (props: Props) => {
         ))}
         <button
           type="button"
-          onClick={() => addItem({ value: "", id: uuid(), type: chooseType ? 0 : undefined })}
-          className={clsx(list.length === 0 ? "w-full py-2" : "w-max", "px-6 rounded-md bg-blue-100 p-1 text-xs")}
+          onClick={() =>
+            addItem({ value: "", id: uuid(), type: chooseType ? 0 : undefined })
+          }
+          className={clsx(
+            list.length === 0 ? "w-full py-2" : "w-max",
+            "rounded-md bg-blue-100 p-1 px-6 text-xs"
+          )}
         >
           <span>Add {placeholder}</span>
         </button>

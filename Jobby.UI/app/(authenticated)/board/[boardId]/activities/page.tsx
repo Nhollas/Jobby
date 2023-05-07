@@ -1,21 +1,22 @@
-import { serverClient } from "clients";
+import { getAsync } from "app/serverClient";
 import { Activity } from "types";
 import { Activities } from "components/Activities";
-
-async function getActivities(boardId: string) {
-  const activities = await serverClient.get<Activity[]>(
-    `/board/${boardId}/activities`
-  );
-
-  return activities;
-}
+import { auth } from "@clerk/nextjs";
 
 export async function Page({
   params: { boardId },
 }: {
   params: { boardId: string };
 }) {
-  const activities = await getActivities(boardId);
+  const { getToken } = auth();
+  const activities = await getAsync<Activity[]>(
+    `/board/${boardId}/activities`,
+    {
+      headers: {
+        Authorization: `Bearer ${await getToken()}`,
+      },
+    }
+  );
 
   return <Activities activities={activities} />;
 }

@@ -1,6 +1,7 @@
 import "./globals.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import { Poppins } from "@next/font/google";
+import { ClerkProvider } from "@clerk/nextjs/app-beta";
 
 const poppins = Poppins({
   display: "swap",
@@ -9,12 +10,11 @@ const poppins = Poppins({
 });
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  
   return (
     <html lang="en" className={poppins.className}>
       <head />
       <body>
-        {children}
+        <ClerkProvider>{children}</ClerkProvider>
       </body>
     </html>
   );

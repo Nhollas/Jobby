@@ -5,8 +5,6 @@ export default async function Layout({
   children: React.ReactNode;
   modal: React.ReactNode;
 }) {
-  console.log(modal);
-
   return (
     <>
       {children}

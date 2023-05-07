@@ -5,16 +5,18 @@ import reducer from "reducers/CreateContactReducer";
 import { ActionButton } from "../Common";
 import Input from "components/Common/Input";
 import MultiInput from "components/Common/MultiInput";
-import { client } from "clients";
+import { postAsync } from "app/serverClient";
 import { Contact } from "types";
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams } from "next/navigation";
+import { useAuth } from "@clerk/nextjs";
 
 export const CreateContactModal = () => {
-      // instead of param we can use query
+  // instead of param we can use query
   const searchParams = useSearchParams();
-  
+  const { getToken } = useAuth();
+
   // @ts-ignore: SearchParams will never be null here.
-  const boardId = searchParams.get('boardId');
+  const boardId = searchParams.get("boardId");
 
   const [state, dispatch] = useReducer(reducer, {
     body: {
@@ -65,20 +67,25 @@ export const CreateContactModal = () => {
       emails: body.emails.map((email) => {
         return {
           name: email.value,
-          type: email.type
-        }
+          type: email.type,
+        };
       }),
       phones: body.phones.map((phone) => {
         return {
           number: phone.value,
-          type: phone.type
-        }
+          type: phone.type,
+        };
       }),
     };
 
-    const createdContact = await client.post<any, Contact>(
+    const createdContact = await postAsync<any, Contact>(
       "/contact/create",
-      formattedBody
+      formattedBody,
+      {
+        headers: {
+          Authorization: `Bearer ${await getToken()}`,
+        },
+      }
     );
 
     // setContacts((contacts) => {
@@ -88,14 +95,14 @@ export const CreateContactModal = () => {
 
   return (
     <div className="absolute inset-0 top-16 z-10 flex w-full justify-center bg-white/70">
-      <div className="mt-8 max-h-[75vh] overflow-y-scroll w-full max-w-md rounded-md border border-slate-200 bg-white p-8">
+      <div className="mt-8 max-h-[75vh] w-full max-w-md overflow-y-scroll rounded-md border border-slate-200 bg-white p-8">
         <form
           className="flex flex-col gap-y-8"
           method="post"
           onSubmit={handleSubmit}
         >
           <h1 className="text-xl font-medium">Create Contact</h1>
-          <div className="flex flex-row w-full">
+          <div className="flex w-full flex-row">
             <section className="flex flex-col gap-y-5">
               <div className="flex flex-row gap-x-4">
                 <Input

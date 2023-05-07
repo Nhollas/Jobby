@@ -13,7 +13,6 @@ interface State {
 
 const reducer: Reducer<State, Action> = (state, action) => {
   const { name, value } = action;
-  console.log(value);
 
   switch (action.type) {
     case "HANDLE_INPUT_CHANGE":

@@ -1,10 +1,16 @@
 import { PageContainer } from "components/Common";
-import { Board, Contact } from "types";
-import { serverClient } from "clients";
+import { Contact } from "types";
+import { getAsync } from "app/serverClient";
 import { Contacts } from "components";
+import { auth } from "@clerk/nextjs";
 
 export default async function Page() {
-  const contacts = await serverClient.get<Contact[]>("/contact/list");
+  const { getToken } = auth();
+  const contacts = await getAsync<Contact[]>("/contact/list", {
+    headers: {
+      Authorization: `Bearer ${await getToken()}`,
+    },
+  });
 
   return (
     <PageContainer>
@@ -12,4 +18,3 @@ export default async function Page() {
     </PageContainer>
   );
 }
-

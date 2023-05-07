@@ -28,7 +28,7 @@ import {
 import { DroppableContainer, SortableItem } from "./components";
 import { coordinateGetter } from "./kanbanKeyboardCoordinates";
 import { Job, JobList, JobListPreview } from "types";
-import { client } from "clients";
+import { deleteAsync, putAsync } from "app/serverClient";
 import { BoardDictionaryResponse } from "types/responses/Board";
 import { Item, Container } from "components/Board";
 
@@ -197,7 +197,7 @@ export function Kanban({ lists, boardId, loading }: Props) {
   }
 
   async function handleRemove(containerId: string) {
-    const response = await client.delete(`/JobList/Delete/${containerId}`);
+    const response = await deleteAsync(`/JobList/Delete/${containerId}`);
 
     if (response?.status == 204) {
       setContainerKeys((containerKeys) =>
@@ -298,7 +298,7 @@ export function Kanban({ lists, boardId, loading }: Props) {
               targetJobListId: overContainer,
             };
 
-            client.put("/Job/Move", model);
+            putAsync("/Job/Move", model);
           }
         }}
         onDragEnd={({ active, over }) => {
@@ -327,7 +327,7 @@ export function Kanban({ lists, boardId, loading }: Props) {
                 jobListIndexes,
               };
 
-              client.put("/Board/ArrangeJobLists", model);
+              putAsync("/Board/ArrangeJobLists", model);
 
               return updatedJobLists;
             });
@@ -421,7 +421,7 @@ export function Kanban({ lists, boardId, loading }: Props) {
                     jobIndexes,
                   };
 
-                  client.put("/JobList/ArrangeJobs", model);
+                  putAsync("/JobList/ArrangeJobs", model);
 
                   return {
                     ...containerDict,
@@ -448,7 +448,7 @@ export function Kanban({ lists, boardId, loading }: Props) {
                   jobIndexes,
                 };
 
-                client.put("/JobList/ArrangeJobs", model);
+                putAsync("/JobList/ArrangeJobs", model);
 
                 return containerDict;
               });

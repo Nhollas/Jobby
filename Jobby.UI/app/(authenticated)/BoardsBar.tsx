@@ -10,8 +10,6 @@ export const BoardsBar = () => {
   const { isOpen } = useContext(NavigationContext);
   const { boards } = useContext(BoardsAndJobsContext);
 
-  console.log(boards);
-
   const list: Variants = {
     open: { opacity: 1, x: 16, transition: { ease: "linear" } },
     closed: { opacity: 0, x: -256, transition: { ease: "linear" } },

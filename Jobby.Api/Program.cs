@@ -1,12 +1,12 @@
+using System.Security.Cryptography;
 using Jobby.Api.Middleware;
 using Jobby.Application;
 using Jobby.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using System.Text;
 using System.Text.Json.Serialization;
-using Microsoft.Net.Http.Headers;
+using System.Text.RegularExpressions;
 
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
@@ -20,13 +20,10 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
         options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
     });
-        
-
 
 builder.Services.AddTransient<ExceptionHandlingMiddleware>();
 
 builder.Services.AddCors();
-
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
@@ -70,39 +67,26 @@ builder.Services.AddAuthentication(options =>
         options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
     })
     .AddJwtBearer(options =>
-    {
-        var key = Encoding.UTF8.GetBytes(config["Jwt:Key"]);
-        options.TokenValidationParameters = new TokenValidationParameters
         {
-            ValidIssuer = config["Jwt:Issuer"],
-            ValidAudience = config["Jwt:Audience"],
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ClockSkew = TimeSpan.Zero,
-            IssuerSigningKey = new SymmetricSecurityKey(key)
-        };
-    }
-);
+            string pem = config.GetSection("Jwt:Key").Value!;
+            string[] splitPem = Regex.Matches(pem, ".{1,64}").Select(m => m.Value).ToArray();
+            string publicKey = "-----BEGIN PUBLIC KEY-----\n" + string.Join("\n", splitPem) + "\n-----END PUBLIC KEY-----";
+            RSA rsa = RSA.Create();
+            rsa.ImportFromPem(publicKey);
+            SecurityKey issuerSigningKey = new RsaSecurityKey(rsa);
 
-builder.Services.AddHttpClient("Github", client =>
-{
-    client.BaseAddress = new Uri("https://api.github.com/");
-    client.DefaultRequestHeaders.Add(
-        HeaderNames.Accept, "application/vnd.github.v3+json");
-    client.DefaultRequestHeaders.Add(
-        HeaderNames.UserAgent, "HttpRequestsSample");
-});
-
-builder.Services.AddHttpClient("Google", client =>
-{
-    client.BaseAddress = new Uri("https://www.googleapis.com/");
-    client.DefaultRequestHeaders.Add(
-        HeaderNames.Accept, "application/json");
-    client.DefaultRequestHeaders.Add(
-        HeaderNames.UserAgent, "HttpRequestsSample");
-});
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidIssuer = "https://darling-bug-65.clerk.accounts.dev",
+                ValidateIssuer = true,
+                ValidateLifetime = true,
+                ValidateAudience = false,
+                ValidateIssuerSigningKey = true,
+                ClockSkew = TimeSpan.Zero,
+                IssuerSigningKey = issuerSigningKey
+            };
+        }
+    );
 
 var app = builder.Build();
 
