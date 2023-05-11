@@ -1,12 +1,21 @@
 "use client";
 
-import { ActionButton, ModalContainer } from "../Common";
 import { Board } from "types";
 import { useContext, useState } from "react";
-import Input from "../Common/Input";
 import BoardsAndJobsContext from "contexts/BoardsAndJobsContext";
 import { useRouter } from "next/navigation";
-import { postAsync } from "app/serverClient";
+import { postAsync } from "@/lib/clientFetch";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
 import { useAuth } from "@clerk/nextjs";
 
 export const CreateBoardModal = () => {
@@ -29,41 +38,45 @@ export const CreateBoardModal = () => {
       },
     });
 
+    console.log("createdBoard", createdBoard);
+
     setBoards((prev: Board[]) => [...prev, createdBoard]);
 
     router.back();
   };
 
   return (
-    <ModalContainer>
-      <form
-        onSubmit={handleSubmit}
-        className="flex flex-col gap-y-8"
-        method="post"
-      >
-        <h1 className="text-xl font-medium">Create Board</h1>
-        <Input
-          name="name"
-          label="Name"
-          type="text"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-        <p className="flex flex-row justify-center gap-4">
-          <ActionButton
-            variant="secondary"
-            text="Cancel"
-            onClick={() => router.back()}
-            type="button"
-          />
-          <ActionButton
-            variant="primary"
-            text="Create"
-            type="submit"
-            extended
-          />
-        </p>
-      </form>
-    </ModalContainer>
+    <Dialog defaultOpen onOpenChange={router.back}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>Create Board</DialogTitle>
+          <DialogDescription>
+            Are you sure you want to delete this board?
+          </DialogDescription>
+          <form method="post" className="py-4">
+            <div className="grid w-full gap-1.5">
+              <Label htmlFor="name" className="text-start">
+                Name
+              </Label>
+              <Input
+                type="text"
+                id="name"
+                placeholder="Name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </div>
+          </form>
+        </DialogHeader>
+        <DialogFooter>
+          <Button type="button" variant="outline" onClick={router.back}>
+            Cancel
+          </Button>
+          <Button type="submit" variant="default" onClick={handleSubmit}>
+            Create
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 };

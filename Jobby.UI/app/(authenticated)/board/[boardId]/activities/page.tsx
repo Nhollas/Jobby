@@ -1,4 +1,4 @@
-import { getAsync } from "app/serverClient";
+import { getAsync } from "@/lib/serverFetch";
 import { Activity } from "types";
 import { Activities } from "components/Activities";
 import { auth } from "@clerk/nextjs";

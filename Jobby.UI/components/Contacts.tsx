@@ -1,27 +1,68 @@
 "use client";
 
+import { MoreVertical, Mail, Phone, Eye, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { Contact, Social } from "types";
-import { ActionButton } from "./Common";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { Badge } from "./ui/badge";
+import { Button } from "./ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "./ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
+import { Input } from "./ui/input";
 
 type Props = {
   contacts: Contact[];
   boardId?: string;
 };
 
+const contactNameToInitials = (name: string | undefined) => {
+  if (!name) return "";
+
+  const [firstName, lastName] = name?.split(" ");
+  return `${firstName[0]}${lastName[0]}`;
+};
+
 export function Contacts({ contacts, boardId }: Props) {
+  console.log(contacts);
+
   return (
-    <div className="flex flex-col gap-y-4 border-t border-gray-300 p-4 lg:px-8">
-      <Link
-        href={!boardId ? "/create-contact" : `/create-contact?boardId=${boardId}`}
-        className="w-max rounded-full border bg-main-blue py-2 px-8 text-base font-medium text-white hover:border-main-blue hover:bg-gray-50 hover:text-black"
-      >
-        Create Contact
-      </Link>
+    <div className="flex flex-col gap-y-6 border-t border-gray-300 p-4 lg:px-8">
+      <div className="flex flex-col gap-y-2">
+        <h1 className="text-2xl font-medium">Contacts</h1>
+        <p className="text-sm text-gray-500">View and manage contacts</p>
+      </div>
+      <div className="flex flex-row gap-x-4">
+        <Input type="text" placeholder="Search.." className="w-full max-w-xs" />
+        <Button asChild>
+          <Link
+            href={
+              !boardId
+                ? "/create-contact"
+                : `/create-contact?boardId=${boardId}`
+            }
+            className="w-max"
+          >
+            Create Contact
+          </Link>
+        </Button>
+      </div>
       {contacts.length === 0 ? (
         <h1>No Contacts Found.</h1>
       ) : (
-        <section className="grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-8">
+        <section className="grid grid-cols-[repeat(auto-fill,minmax(265px,1fr))] gap-8">
           {contacts.map((contact) => {
             const socials = [];
 
@@ -47,86 +88,124 @@ export function Contacts({ contacts, boardId }: Props) {
             }
 
             return (
-              <div
-                className="w-full max-w-xs border border-gray-300 bg-gray-50"
-                key={contact.id}
-              >
-                <div className="p-4">
-                  <p className="text-lg font-medium text-gray-900">
-                    {contact.firstName} {contact.lastName}
-                  </p>
-                  <p className="mt-1.5 mb-0.5 text-gray-800">
-                    {contact.jobTitle}
-                  </p>
-                  <p className="text-sm text-gray-700">
-                    {contact.companies
-                      .map((company) => {
-                        return company.name;
-                      })
-                      .join(", ")}
-                  </p>
-                </div>
-                <div className="flex flex-col gap-y-2 border-y border-gray-300 bg-white p-4">
-                  <div className="flex flex-row items-center gap-x-2">
-                    <i className="bi bi-geo-alt text-gray-900"></i>
-                    <p className="text-sm text-gray-700">
-                      {contact.location ? contact.location : "Location"}
-                    </p>
-                  </div>
-                  <div className="flex flex-row items-center gap-x-2">
-                    <i className="bi bi-envelope text-gray-900"></i>
-                    <p className="truncate text-sm text-gray-700">
-                      {contact.emails.length === 0
-                        ? "Email"
-                        : contact.emails
-                            .slice(0, 2)
-                            .map((email) => {
-                              return email.name;
-                            })
-                            .join(", ")}
-                    </p>
-                  </div>
-                  <div className="flex flex-row items-center gap-x-2">
-                    <i className="bi bi-telephone text-gray-900"></i>
-                    <p className="truncate text-sm text-gray-700">
-                      {contact.phones.length === 0
-                        ? "Phone"
-                        : contact.phones
-                            .map((phone) => {
-                              return phone.number;
-                            })
-                            .join(", ")}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex flex-row items-center gap-x-4 p-4 text-xl">
-                  {socials.map((social) => {
-                    return (
-                      <a
-                        key={social.name}
-                        href={social.url}
-                        target="_blank"
-                        rel="noreferrer"
-                        className={
-                          social.url === "" ? "pointer-events-none" : ""
-                        }
+              <Card key={contact.id}>
+                <CardHeader className="flex flex-col items-start gap-4 space-y-0 p-4 pb-2">
+                  <div className="flex w-full flex-row items-center gap-x-4">
+                    <Avatar>
+                      <AvatarImage
+                        src="https://github.com/nhollas.png"
+                        alt="@nhollas"
+                      />
+                      <AvatarFallback>
+                        {contactNameToInitials(
+                          `${contact.firstName} ${contact.lastName}`
+                        )}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex flex-col gap-y-1">
+                      <CardTitle className="whitespace-nowrap">
+                        {contact.firstName} {contact.lastName}
+                      </CardTitle>
+                      <CardDescription>{contact.jobTitle}</CardDescription>
+                      <p className="text-xs text-muted-foreground">
+                        {contact.location}
+                      </p>
+                    </div>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className="ml-auto w-10 rounded-full p-0"
+                        >
+                          <MoreVertical className="h-4 w-4 text-secondary-foreground" />
+                          <span className="sr-only">Actions</span>
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent
+                        align="end"
+                        className="w-[200px]"
+                        forceMount
                       >
-                        {social.url === ""
-                          ? disabledSocialDict[
-                              social.name as keyof typeof disabledSocialDict
-                            ]
-                          : socialDict[social.name as keyof typeof socialDict]}
-                      </a>
-                    );
-                  })}
-                  <ActionButton
-                    text="View"
-                    variant="secondary"
-                    rounded
-                    className="ml-auto text-base"
-                  />
-                </div>
-              </div>
+                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem>
+                          <Eye className="mr-2 h-4 w-4" />
+                          <span>View</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>
+                          <Link
+                            href={`/delete-contact/${contact.id}`}
+                            className="flex w-full flex-row"
+                          >
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            <span>Delete</span>
+                          </Link>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                  <div className="flex w-full flex-row items-center gap-x-2 overflow-hidden">
+                    {contact.companies.map((company) => (
+                      <Badge key={company.id}>{company.name}</Badge>
+                    ))}
+                  </div>
+                </CardHeader>
+                <CardContent className="flex flex-col p-2">
+                  <div className="flex flex-col gap-y-2 rounded-lg border bg-muted p-4 text-sm">
+                    <div className="flex flex-row items-center gap-x-2">
+                      <Mail className="h-4 w-4" />
+                      <p className="w-full truncate text-xs">
+                        {contact.emails.length === 0
+                          ? "Email"
+                          : contact.emails
+                              .slice(0, 2)
+                              .map((email) => {
+                                return email.name;
+                              })
+                              .join(", ")}
+                      </p>
+                    </div>
+                    <div className="flex flex-row items-center gap-x-2">
+                      <Phone className="h-4 w-4" />
+                      <p className="w-full truncate text-xs">
+                        {contact.phones.length === 0
+                          ? "Phone"
+                          : contact.phones
+                              .map((phone) => {
+                                return phone.number;
+                              })
+                              .join(", ")}
+                      </p>
+                    </div>
+                    <div className="mt-2 flex flex-row items-center gap-x-4 text-xl">
+                      {socials.map((social) => {
+                        return (
+                          <a
+                            key={social.name}
+                            href={social.url}
+                            target="_blank"
+                            rel="noreferrer"
+                            className={
+                              social.url === "" ? "pointer-events-none" : ""
+                            }
+                          >
+                            {social.url === ""
+                              ? disabledSocialDict[
+                                  social.name as keyof typeof disabledSocialDict
+                                ]
+                              : socialDict[
+                                  social.name as keyof typeof socialDict
+                                ]}
+                          </a>
+                        );
+                      })}
+                    </div>
+                  </div>
+                  <p className="ml-auto w-max py-2 pt-4 text-xs text-gray-600">
+                    Created {new Date(contact.createdDate).toDateString()}
+                  </p>
+                </CardContent>
+              </Card>
             );
           })}
         </section>

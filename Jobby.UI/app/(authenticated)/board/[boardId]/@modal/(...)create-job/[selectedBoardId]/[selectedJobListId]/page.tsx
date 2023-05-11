@@ -1,5 +1,5 @@
 import { auth } from "@clerk/nextjs";
-import { getAsync } from "app/serverClient";
+import { getAsync } from "@/lib/serverFetch";
 import { CreateJobModal } from "components/Modals/CreateJobModal";
 import { BoardDictionaryResponse } from "types/responses/Board";
 

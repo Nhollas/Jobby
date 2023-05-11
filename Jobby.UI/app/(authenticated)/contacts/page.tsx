@@ -1,6 +1,6 @@
 import { PageContainer } from "components/Common";
 import { Contact } from "types";
-import { getAsync } from "app/serverClient";
+import { getAsync } from "@/lib/serverFetch";
 import { Contacts } from "components";
 import { auth } from "@clerk/nextjs";
 

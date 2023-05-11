@@ -55,7 +55,7 @@ export const JobNavigation = ({
   }, [pathnameSections]);
 
   return (
-    <div className="relative flex flex-col gap-y-2 p-4 lg:px-8">
+    <div className="relative flex flex-col gap-y-2 p-4">
       <div className="flex flex-row flex-wrap gap-4">
         {navItems.map(({ icon, leaf, name }) => (
           <MenuItem

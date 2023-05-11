@@ -1,7 +1,7 @@
 "use client";
 
 import { useReducer, useState } from "react";
-import { postAsync } from "app/serverClient";
+import { postAsync } from "@/lib/serverFetch";
 import reducer from "reducers/CreateJobReducer";
 import { Job } from "types";
 import { BoardDictionaryResponse } from "types/responses/Board";

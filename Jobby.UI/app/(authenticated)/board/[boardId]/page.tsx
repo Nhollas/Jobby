@@ -1,5 +1,4 @@
-import { auth } from "@clerk/nextjs";
-import { getAsync } from "app/serverClient";
+import { getAsync } from "@/lib/serverFetch";
 import { Kanban } from "components/Board";
 import { Board } from "types";
 
@@ -8,12 +7,7 @@ export default async function Page({
 }: {
   params: { boardId: string };
 }) {
-  const { getToken } = auth();
-  const board = await getAsync<Board>(`/board/${boardId}`, {
-    headers: {
-      Authorization: `Bearer ${await getToken()}`,
-    },
-  });
+  const board = await getAsync<Board>(`/board/${boardId}`);
 
   if (!board) {
     return <div>Board not found</div>;

@@ -27,9 +27,8 @@ import {
 } from "@dnd-kit/sortable";
 import { DroppableContainer, SortableItem } from "./components";
 import { coordinateGetter } from "./kanbanKeyboardCoordinates";
-import { Job, JobList, JobListPreview } from "types";
-import { deleteAsync, putAsync } from "app/serverClient";
-import { BoardDictionaryResponse } from "types/responses/Board";
+import { JobListPreview } from "types";
+import { deleteAsync, putAsync } from "@/lib/serverFetch";
 import { Item, Container } from "components/Board";
 
 const dropAnimation: DropAnimation = {
@@ -207,7 +206,7 @@ export function Kanban({ lists, boardId, loading }: Props) {
   }
 
   return (
-    <div className="relative flex h-full w-full flex-row divide-x overflow-x-scroll border border-l-0 border-gray-300 bg-[#f5f5f4]">
+    <div className="relative flex h-full w-full flex-row divide-x overflow-x-scroll border border-t-0 border-l-0 border-gray-300 bg-[#f5f5f4]">
       <DndContext
         sensors={sensors}
         collisionDetection={collisionDetectionStrategy}

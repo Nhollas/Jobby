@@ -1,5 +1,5 @@
 import { auth } from "@clerk/nextjs";
-import { getAsync } from "app/serverClient";
+import { getAsync } from "@/lib/serverFetch";
 import { Job } from "types";
 
 export default async function Page({
@@ -15,5 +15,5 @@ export default async function Page({
     },
   });
 
-  return <h1>Job info {job.id}</h1>;
+  return <h1 className="p-4">Job info {job.id}</h1>;
 }

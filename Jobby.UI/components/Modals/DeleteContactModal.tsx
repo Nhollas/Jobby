@@ -1,9 +1,6 @@
 "use client";
 
 import { deleteAsync } from "@/lib/clientFetch";
-import { Board } from "types";
-import { useContext } from "react";
-import BoardsAndJobsContext from "contexts/BoardsAndJobsContext";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
 import {
@@ -18,11 +15,10 @@ import {
 } from "@/components/ui/alert-dialog";
 
 interface Props {
-  boardId: string | null;
+  contactId: string | null;
 }
 
-export const DeleteBoardModal = ({ boardId }: Props) => {
-  const { setBoards } = useContext(BoardsAndJobsContext);
+export const DeleteContactModal = ({ contactId }: Props) => {
   const { getToken } = useAuth();
 
   const router = useRouter();
@@ -30,13 +26,11 @@ export const DeleteBoardModal = ({ boardId }: Props) => {
   const handleSubmit = async (event: any) => {
     event.preventDefault();
 
-    await deleteAsync(`/board/delete/${boardId}`, {
+    await deleteAsync(`/contact/delete/${contactId}`, {
       headers: {
         Authorization: `Bearer ${await getToken()}`,
       },
     });
-
-    setBoards((prev: Board[]) => prev.filter((board) => board.id !== boardId));
 
     router.back();
   };
@@ -45,9 +39,9 @@ export const DeleteBoardModal = ({ boardId }: Props) => {
     <AlertDialog defaultOpen>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Delete Board</AlertDialogTitle>
+          <AlertDialogTitle>Delete Contact</AlertDialogTitle>
           <AlertDialogDescription>
-            Are you sure you want to delete this board?
+            Are you sure you want to delete this contact?
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

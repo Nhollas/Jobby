@@ -5,7 +5,7 @@ import reducer from "reducers/CreateContactReducer";
 import { ActionButton } from "../Common";
 import Input from "components/Common/Input";
 import MultiInput from "components/Common/MultiInput";
-import { postAsync } from "app/serverClient";
+import { postAsync } from "@/lib/clientFetch";
 import { Contact } from "types";
 import { useSearchParams } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";

@@ -4,7 +4,7 @@ import { Activity } from "types";
 import { ActionButton } from "components/Common";
 import { Reducer, useReducer } from "react";
 import reducer from "reducers/ActivityListReducer";
-import { putAsync } from "app/serverClient";
+import { putAsync } from "@/lib/serverFetch";
 import Input from "components/Common/Input";
 
 type Props = {

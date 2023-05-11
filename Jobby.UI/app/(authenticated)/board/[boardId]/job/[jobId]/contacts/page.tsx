@@ -1,5 +1,5 @@
 import { Contacts } from "components";
-import { getAsync } from "app/serverClient";
+import { getAsync } from "@/lib/serverFetch";
 import { Contact } from "types";
 import { auth } from "@clerk/nextjs";
 

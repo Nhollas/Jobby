@@ -1,4 +1,4 @@
-import { getAsync } from "app/serverClient";
+import { getAsync } from "@/lib/serverFetch";
 import { Contact } from "types";
 import { Contacts } from "components";
 import { auth } from "@clerk/nextjs";
