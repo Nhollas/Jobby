@@ -2,7 +2,7 @@
 
 import { deleteAsync } from "@/lib/clientFetch";
 import { Board } from "types";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import BoardsAndJobsContext from "contexts/BoardsAndJobsContext";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
@@ -25,6 +25,12 @@ export const DeleteBoardModal = ({ boardId }: Props) => {
   const { setBoards } = useContext(BoardsAndJobsContext);
   const { getToken } = useAuth();
 
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    setOpen(true);
+  }, []);
+
   const router = useRouter();
 
   const handleSubmit = async (event: any) => {
@@ -42,7 +48,7 @@ export const DeleteBoardModal = ({ boardId }: Props) => {
   };
 
   return (
-    <AlertDialog defaultOpen>
+    <AlertDialog open={open} onOpenChange={router.back}>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Delete Board</AlertDialogTitle>

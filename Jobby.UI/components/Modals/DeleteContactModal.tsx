@@ -13,6 +13,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { useEffect, useState } from "react";
 
 interface Props {
   contactId: string | null;
@@ -20,6 +21,12 @@ interface Props {
 
 export const DeleteContactModal = ({ contactId }: Props) => {
   const { getToken } = useAuth();
+
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    setOpen(true);
+  }, []);
 
   const router = useRouter();
 
@@ -36,7 +43,7 @@ export const DeleteContactModal = ({ contactId }: Props) => {
   };
 
   return (
-    <AlertDialog defaultOpen>
+    <AlertDialog open={open} onOpenChange={router.back}>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Delete Contact</AlertDialogTitle>

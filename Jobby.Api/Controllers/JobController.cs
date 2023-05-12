@@ -1,9 +1,11 @@
 ﻿using Jobby.Api.Controllers.Base;
+using Jobby.Application.Dtos;
 using Jobby.Application.Features.JobFeatures.Commands.Create;
 using Jobby.Application.Features.JobFeatures.Commands.Delete;
 using Jobby.Application.Features.JobFeatures.Commands.Update.MoveJob;
 using Jobby.Application.Features.JobFeatures.Commands.Update.UpdateDetails;
 using Jobby.Application.Features.JobFeatures.Queries.GetById;
+using Jobby.Application.Features.JobFeatures.Queries.GetList;
 using Jobby.Application.Features.JobFeatures.Queries.ListActivities;
 using Jobby.Application.Features.JobFeatures.Queries.ListContacts;
 using Microsoft.AspNetCore.Mvc;
@@ -14,6 +16,14 @@ namespace Jobby.Api.Controllers;
 [ApiController]
 public class JobController : ApiController
 {
+    [Route("~/api/jobs", Name = "ListJobs")]
+    [HttpGet]
+    public async Task<ActionResult<List<PreviewJobDto>>> ListBoards()
+    {
+        var dtos = await Sender.Send(new GetJobListQuery());
+        return Ok(dtos);
+    }
+    
     [HttpGet("{jobId:guid}", Name = "GetJob")]
     public async Task<IActionResult> GetJob(Guid jobId)
     {

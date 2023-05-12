@@ -2,6 +2,7 @@
 using Jobby.Application.Abstractions.Specification;
 using Jobby.Application.Dtos;
 using Jobby.Application.Features.BoardFeatures.Specifications;
+using Jobby.Application.Features.ContactFeatures.Specifications;
 using Jobby.Application.Interfaces.Services;
 using Jobby.Application.Services;
 using Jobby.Domain.Entities;
@@ -15,6 +16,7 @@ internal sealed class CreateContactCommandHandler : IRequestHandler<CreateContac
     private readonly IDateTimeProvider _dateTimeProvider;
     private readonly IGuidProvider _guidProvider;
     private readonly IRepository<Board> _boardRepository;
+    private readonly IRepository<Job> _jobRepository;
     private readonly IRepository<Contact> _contactRepository;
     private readonly IMapper _mapper;
     private readonly string _userId;
@@ -24,6 +26,7 @@ internal sealed class CreateContactCommandHandler : IRequestHandler<CreateContac
     IRepository<Board> boardRepository,
     IDateTimeProvider dateTimeProvider,
     IRepository<Contact> contactRepository,
+    IRepository<Job> jobRepository,
     IGuidProvider guidProvider,
     IMapper mapper)
     {
@@ -31,6 +34,7 @@ internal sealed class CreateContactCommandHandler : IRequestHandler<CreateContac
         _boardRepository = boardRepository;
         _dateTimeProvider = dateTimeProvider;
         _contactRepository = contactRepository;
+        _jobRepository = jobRepository;
         _guidProvider = guidProvider;
         _mapper = mapper;
     }
@@ -68,12 +72,9 @@ internal sealed class CreateContactCommandHandler : IRequestHandler<CreateContac
             FormatEmails(request.Emails),
             FormatPhones(request.Phones));
 
-        if (board != null && request.JobIds.Count > 0) // only link jobs to the contact if a board was retrieved
+        if (request.JobIds.Count > 0) // only link jobs to the contact if a board was retrieved
         {
-            List<Job> jobsToLink = board.JobLists
-                .SelectMany(x => x.Jobs)
-                .Where(x => request.JobIds.Contains(x.Id))
-                .ToList();
+            var jobsToLink = await _jobRepository.ListAsync(new GetJobsFromListSpecification(request.JobIds, _userId), cancellationToken);
 
             createdContact.SetJobs(jobsToLink);
         }

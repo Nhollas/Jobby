@@ -39,7 +39,7 @@ export function Contacts({ contacts, boardId }: Props) {
   console.log(contacts);
 
   return (
-    <div className="flex flex-col gap-y-6 border-t border-gray-300 p-4 lg:px-8">
+    <div className="flex flex-col gap-y-6 overscroll-contain border-t border-gray-300 p-4 lg:px-8">
       <div className="flex flex-col gap-y-2">
         <h1 className="text-2xl font-medium">Contacts</h1>
         <p className="text-sm text-gray-500">View and manage contacts</p>
@@ -177,7 +177,7 @@ export function Contacts({ contacts, boardId }: Props) {
                               .join(", ")}
                       </p>
                     </div>
-                    <div className="mt-2 flex flex-row items-center gap-x-4 text-xl">
+                    {/* <div className="mt-2 flex flex-row items-center gap-x-4 text-xl">
                       {socials.map((social) => {
                         return (
                           <a
@@ -199,7 +199,7 @@ export function Contacts({ contacts, boardId }: Props) {
                           </a>
                         );
                       })}
-                    </div>
+                    </div> */}
                   </div>
                   <p className="ml-auto w-max py-2 pt-4 text-xs text-gray-600">
                     Created {new Date(contact.createdDate).toDateString()}

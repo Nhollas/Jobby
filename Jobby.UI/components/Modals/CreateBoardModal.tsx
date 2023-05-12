@@ -1,7 +1,7 @@
 "use client";
 
 import { Board } from "types";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import BoardsAndJobsContext from "contexts/BoardsAndJobsContext";
 import { useRouter } from "next/navigation";
 import { postAsync } from "@/lib/clientFetch";
@@ -25,6 +25,12 @@ export const CreateBoardModal = () => {
   const router = useRouter();
   const [name, setName] = useState("");
 
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    setOpen(true);
+  }, []);
+
   const handleSubmit = async (event: any) => {
     event.preventDefault();
 
@@ -46,7 +52,7 @@ export const CreateBoardModal = () => {
   };
 
   return (
-    <Dialog defaultOpen onOpenChange={router.back}>
+    <Dialog open={open} onOpenChange={router.back}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Create Board</DialogTitle>

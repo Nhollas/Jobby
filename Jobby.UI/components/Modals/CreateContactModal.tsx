@@ -1,22 +1,70 @@
 "use client";
 
-import { useReducer } from "react";
+import { useEffect, useReducer, useState } from "react";
 import reducer from "reducers/CreateContactReducer";
-import { ActionButton } from "../Common";
-import Input from "components/Common/Input";
-import MultiInput from "components/Common/MultiInput";
 import { postAsync } from "@/lib/clientFetch";
-import { Contact } from "types";
-import { useSearchParams } from "next/navigation";
+import { Board, Contact, Job } from "types";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "../ui/button";
+import { Label } from "../ui/label";
+import { Input } from "../ui/input";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "../ui/card";
+import { cn } from "@/lib/utils";
+import {
+  Check,
+  FacebookIcon,
+  Github,
+  Linkedin,
+  Twitter,
+  ChevronsUpDown,
+  Briefcase,
+  Layout,
+} from "lucide-react";
 
-export const CreateContactModal = () => {
-  // instead of param we can use query
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+import React from "react";
+import { ScrollArea } from "../ui/scroll-area";
+import { AnimateSharedLayout, motion } from "framer-motion";
+
+interface Props {
+  boards: Board[];
+  jobs: Job[];
+}
+
+export const CreateContactModal = ({ boards, jobs }: Props) => {
   const searchParams = useSearchParams();
   const { getToken } = useAuth();
 
-  // @ts-ignore: SearchParams will never be null here.
   const boardId = searchParams.get("boardId");
+
+  const router = useRouter();
 
   const [state, dispatch] = useReducer(reducer, {
     body: {
@@ -38,23 +86,22 @@ export const CreateContactModal = () => {
     },
   });
 
+  const [boardOpen, setBoardOpen] = useState(false);
+  const [jobsOpen, setJobsOpen] = useState(false);
+  const [defaultOpen, setDefaultOpen] = useState(false);
+
+  const [filteredBoards, setFilteredBoards] = useState(boards);
+  const [selectedBoardId, setSelectedBoardId] = useState("");
+  const [filteredJobs, setFilteredJobs] = useState(jobs);
+  const [selectedJobIds, setSelectedJobIds] = useState<string[]>([]);
+
+  const [activeTab, setActiveTab] = useState("socials");
+
+  useEffect(() => {
+    setDefaultOpen(true);
+  }, []);
+
   const { body } = state;
-
-  const handleChange = (e: any) => {
-    dispatch({
-      type: "HANDLE_INPUT_CHANGE",
-      name: e.target.name,
-      value: e.target.value,
-    });
-  };
-
-  const handleSocialsChange = (e: any) => {
-    dispatch({
-      type: "HANDLE_SOCIALS_INPUT_CHANGE",
-      name: e.target.name,
-      value: e.target.value,
-    });
-  };
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -87,176 +134,313 @@ export const CreateContactModal = () => {
         },
       }
     );
-
-    // setContacts((contacts) => {
-    //   return [...contacts, createdContact];
-    // });
   };
 
   return (
-    <div className="absolute inset-0 top-16 z-10 flex w-full justify-center bg-white/70">
-      <div className="mt-8 max-h-[75vh] w-full max-w-md overflow-y-scroll rounded-md border border-slate-200 bg-white p-8">
+    <Dialog open={defaultOpen} onOpenChange={router.back}>
+      <DialogContent className="flex h-full flex-col gap-y-4">
+        <DialogHeader>
+          <DialogTitle>Create Contact</DialogTitle>
+          <DialogDescription>
+            Fill out info for your new contact.
+          </DialogDescription>
+        </DialogHeader>
         <form
-          className="flex flex-col gap-y-8"
           method="post"
+          className="flex flex-col gap-4"
           onSubmit={handleSubmit}
         >
-          <h1 className="text-xl font-medium">Create Contact</h1>
-          <div className="flex w-full flex-row">
-            <section className="flex flex-col gap-y-5">
-              <div className="flex flex-row gap-x-4">
-                <Input
-                  name="firstName"
-                  label="First Name"
-                  onChange={handleChange}
-                  value={body.firstName}
-                  type="text"
-                />
-                <Input
-                  name="lastName"
-                  label="Last Name"
-                  onChange={handleChange}
-                  value={body.lastName}
-                  type="text"
-                />
-              </div>
-              <Input
-                name="jobTitle"
-                label="Job Title"
-                onChange={handleChange}
-                value={body.jobTitle}
-                type="text"
-              />
-              <Input
-                name="location"
-                label="Location"
-                onChange={handleChange}
-                value={body.location}
-                type="text"
-              />
-              <MultiInput
-                list={body.companies}
-                name="companies"
-                label="Companies"
-                placeholder="Company"
-                onChange={(value) =>
-                  dispatch({
-                    type: "HANDLE_COMPANY_CHANGE",
-                    value,
-                  })
-                }
-                addItem={(value) =>
-                  dispatch({
-                    type: "HANDLE_COMPANY_ADD",
-                    value,
-                  })
-                }
-                removeItem={(index) =>
-                  dispatch({
-                    type: "HANDLE_COMPANY_REMOVE",
-                    value: index,
-                  })
-                }
-              />
-              <MultiInput
-                list={body.emails}
-                name="emails"
-                label="Emails"
-                placeholder="Email"
-                onChange={(value) =>
-                  dispatch({
-                    type: "HANDLE_EMAIL_CHANGE",
-                    value,
-                  })
-                }
-                addItem={(value) =>
-                  dispatch({
-                    type: "HANDLE_EMAIL_ADD",
-                    value,
-                  })
-                }
-                removeItem={(index) =>
-                  dispatch({
-                    type: "HANDLE_EMAIL_REMOVE",
-                    value: index,
-                  })
-                }
-                chooseType
-              />
-              <MultiInput
-                list={body.phones}
-                name="phones"
-                label="Phones"
-                placeholder="Phone"
-                onChange={(value) =>
-                  dispatch({
-                    type: "HANDLE_PHONE_CHANGE",
-                    value,
-                  })
-                }
-                addItem={(value) =>
-                  dispatch({
-                    type: "HANDLE_PHONE_ADD",
-                    value,
-                  })
-                }
-                removeItem={(index) =>
-                  dispatch({
-                    type: "HANDLE_PHONE_REMOVE",
-                    value: index,
-                  })
-                }
-                chooseType
-              />
-              <div className="flex flex-col gap-y-2">
-                <p className="text-sm font-medium">Socials</p>
-                <Input
-                  name="twitterUrl"
-                  placeholder="Twitter Url"
-                  onChange={handleSocialsChange}
-                  value={body.socials.twitterUrl}
-                  type="text"
-                />
-                <Input
-                  name="facebookUrl"
-                  placeholder="Facebook Url"
-                  onChange={handleSocialsChange}
-                  value={body.socials.facebookUrl}
-                  type="text"
-                />
-                <Input
-                  name="linkedInUrl"
-                  placeholder="LinkedIn Url"
-                  onChange={handleSocialsChange}
-                  value={body.socials.linkedInUrl}
-                  type="text"
-                />
-                <Input
-                  name="githubUrl"
-                  placeholder="Github Url"
-                  onChange={handleSocialsChange}
-                  value={body.socials.githubUrl}
-                  type="text"
-                />
-              </div>
-            </section>
-            <section></section>
+          <div className="flex flex-row gap-x-2">
+            <div className="grid w-full gap-1.5">
+              <Label htmlFor="firstName" className="text-start">
+                First Name
+              </Label>
+              <Input type="text" id="firstName" placeholder="Name" />
+            </div>
+            <div className="grid w-full gap-1.5">
+              <Label htmlFor="lastName" className="text-start">
+                Last Name
+              </Label>
+              <Input type="text" id="lastName" placeholder="Name" />
+            </div>
           </div>
-          <div className="flex flex-row justify-center gap-4">
-            <ActionButton
-              variant="secondary"
-              text="Cancel"
-              onClick={() => console.log("cancel")}
-            />
-            <ActionButton
-              variant="primary"
-              text="Create"
-              type="submit"
-              extended
-            />
+          <div className="flex flex-row gap-x-2">
+            <div className="grid w-full gap-1.5">
+              <Label htmlFor="jobTitle" className="text-start">
+                Job Title
+              </Label>
+              <Input type="text" id="jobTitle" placeholder="Title" />
+            </div>
+            <div className="grid w-full gap-1.5">
+              <Label htmlFor="location" className="text-start">
+                Location
+              </Label>
+              <Input type="text" id="location" placeholder="Location" />
+            </div>
           </div>
+          <Tabs
+            onValueChange={(value) => setActiveTab(value)}
+            defaultValue="socials"
+            className="flex w-full flex-col gap-y-2"
+          >
+            {/* TODO- Add Custom <FramerTabsTrigger /> component in /ui/tabs */}
+            <TabsList className="grid w-full grid-cols-2">
+              <div className="relative flex justify-center">
+                <TabsTrigger value="socials" className="z-10 w-full">
+                  Socials
+                </TabsTrigger>
+                {activeTab === "socials" && (
+                  <motion.div
+                    className={`absolute inset-0 -z-0 rounded-sm bg-background`}
+                    layoutId={"1"}
+                  />
+                )}
+              </div>
+              <div className="relative flex justify-center">
+                <TabsTrigger value="linkedTo" className="z-10 w-full">
+                  Link To
+                </TabsTrigger>
+                {activeTab === "linkedTo" && (
+                  <motion.div
+                    className={`absolute inset-0 -z-0 rounded-sm bg-background`}
+                    layoutId={"1"}
+                  />
+                )}
+              </div>
+            </TabsList>
+            <TabsContent value="socials">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Socials</CardTitle>
+                  <CardDescription>
+                    Add social links for this contact.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="grid gap-2">
+                  <div className="flex w-full flex-row items-center gap-1.5">
+                    <Twitter className="h-10 w-10 rounded-lg border p-2" />
+                    <Input
+                      type="text"
+                      id="twitterUrl"
+                      placeholder="Twitter Url"
+                    />
+                  </div>
+                  <div className="flex w-full flex-row items-center gap-1.5">
+                    <Linkedin className="h-10 w-10 rounded-lg border p-2" />
+                    <Input
+                      type="text"
+                      id="linkedInUrl"
+                      placeholder="LinkedIn Url"
+                    />
+                  </div>
+                  <div className="flex w-full flex-row items-center gap-1.5">
+                    <Github className="h-10 w-10 rounded-lg border p-2" />
+                    <Input
+                      type="text"
+                      id="githubUrl"
+                      placeholder="Github Url"
+                    />
+                  </div>
+                  <div className="flex w-full flex-row items-center gap-1.5">
+                    <FacebookIcon className="h-10 w-10 rounded-lg border p-2" />
+                    <Input
+                      type="text"
+                      id="facebookUrl"
+                      placeholder="Facebook Url"
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+            <TabsContent value="linkedTo">
+              <Card className="w-full">
+                <CardHeader>
+                  <CardTitle>Link To</CardTitle>
+                  <CardDescription>
+                    Optionally link this contact to many jobs or a board.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="flex flex-col gap-y-4">
+                  <Popover open={boardOpen} onOpenChange={setBoardOpen}>
+                    <div className="flex w-full flex-col items-start gap-1.5">
+                      <Label htmlFor="board" className="text-start">
+                        Board
+                      </Label>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          aria-expanded={boardOpen}
+                          className="w-full justify-between"
+                        >
+                          <div className="flex flex-row items-center gap-3">
+                            <Layout className="h-4 w-4" />
+                            {selectedBoardId
+                              ? filteredBoards.find(
+                                  (board) => board.id === selectedBoardId
+                                )?.name
+                              : "Choose board..."}
+                          </div>
+                          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                        </Button>
+                      </PopoverTrigger>
+                    </div>
+                    <PopoverContent className="p-0">
+                      <Command>
+                        <CommandInput
+                          placeholder="Search board..."
+                          onChangeCapture={(event) => {
+                            // @ts-ignore
+                            const inputValue = event.target.value.toLowerCase();
+                            const filteredBoards = boards.filter((board) =>
+                              board.name.toLowerCase().includes(inputValue)
+                            );
+
+                            setFilteredBoards(filteredBoards);
+                          }}
+                        />
+                        <CommandEmpty>No boards found.</CommandEmpty>
+                        <CommandGroup>
+                          <ScrollArea className="h-72">
+                            {filteredBoards.map((board) => (
+                              <CommandItem
+                                key={board.id}
+                                value={`${board.name}${board.id}`}
+                                onSelect={(currentValue) => {
+                                  const boardId = currentValue.substring(
+                                    currentValue.length - 36
+                                  );
+
+                                  setSelectedBoardId(
+                                    boardId === selectedBoardId ? "" : boardId
+                                  );
+                                  setBoardOpen(false);
+                                }}
+                              >
+                                <Layout className="mr-2 h-4 w-4" />
+                                <Check
+                                  className={cn(
+                                    "mr-2 h-4 w-4",
+                                    selectedBoardId === board.id
+                                      ? "opacity-100"
+                                      : "opacity-0"
+                                  )}
+                                />
+                                {board.name}
+                              </CommandItem>
+                            ))}
+                          </ScrollArea>
+                        </CommandGroup>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                  <Popover open={jobsOpen} onOpenChange={setJobsOpen}>
+                    <div className="flex w-full flex-col items-start gap-1.5">
+                      <Label htmlFor="board" className="text-start">
+                        Jobs
+                      </Label>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          role="combobox"
+                          aria-expanded={jobsOpen}
+                          className="relative w-full justify-between overflow-hidden"
+                        >
+                          <div className="absolute flex flex-row items-center gap-3 truncate">
+                            <Briefcase className="h-4 w-4" />
+                            {selectedJobIds.length === 0
+                              ? "Select Jobs..."
+                              : selectedJobIds
+                                  .map((jobId) => {
+                                    const job = jobs.find(
+                                      (job) => job.id === jobId
+                                    );
+
+                                    return job?.title;
+                                  })
+                                  .join(", ")}
+                          </div>
+                        </Button>
+                      </PopoverTrigger>
+                    </div>
+                    <PopoverContent className="w-full p-0">
+                      <Command>
+                        <CommandInput
+                          placeholder="Search job..."
+                          onChangeCapture={(event) => {
+                            // @ts-ignore
+                            const inputValue = event.target.value.toLowerCase();
+
+                            const filteredJobs = jobs.filter((job) =>
+                              job.title.toLowerCase().includes(inputValue)
+                            );
+
+                            setFilteredJobs(filteredJobs);
+                          }}
+                        />
+
+                        <CommandEmpty>No Jobs found.</CommandEmpty>
+                        <CommandGroup>
+                          <ScrollArea className="h-72">
+                            {filteredJobs.map((job) => (
+                              <CommandItem
+                                key={job.id}
+                                value={`${job.title}${job.id}`}
+                                onSelect={(currentValue) => {
+                                  const jobId = currentValue.substring(
+                                    currentValue.length - 36
+                                  );
+
+                                  if (selectedJobIds.includes(jobId)) {
+                                    setSelectedJobIds((prev) =>
+                                      prev.filter((id) => id !== jobId)
+                                    );
+                                  } else {
+                                    setSelectedJobIds((prev) => [
+                                      ...prev,
+                                      jobId,
+                                    ]);
+                                  }
+                                }}
+                              >
+                                <Briefcase className="mr-2 h-4 w-4" />
+                                <Check
+                                  className={cn(
+                                    "mr-2 h-4 w-4",
+                                    selectedJobIds.includes(job.id)
+                                      ? "opacity-100"
+                                      : "opacity-0"
+                                  )}
+                                />
+                                <div>
+                                  <h2 className="text-sm font-semibold leading-none tracking-tight">
+                                    {job.title}
+                                  </h2>
+                                  <p className="text-xs text-muted-foreground">
+                                    {job.company}
+                                  </p>
+                                </div>
+                              </CommandItem>
+                            ))}
+                          </ScrollArea>
+                        </CommandGroup>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
         </form>
-      </div>
-    </div>
+        <DialogFooter className="gap-2">
+          <Button type="button" variant="outline" onClick={router.back}>
+            Cancel
+          </Button>
+          <Button type="submit" variant="default" onClick={handleSubmit}>
+            Create
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 };
