@@ -177,29 +177,6 @@ export function Contacts({ contacts, boardId }: Props) {
                               .join(", ")}
                       </p>
                     </div>
-                    {/* <div className="mt-2 flex flex-row items-center gap-x-4 text-xl">
-                      {socials.map((social) => {
-                        return (
-                          <a
-                            key={social.name}
-                            href={social.url}
-                            target="_blank"
-                            rel="noreferrer"
-                            className={
-                              social.url === "" ? "pointer-events-none" : ""
-                            }
-                          >
-                            {social.url === ""
-                              ? disabledSocialDict[
-                                  social.name as keyof typeof disabledSocialDict
-                                ]
-                              : socialDict[
-                                  social.name as keyof typeof socialDict
-                                ]}
-                          </a>
-                        );
-                      })}
-                    </div> */}
                   </div>
                   <p className="ml-auto w-max py-2 pt-4 text-xs text-gray-600">
                     Created {new Date(contact.createdDate).toDateString()}
