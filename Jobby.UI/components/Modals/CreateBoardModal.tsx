@@ -74,7 +74,7 @@ export const CreateBoardModal = () => {
             </div>
           </form>
         </DialogHeader>
-        <DialogFooter>
+        <DialogFooter className="gap-y-2 sm:gap-y-0">
           <Button type="button" variant="outline" onClick={router.back}>
             Cancel
           </Button>

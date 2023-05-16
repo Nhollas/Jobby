@@ -10,13 +10,13 @@ export type JobList = {
   jobs: Job[];
   index?: number;
   count?: number;
-} & Entity
+} & Entity;
 
 export type JobListPreview = {
   name: string;
   jobs: JobPreview[];
   boardId: string;
-} & Entity
+} & Entity;
 
 export type Activity = {
   title: string;
@@ -25,8 +25,8 @@ export type Activity = {
   note: string;
   completed: boolean;
   board: Board;
-  job: Job
-} & Entity
+  job: Job;
+} & Entity;
 
 export type Job = {
   company: string;
@@ -38,12 +38,12 @@ export type Job = {
   description: string;
   deadline: string;
   index: number;
-  activities: Activity[]
-  notes: Note[]
-  contacts: Contact[]
+  activities: Activity[];
+  notes: Note[];
+  contacts: Contact[];
   jobListId: string;
   boardId: string;
-} & Entity
+} & Entity;
 
 export type JobPreview = {
   company: string;
@@ -52,7 +52,7 @@ export type JobPreview = {
   colour: string;
   jobListId: string;
   boardId: string;
-} & Entity
+} & Entity;
 
 export type Note = {
   id: string;
@@ -60,7 +60,7 @@ export type Note = {
   description: string;
   job: Job;
   jobId: string;
-}
+};
 
 export type Contact = {
   firstName: string;
@@ -68,10 +68,11 @@ export type Contact = {
   jobTitle: string;
   location: string;
   socials: Social;
-  jobs: Job[]
-  companies: Company[]
-  emails: Email[]
-  phones: Phone[]
+  jobs: Job[];
+  companies: Company[];
+  emails: Email[];
+  phones: Phone[];
+  board: Board;
 } & Entity;
 
 export type Social = {
@@ -79,29 +80,29 @@ export type Social = {
   facebookUrl: string;
   linkedInUrl: string;
   githubUrl: string;
-}
+};
 
 type Company = {
   id: string;
   name: string;
-  contact: Contact
+  contact: Contact;
   contactId: string;
-}
+};
 
 type Email = {
   id: string;
   name: string;
-  contact: Contact
+  contact: Contact;
   contactId: string;
-}
+};
 
 type Phone = {
   id: string;
   number: string;
   type: string;
-  contact: Contact
+  contact: Contact;
   contactId: string;
-}
+};
 
 export type Board = {
   id: string;
@@ -111,4 +112,4 @@ export type Board = {
   activitiesCount: number;
   contactsCount: number;
   jobLists: JobList[];
-} & Entity
+} & Entity;

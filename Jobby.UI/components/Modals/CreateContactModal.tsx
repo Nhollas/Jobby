@@ -28,6 +28,8 @@ import {
   Briefcase,
   Layout,
   Mail,
+  Phone,
+  Building2,
 } from "lucide-react";
 
 import {
@@ -46,6 +48,7 @@ import { FramerTabsTrigger, Tabs, TabsContent, TabsList } from "../ui/tabs";
 import React from "react";
 import { ScrollArea } from "../ui/scroll-area";
 import { Modal } from "../Modal";
+import MultiInput from "../Common/MultiInput";
 
 interface Props {
   boards: Board[];
@@ -82,14 +85,30 @@ export const CreateContactModal = ({ boards, jobs }: Props) => {
 
   const [boardOpen, setBoardOpen] = useState(false);
   const [jobsOpen, setJobsOpen] = useState(false);
-
   const [filteredBoards, setFilteredBoards] = useState(boards);
   const [selectedBoardId, setSelectedBoardId] = useState("");
   const [filteredJobs, setFilteredJobs] = useState(jobs);
   const [selectedJobIds, setSelectedJobIds] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState("socials");
+  const [activeTab2, setActiveTab2] = useState("companies");
 
   const { body } = state;
+
+  const handleChange = (e: any) => {
+    dispatch({
+      type: "HANDLE_INPUT_CHANGE",
+      property: e.target.name,
+      value: e.target.value,
+    });
+  };
+
+  const handleSocialsChange = (e: any) => {
+    dispatch({
+      type: "HANDLE_SOCIALS_INPUT_CHANGE",
+      property: e.target.name,
+      value: e.target.value,
+    });
+  };
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -142,13 +161,25 @@ export const CreateContactModal = ({ boards, jobs }: Props) => {
                 <Label htmlFor="firstName" className="text-start">
                   First Name
                 </Label>
-                <Input type="text" id="firstName" placeholder="Name" />
+                <Input
+                  type="text"
+                  name="firstName"
+                  placeholder="Name"
+                  value={body.firstName}
+                  onChange={handleChange}
+                />
               </div>
               <div className="grid w-full gap-1.5">
                 <Label htmlFor="lastName" className="text-start">
                   Last Name
                 </Label>
-                <Input type="text" id="lastName" placeholder="Name" />
+                <Input
+                  type="text"
+                  name="lastName"
+                  placeholder="Name"
+                  value={body.lastName}
+                  onChange={handleChange}
+                />
               </div>
             </div>
             <div className="flex flex-row gap-x-2">
@@ -156,163 +187,154 @@ export const CreateContactModal = ({ boards, jobs }: Props) => {
                 <Label htmlFor="jobTitle" className="text-start">
                   Job Title
                 </Label>
-                <Input type="text" id="jobTitle" placeholder="Title" />
+                <Input
+                  type="text"
+                  name="jobTitle"
+                  placeholder="Title"
+                  value={body.jobTitle}
+                  onChange={handleChange}
+                />
               </div>
               <div className="grid w-full gap-1.5">
                 <Label htmlFor="location" className="text-start">
                   Location
                 </Label>
-                <Input type="text" id="location" placeholder="Location" />
+                <Input
+                  type="text"
+                  name="location"
+                  placeholder="Location"
+                  value={body.location}
+                  onChange={handleChange}
+                />
               </div>
             </div>
-            <Popover open={boardOpen} onOpenChange={setBoardOpen}>
-              <div className="flex w-full flex-col items-start gap-1.5">
-                <Label htmlFor="email" className="text-start">
-                  Emails
-                </Label>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    role="combobox"
-                    aria-expanded={boardOpen}
-                    className="w-full justify-between"
-                  >
-                    <div className="flex flex-row items-center gap-3">
-                      <Mail className="h-4 w-4" />
-                      {selectedBoardId
-                        ? filteredBoards.find(
-                            (board) => board.id === selectedBoardId
-                          )?.name
-                        : "Choose board..."}
-                    </div>
-                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                  </Button>
-                </PopoverTrigger>
-              </div>
-              <PopoverContent className="p-0">
-                <Command>
-                  <CommandInput
-                    placeholder="Search board..."
-                    onChangeCapture={(event) => {
-                      const inputValue =
-                        // @ts-ignore
-                        event.target.value.toLowerCase();
-                      const filteredBoards = boards.filter((board) =>
-                        board.name.toLowerCase().includes(inputValue)
-                      );
-
-                      setFilteredBoards(filteredBoards);
-                    }}
-                  />
-                  <CommandEmpty>No boards found.</CommandEmpty>
-                  <CommandGroup>
-                    <ScrollArea className="h-72">
-                      {filteredBoards.map((board) => (
-                        <CommandItem
-                          key={board.id}
-                          value={`${board.name}${board.id}`}
-                          onSelect={(currentValue) => {
-                            const boardId = currentValue.substring(
-                              currentValue.length - 36
-                            );
-
-                            setSelectedBoardId(
-                              boardId === selectedBoardId ? "" : boardId
-                            );
-                            setBoardOpen(false);
-                          }}
-                        >
-                          <Layout className="mr-2 h-4 w-4" />
-                          <Check
-                            className={cn(
-                              "mr-2 h-4 w-4",
-                              selectedBoardId === board.id
-                                ? "opacity-100"
-                                : "opacity-0"
-                            )}
-                          />
-                          {board.name}
-                        </CommandItem>
-                      ))}
-                    </ScrollArea>
-                  </CommandGroup>
-                </Command>
-              </PopoverContent>
-            </Popover>
-            <Popover open={boardOpen} onOpenChange={setBoardOpen}>
-              <div className="flex w-full flex-col items-start gap-1.5">
-                <Label htmlFor="board" className="text-start">
+            <Tabs
+              onValueChange={(value) => setActiveTab2(value)}
+              defaultValue="companies"
+              className="flex w-full flex-col gap-y-2"
+            >
+              <TabsList className="grid w-full grid-cols-3">
+                <FramerTabsTrigger
+                  value="companies"
+                  className="z-10 w-full"
+                  active={activeTab2 === "companies"}
+                  layoutId={"2"}
+                >
+                  Companies
+                </FramerTabsTrigger>
+                <FramerTabsTrigger
+                  value="phones"
+                  className="z-10 w-full"
+                  active={activeTab2 === "phones"}
+                  layoutId={"2"}
+                >
                   Phones
-                </Label>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="outline"
-                    role="combobox"
-                    aria-expanded={boardOpen}
-                    className="w-full justify-between"
-                  >
-                    <div className="flex flex-row items-center gap-3">
-                      <Layout className="h-4 w-4" />
-                      {selectedBoardId
-                        ? filteredBoards.find(
-                            (board) => board.id === selectedBoardId
-                          )?.name
-                        : "Choose board..."}
-                    </div>
-                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                  </Button>
-                </PopoverTrigger>
-              </div>
-              <PopoverContent className="p-0">
-                <Command>
-                  <CommandInput
-                    placeholder="Search board..."
-                    onChangeCapture={(event) => {
-                      const inputValue =
-                        // @ts-ignore
-                        event.target.value.toLowerCase();
-                      const filteredBoards = boards.filter((board) =>
-                        board.name.toLowerCase().includes(inputValue)
-                      );
-
-                      setFilteredBoards(filteredBoards);
-                    }}
-                  />
-                  <CommandEmpty>No boards found.</CommandEmpty>
-                  <CommandGroup>
-                    <ScrollArea className="h-72">
-                      {filteredBoards.map((board) => (
-                        <CommandItem
-                          key={board.id}
-                          value={`${board.name}${board.id}`}
-                          onSelect={(currentValue) => {
-                            const boardId = currentValue.substring(
-                              currentValue.length - 36
-                            );
-
-                            setSelectedBoardId(
-                              boardId === selectedBoardId ? "" : boardId
-                            );
-                            setBoardOpen(false);
-                          }}
-                        >
-                          <Layout className="mr-2 h-4 w-4" />
-                          <Check
-                            className={cn(
-                              "mr-2 h-4 w-4",
-                              selectedBoardId === board.id
-                                ? "opacity-100"
-                                : "opacity-0"
-                            )}
-                          />
-                          {board.name}
-                        </CommandItem>
-                      ))}
-                    </ScrollArea>
-                  </CommandGroup>
-                </Command>
-              </PopoverContent>
-            </Popover>
+                </FramerTabsTrigger>
+                <FramerTabsTrigger
+                  value="emails"
+                  className="z-10 w-full"
+                  active={activeTab2 === "emails"}
+                  layoutId={"2"}
+                >
+                  Emails
+                </FramerTabsTrigger>
+              </TabsList>
+              <TabsContent value="companies">
+                <MultiInput
+                  list={body.companies}
+                  name="companies"
+                  label="Companies"
+                  description="Add companies for this contact."
+                  placeholder="Company"
+                  icon={<Building2 className="h-5 rounded-lg" />}
+                  onChange={(value) =>
+                    dispatch({
+                      type: "HANDLE_ARRAY_ITEM_CHANGE",
+                      property: "companies",
+                      value,
+                    })
+                  }
+                  addItem={(value) =>
+                    dispatch({
+                      type: "HANDLE_ARRAY_ITEM_ADD",
+                      property: "companies",
+                      value,
+                    })
+                  }
+                  removeItem={(value) =>
+                    dispatch({
+                      type: "HANDLE_ARRAY_ITEM_REMOVE",
+                      property: "companies",
+                      value: value,
+                    })
+                  }
+                />
+              </TabsContent>
+              <TabsContent value="phones">
+                <MultiInput
+                  list={body.phones}
+                  name="phones"
+                  label="Phones"
+                  description="Add phone numbers for this contact."
+                  placeholder="Phone"
+                  chooseType
+                  icon={<Phone className="h-5 rounded-lg" />}
+                  onChange={(value) =>
+                    dispatch({
+                      type: "HANDLE_ARRAY_ITEM_CHANGE",
+                      property: "phones",
+                      value,
+                    })
+                  }
+                  addItem={(value) =>
+                    dispatch({
+                      type: "HANDLE_ARRAY_ITEM_ADD",
+                      property: "phones",
+                      value,
+                    })
+                  }
+                  removeItem={(value) =>
+                    dispatch({
+                      type: "HANDLE_ARRAY_ITEM_REMOVE",
+                      property: "phones",
+                      value: value,
+                    })
+                  }
+                />
+              </TabsContent>
+              <TabsContent value="emails">
+                <MultiInput
+                  list={body.emails}
+                  name="emails"
+                  label="Emails"
+                  description="Add emails for this contact."
+                  placeholder="Email"
+                  chooseType
+                  icon={<Mail className="h-5 rounded-lg" />}
+                  onChange={(value) =>
+                    dispatch({
+                      type: "HANDLE_ARRAY_ITEM_CHANGE",
+                      property: "emails",
+                      value,
+                    })
+                  }
+                  addItem={(value) =>
+                    dispatch({
+                      type: "HANDLE_ARRAY_ITEM_ADD",
+                      property: "emails",
+                      value,
+                    })
+                  }
+                  removeItem={(value) =>
+                    dispatch({
+                      type: "HANDLE_ARRAY_ITEM_REMOVE",
+                      property: "emails",
+                      value: value,
+                    })
+                  }
+                />
+              </TabsContent>
+            </Tabs>
             <Tabs
               onValueChange={(value) => setActiveTab(value)}
               defaultValue="socials"
@@ -349,32 +371,40 @@ export const CreateContactModal = ({ boards, jobs }: Props) => {
                       <Twitter className="h-10 w-10 rounded-lg border p-2" />
                       <Input
                         type="text"
-                        id="twitterUrl"
+                        name="twitterUrl"
                         placeholder="Twitter Url"
+                        value={body.socials.twitterUrl}
+                        onChange={handleSocialsChange}
                       />
                     </div>
                     <div className="flex w-full flex-row items-center gap-1.5">
                       <Linkedin className="h-10 w-10 rounded-lg border p-2" />
                       <Input
                         type="text"
-                        id="linkedInUrl"
+                        name="linkedInUrl"
                         placeholder="LinkedIn Url"
+                        value={body.socials.linkedInUrl}
+                        onChange={handleSocialsChange}
                       />
                     </div>
                     <div className="flex w-full flex-row items-center gap-1.5">
                       <Github className="h-10 w-10 rounded-lg border p-2" />
                       <Input
                         type="text"
-                        id="githubUrl"
+                        name="githubUrl"
                         placeholder="Github Url"
+                        value={body.socials.githubUrl}
+                        onChange={handleSocialsChange}
                       />
                     </div>
                     <div className="flex w-full flex-row items-center gap-1.5">
                       <FacebookIcon className="h-10 w-10 rounded-lg border p-2" />
                       <Input
                         type="text"
-                        id="facebookUrl"
+                        name="facebookUrl"
                         placeholder="Facebook Url"
+                        value={body.socials.facebookUrl}
+                        onChange={handleSocialsChange}
                       />
                     </div>
                   </CardContent>
@@ -443,6 +473,13 @@ export const CreateContactModal = ({ boards, jobs }: Props) => {
                                     setSelectedBoardId(
                                       boardId === selectedBoardId ? "" : boardId
                                     );
+
+                                    dispatch({
+                                      type: "HANDLE_INPUT_CHANGE",
+                                      property: "boardId",
+                                      value: boardId,
+                                    });
+
                                     setBoardOpen(false);
                                   }}
                                 >
@@ -521,16 +558,23 @@ export const CreateContactModal = ({ boards, jobs }: Props) => {
                                       currentValue.length - 36
                                     );
 
-                                    if (selectedJobIds.includes(jobId)) {
-                                      setSelectedJobIds((prev) =>
-                                        prev.filter((id) => id !== jobId)
+                                    let jobIds = [...selectedJobIds];
+
+                                    if (jobIds.includes(jobId)) {
+                                      jobIds = jobIds.filter(
+                                        (id) => id !== jobId
                                       );
                                     } else {
-                                      setSelectedJobIds((prev) => [
-                                        ...prev,
-                                        jobId,
-                                      ]);
+                                      jobIds = [...selectedJobIds, jobId];
                                     }
+
+                                    setSelectedJobIds(jobIds);
+
+                                    dispatch({
+                                      type: "HANDLE_INPUT_CHANGE",
+                                      property: "jobIds",
+                                      value: jobIds,
+                                    });
                                   }}
                                 >
                                   <Briefcase className="mr-2 h-4 w-4" />

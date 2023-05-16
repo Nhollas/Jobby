@@ -58,10 +58,13 @@ const FramerTabsTrigger = React.forwardRef<
       {...props}
     />
     {active && (
-      <motion.div
-        className={`absolute inset-0 -z-0 rounded-sm bg-background`}
-        layoutId={layoutId}
-      />
+      // Single axis animations. https://github.com/framer/motion/issues/1112
+      <motion.div layout layoutRoot>
+        <motion.div
+          className={`absolute inset-0 -z-0 rounded-sm bg-background`}
+          layoutId={layoutId}
+        />
+      </motion.div>
     )}
   </div>
 ));

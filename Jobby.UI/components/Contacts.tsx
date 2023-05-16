@@ -1,6 +1,6 @@
 "use client";
 
-import { MoreVertical, Mail, Phone, Eye, Trash2 } from "lucide-react";
+import { MoreVertical, Mail, Phone, Eye, Trash2, Layout } from "lucide-react";
 import Link from "next/link";
 import { Contact, Social } from "types";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
@@ -39,7 +39,7 @@ export function Contacts({ contacts, boardId }: Props) {
   console.log(contacts);
 
   return (
-    <div className="flex flex-col gap-y-6 overscroll-contain border-t border-gray-300 p-4 lg:px-8">
+    <div className="flex flex-col gap-y-6 overscroll-contain border-gray-300 p-4 lg:px-8">
       <div className="flex flex-col gap-y-2">
         <h1 className="text-2xl font-medium">Contacts</h1>
         <p className="text-sm text-gray-500">View and manage contacts</p>
@@ -150,7 +150,7 @@ export function Contacts({ contacts, boardId }: Props) {
                     ))}
                   </div>
                 </CardHeader>
-                <CardContent className="flex flex-col p-2">
+                <CardContent className="flex flex-col gap-y-4 p-2">
                   <div className="flex flex-col gap-y-2 rounded-lg border bg-muted p-4 text-sm">
                     <div className="flex flex-row items-center gap-x-2">
                       <Mail className="h-4 w-4" />
@@ -178,7 +178,18 @@ export function Contacts({ contacts, boardId }: Props) {
                       </p>
                     </div>
                   </div>
-                  <p className="ml-auto w-max py-2 pt-4 text-xs text-gray-600">
+                  {contact.board && (
+                    <Button variant="outline" asChild>
+                      <Link
+                        href={`/board/${contact.board.id}`}
+                        className="ml-auto flex h-7 w-max items-center gap-x-2 text-xs"
+                      >
+                        <Layout className="h-4 w-4" />
+                        <p>{contact.board.name}</p>
+                      </Link>
+                    </Button>
+                  )}
+                  <p className="ml-auto w-max text-xs text-gray-600">
                     Created {new Date(contact.createdDate).toDateString()}
                   </p>
                 </CardContent>
