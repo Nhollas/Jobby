@@ -2,4 +2,4 @@
 
 namespace Jobby.Application.Features.ActivityFeatures.Commands.Delete;
 
-public sealed record DeleteActivityCommand(Guid ActivityId) : IRequest;
+public sealed record DeleteActivityCommand(Guid ActivityId) : IRequest<Unit>;

@@ -3,7 +3,7 @@ using MediatR;
 
 namespace Jobby.Application.Features.ContactFeatures.Commands.Update.UpdateDetails;
 
-public sealed record UpdateContactCommand : IRequest
+public sealed record UpdateContactCommand : IRequest<Unit>
 {
     public Guid ContactId { get; set; }
     public string FirstName { get; set; }

@@ -11,6 +11,7 @@ using Jobby.Application.Features.BoardFeatures.Queries.GetById;
 using Jobby.Application.Features.BoardFeatures.Queries.GetDictionary;
 using Jobby.Application.Features.BoardFeatures.Queries.GetList;
 using Jobby.Application.Features.ContactFeatures.Queries.GetList;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,6 +22,9 @@ namespace Jobby.Api.Controllers;
 [Authorize]
 public class BoardController : ApiController
 {
+    private readonly IMediator _mediator;
+    public BoardController(IMediator mediator) => _mediator = mediator;
+    
     [HttpPost("Create", Name = "CreateBoard")]
     public async Task<ActionResult<CreateBoardResponse>> CreateBoard([FromBody] CreateBoardCommand command)
     {
@@ -53,7 +57,8 @@ public class BoardController : ApiController
     [HttpGet]
     public async Task<ActionResult<List<ListBoardsResponse>>> ListBoards()
     {
-        var dtos = await Sender.Send(new GetBoardListQuery());
+
+        var dtos = await _mediator.Send(new GetBoardListQuery());
         return Ok(dtos);
     }
     

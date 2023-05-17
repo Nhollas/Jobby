@@ -1,5 +1,7 @@
 ﻿using Jobby.Application.Abstractions.Specification;
+using Jobby.Application.Interfaces.Repositories;
 using Jobby.Persistence.Data;
+using Jobby.Persistence.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,7 +14,8 @@ public static class PersistenceServiceRegistration
     {
         services.AddDbContext<JobbyDbContext>(c =>
             c.UseSqlServer(configuration.GetConnectionString("JobbyConnection")));
-        
+
+        services.AddScoped(typeof(IContactRepository), typeof(ContactRepository));
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
         services.AddScoped(typeof(IReadRepository<>), typeof(Repository<>));
 

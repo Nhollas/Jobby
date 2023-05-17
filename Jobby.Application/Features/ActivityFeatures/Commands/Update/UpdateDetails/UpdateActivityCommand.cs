@@ -2,7 +2,7 @@
 
 namespace Jobby.Application.Features.ActivityFeatures.Commands.Update.UpdateDetails;
 
-public sealed record UpdateActivityCommand : IRequest
+public sealed record UpdateActivityCommand : IRequest<Unit>
 {
     public Guid Id { get; set; }
     public string Title { get; set; }
