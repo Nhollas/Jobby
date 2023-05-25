@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { postAsync } from "@/lib/clientFetch";
 import { Board, Contact, Job } from "types";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@clerk/nextjs";
@@ -46,7 +45,7 @@ import React from "react";
 import { ScrollArea } from "../ui/scroll-area";
 import { Modal } from "../Modal";
 import { z } from "zod";
-import { useFieldArray, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
@@ -57,6 +56,7 @@ import {
   FormMessage,
 } from "../ui/form";
 import MultiInput from "../Common/MultiInput";
+import { postAsync } from "@/lib/clientFetch";
 
 interface Props {
   boards: Board[];
@@ -80,9 +80,11 @@ const formSchema = z.object({
     linkedInUrl: z.string().url().or(z.literal("")),
     githubUrl: z.string().url().or(z.literal("")),
   }),
-  emails: z.array(z.object({ value: z.string().email(), type: z.number() })),
-  phones: z.array(z.object({ value: z.string(), type: z.number() })),
-  companies: z.array(z.object({ value: z.string().nullable() })),
+  emails: z.array(
+    z.object({ value: z.string().email(), type: z.string().optional() })
+  ),
+  phones: z.array(z.object({ value: z.string(), type: z.string().optional() })),
+  companies: z.array(z.string().min(2)),
 });
 
 export const CreateContactModal = ({ boards, jobs }: Props) => {
@@ -114,29 +116,27 @@ export const CreateContactModal = ({ boards, jobs }: Props) => {
     },
   });
 
-  const errors = form.formState.errors;
-
   const [filteredBoards, setFilteredBoards] = useState(boards);
   const [filteredJobs, setFilteredJobs] = useState(jobs);
   const [activeTab, setActiveTab] = useState("socials");
   const [activeTab2, setActiveTab2] = useState("companies");
 
-  console.log(form);
+  console.log(form.formState.errors);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
 
-    // const createdContact = await postAsync<any, Contact>(
-    //   "/contact/create",
-    //   values,
-    //   {
-    //     headers: {
-    //       Authorization: `Bearer ${await getToken()}`,
-    //     },
-    //   }
-    // );
+    const createdContact = await postAsync<any, Contact>(
+      "/contact/create",
+      values,
+      {
+        headers: {
+          Authorization: `Bearer ${await getToken()}`,
+        },
+      }
+    );
 
-    // router.back();
+    router.back();
   }
 
   return (
@@ -246,8 +246,6 @@ export const CreateContactModal = ({ boards, jobs }: Props) => {
                     label="Companies"
                     description="Add companies to your contact."
                     icon={<Building2 className="h-5 w-5 flex-shrink-0" />}
-                    register={form.register}
-                    errors={errors}
                   />
                 </TabsContent>
                 <TabsContent value="phones">
@@ -255,10 +253,10 @@ export const CreateContactModal = ({ boards, jobs }: Props) => {
                     control={form.control}
                     name="phones"
                     label="Phones"
-                    description="Add phone to your contact."
+                    description="Add phones to your contact."
                     icon={<Phone className="h-5 w-5 flex-shrink-0" />}
-                    register={form.register}
-                    errors={errors}
+                    propertyName="value"
+                    includeType
                   />
                 </TabsContent>
                 <TabsContent value="emails">
@@ -268,8 +266,8 @@ export const CreateContactModal = ({ boards, jobs }: Props) => {
                     label="Emails"
                     description="Add emails to your contact."
                     icon={<Mail className="h-5 w-5 flex-shrink-0" />}
-                    register={form.register}
-                    errors={errors}
+                    propertyName="value"
+                    includeType
                   />
                 </TabsContent>
               </Tabs>
