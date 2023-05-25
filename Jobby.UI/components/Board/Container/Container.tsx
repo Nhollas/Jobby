@@ -8,6 +8,8 @@ import { Handle, Remove } from "../Item";
 import { JobListPreview } from "types";
 import { ActionButton } from "../../Common";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
 
 export interface Props {
   children: React.ReactNode;
@@ -70,13 +72,15 @@ export const Container = forwardRef<HTMLDivElement & HTMLButtonElement, Props>(
               {list.name}
             </p>
             <p>{list.jobs.length} Jobs</p>
-            <Link
-              href={`/create-job/${boardId}/${list.id}`}
-              className="ml-auto flex w-max flex-row gap-x-2 rounded-full border bg-main-blue py-2 px-8 text-base font-medium text-white hover:border-main-blue hover:bg-gray-50 hover:text-black"
-            >
-              Add Job
-              <i className="bi bi-plus-lg flex text-xl"></i>
-            </Link>
+            <Button variant="default" asChild>
+              <Link
+                href={`/create-job/${boardId}/${list.id}`}
+                className="flex flex-row items-center gap-x-2 rounded-full"
+              >
+                <Plus className="h-4 w-4" />
+                <p>Add Job</p>
+              </Link>
+            </Button>
             <div className="ml-auto flex w-max flex-row gap-x-2">
               {onRemove && <Remove onClick={onRemove} />}
               <Handle {...handleProps} />

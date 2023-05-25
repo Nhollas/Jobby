@@ -1,5 +1,4 @@
 import "./globals.css";
-import "bootstrap-icons/font/bootstrap-icons.css";
 import { Poppins } from "@next/font/google";
 import { ClerkProvider } from "@clerk/nextjs/app-beta";
 

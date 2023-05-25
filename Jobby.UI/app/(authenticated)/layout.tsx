@@ -12,7 +12,7 @@ export default async function Layout({
 
   return (
     <Providers boards={boards}>
-      <main className="flex flex-row">
+      <main className="grid lg:grid-cols-[250px,1fr]">
         <BoardsBar />
         {children}
       </main>

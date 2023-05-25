@@ -53,7 +53,7 @@ export function Contacts({ contacts, boardId }: Props) {
                 ? "/create-contact"
                 : `/create-contact?boardId=${boardId}`
             }
-            className="w-max"
+            className="w-max whitespace-nowrap"
           >
             Create Contact
           </Link>
@@ -65,20 +65,6 @@ export function Contacts({ contacts, boardId }: Props) {
         <section className="grid grid-cols-[repeat(auto-fill,minmax(265px,1fr))] gap-8">
           {contacts.map((contact) => {
             const socials = [];
-
-            const socialDict = {
-              twitterUrl: <i className="bi bi-twitter text-cyan-400"></i>,
-              facebookUrl: <i className="bi bi-facebook text-blue-700"></i>,
-              linkedInUrl: <i className="bi bi-linkedin text-blue-500"></i>,
-              githubUrl: <i className="bi bi-github text-gray-800"></i>,
-            };
-
-            const disabledSocialDict = {
-              twitterUrl: <i className="bi bi-twitter text-gray-300"></i>,
-              facebookUrl: <i className="bi bi-facebook text-gray-300"></i>,
-              linkedInUrl: <i className="bi bi-linkedin text-gray-300"></i>,
-              githubUrl: <i className="bi bi-github text-gray-300"></i>,
-            };
 
             for (const property in contact.socials) {
               socials.push({

@@ -43,7 +43,7 @@ export const DeleteContactModal = ({ contactId }: Props) => {
   };
 
   return (
-    <AlertDialog open={open} onOpenChange={router.back}>
+    <AlertDialog open={open}>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Delete Contact</AlertDialogTitle>

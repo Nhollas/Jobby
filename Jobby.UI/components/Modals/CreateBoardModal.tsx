@@ -5,25 +5,36 @@ import { useContext, useEffect, useState } from "react";
 import BoardsAndJobsContext from "contexts/BoardsAndJobsContext";
 import { useRouter } from "next/navigation";
 import { postAsync } from "@/lib/clientFetch";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "../ui/input";
-import { Label } from "../ui/label";
 import { useAuth } from "@clerk/nextjs";
+import { z } from "zod";
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from "@/components/ui/form";
+import { useForm } from "react-hook-form";
+
+const formSchema = z.object({
+  name: z.string().nonempty({ message: "The Name field is required" }),
+});
 
 export const CreateBoardModal = () => {
   const { setBoards } = useContext(BoardsAndJobsContext);
   const { getToken } = useAuth();
 
   const router = useRouter();
-  const [name, setName] = useState("");
 
   const [open, setOpen] = useState(false);
 
@@ -31,57 +42,56 @@ export const CreateBoardModal = () => {
     setOpen(true);
   }, []);
 
-  const handleSubmit = async (event: any) => {
-    event.preventDefault();
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: "",
+    },
+  });
 
-    var board = {
-      name,
-    };
-
-    const createdBoard = await postAsync<any, Board>("/board/create", board, {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    const createdBoard = await postAsync<any, Board>("/board/create", values, {
       headers: {
         Authorization: `Bearer ${await getToken()}`,
       },
     });
 
-    console.log("createdBoard", createdBoard);
-
-    setBoards((prev: Board[]) => [...prev, createdBoard]);
+    if (createdBoard) {
+      setBoards((prev: Board[]) => [...prev, createdBoard]);
+    }
 
     router.back();
-  };
+  }
 
   return (
     <Dialog open={open} onOpenChange={router.back}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Create Board</DialogTitle>
-          <DialogDescription>
-            Are you sure you want to delete this board?
-          </DialogDescription>
-          <form method="post" className="py-4">
-            <div className="grid w-full gap-1.5">
-              <Label htmlFor="name" className="text-start">
-                Name
-              </Label>
-              <Input
-                type="text"
-                id="name"
-                placeholder="Name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Name" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
               />
-            </div>
-          </form>
+              <div className="flex flex-row gap-x-2">
+                <Button type="button" variant="outline" onClick={router.back}>
+                  Cancel
+                </Button>
+                <Button type="submit">Submit</Button>
+              </div>
+            </form>
+          </Form>
         </DialogHeader>
-        <DialogFooter className="gap-y-2 sm:gap-y-0">
-          <Button type="button" variant="outline" onClick={router.back}>
-            Cancel
-          </Button>
-          <Button type="submit" variant="default" onClick={handleSubmit}>
-            Create
-          </Button>
-        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

@@ -1,120 +1,84 @@
 import clsx from "clsx";
-import { Base } from "types/requests/CreateContactRequest";
-import { v4 as uuid } from "uuid";
-import { Input } from "@/components/ui/input";
-import { Button } from "../ui/button";
 import { X } from "lucide-react";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "../ui/card";
+import { Control, FieldErrors, useFieldArray } from "react-hook-form";
+import { Button } from "../ui/button";
+import { FormMessage } from "../ui/form";
+import { Input } from "../ui/input";
 
-interface Props {
-  list: Base[];
+type MultiInputProps = {
+  control: Control<any>;
   name: string;
   label: string;
   description: string;
-  onChange: (value: Base) => void;
-  addItem: (value: Base) => void;
-  removeItem: (value: Base) => void;
-  placeholder?: string;
-  chooseType?: boolean;
   icon?: React.ReactNode;
-}
+  register: any;
+  placeholder?: string;
+  errors: FieldErrors<any>;
+};
 
-const MultiInput = (props: Props) => {
-  const {
-    list,
+function MultiInput({
+  control,
+  name,
+  icon,
+  register,
+  placeholder,
+  errors,
+}: MultiInputProps) {
+  const { fields, append, remove } = useFieldArray({
     name,
-    label,
-    description,
-    onChange,
-    placeholder,
-    addItem,
-    removeItem,
-    chooseType,
-    icon,
-  } = props;
+    control,
+  });
+
+  console.log(fields);
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{label}</CardTitle>
-        <CardDescription>{description}</CardDescription>
-      </CardHeader>
-      {list.length > 0 && (
-        <CardContent className="grid gap-2">
-          {list.map((item, index) => (
-            <div key={index} className="flex flex-row gap-x-2">
-              <div className="flex h-8 items-center justify-center">{icon}</div>
-              <Input
-                type="text"
-                className="h-8 bg-white"
-                name={name}
-                value={item.value}
-                onChange={(e) => onChange({ ...item, value: e.target.value })}
-                placeholder={placeholder}
-              />
+    <div className="!m-0 grid gap-2">
+      {fields.map((field, index) => {
+        const errorForField = errors?.[name]?.[index]?.value;
 
-              {chooseType && (
-                <Select
-                  value={`${item.type}`}
-                  onValueChange={(e) => {
-                    return onChange({ ...item, type: +e });
-                  }}
-                >
-                  <SelectTrigger className="h-8 w-[200px] truncate">
-                    <SelectValue placeholder="Select a type"></SelectValue>
-                  </SelectTrigger>
-                  <SelectContent className="w-[200px]">
-                    <SelectGroup>
-                      <SelectLabel>Types</SelectLabel>
-                      <SelectItem value="0">Work</SelectItem>
-                      <SelectItem value="1">Personal</SelectItem>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              )}
-              <Button
-                onClick={() => removeItem(item)}
-                variant="outline"
-                className="h-8 w-8 rounded-full p-0"
-              >
-                <X className="h-8 w-8 p-2" />
-                <span className="sr-only">Remove</span>
-              </Button>
-            </div>
-          ))}
-        </CardContent>
-      )}
-      <CardFooter>
-        <Button
-          onClick={() =>
-            addItem({ value: "", id: uuid(), type: chooseType ? 0 : undefined })
-          }
-          className={clsx(
-            list.length === 0 ? "w-full py-2" : "w-max",
-            "flex h-8 py-4 px-6"
-          )}
-        >
-          Add {placeholder}
-        </Button>
-      </CardFooter>
-    </Card>
+        console.log(errorForField);
+
+        return (
+          <div
+            key={field.id}
+            className="flex flex-row items-center gap-x-2 rounded-lg border px-4 py-1"
+          >
+            {icon}
+            <Input
+              placeholder={placeholder}
+              className="h-6 border-0 py-1"
+              {...register(`${name}.${index}.value` as const)}
+            />
+            <Button
+              onClick={() => remove(index)}
+              variant="outline"
+              type="button"
+              className="h-8 w-8 rounded-full"
+            >
+              <X className="h-5 w-5 flex-shrink-0" />
+              <span className="sr-only">Remove</span>
+            </Button>
+            {errorForField && (
+              <FormMessage className="text-xs">
+                {errorForField.message}
+              </FormMessage>
+            )}
+          </div>
+        );
+      })}
+      <Button
+        type="button"
+        onClick={() => append({ value: "" })}
+        className={clsx(
+          fields.length === 0 ? "!mt-4 w-full py-2" : "w-max",
+          "flex h-8 py-4 px-6"
+        )}
+      >
+        Add
+      </Button>
+      <FormMessage className="text-xs" />
+    </div>
   );
-};
+}
 
 export default MultiInput;

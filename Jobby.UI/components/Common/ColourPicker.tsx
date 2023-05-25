@@ -45,16 +45,20 @@ const ColourPicker = (props: Props) => {
         <label className="text-sm font-medium" htmlFor="colour">
           Colour
         </label>
-        <input
-          style={{
-            backgroundColor: selectedColour,
-            outlineColor: selectedColour,
-          }}
-          type="text"
-          disabled
-          className="max-w-[7rem] cursor-pointer bg-gray-50 px-3 py-1 outline outline-1"
-          name="colour"
-        ></input>
+        <div className="relative h-10 w-20">
+          <input
+            type="text"
+            disabled
+            className="h-10 w-full cursor-pointer rounded-md border border-input bg-gray-50 p-1 px-3 py-1"
+            name="colour"
+          ></input>
+          <div
+            className="absolute inset-1.5 rounded-md"
+            style={{
+              backgroundColor: selectedColour,
+            }}
+          ></div>
+        </div>
       </div>
       {showPicker && (
         <div className="flex w-max flex-wrap gap-1 bg-white p-1.5 outline outline-1 outline-gray-300">
