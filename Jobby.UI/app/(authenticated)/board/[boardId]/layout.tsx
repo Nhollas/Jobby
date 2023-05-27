@@ -1,4 +1,3 @@
-import { PageContainer } from "components/Common";
 import { BoardNavigation } from "./boardNavigation";
 
 export default async function BoardLayout({
@@ -9,10 +8,10 @@ export default async function BoardLayout({
   modal?: React.ReactNode;
 }) {
   return (
-    <PageContainer>
+    <div>
       <BoardNavigation />
       {children}
       {modal}
-    </PageContainer>
+    </div>
   );
 }

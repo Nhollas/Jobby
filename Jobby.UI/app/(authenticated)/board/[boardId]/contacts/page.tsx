@@ -1,20 +1,15 @@
-import { getAsync } from "@/lib/serverFetch";
 import { Contact } from "types";
 import { Contacts } from "components";
-import { auth } from "@clerk/nextjs";
+import { serverApi } from "@/lib/clients/serverApi";
 
 export async function Page({
   params: { boardId },
 }: {
   params: { boardId: string };
 }) {
-  const { getToken } = auth();
-
-  const contacts = await getAsync<Contact[]>(`/board/${boardId}/contacts`, {
-    headers: {
-      Authorization: `Bearer ${await getToken()}`,
-    },
-  });
+  const { data: contacts } = await serverApi.get<Contact[]>(
+    `/board/${boardId}/contacts`
+  );
 
   return <Contacts contacts={contacts} boardId={boardId} />;
 }

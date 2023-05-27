@@ -1,6 +1,5 @@
 "use client";
 
-import { deleteAsync } from "@/lib/clientFetch";
 import { Board } from "types";
 import { useContext, useEffect, useState } from "react";
 import BoardsAndJobsContext from "contexts/BoardsAndJobsContext";
@@ -16,6 +15,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { clientApi } from "@/lib/clients/clientApi";
 
 interface Props {
   boardId: string | null;
@@ -36,7 +36,7 @@ export const DeleteBoardModal = ({ boardId }: Props) => {
   const handleSubmit = async (event: any) => {
     event.preventDefault();
 
-    await deleteAsync(`/board/delete/${boardId}`, {
+    await clientApi.delete(`/board/delete/${boardId}`, {
       headers: {
         Authorization: `Bearer ${await getToken()}`,
       },

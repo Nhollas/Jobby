@@ -1,9 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Board, Contact, Job } from "types";
+import { Board, Job } from "types";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useAuth } from "@clerk/nextjs";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import {
@@ -56,7 +55,7 @@ import {
   FormMessage,
 } from "../ui/form";
 import MultiInput from "../Common/MultiInput";
-import { postAsync } from "@/lib/clientFetch";
+import { useCreateContact } from "@/hooks/useContactData";
 
 interface Props {
   boards: Board[];
@@ -81,15 +80,30 @@ const formSchema = z.object({
     githubUrl: z.string().url().or(z.literal("")),
   }),
   emails: z.array(
-    z.object({ value: z.string().email(), type: z.string().optional() })
+    z.object({
+      name: z.string().email({ message: "Invalid email address." }),
+      type: z.string().transform((val) => parseInt(val)),
+    })
   ),
-  phones: z.array(z.object({ value: z.string(), type: z.string().optional() })),
-  companies: z.array(z.string().min(2)),
+  phones: z.array(
+    z.object({
+      number: z.string(),
+      type: z.string().transform((val) => parseInt(val)),
+    })
+  ),
+  companies: z
+    .array(
+      z.object({
+        value: z
+          .string()
+          .nonempty({ message: "The Company field is required." }),
+      })
+    )
+    .transform((val) => val.map((v) => v.value)),
 });
 
 export const CreateContactModal = ({ boards, jobs }: Props) => {
   const searchParams = useSearchParams();
-  const { getToken } = useAuth();
 
   const boardId = searchParams.get("boardId");
 
@@ -121,20 +135,10 @@ export const CreateContactModal = ({ boards, jobs }: Props) => {
   const [activeTab, setActiveTab] = useState("socials");
   const [activeTab2, setActiveTab2] = useState("companies");
 
-  console.log(form.formState.errors);
+  const { mutateAsync } = useCreateContact();
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-
-    const createdContact = await postAsync<any, Contact>(
-      "/contact/create",
-      values,
-      {
-        headers: {
-          Authorization: `Bearer ${await getToken()}`,
-        },
-      }
-    );
+    await mutateAsync(values);
 
     router.back();
   }
@@ -246,6 +250,7 @@ export const CreateContactModal = ({ boards, jobs }: Props) => {
                     label="Companies"
                     description="Add companies to your contact."
                     icon={<Building2 className="h-5 w-5 flex-shrink-0" />}
+                    propertyName="value"
                   />
                 </TabsContent>
                 <TabsContent value="phones">
@@ -255,7 +260,7 @@ export const CreateContactModal = ({ boards, jobs }: Props) => {
                     label="Phones"
                     description="Add phones to your contact."
                     icon={<Phone className="h-5 w-5 flex-shrink-0" />}
-                    propertyName="value"
+                    propertyName="number"
                     includeType
                   />
                 </TabsContent>
@@ -266,7 +271,7 @@ export const CreateContactModal = ({ boards, jobs }: Props) => {
                     label="Emails"
                     description="Add emails to your contact."
                     icon={<Mail className="h-5 w-5 flex-shrink-0" />}
-                    propertyName="value"
+                    propertyName="name"
                     includeType
                   />
                 </TabsContent>

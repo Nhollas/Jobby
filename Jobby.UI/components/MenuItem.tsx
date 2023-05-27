@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { Button } from "./ui/button";
 
 export const MenuItem = ({
   selected,
@@ -12,19 +13,21 @@ export const MenuItem = ({
   layoutId,
   colour,
 }) => (
-  <motion.div className='relative'>
-    <Link
-      href={href}
-      className={
-        "flex flex-row items-center gap-x-2 border border-gray-300 bg-white px-3 py-1 text-sm"
-      }
+  <motion.div className="relative">
+    <Button
+      asChild
+      size="sm"
+      variant="outline"
+      className="flex flex-row gap-x-2"
     >
-      {icon}
-      {name}
-    </Link>
+      <Link href={href}>
+        {icon}
+        {name}
+      </Link>
+    </Button>
     {selected && (
       <motion.div
-        className={`absolute -bottom-1 h-1 w-full ${colour}`}
+        className={`absolute -bottom-2 h-1 w-full rounded-lg bg-primary`}
         layoutId={layoutId}
       />
     )}

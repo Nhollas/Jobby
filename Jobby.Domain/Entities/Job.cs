@@ -42,7 +42,7 @@ public class Job : Entity
     public string Location { get; private set; }
     public string Colour { get; private set; }
     public string Description { get; private set; }
-    public DateTime Deadline { get; private set; }
+    public DateTime? Deadline { get; private set; }
     public int Index { get; private set; }
     public IReadOnlyCollection<Note> Notes => _notes;
     public IReadOnlyCollection<Activity> Activities => _activities;

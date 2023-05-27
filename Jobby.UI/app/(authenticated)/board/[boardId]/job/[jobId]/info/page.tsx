@@ -1,19 +1,13 @@
-import { auth } from "@clerk/nextjs";
-import { getAsync } from "@/lib/serverFetch";
 import { Job } from "types";
+import JobInfo from "./JobInfo";
+import { serverApi } from "@/lib/clients/serverApi";
 
 export default async function Page({
   params: { jobId },
 }: {
   params: { jobId: string };
 }) {
-  const { getToken } = auth();
+  const { data: job } = await serverApi.get<Job>(`/job/${jobId}`);
 
-  const job = await getAsync<Job>(`/job/${jobId}`, {
-    headers: {
-      Authorization: `Bearer ${await getToken()}`,
-    },
-  });
-
-  return <h1 className="p-4">Job info {job.id}</h1>;
+  return <JobInfo job={job} />;
 }

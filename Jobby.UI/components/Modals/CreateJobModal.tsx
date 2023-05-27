@@ -1,6 +1,5 @@
 "use client";
 
-import { postAsync } from "@/lib/clientFetch";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Job } from "types";
 import { BoardDictionaryResponse } from "types/responses/Board";
@@ -35,6 +34,7 @@ import {
   FormMessage,
 } from "../ui/form";
 import { Layout, List } from "lucide-react";
+import { clientApi } from "@/lib/clients/clientApi";
 
 interface Props {
   boardId: string;
@@ -72,7 +72,7 @@ export const CreateJobModal = ({
   async function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
 
-    const createdJob = await postAsync<
+    const createdJob = await clientApi.post<
       Pick<Job, "company" | "title" | "jobListId" | "boardId">,
       Job
     >("/Job/Create", values, {

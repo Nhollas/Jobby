@@ -33,10 +33,10 @@ export type Job = {
   title: string;
   postUrl: string;
   salary: number;
-  location: string;
+  location?: string;
   colour: string;
-  description: string;
-  deadline: string;
+  description?: string;
+  deadline?: Date;
   index: number;
   activities: Activity[];
   notes: Note[];

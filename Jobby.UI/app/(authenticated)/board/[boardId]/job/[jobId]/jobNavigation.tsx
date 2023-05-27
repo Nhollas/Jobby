@@ -2,7 +2,12 @@
 
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { MenuItem } from "components";
+import { Book, FileText, Info, List, Users } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { motion } from "framer-motion";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { cn } from "@/lib/utils";
 
 type NavItem = {
   leaf: string;
@@ -14,27 +19,27 @@ const navItems: NavItem[] = [
   {
     leaf: "info",
     name: "Info",
-    icon: <i className="bi bi-info-circle text-xl text-slate-900"></i>,
+    icon: <Info className="h-5 w-5" />,
   },
   {
     leaf: "activities",
     name: "Activities",
-    icon: <i className="bi-list-ul text-xl text-slate-900"></i>,
+    icon: <List className="h-5 w-5" />,
   },
   {
     leaf: "notes",
     name: "Notes",
-    icon: <i className="bi bi-journal text-xl text-slate-900"></i>,
+    icon: <Book className="h-5 w-5" />,
   },
   {
     leaf: "contacts",
     name: "Contacts",
-    icon: <i className="bi bi-people text-xl text-slate-900"></i>,
+    icon: <Users className="h-5 w-5" />,
   },
   {
     leaf: "documents",
     name: "Documents",
-    icon: <i className="bi bi-file-earmark-text text-xl text-slate-900"></i>,
+    icon: <FileText className="h-5 w-5" />,
   },
 ];
 
@@ -55,21 +60,26 @@ export const JobNavigation = ({
   }, [pathnameSections]);
 
   return (
-    <div className="relative flex flex-col gap-y-2 p-4">
-      <div className="flex flex-row flex-wrap gap-4">
+    <ScrollArea className="w-screen rounded-md px-4 pt-4 sm:w-max">
+      <div className="flex items-center justify-center gap-x-2">
         {navItems.map(({ icon, leaf, name }) => (
-          <MenuItem
-            selected={selected === leaf}
-            icon={icon}
-            name={name}
-            leaf={leaf}
-            key={leaf}
-            href={`/board/${boardId}/job/${jobId}/${leaf}`}
-            layoutId={jobId}
-            colour="bg-main-red"
-          />
+          <Button key={leaf} asChild variant="outline">
+            <Link
+              href={`/board/${boardId}/job/${jobId}/${leaf}`}
+              className={cn(
+                "flex items-center gap-x-2 rounded-md px-4 py-2 text-sm",
+                selected === leaf
+                  ? "bg-white font-medium text-primary"
+                  : "font-medium text-muted-foreground"
+              )}
+            >
+              {icon}
+              {name}
+            </Link>
+          </Button>
         ))}
       </div>
-    </div>
+      <ScrollBar orientation="horizontal" className="invisible" />
+    </ScrollArea>
   );
 };

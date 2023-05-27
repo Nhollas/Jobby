@@ -1,11 +1,10 @@
 "use client";
 
 import { Activity } from "types";
-import { ActionButton } from "components/Common";
 import { Reducer, useReducer } from "react";
-import reducer from "reducers/ActivityListReducer";
-import { putAsync } from "@/lib/serverFetch";
-import Input from "components/Common/Input";
+import { Input } from "./ui/input";
+import { Button } from "./ui/button";
+import { clientApi } from "@/lib/clients/clientApi";
 
 type Props = {
   activities: Activity[];
@@ -73,7 +72,7 @@ export const Activities = ({ activities }: Props) => {
     );
 
     if (activity) {
-      await putAsync<Activity, any>("/activity/update", activity);
+      await clientApi.put<Activity, any>("/activity/update", activity);
     }
   };
 
@@ -138,7 +137,7 @@ export const Activities = ({ activities }: Props) => {
               placeholder="Note"
               onChange={(e) => handleChange(e, activity.id)}
             />
-            <ActionButton variant="primary" text="Save" />
+            <Button>Save</Button>
           </form>
         </div>
       ))}

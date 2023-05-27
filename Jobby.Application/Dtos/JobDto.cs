@@ -11,7 +11,7 @@ public sealed record JobDto : EntityDto
     public string City { get; set; }
     public string Colour { get; set; }
     public string Description { get; set; }
-    public DateTime Deadline { get; set; }
+    public DateTime? Deadline { get; set; }
     public int Index { get; set; }
     public Guid BoardId { get; set; }
     public Guid JobListId { get; set; }

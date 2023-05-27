@@ -1,24 +1,17 @@
-import { getAsync } from "@/lib/serverFetch";
 import { Activity } from "types";
-import { Activities } from "components/Activities";
-import { auth } from "@clerk/nextjs";
+import { serverApi } from "@/lib/clients/serverApi";
 
 export async function Page({
   params: { boardId },
 }: {
   params: { boardId: string };
 }) {
-  const { getToken } = auth();
-  const activities = await getAsync<Activity[]>(
-    `/board/${boardId}/activities`,
-    {
-      headers: {
-        Authorization: `Bearer ${await getToken()}`,
-      },
-    }
+  const { data: activities } = await serverApi.get<Activity[]>(
+    `/board/${boardId}/activities`
   );
 
-  return <Activities activities={activities} />;
+  // return <Activities activities={activities} />;
+  return <div>Activities</div>;
 }
 
 export default Page;

@@ -4,7 +4,6 @@ import { Board } from "types";
 import { useContext, useEffect, useState } from "react";
 import BoardsAndJobsContext from "contexts/BoardsAndJobsContext";
 import { useRouter } from "next/navigation";
-import { postAsync } from "@/lib/clientFetch";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Dialog,
@@ -25,6 +24,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
+import { clientApi } from "@/lib/clients/clientApi";
 
 const formSchema = z.object({
   name: z.string().nonempty({ message: "The Name field is required" }),
@@ -50,11 +50,15 @@ export const CreateBoardModal = () => {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const createdBoard = await postAsync<any, Board>("/board/create", values, {
-      headers: {
-        Authorization: `Bearer ${await getToken()}`,
-      },
-    });
+    const createdBoard = await clientApi.post<any, Board>(
+      "/board/create",
+      values,
+      {
+        headers: {
+          Authorization: `Bearer ${await getToken()}`,
+        },
+      }
+    );
 
     if (createdBoard) {
       setBoards((prev: Board[]) => [...prev, createdBoard]);

@@ -1,7 +1,5 @@
-import { Activities } from "components";
-import { getAsync } from "@/lib/serverFetch";
 import { Activity } from "types";
-import { auth } from "@clerk/nextjs";
+import { serverApi } from "@/lib/clients/serverApi";
 
 // create a delay function to simulate loading for 5 secs.
 
@@ -12,14 +10,10 @@ export default async function Page({
 }: {
   params: { jobId: string };
 }) {
-  const { getToken } = auth();
+  const { data: activities } = await serverApi.get<Activity[]>(
+    `/job/${jobId}/activities`
+  );
 
-  const activities = await getAsync<Activity[]>(`/job/${jobId}/activities`, {
-    headers: {
-      Authorization: `Bearer ${await getToken()}`,
-    },
-  });
-  await delay(5000);
-
-  return <Activities activities={activities} />;
+  // return <Activities activities={activities} />;
+  return <div>Activities</div>;
 }

@@ -28,7 +28,9 @@ public class JobController : ApiController
     public async Task<IActionResult> GetJob(Guid jobId)
     {
         var jobQuery = new GetJobDetailQuery(jobId);
-        return Ok(await Sender.Send(jobQuery));
+        var job = await Sender.Send(jobQuery);
+        
+        return Ok(job);
     }
     
     [HttpGet("{jobId:guid}/activities", Name = "GetJobActivities")]

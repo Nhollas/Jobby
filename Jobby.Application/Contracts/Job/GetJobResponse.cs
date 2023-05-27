@@ -12,7 +12,7 @@ public sealed record GetJobResponse
     public string Location { get; set; }
     public string Colour { get; set; }
     public string Description { get; set; }
-    public DateTime Deadline { get; set; }
+    public DateTime? Deadline { get; set; }
     public PreviewBoardDto Board { get; set; }
     public List<ActivityDto> Activities { get; set; }
 }

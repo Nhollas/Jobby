@@ -28,8 +28,8 @@ import {
 import { DroppableContainer, SortableItem } from "./components";
 import { coordinateGetter } from "./kanbanKeyboardCoordinates";
 import { JobListPreview } from "types";
-import { deleteAsync, putAsync } from "@/lib/serverFetch";
 import { Item, Container } from "components/Board";
+import { clientApi } from "@/lib/clients/clientApi";
 
 const dropAnimation: DropAnimation = {
   sideEffects: defaultDropAnimationSideEffects({
@@ -196,7 +196,7 @@ export function Kanban({ lists, boardId, loading }: Props) {
   }
 
   async function handleRemove(containerId: string) {
-    const response = await deleteAsync(`/JobList/Delete/${containerId}`);
+    const response = await clientApi.delete(`/JobList/Delete/${containerId}`);
 
     if (response?.status == 204) {
       setContainerKeys((containerKeys) =>
@@ -297,7 +297,7 @@ export function Kanban({ lists, boardId, loading }: Props) {
               targetJobListId: overContainer,
             };
 
-            putAsync("/Job/Move", model);
+            await clientApi.put("/Job/Move", model);
           }
         }}
         onDragEnd={({ active, over }) => {
@@ -326,7 +326,7 @@ export function Kanban({ lists, boardId, loading }: Props) {
                 jobListIndexes,
               };
 
-              putAsync("/Board/ArrangeJobLists", model);
+              clientApi.put("/Board/ArrangeJobLists", model);
 
               return updatedJobLists;
             });
@@ -420,7 +420,7 @@ export function Kanban({ lists, boardId, loading }: Props) {
                     jobIndexes,
                   };
 
-                  putAsync("/JobList/ArrangeJobs", model);
+                  clientApi.put("/JobList/ArrangeJobs", model);
 
                   return {
                     ...containerDict,
@@ -447,7 +447,7 @@ export function Kanban({ lists, boardId, loading }: Props) {
                   jobIndexes,
                 };
 
-                putAsync("/JobList/ArrangeJobs", model);
+                clientApi.put("/JobList/ArrangeJobs", model);
 
                 return containerDict;
               });

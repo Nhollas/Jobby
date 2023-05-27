@@ -1,5 +1,8 @@
 "use client";
 
+import { clientApi } from "@/lib/clients/clientApi";
+import { useAuth } from "@clerk/nextjs";
+import { useQuery } from "@tanstack/react-query";
 import { MoreVertical, Mail, Phone, Eye, Trash2, Layout } from "lucide-react";
 import Link from "next/link";
 import { Contact, Social } from "types";
@@ -35,8 +38,26 @@ const contactNameToInitials = (name: string | undefined) => {
   return `${firstName[0]}${lastName[0]}`;
 };
 
-export function Contacts({ contacts, boardId }: Props) {
-  console.log(contacts);
+export function Contacts({ contacts: initialContacts, boardId }: Props) {
+  const { getToken } = useAuth();
+
+  const getContacts = async () => {
+    const contacts = await clientApi.get<Contact[]>("/contact/list", {
+      headers: {
+        Authorization: `Bearer ${await getToken()}`,
+      },
+    });
+
+    return contacts.data;
+  };
+
+  const { data: contacts } = useQuery<Contact[]>({
+    queryKey: ["contacts"],
+    queryFn: getContacts,
+    initialData: initialContacts,
+  });
+
+  console.log("contacts", contacts);
 
   return (
     <div className="flex flex-col gap-y-6 overscroll-contain border-gray-300 p-4 lg:px-8">
@@ -62,7 +83,7 @@ export function Contacts({ contacts, boardId }: Props) {
       {contacts.length === 0 ? (
         <h1>No Contacts Found.</h1>
       ) : (
-        <section className="grid grid-cols-[repeat(auto-fill,minmax(265px,1fr))] gap-8">
+        <section className="grid grid-cols-[repeat(auto-fill,minmax(275px,1fr))] gap-8">
           {contacts.map((contact) => {
             const socials = [];
 
@@ -101,7 +122,7 @@ export function Contacts({ contacts, boardId }: Props) {
                       <DropdownMenuTrigger asChild>
                         <Button
                           variant="outline"
-                          className="ml-auto w-10 rounded-full p-0"
+                          className="ml-auto w-10 flex-shrink-0 rounded-full p-0"
                         >
                           <MoreVertical className="h-4 w-4 text-secondary-foreground" />
                           <span className="sr-only">Actions</span>

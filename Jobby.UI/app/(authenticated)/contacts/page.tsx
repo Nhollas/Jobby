@@ -1,16 +1,10 @@
 import { PageContainer } from "components/Common";
 import { Contact } from "types";
-import { getAsync } from "@/lib/serverFetch";
 import { Contacts } from "components";
-import { auth } from "@clerk/nextjs";
+import { serverApi } from "@/lib/clients/serverApi";
 
 export default async function Page() {
-  const { getToken } = auth();
-  const contacts = await getAsync<Contact[]>("/contact/list", {
-    headers: {
-      Authorization: `Bearer ${await getToken()}`,
-    },
-  });
+  const { data: contacts } = await serverApi.get<Contact[]>("/contact/list");
 
   return (
     <PageContainer>

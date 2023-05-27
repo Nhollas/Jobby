@@ -47,8 +47,8 @@ export const BoardsBar = () => {
   const { user } = useUser();
 
   return (
-    <div className="relative z-50">
-      <div className="fixed top-0 left-0 hidden h-screen w-[250px] border-r border-gray-200 py-4 lg:block">
+    <div className="relative z-50 hidden lg:block">
+      <div className="fixed top-0 left-0 h-screen w-[250px] border-r border-gray-200 py-4">
         <div className="flex w-full flex-col gap-y-4">
           <div className="py-2 pt-0">
             <h2 className="mb-2 px-6 text-lg font-semibold tracking-tight">

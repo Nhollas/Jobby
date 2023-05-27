@@ -1,4 +1,3 @@
-import { deleteAsync } from "@/lib/serverFetch";
 import { DeleteBoardModal } from "components/Modals/DeleteBoardModal";
 
 export default async function Page({

@@ -25,14 +25,7 @@ export const PageContainer = (props: Props) => {
     <div className="flex w-full items-center justify-center">
       <section className={clsx("flex min-h-screen w-full justify-center")}>
         <div className="relative flex w-full flex-col">
-          <div className="flex h-full w-full flex-col">
-            {title && (
-              <div className="flex flex-row">
-                <h1 className="text-2xl font-medium">{title}</h1>
-              </div>
-            )}
-            {children}
-          </div>
+          <div className="flex h-full w-full flex-col">{children}</div>
         </div>
       </section>
     </div>

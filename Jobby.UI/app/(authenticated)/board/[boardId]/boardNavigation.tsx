@@ -48,12 +48,6 @@ export const BoardNavigation = () => {
 
   return (
     <div className="relative flex w-full flex-row flex-wrap gap-4 border-b border-gray-300 p-4">
-      <button
-        className="z-20 flex items-center gap-x-2 border border-gray-300 bg-white px-4 py-1 text-xl md:hidden"
-        onClick={() => toggleOpen()}
-      >
-        <i className="bi bi-list"></i>
-      </button>
       {navItems.map(({ icon, leaf, name }) => (
         <MenuItem
           selected={selected === leaf}

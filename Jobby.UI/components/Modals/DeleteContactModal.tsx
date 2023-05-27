@@ -1,8 +1,6 @@
 "use client";
 
-import { deleteAsync } from "@/lib/clientFetch";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@clerk/nextjs";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,15 +12,15 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { useEffect, useState } from "react";
+import { useDeleteContact } from "@/hooks/useContactData";
 
 interface Props {
-  contactId: string | null;
+  contactId: string;
 }
 
 export const DeleteContactModal = ({ contactId }: Props) => {
-  const { getToken } = useAuth();
-
   const [open, setOpen] = useState(false);
+  const { mutateAsync } = useDeleteContact();
 
   useEffect(() => {
     setOpen(true);
@@ -33,11 +31,7 @@ export const DeleteContactModal = ({ contactId }: Props) => {
   const handleSubmit = async (event: any) => {
     event.preventDefault();
 
-    await deleteAsync(`/contact/delete/${contactId}`, {
-      headers: {
-        Authorization: `Bearer ${await getToken()}`,
-      },
-    });
+    await mutateAsync(contactId);
 
     router.back();
   };
