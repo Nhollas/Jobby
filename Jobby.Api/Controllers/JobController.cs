@@ -65,8 +65,8 @@ public class JobController : ApiController
     [HttpPut("Update", Name = "UpdateJob")]
     public async Task<IActionResult> UpdateJob([FromBody] UpdateJobCommand command)
     {
-        await Sender.Send(command);
-        return NoContent();
+        var updatedjob =  await Sender.Send(command);
+        return Ok(updatedjob);
     }
 
     [HttpPut("Move", Name = "MoveJob")]

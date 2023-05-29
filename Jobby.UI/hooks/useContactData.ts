@@ -1,28 +1,47 @@
 import { clientApi } from "@/lib/clients/clientApi";
 import { Contact } from "@/types";
 import { useAuth } from "@clerk/nextjs";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { AxiosResponse } from "axios";
 
 export const useCreateContact = () => {
   const queryClient = useQueryClient();
   const { getToken } = useAuth();
 
   async function createContact(values: any) {
-    return await clientApi.post<any, Contact>("/contact/create", values, {
-      headers: {
-        Authorization: `Bearer ${await getToken()}`,
-      },
-    });
+    return await clientApi.post<any, AxiosResponse<Contact>>(
+      "/contact/create",
+      values,
+      {
+        headers: {
+          Authorization: `Bearer ${await getToken()}`,
+        },
+      }
+    );
   }
 
   return useMutation(createContact, {
-    onSuccess: (createdContact) => {
-      queryClient.setQueryData(
-        ["contacts"],
-        (prevData: Contact[] | undefined) => {
-          return prevData ? [...prevData, createdContact] : [createdContact];
-        }
-      );
+    onSuccess: async  ({ data: createdContact}) => {
+      const queryKeys = [];
+
+      // Global Contacts
+      queryKeys.push(["/contacts"]);
+
+      // Board Contacts
+      if (createdContact.board?.id) {
+        queryKeys.push(["/contacts", `/board/${createdContact.board.id}/contacts`]);
+      }
+
+      // Job Contacts
+      if (createdContact.jobs.length > 0) {
+        createdContact.jobs.forEach((job) => {
+          queryKeys.push(["/contacts", `/job/${job.id}/contacts`]);
+        });
+      }
+
+      console.log("queryKeys", queryKeys);
+
+      await Promise.all(queryKeys.map((key) => queryClient.invalidateQueries(key)));
     },
   });
 };
@@ -32,7 +51,7 @@ export const useUpdateContact = () => {
   const { getToken } = useAuth();
 
   async function updateContact(values: any) {
-    return await clientApi.post<any, Contact>("/contact/update", values, {
+    return await clientApi.put<any, AxiosResponse<Contact>>("/contact/update", values, {
       headers: {
         Authorization: `Bearer ${await getToken()}`,
       },
@@ -40,21 +59,20 @@ export const useUpdateContact = () => {
   }
 
   return useMutation(updateContact, {
-    onSuccess: (updatedContact) => {
-      queryClient.setQueryData(
-        ["contacts"],
-        (prevData: Contact[] | undefined) => {
-          if (prevData) {
-            return prevData.map((contact) => {
-              if (contact.id === updatedContact.id) {
-                return updatedContact;
-              }
-              return contact;
-            });
-          }
-          return [updatedContact];
-        }
-      );
+    onSuccess: async  ({ data: updatedContact}) => {
+      const previousQueries = queryClient.getQueriesData<Contact[]>(["contacts"]);
+
+      previousQueries.map((query) => {
+        queryClient.setQueryData(query[0], (prevContacts: Contact[] | undefined) =>
+          prevContacts?.map((contact) => {
+            if (contact?.id === updatedContact.id) {
+              return updatedContact;
+            }
+            
+            return contact;
+          })
+        );
+      })
     },
   });
 };
@@ -74,20 +92,38 @@ export const useDeleteContact = () => {
   }
 
   return useMutation(deleteContact, {
-    onSuccess: ([_, contactId]) => {
-      queryClient.setQueryData(
-        ["contacts"],
-        (prevData: Contact[] | undefined) =>
-          prevData?.filter((contact) => contact.id !== contactId)
-      );
+    onSuccess: async (_, contactId) => {
+      // const previousQueries = queryClient.getQueriesData<Contact[]>(["/contacts"]);
+
+      // previousQueries.map((query) => {
+      //   queryClient.setQueryData(query[0], (prevContacts: Contact[] | undefined) =>
+      //     prevContacts?.filter((contact) => contact?.id !== contactId)
+      //   );
+      // })
+
+      await queryClient.invalidateQueries(["/contacts"]);
     },
   });
 };
 
-export function useMutateContact() {
-  return {
-    useCreateContact,
-    useUpdateContact,
-    useDeleteContact,
+export const useContactsQuery = (initialContacts: Contact[], url: string, queryKeyVariable?: any) => {
+  const { getToken } = useAuth();
+
+  const getContacts = async () => {
+    const response = await clientApi.get<Contact[]>(url, {
+      headers: {
+        Authorization: `Bearer ${await getToken()}`,
+      },
+    });
+
+    return response.data;
   };
-}
+
+  const queryKey = queryKeyVariable ? ["/contacts", queryKeyVariable] : ["/contacts"];
+
+   return useQuery<Contact[]>({
+    queryKey,
+    queryFn: getContacts,
+    initialData: initialContacts,
+  });
+};

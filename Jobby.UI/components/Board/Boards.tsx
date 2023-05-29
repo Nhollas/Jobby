@@ -1,8 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useContext } from "react";
-import BoardsAndJobsContext from "contexts/BoardsAndJobsContext";
 import { Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,9 +11,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Board } from "@/types";
+import { useBoardsQuery } from "@/hooks/useBoardsData";
 
-export function Boards() {
-  const { boards } = useContext(BoardsAndJobsContext);
+export function Boards({ boards: initialBoards }: { boards: Board[] }) {
+  const { data: boards } = useBoardsQuery(initialBoards);
 
   return (
     <div className="flex flex-col gap-y-6 p-4 lg:px-8">
@@ -36,7 +36,7 @@ export function Boards() {
         </Button>
       </div>
       <div className="grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-8">
-        {boards.map((board) => (
+        {boards?.map((board) => (
           <Card key={board.id}>
             <CardHeader>
               <CardTitle>{board.name}</CardTitle>

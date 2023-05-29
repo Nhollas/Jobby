@@ -1,5 +1,6 @@
 "use client";
 
+import { useContactsQuery } from "@/hooks/useContactData";
 import { clientApi } from "@/lib/clients/clientApi";
 import { useAuth } from "@clerk/nextjs";
 import { useQuery } from "@tanstack/react-query";
@@ -28,7 +29,9 @@ import { Input } from "./ui/input";
 
 type Props = {
   contacts: Contact[];
+  url: string;
   boardId?: string;
+  querykeyVariable?: any;
 };
 
 const contactNameToInitials = (name: string | undefined) => {
@@ -38,26 +41,8 @@ const contactNameToInitials = (name: string | undefined) => {
   return `${firstName[0]}${lastName[0]}`;
 };
 
-export function Contacts({ contacts: initialContacts, boardId }: Props) {
-  const { getToken } = useAuth();
-
-  const getContacts = async () => {
-    const contacts = await clientApi.get<Contact[]>("/contact/list", {
-      headers: {
-        Authorization: `Bearer ${await getToken()}`,
-      },
-    });
-
-    return contacts.data;
-  };
-
-  const { data: contacts } = useQuery<Contact[]>({
-    queryKey: ["contacts"],
-    queryFn: getContacts,
-    initialData: initialContacts,
-  });
-
-  console.log("contacts", contacts);
+export function Contacts({ contacts: initialContacts, boardId, url, querykeyVariable }: Props) {
+  const { data: contacts} = useContactsQuery(initialContacts, url, querykeyVariable);
 
   return (
     <div className="flex flex-col gap-y-6 overscroll-contain border-gray-300 p-4 lg:px-8">

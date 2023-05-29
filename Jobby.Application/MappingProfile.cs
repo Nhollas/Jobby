@@ -42,7 +42,6 @@ public class MappingProfile : Profile
 
         // Contact Maps
         CreateMap<Contact, GetContactResponse>();
-        CreateMap<Contact, ListContactsResponse>();
         CreateMap<Contact, PreviewContactDto>();
         CreateMap<Contact, ContactDto>();
         CreateMap<Social, SocialDto>();

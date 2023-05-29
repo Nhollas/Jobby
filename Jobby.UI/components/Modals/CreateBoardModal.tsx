@@ -1,8 +1,6 @@
 "use client";
 
-import { Board } from "types";
-import { useContext, useEffect, useState } from "react";
-import BoardsAndJobsContext from "contexts/BoardsAndJobsContext";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -13,7 +11,6 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "../ui/input";
-import { useAuth } from "@clerk/nextjs";
 import { z } from "zod";
 import {
   Form,
@@ -24,15 +21,14 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
-import { clientApi } from "@/lib/clients/clientApi";
+import { useCreateBoard } from "@/hooks/useBoardsData";
 
 const formSchema = z.object({
   name: z.string().nonempty({ message: "The Name field is required" }),
 });
 
 export const CreateBoardModal = () => {
-  const { setBoards } = useContext(BoardsAndJobsContext);
-  const { getToken } = useAuth();
+  const { mutateAsync } = useCreateBoard();
 
   const router = useRouter();
 
@@ -50,19 +46,7 @@ export const CreateBoardModal = () => {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const createdBoard = await clientApi.post<any, Board>(
-      "/board/create",
-      values,
-      {
-        headers: {
-          Authorization: `Bearer ${await getToken()}`,
-        },
-      }
-    );
-
-    if (createdBoard) {
-      setBoards((prev: Board[]) => [...prev, createdBoard]);
-    }
+    await mutateAsync(values);
 
     router.back();
   }

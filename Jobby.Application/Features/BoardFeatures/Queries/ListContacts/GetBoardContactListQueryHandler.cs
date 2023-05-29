@@ -6,8 +6,8 @@ using Jobby.Application.Interfaces.Services;
 using Jobby.Domain.Entities;
 using MediatR;
 
-namespace Jobby.Application.Features.ContactFeatures.Queries.GetList;
-internal sealed class GetBoardContactListQueryHandler : IRequestHandler<GetBoardContactListQuery, List<ListContactsResponse>>
+namespace Jobby.Application.Features.BoardFeatures.Queries.ListContacts;
+internal sealed class GetBoardContactListQueryHandler : IRequestHandler<GetBoardContactListQuery, List<GetContactResponse>>
 {
     private readonly IReadRepository<Contact> _contactRepository;
     private readonly IMapper _mapper;
@@ -23,12 +23,12 @@ internal sealed class GetBoardContactListQueryHandler : IRequestHandler<GetBoard
         _mapper = mapper;
     }
 
-    public async Task<List<ListContactsResponse>> Handle(GetBoardContactListQuery request, CancellationToken cancellationToken)
+    public async Task<List<GetContactResponse>> Handle(GetBoardContactListQuery request, CancellationToken cancellationToken)
     {
         var contactSpec = new GetContactsFromBoardSpecification(request.BoardId, _userId);
 
         var contactList = await _contactRepository.ListAsync(contactSpec, cancellationToken);
 
-        return _mapper.Map<List<ListContactsResponse>>(contactList);
+        return _mapper.Map<List<GetContactResponse>>(contactList);
     }
 }

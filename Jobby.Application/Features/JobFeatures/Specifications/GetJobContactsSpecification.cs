@@ -11,6 +11,7 @@ public sealed class GetJobContactsSpecification  : Specification<Contact>
             .Include(x => x.Companies)
             .Include(x => x.Phones)
             .Include(x => x.Emails)
+            .Include(x => x.Board)
             .AsSplitQuery()    
             .AsNoTracking()
             .Where(contact=> contact.Jobs.Any(job => job.Id == jobId && job.OwnerId == userId));

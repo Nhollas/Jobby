@@ -11,7 +11,6 @@ public class GetContactsFromBoardSpecification : Specification<Contact>
             .Include(x => x.Phones)
             .Include(x => x.Emails)
             .Include(x => x.Board)
-            .Include(x => x.Jobs)
             .AsNoTracking()
             .Where(b => b.BoardId == BoardId && b.OwnerId == UserId)
             .OrderBy(x => x.CreatedDate);

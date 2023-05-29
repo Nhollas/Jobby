@@ -1,10 +1,7 @@
 "use client";
 
-import { Board } from "types";
-import { useContext, useEffect, useState } from "react";
-import BoardsAndJobsContext from "contexts/BoardsAndJobsContext";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@clerk/nextjs";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,16 +12,13 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { clientApi } from "@/lib/clients/clientApi";
+import { useDeleteBoard } from "@/hooks/useBoardsData";
 
 interface Props {
-  boardId: string | null;
+  boardId: string;
 }
 
 export const DeleteBoardModal = ({ boardId }: Props) => {
-  const { setBoards } = useContext(BoardsAndJobsContext);
-  const { getToken } = useAuth();
-
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -33,16 +27,12 @@ export const DeleteBoardModal = ({ boardId }: Props) => {
 
   const router = useRouter();
 
+  const { mutateAsync } = useDeleteBoard();
+
   const handleSubmit = async (event: any) => {
     event.preventDefault();
 
-    await clientApi.delete(`/board/delete/${boardId}`, {
-      headers: {
-        Authorization: `Bearer ${await getToken()}`,
-      },
-    });
-
-    setBoards((prev: Board[]) => prev.filter((board) => board.id !== boardId));
+    await mutateAsync(boardId);
 
     router.back();
   };

@@ -7,11 +7,12 @@ export async function Page({
 }: {
   params: { boardId: string };
 }) {
+  const url = `/board/${boardId}/contacts`;
   const { data: contacts } = await serverApi.get<Contact[]>(
-    `/board/${boardId}/contacts`
+    url
   );
 
-  return <Contacts contacts={contacts} boardId={boardId} />;
+  return <Contacts contacts={contacts} boardId={boardId} url={url} querykeyVariable={url}  />;
 }
 
 export default Page;

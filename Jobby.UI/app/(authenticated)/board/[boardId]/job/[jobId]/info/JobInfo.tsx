@@ -9,12 +9,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Job } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Textarea } from "@/components/ui/textarea";
-import { useAuth } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import {
   Popover,
@@ -25,10 +23,10 @@ import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
-import JobTitle from "../JobTitle";
+import { useJobQuery, useUpdateJob } from "@/hooks/useJobData";
 
 type Props = {
-  job: Job;
+  jobId: string;
 };
 
 const formSchema = z.object({
@@ -36,38 +34,28 @@ const formSchema = z.object({
   company: z.string(),
   title: z.string().nonempty({ message: "The Title field is required." }),
   postUrl: z.string().url(),
-  salary: z.number(),
-  city: z.string(),
+  salary: z.string().transform((val) => parseInt(val)),
   colour: z.string(),
   description: z.string(),
   deadline: z.date().optional(),
 });
 
-function JobInfo({ job }: Props) {
+function JobInfo({ jobId }: Props) {
+  const { data: jobData } = useJobQuery(jobId);
+
+  const { mutateAsync } = useUpdateJob();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      ...job,
-    },
+    defaultValues: jobData,
   });
 
-  console.log(form.formState);
-
-  const { getToken } = useAuth();
-
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-
-    // await putAsync<any, Job>("/job/update", values, {
-    //   headers: {
-    //     Authorization: `Bearer ${await getToken()}`,
-    //   },
-    // });
+    await mutateAsync(values);
   }
 
   return (
     <div className="w-full">
-      <JobTitle job={form.formState} />
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
@@ -130,19 +118,6 @@ function JobInfo({ job }: Props) {
             />
           </div>
           <div className="grid gap-y-6 gap-x-2 @md:grid-cols-2">
-            <FormField
-              control={form.control}
-              name="city"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>City</FormLabel>
-                  <FormControl>
-                    <Input placeholder="City" {...field} />
-                  </FormControl>
-                  <FormMessage className="text-xs" />
-                </FormItem>
-              )}
-            />
             <FormField
               control={form.control}
               name="colour"

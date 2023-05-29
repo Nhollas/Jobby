@@ -2,7 +2,6 @@
 using Jobby.Application.Contracts.Activity;
 using Jobby.Application.Contracts.Board;
 using Jobby.Application.Contracts.Contact;
-using Jobby.Application.Features.ActivityFeatures.Queries.ListBoardActivities;
 using Jobby.Application.Features.BoardFeatures.Commands.Create;
 using Jobby.Application.Features.BoardFeatures.Commands.Delete;
 using Jobby.Application.Features.BoardFeatures.Commands.Update.ArrangeJobLists;
@@ -10,7 +9,8 @@ using Jobby.Application.Features.BoardFeatures.Commands.Update.UpdateDetails;
 using Jobby.Application.Features.BoardFeatures.Queries.GetById;
 using Jobby.Application.Features.BoardFeatures.Queries.GetDictionary;
 using Jobby.Application.Features.BoardFeatures.Queries.GetList;
-using Jobby.Application.Features.ContactFeatures.Queries.GetList;
+using Jobby.Application.Features.BoardFeatures.Queries.ListActivities;
+using Jobby.Application.Features.BoardFeatures.Queries.ListContacts;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -77,8 +77,8 @@ public class BoardController : ApiController
         return Ok(dtos);
     }
 
-    [HttpGet("{boardId:guid}/contacts", Name = "ListContacts")]
-    public async Task<ActionResult<List<ListContactsResponse>>> ListContacts(Guid boardId)
+    [HttpGet("{boardId:guid}/contacts", Name = "ListBoardContacts")]
+    public async Task<ActionResult<List<GetContactResponse>>> ListContacts(Guid boardId)
     {
         var dtos = await Sender.Send(new GetBoardContactListQuery(boardId));
         return Ok(dtos);

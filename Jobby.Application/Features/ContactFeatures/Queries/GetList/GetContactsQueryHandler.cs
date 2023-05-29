@@ -8,7 +8,7 @@ using Jobby.Application.Services;
 using Jobby.Domain.Entities;
 using MediatR;
 
-namespace Jobby.Application.Features.ContactFeatures.Queries.ListContacts;
+namespace Jobby.Application.Features.ContactFeatures.Queries.GetList;
 
 internal sealed class GetContactsQueryHandler : IRequestHandler<GetContactsQuery, List<GetContactResponse>>
 {

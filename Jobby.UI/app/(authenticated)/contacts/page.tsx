@@ -4,11 +4,13 @@ import { Contacts } from "components";
 import { serverApi } from "@/lib/clients/serverApi";
 
 export default async function Page() {
-  const { data: contacts } = await serverApi.get<Contact[]>("/contact/list");
+  const url = "/contacts";
+
+  const { data: contacts } = await serverApi.get<Contact[]>(url);
 
   return (
     <PageContainer>
-      <Contacts contacts={contacts} />
+      <Contacts contacts={contacts} url={url} />
     </PageContainer>
   );
 }

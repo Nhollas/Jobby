@@ -1,11 +1,9 @@
-import Providers from "app/providers";
 import Navbar from "components/Navbar";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  return (
-    <Providers>
+  return <>
       <Navbar />
       <main>{children}</main>
-    </Providers>
-  );
+      
+    </>;
 }

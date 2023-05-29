@@ -4,7 +4,7 @@ using Jobby.Application.Features.ContactFeatures.Commands.Create;
 using Jobby.Application.Features.ContactFeatures.Commands.Delete;
 using Jobby.Application.Features.ContactFeatures.Commands.Update.UpdateDetails;
 using Jobby.Application.Features.ContactFeatures.Queries.GetById;
-using Jobby.Application.Features.ContactFeatures.Queries.ListContacts;
+using Jobby.Application.Features.ContactFeatures.Queries.GetList;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -43,7 +43,7 @@ public class ContactController : ApiController
         return NoContent();
     }
     
-    [HttpGet("List", Name = "GetAllContacts")]
+    [Route("~/api/contacts", Name = "ListContacts")]
     public async Task<ActionResult<List<GetContactResponse>>> GetAllContacts()
     {
         var contactQuery = new GetContactsQuery();

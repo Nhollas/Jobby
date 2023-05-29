@@ -1,12 +1,13 @@
 ﻿using AutoMapper;
 using Jobby.Application.Abstractions.Specification;
+using Jobby.Application.Dtos;
 using Jobby.Application.Interfaces.Services;
 using Jobby.Application.Services;
 using Jobby.Domain.Entities;
 using MediatR;
 
 namespace Jobby.Application.Features.JobFeatures.Commands.Update.UpdateDetails;
-internal sealed class UpdateJobCommandHandler : IRequestHandler<UpdateJobCommand, Unit>
+internal sealed class UpdateJobCommandHandler : IRequestHandler<UpdateJobCommand, JobDto>
 {
     private readonly IRepository<Job> _jobRepository;
     private readonly IDateTimeProvider _timeProvider;
@@ -25,18 +26,18 @@ internal sealed class UpdateJobCommandHandler : IRequestHandler<UpdateJobCommand
         _timeProvider = timeProvider;
     }
 
-    public async Task<Unit> Handle(UpdateJobCommand request, CancellationToken cancellationToken)
+    public async Task<JobDto> Handle(UpdateJobCommand request, CancellationToken cancellationToken)
     {
         Job jobToUpdate = await ResourceProvider<Job>
             .GetById(_jobRepository.GetByIdAsync)
-            .Check(_userId, request.JobId, cancellationToken);
+            .Check(_userId, request.Id, cancellationToken);
 
         _mapper.Map(request, jobToUpdate, typeof(UpdateJobCommand), typeof(Job));
 
         jobToUpdate.UpdateEntity(_timeProvider.UtcNow);
 
         await _jobRepository.UpdateAsync(jobToUpdate, cancellationToken);
-
-        return Unit.Value;
+        
+        return _mapper.Map<JobDto>(jobToUpdate);
     }
 }

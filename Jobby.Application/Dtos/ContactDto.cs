@@ -13,5 +13,5 @@ public sealed record ContactDto : EntityDto
     public List<PhoneDto> Phones { get; set; }
     public List<CompanyDto> Companies { get; set; }
     public List<JobDto> Jobs { get; set; }
-    public Guid BoardId { get; set; }
+    public PreviewBoardDto Board { get; set; }
 }

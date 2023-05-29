@@ -1,7 +1,5 @@
 "use client";
 
-import { useContext } from "react";
-import BoardsAndJobsContext from "contexts/BoardsAndJobsContext";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Separator } from "@/components/ui/separator";
@@ -39,10 +37,14 @@ import {
   UserPlus,
   Users,
 } from "lucide-react";
-import { useUser } from "@clerk/nextjs";
+import { useAuth, useUser } from "@clerk/nextjs";
+import { useQuery } from "@tanstack/react-query";
+import { Board } from "@/types";
+import { clientApi } from "@/lib/clients/clientApi";
+import { useBoardsQuery } from "@/hooks/useBoardsData";
 
 export const BoardsBar = () => {
-  const { boards } = useContext(BoardsAndJobsContext);
+  const { data: boards } = useBoardsQuery();
 
   const { user } = useUser();
 
@@ -90,7 +92,7 @@ export const BoardsBar = () => {
               >
                 <div style={{ minWidth: "100%", display: "table" }}>
                   <div className="space-y-1">
-                    {boards.map((board) => (
+                    {boards?.map((board) => (
                       <Button
                         asChild
                         variant="ghost"

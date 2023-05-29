@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
 using Jobby.Application.Abstractions.Specification;
 using Jobby.Application.Contracts.Activity;
-using Jobby.Application.Features.ActivityFeatures.Specifications;
+using Jobby.Application.Features.BoardFeatures.Specifications;
 using Jobby.Application.Interfaces.Services;
 using Jobby.Domain.Entities;
 using MediatR;
 
-namespace Jobby.Application.Features.ActivityFeatures.Queries.ListBoardActivities;
+namespace Jobby.Application.Features.BoardFeatures.Queries.ListActivities;
 internal sealed class GetBoardActivityListQueryHandler : IRequestHandler<GetBoardActivityListQuery, List<ListActivitiesResponse>>
 {
     private readonly IReadRepository<Activity> _repository;
