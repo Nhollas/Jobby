@@ -100,3 +100,25 @@ export const useBoardsQuery = (initialBoards?: Board[]) => {
     initialData: initialBoards,
   });
 };
+
+export const useBoardQuery = (boardId: string, initialBoard?: Board) => {
+  const { getToken } = useAuth();
+
+  const getBoard = async () => {
+    const response = await clientApi.get<Board>(`/board/${boardId}`, {
+      headers: {
+        Authorization: `Bearer ${await getToken()}`,
+      },
+    });
+
+    return response.data;
+  }
+
+  return useQuery<Board>({
+    queryKey: ["board", boardId],
+    queryFn: getBoard,
+    initialData: initialBoard,
+    staleTime: Infinity,
+    cacheTime: Infinity,
+  });
+};

@@ -1,9 +1,9 @@
 "use client";
 
-import NavigationContext from "contexts/NavigationContext";
 import { usePathname } from "next/navigation";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { MenuItem } from "components/MenuItem";
+import { Layout, List, Users } from "lucide-react";
 
 type NavItem = {
   leaf: string;
@@ -15,17 +15,17 @@ const navItems: NavItem[] = [
   {
     leaf: "/",
     name: "Board",
-    icon: <i className="bi bi-kanban text-xl text-slate-900"></i>,
+    icon: <Layout className="h-4 w-4" />,
   },
   {
     leaf: "activities",
     name: "Activities",
-    icon: <i className="bi-list-ul text-xl text-slate-900"></i>,
+    icon: <List className="h-4 w-4" />,
   },
   {
     leaf: "contacts",
     name: "Contacts",
-    icon: <i className="bi bi-people text-xl text-slate-900"></i>,
+    icon: <Users className="h-4 w-4" />,
   },
 ];
 
@@ -40,24 +40,21 @@ export const BoardNavigation = () => {
   }
 
   const [selected, setSelected] = useState(leaf);
-  const { toggleOpen } = useContext(NavigationContext);
 
   useEffect(() => {
     setSelected(leaf);
   }, [leaf]);
 
   return (
-    <div className="relative flex w-full flex-row flex-wrap gap-4 border-b border-gray-300 p-4">
+    <div className="fixed top-0 z-10 flex h-16 w-full flex-row flex-wrap items-center gap-4 border-b border-gray-300 bg-white px-4">
       {navItems.map(({ icon, leaf, name }) => (
         <MenuItem
           selected={selected === leaf}
           icon={icon}
           name={name}
-          leaf={leaf}
           key={leaf}
           href={`/board/${pathnameSections[2]}/${leaf}`}
           layoutId={pathnameSections[2]}
-          colour="bg-main-blue"
         />
       ))}
     </div>

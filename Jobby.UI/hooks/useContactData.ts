@@ -41,7 +41,13 @@ export const useCreateContact = () => {
 
       console.log("queryKeys", queryKeys);
 
-      await Promise.all(queryKeys.map((key) => queryClient.invalidateQueries(key)));
+      // Only invalidate the queries that are affected by the new contact.
+      await Promise.all(queryKeys.map((key) => queryClient.invalidateQueries({
+        queryKey: key,
+        refetchType: "all"
+      })));
+
+      // await queryClient.invalidateQueries(["/contacts"]);
     },
   });
 };
@@ -101,12 +107,17 @@ export const useDeleteContact = () => {
       //   );
       // })
 
-      await queryClient.invalidateQueries(["/contacts"]);
+      // The above commented out implementation was expensive.
+      // This one is simple but has been having weird issues where it sometimes doesn't refetch.
+      await queryClient.invalidateQueries({
+        queryKey: ["/contacts"],
+        refetchType: "all"
+      });
     },
   });
 };
 
-export const useContactsQuery = (initialContacts: Contact[], url: string, queryKeyVariable?: any) => {
+export const useContactsQuery = (initialContacts: Contact[], url: string, queryKeyVariable?: string) => {
   const { getToken } = useAuth();
 
   const getContacts = async () => {

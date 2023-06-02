@@ -1,4 +1,4 @@
-import { CreateJobModal } from "components/Modals/CreateJobModal";
+import { CreateJobModal } from "@/components/modals/CreateJobModal";
 import { BoardDictionaryResponse } from "types/responses/Board";
 import { serverApi } from "@/lib/clients/serverApi";
 

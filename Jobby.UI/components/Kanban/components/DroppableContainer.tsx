@@ -5,7 +5,8 @@ import {
   defaultAnimateLayoutChanges,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { JobPreview } from "types";
+import { UniqueIdentifier } from "@dnd-kit/core";
+import { Job } from "@/types";
 
 const animateLayoutChanges: AnimateLayoutChanges = (args) =>
   defaultAnimateLayoutChanges({ ...args, wasDragging: true });
@@ -20,7 +21,7 @@ export function DroppableContainer({
 }: ContainerProps & {
   disabled?: boolean;
   id: string;
-  items: JobPreview[];
+  items: Job[];
   style?: React.CSSProperties;
 }) {
   const {

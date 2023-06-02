@@ -54,7 +54,7 @@ import {
   FormControl,
   FormMessage,
 } from "../ui/form";
-import MultiInput from "../Common/MultiInput";
+import MultiInput from "../ui/multi-input";
 import { useCreateContact } from "@/hooks/useContactData";
 
 interface Props {

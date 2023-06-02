@@ -3,11 +3,8 @@
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Book, FileText, Info, List, Users } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import { motion } from "framer-motion";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { cn } from "@/lib/utils";
+import { MenuItem } from "@/components";
 
 type NavItem = {
   leaf: string;
@@ -63,20 +60,14 @@ export const JobNavigation = ({
     <ScrollArea className="w-screen rounded-md px-4 pt-4 sm:w-max">
       <div className="flex items-center justify-center gap-x-2">
         {navItems.map(({ icon, leaf, name }) => (
-          <Button key={leaf} asChild variant="outline">
-            <Link
-              href={`/board/${boardId}/job/${jobId}/${leaf}`}
-              className={cn(
-                "flex items-center gap-x-2 rounded-md px-4 py-2 text-sm",
-                selected === leaf
-                  ? "bg-white font-medium text-primary"
-                  : "font-medium text-muted-foreground"
-              )}
-            >
-              {icon}
-              {name}
-            </Link>
-          </Button>
+          <MenuItem
+            selected={selected === leaf}
+            icon={icon}
+            name={name}
+            key={leaf}
+            href={`/board/${boardId}/job/${jobId}/${leaf}`}
+            layoutId={jobId}
+          />
         ))}
       </div>
       <ScrollBar orientation="horizontal" className="invisible" />

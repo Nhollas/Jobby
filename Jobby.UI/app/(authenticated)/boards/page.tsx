@@ -1,5 +1,5 @@
-import { PageContainer } from "components/Common";
-import { Boards } from "components/Board/Boards";
+import { PageContainer } from "@/components/PageContainer";
+import { Boards } from "@/components";
 import { serverApi } from "@/lib/clients/serverApi";
 import { Board } from "@/types";
 

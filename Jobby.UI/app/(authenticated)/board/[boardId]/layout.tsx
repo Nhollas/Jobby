@@ -8,10 +8,10 @@ export default async function BoardLayout({
   modal?: React.ReactNode;
 }) {
   return (
-    <div>
+    <div className="relative h-screen w-[calc(100vw-250px)]">
+      {modal}
       <BoardNavigation />
       {children}
-      {modal}
     </div>
   );
 }

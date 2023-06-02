@@ -23,6 +23,8 @@ internal sealed class MoveJobCommandHandler : IRequestHandler<MoveJobCommand, Un
 
     public async Task<Unit> Handle(MoveJobCommand request, CancellationToken cancellationToken)
     {
+        
+        
         Job jobToMove = await ResourceProvider<Job>
             .GetById(_jobRepository.GetByIdAsync)
             .Check(_userId, request.JobId, cancellationToken);

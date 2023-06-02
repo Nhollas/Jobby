@@ -1,15 +1,14 @@
 "use client";
 
-import React, { Dispatch, forwardRef, SetStateAction } from "react";
-import classNames from "classnames";
+import React, { forwardRef } from "react";
 
 import styles from "./Container.module.css";
-import { Handle, Remove } from "../Item";
-import { JobListPreview } from "types";
-import { ActionButton } from "../../Common";
+import { Handle, Remove } from "@/components/Item";
+import { Button } from "../ui/button";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
+import clsx from "clsx";
+import { JobList } from "@/types";
 
 export interface Props {
   children: React.ReactNode;
@@ -18,14 +17,12 @@ export interface Props {
   handleProps?: React.HTMLAttributes<any>;
   shadow?: boolean;
   placeholder?: boolean;
-  list?: JobListPreview;
+  list?: JobList;
   onClick?(): void;
   onRemove?: () => Promise<void>;
-  setContainerDict: Dispatch<SetStateAction<Record<string, JobListPreview>>>;
   boardId: string;
 }
 
-// eslint-disable-next-line react/display-name
 export const Container = forwardRef<HTMLDivElement & HTMLButtonElement, Props>(
   (
     {
@@ -38,7 +35,6 @@ export const Container = forwardRef<HTMLDivElement & HTMLButtonElement, Props>(
       list,
       onClick,
       onRemove,
-      setContainerDict,
       boardId,
       ...props
     }: Props,
@@ -56,7 +52,7 @@ export const Container = forwardRef<HTMLDivElement & HTMLButtonElement, Props>(
             "--columns": 1,
           } as React.CSSProperties
         }
-        className={classNames(
+        className={clsx(
           styles.Container,
           hover && styles.hover,
           placeholder && styles.placeholder,
@@ -96,3 +92,5 @@ export const Container = forwardRef<HTMLDivElement & HTMLButtonElement, Props>(
     );
   }
 );
+
+Container.displayName = "Container";

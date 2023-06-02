@@ -1,4 +1,4 @@
-import { PageContainer } from "components/Common";
+import { PageContainer } from "@/components/PageContainer";
 import { Contact } from "types";
 import { Contacts } from "components";
 import { serverApi } from "@/lib/clients/serverApi";

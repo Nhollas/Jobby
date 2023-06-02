@@ -1,4 +1,4 @@
-import { DeleteContactModal } from "components/Modals/DeleteContactModal";
+import { DeleteContactModal } from "@/components/modals/DeleteContactModal";
 
 export default function Page({
   params: { contactId },

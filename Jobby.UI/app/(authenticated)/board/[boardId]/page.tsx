@@ -1,5 +1,5 @@
 import { serverApi } from "@/lib/clients/serverApi";
-import { Kanban } from "components/Board";
+import { Kanban } from "@/components/Kanban";
 import { Board } from "types";
 
 export default async function Page({
@@ -12,7 +12,5 @@ export default async function Page({
     return <div>Board not found</div>;
   }
 
-  const { jobLists } = board;
-
-  return <Kanban lists={jobLists} boardId={board.id} />;
+  return <Kanban boardId={boardId} lists={board.jobLists} />;
 }

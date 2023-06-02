@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import { X } from "lucide-react";
 import { Control, useFieldArray } from "react-hook-form";
-import { Button } from "../ui/button";
+import { Button } from "./button";
 import {
   FormControl,
   FormDescription,
@@ -9,15 +9,15 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "../ui/form";
-import { Input } from "../ui/input";
+} from "./form";
+import { Input } from "./input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../ui/select";
+} from "./select";
 
 type MultiInputProps = {
   control: Control<any>;

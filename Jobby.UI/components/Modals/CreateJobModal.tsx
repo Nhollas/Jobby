@@ -1,12 +1,10 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Job } from "types";
 import { BoardDictionaryResponse } from "types/responses/Board";
-import ColourPicker from "../Common/ColourPicker";
+import ColourPicker from "../ColourPicker";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@clerk/nextjs";
-import { Modal } from "../Modal";
+import { Modal } from "@/components/Modal";
 import {
   Card,
   CardContent,
@@ -34,7 +32,7 @@ import {
   FormMessage,
 } from "../ui/form";
 import { Layout, List } from "lucide-react";
-import { clientApi } from "@/lib/clients/clientApi";
+import { useCreateJob } from "@/hooks/useJobData";
 
 interface Props {
   boardId: string;
@@ -67,19 +65,13 @@ export const CreateJobModal = ({
   });
 
   const router = useRouter();
-  const { getToken } = useAuth();
+
+  const { mutateAsync } = useCreateJob();
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
 
-    const createdJob = await clientApi.post<
-      Pick<Job, "company" | "title" | "jobListId" | "boardId">,
-      Job
-    >("/Job/Create", values, {
-      headers: {
-        Authorization: `Bearer ${await getToken()}`,
-      },
-    });
+    await mutateAsync(values);
 
     router.back();
   }

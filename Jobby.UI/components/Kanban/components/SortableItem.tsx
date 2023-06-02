@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useSortable } from "@dnd-kit/sortable";
-import { Item } from "../../Item";
-import { JobPreview } from "types";
+import { Item } from "@/components/Item";
+import { Job } from "@/types";
 
 function useMountStatus() {
   const [isMounted, setIsMounted] = useState(false);
@@ -19,7 +19,7 @@ interface SortableItemProps {
   id: string;
   index: number;
   disabled?: boolean;
-  job: JobPreview;
+  job: Job;
   loading?: boolean;
 }
 
@@ -54,7 +54,6 @@ export function SortableItem({
       transform={transform}
       fadeIn={mountedWhileDragging}
       listeners={listeners}
-      loading={loading}
     />
   );
 }

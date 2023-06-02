@@ -1,6 +1,6 @@
 import { serverApi } from "@/lib/clients/serverApi";
 import { Board, Job } from "@/types";
-import { CreateContactModal } from "components/Modals/CreateContactModal";
+import { CreateContactModal } from "@/components/modals/CreateContactModal";
 
 export default async function Page() {
   const { data: boards } = await serverApi.get<Board[]>("/boards");

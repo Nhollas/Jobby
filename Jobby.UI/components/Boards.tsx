@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Board } from "@/types";
 import { useBoardsQuery } from "@/hooks/useBoardsData";
 
-export function Boards({ boards: initialBoards }: { boards: Board[] }) {
+export const Boards = ({ boards: initialBoards }: { boards: Board[] }) => {
   const { data: boards } = useBoardsQuery(initialBoards);
 
   return (

@@ -42,7 +42,7 @@ const contactNameToInitials = (name: string | undefined) => {
 };
 
 export function Contacts({ contacts: initialContacts, boardId, url, querykeyVariable }: Props) {
-  const { data: contacts} = useContactsQuery(initialContacts, url, querykeyVariable);
+  const { data: contacts } = useContactsQuery(initialContacts, url, querykeyVariable);
 
   return (
     <div className="flex flex-col gap-y-6 overscroll-contain border-gray-300 p-4 lg:px-8">
@@ -68,7 +68,7 @@ export function Contacts({ contacts: initialContacts, boardId, url, querykeyVari
       {contacts.length === 0 ? (
         <h1>No Contacts Found.</h1>
       ) : (
-        <section className="grid grid-cols-[repeat(auto-fill,minmax(275px,1fr))] gap-8">
+        <section className="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-8">
           {contacts.map((contact) => {
             const socials = [];
 
@@ -94,8 +94,8 @@ export function Contacts({ contacts: initialContacts, boardId, url, querykeyVari
                         )}
                       </AvatarFallback>
                     </Avatar>
-                    <div className="flex flex-col gap-y-1">
-                      <CardTitle className="whitespace-nowrap">
+                    <div className="flex flex-col gap-y-1 truncate">
+                      <CardTitle className="">
                         {contact.firstName} {contact.lastName}
                       </CardTitle>
                       <CardDescription>{contact.jobTitle}</CardDescription>
