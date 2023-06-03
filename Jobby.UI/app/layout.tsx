@@ -15,9 +15,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <head />
       <body>
         <ClerkProvider>
-          <Providers>
-            {children}        
-            </Providers>
+          <Providers>{children}</Providers>
         </ClerkProvider>
       </body>
     </html>

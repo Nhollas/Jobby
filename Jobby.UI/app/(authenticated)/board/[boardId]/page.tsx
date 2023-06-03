@@ -12,5 +12,5 @@ export default async function Page({
     return <div>Board not found</div>;
   }
 
-  return <Kanban boardId={boardId} lists={board.jobLists} />;
+  return <Kanban />;
 }

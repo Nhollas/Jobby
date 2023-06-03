@@ -1,25 +1,25 @@
-"use client";
-
 import React, { useEffect } from "react";
+import type { DraggableSyntheticListeners } from "@dnd-kit/core";
 import type { Transform } from "@dnd-kit/utilities";
 
+import { Remove } from "./components";
+
 import styles from "./Item.module.css";
-import { DraggableSyntheticListeners } from "@dnd-kit/core";
 import clsx from "clsx";
-import { Job } from "@/types";
-import Link from "next/link";
 
 export interface Props {
   dragOverlay?: boolean;
   disabled?: boolean;
   dragging?: boolean;
+  handleProps?: any;
+  height?: number;
   index?: number;
   fadeIn?: boolean;
   transform?: Transform | null;
   listeners?: DraggableSyntheticListeners;
   sorting?: boolean;
   transition?: string | null;
-  job: Job;
+  value: React.ReactNode;
   onRemove?(): void;
 }
 
@@ -31,13 +31,15 @@ export const Item = React.memo(
         dragging,
         disabled,
         fadeIn,
+        handleProps,
+        height,
         index,
         listeners,
         onRemove,
         sorting,
         transition,
         transform,
-        job,
+        value,
         ...props
       },
       ref
@@ -82,11 +84,9 @@ export const Item = React.memo(
           }
           ref={ref}
         >
-          <Link
-            href={`/board/${job.boardId}/job/${job.id}/info`}
+          <div
             className={clsx(
               styles.Item,
-              "flex w-full flex-col gap-y-2",
               dragging && styles.dragging,
               dragOverlay && styles.dragOverlay,
               disabled && styles.disabled
@@ -96,14 +96,13 @@ export const Item = React.memo(
             {...props}
             tabIndex={0}
           >
-            <h1 className={clsx("w-full truncate text-lg font-medium")}>
-              {job.title}
-            </h1>
-            <h2 className="w-max">{job.company}</h2>
-            <p className="ml-auto w-max text-sm">
-              {new Date(job.createdDate).toDateString()}
-            </p>
-          </Link>
+            {value}
+            <span className={styles.Actions}>
+              {onRemove ? (
+                <Remove className={styles.Remove} onClick={onRemove} />
+              ) : null}
+            </span>
+          </div>
         </li>
       );
     }

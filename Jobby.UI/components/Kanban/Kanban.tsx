@@ -3,94 +3,149 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import {
+  CancelDrop,
+  closestCenter,
   pointerWithin,
   rectIntersection,
   CollisionDetection,
   DndContext,
   DragOverlay,
+  DropAnimation,
   getFirstCollision,
-  KeyboardSensor,
   MouseSensor,
   TouchSensor,
+  useDroppable,
+  UniqueIdentifier,
   useSensors,
   useSensor,
-  closestCenter,
   MeasuringStrategy,
-  UniqueIdentifier,
+  defaultDropAnimationSideEffects,
 } from "@dnd-kit/core";
 import {
+  AnimateLayoutChanges,
   SortableContext,
-  verticalListSortingStrategy,
+  useSortable,
   arrayMove,
+  defaultAnimateLayoutChanges,
+  verticalListSortingStrategy,
   horizontalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { DroppableContainer, SortableItem } from "./components";
-import { Item } from "@/components/Item";
-import { Container } from "@/components/Container";
-import { dropAnimation } from "./kanbanUtils";
-import { coordinateGetter } from "./kanbanKeyboardCoordinates";
-import { JobList } from "@/types";
-import { clientApi } from "@/lib/clients/clientApi";
-import { useAuth } from "@clerk/nextjs";
+import { CSS } from "@dnd-kit/utilities";
+import { Container, ContainerProps } from "../Container";
+import { Item } from "../Item";
+import { createRange } from "@/lib/utils";
+import clsx from "clsx";
+
+const animateLayoutChanges: AnimateLayoutChanges = (args) =>
+  defaultAnimateLayoutChanges({ ...args, wasDragging: true });
+
+function DroppableContainer({
+  children,
+  disabled,
+  id,
+  items,
+  ...props
+}: ContainerProps & {
+  disabled?: boolean;
+  id: UniqueIdentifier;
+  items: UniqueIdentifier[];
+}) {
+  const {
+    active,
+    attributes,
+    isDragging,
+    listeners,
+    over,
+    setNodeRef,
+    transition,
+    transform,
+  } = useSortable({
+    id,
+    data: {
+      type: "container",
+      children: items,
+    },
+    animateLayoutChanges,
+  });
+  const isOverContainer = over
+    ? (id === over.id && active?.data.current?.type !== "container") ||
+      items.includes(over.id)
+    : false;
+
+  return (
+    <Container
+      ref={disabled ? undefined : setNodeRef}
+      style={{
+        transition,
+        transform: CSS.Translate.toString(transform),
+        opacity: isDragging ? 0.5 : undefined,
+      }}
+      hover={isOverContainer}
+      handleProps={{
+        ...attributes,
+        ...listeners,
+      }}
+      {...props}
+    >
+      {children}
+    </Container>
+  );
+}
+
+const dropAnimation: DropAnimation = {
+  sideEffects: defaultDropAnimationSideEffects({
+    styles: {
+      active: {
+        opacity: "0.5",
+      },
+    },
+  }),
+};
+
+type Items = Record<UniqueIdentifier, UniqueIdentifier[]>;
 
 interface Props {
-  lists: JobList[];
-  boardId: string;
+  cancelDrop?: CancelDrop;
+  itemCount?: number;
+  items?: Items;
 }
 
 export const TRASH_ID = "void";
 const PLACEHOLDER_ID = "placeholder";
+const empty: UniqueIdentifier[] = [];
 
-export function Kanban({ lists, boardId }: Props) {
-  const { getToken } = useAuth();
-
-  const [containerDict, setContainerDict] = useState<Record<string, JobList>>(
-    lists.reduce((acc: Record<string, JobList>, list) => {
-      acc[list.id] = list;
-      return acc;
-    }, {})
+export function Kanban({ itemCount = 15 }: Props) {
+  const [items, setItems] = useState<Items>({
+    A: createRange(itemCount, (index) => `A${index + 1}`),
+    B: createRange(itemCount, (index) => `B${index + 1}`),
+    C: createRange(itemCount, (index) => `C${index + 1}`),
+    D: createRange(itemCount, (index) => `D${index + 1}`),
+  });
+  const [containers, setContainers] = useState(
+    Object.keys(items) as UniqueIdentifier[]
   );
+  console.log(containers.length);
 
-  const [containerKeys, setContainerKeys] = useState<string[]>(
-    Object.keys(containerDict).map((key) => containerDict[key].id)
-  );
-
-  const [activeId, setActiveId] = useState<string | null>(null);
-  const [moveJob, setMoveJob] = useState<{
-    jobId: UniqueIdentifier;
-    targetJobListId: string;
-  } | null>(null);
-  const lastOverId = useRef<string | null>(null);
-  const [portalElement, setPortalElement] = useState<HTMLDivElement | null>(
-    null
-  );
+  const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
+  const lastOverId = useRef<UniqueIdentifier | null>(null);
   const recentlyMovedToNewContainer = useRef(false);
-  const isSortingContainer = activeId
-    ? containerKeys.includes(activeId)
-    : false;
+  const isSortingContainer = activeId ? containers.includes(activeId) : false;
 
-  useEffect(() => {
-    const element = document.createElement("div");
-    document.body.appendChild(element);
-    setPortalElement(element);
-    return () => {
-      document.body.removeChild(element);
-    };
-  }, []);
-
-  useEffect(() => {
-    requestAnimationFrame(() => {
-      recentlyMovedToNewContainer.current = false;
-    });
-  }, [containerDict]);
-
+  /**
+   * Custom collision detection strategy optimized for multiple containers
+   *
+   * - First, find any droppable containers intersecting with the pointer.
+   * - If there are none, find intersecting containers with the active draggable.
+   * - If there are no intersecting containers, return the last matched intersection
+   *
+   */
   const collisionDetectionStrategy: CollisionDetection = useCallback(
     (args) => {
-      if (activeId && activeId in containerDict) {
+      if (activeId && activeId in items) {
         return closestCenter({
           ...args,
           droppableContainers: args.droppableContainers.filter(
-            (container) => container.id in containerDict
+            (container) => container.id in items
           ),
         });
       }
@@ -105,24 +160,30 @@ export function Kanban({ lists, boardId }: Props) {
       let overId = getFirstCollision(intersections, "id");
 
       if (overId != null) {
-        if (overId in containerDict) {
-          const containerJobs = containerDict[overId].jobs;
+        if (overId === TRASH_ID) {
+          // If the intersecting droppable is the trash, return early
+          // Remove this if you're not using trashable functionality in your app
+          return intersections;
+        }
+
+        if (overId in items) {
+          const containerItems = items[overId];
 
           // If a container is matched and it contains items (columns 'A', 'B', 'C')
-          if (containerJobs.length > 0) {
+          if (containerItems.length > 0) {
             // Return the closest droppable within that container
             overId = closestCenter({
               ...args,
               droppableContainers: args.droppableContainers.filter(
                 (container) =>
                   container.id !== overId &&
-                  containerJobs.some((job) => job.id === container.id)
+                  containerItems.includes(container.id)
               ),
             })[0]?.id;
           }
         }
 
-        lastOverId.current = overId as string;
+        lastOverId.current = overId;
 
         return [{ id: overId }];
       }
@@ -138,60 +199,37 @@ export function Kanban({ lists, boardId }: Props) {
       // If no droppable is matched, return the last match
       return lastOverId.current ? [{ id: lastOverId.current }] : [];
     },
-    [activeId, containerDict]
+    [activeId, items]
   );
-  const sensors = useSensors(
-    useSensor(MouseSensor, {
-      activationConstraint: {
-        delay: 250,
-        tolerance: 5,
-      },
-    }),
-    useSensor(TouchSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter,
-    })
+  const [clonedItems, setClonedItems] = useState<Items | null>(null);
+  const [portalElement, setPortalElement] = useState<HTMLDivElement | null>(
+    null
   );
-
-  const findContainer = (id: string) => {
-    if (id in containerDict) {
+  const sensors = useSensors(useSensor(MouseSensor), useSensor(TouchSensor));
+  const findContainer = (id: UniqueIdentifier) => {
+    if (id in items) {
       return id;
     }
 
-    return Object.keys(containerDict).find((key) =>
-      containerDict[key].jobs.some((job) => job.id === id)
-    );
+    return Object.keys(items).find((key) => items[key].includes(id));
   };
 
-  function renderSortableItemDragOverlay(jobId: string) {
-    const foundJob = lists
-      .flatMap((list) => list.jobs)
-      .find((job) => job.id === jobId);
-
-    if (foundJob) {
-      return <Item job={foundJob} dragOverlay />;
+  const onDragCancel = () => {
+    if (clonedItems) {
+      // Reset items to their original state in case items have been
+      // Dragged across containers
+      setItems(clonedItems);
     }
-  }
 
-  function renderContainerDragOverlay(containerId: string) {
-    return (
-      <Container list={containerDict[containerId]} boardId={boardId}>
-        {containerDict[containerId].jobs.map((job) => (
-          <Item key={job.id} job={job} />
-        ))}
-      </Container>
-    );
-  }
+    setActiveId(null);
+    setClonedItems(null);
+  };
 
-  async function handleRemove(containerId: string) {
-    const response = await clientApi.delete(`/JobList/Delete/${containerId}`);
-
-    if (response?.status == 204) {
-      setContainerKeys((containerKeys) =>
-        containerKeys.filter((id) => id !== containerId)
-      );
-    }
-  }
+  useEffect(() => {
+    requestAnimationFrame(() => {
+      recentlyMovedToNewContainer.current = false;
+    });
+  }, [items]);
 
   return (
     <DndContext
@@ -203,304 +241,174 @@ export function Kanban({ lists, boardId }: Props) {
         },
       }}
       onDragStart={({ active }) => {
-        setActiveId(active.id as string);
+        setActiveId(active.id);
+        setClonedItems(items);
       }}
-      onDragOver={async ({ active, over }) => {
-        const overId = over?.id as string;
+      onDragOver={({ active, over }) => {
+        const overId = over?.id;
 
-        // 1. If we are not moving anything over.
-        // 2. Moving a container logic happens in OnDragEnd.
-        if (overId == null || active.id in containerDict) {
+        if (overId == null || overId === TRASH_ID || active.id in items) {
           return;
         }
 
         const overContainer = findContainer(overId);
-        const activeContainer = findContainer(active.id as string);
+        const activeContainer = findContainer(active.id);
 
         if (!overContainer || !activeContainer) {
           return;
         }
-        let newIndex: number;
 
         if (activeContainer !== overContainer) {
-          setContainerDict((containerDict) => {
-            const activeJobs = containerDict[activeContainer].jobs;
-            const overJobs = containerDict[overContainer].jobs;
-            const overIndex = overJobs.findIndex((j) => j.id === overId);
-            const activeIndex = activeJobs.findIndex((j) => j.id === active.id);
+          setItems((items) => {
+            const activeItems = items[activeContainer];
+            const overItems = items[overContainer];
+            const overIndex = overItems.indexOf(overId);
+            const activeIndex = activeItems.indexOf(active.id);
 
-            if (overId in containerDict[overContainer].jobs) {
-              newIndex = overJobs.length + 1;
+            let newIndex: number;
+
+            if (overId in items) {
+              newIndex = overItems.length + 1;
             } else {
-              const middleTranslated =
-                (active.rect.current.translated!.top +
-                  active.rect.current.translated!.bottom) /
-                2;
-
-              const middleOver = over!.rect.top + over!.rect.height;
-
-              const isBelowOverItem = middleTranslated >= middleOver;
+              const isBelowOverItem =
+                over &&
+                active.rect.current.translated &&
+                active.rect.current.translated.top >
+                  over.rect.top + over.rect.height;
 
               const modifier = isBelowOverItem ? 1 : 0;
 
-              if (overJobs.length === 0) {
-                newIndex = 0;
-              } else {
-                newIndex =
-                  overIndex >= 0 ? overIndex + modifier : overJobs.length + 1;
-              }
+              newIndex =
+                overIndex >= 0 ? overIndex + modifier : overItems.length + 1;
             }
+
             recentlyMovedToNewContainer.current = true;
+
             return {
-              ...containerDict,
-              [activeContainer]: {
-                ...containerDict[activeContainer],
-                jobs: containerDict[activeContainer].jobs.filter(
-                  (job) => job.id !== active.id
+              ...items,
+              [activeContainer]: items[activeContainer].filter(
+                (item) => item !== active.id
+              ),
+              [overContainer]: [
+                ...items[overContainer].slice(0, newIndex),
+                items[activeContainer][activeIndex],
+                ...items[overContainer].slice(
+                  newIndex,
+                  items[overContainer].length
                 ),
-              },
-              [overContainer]: {
-                ...containerDict[overContainer],
-                jobs: [
-                  ...containerDict[overContainer].jobs.slice(0, newIndex),
-                  containerDict[activeContainer].jobs[activeIndex],
-                  ...containerDict[overContainer].jobs.slice(
-                    newIndex,
-                    containerDict[overContainer].jobs.length
-                  ),
-                ].map((job, i) => ({
-                  ...job,
-                  index: i,
-                  jobListId: overContainer,
-                })),
-              },
+              ],
             };
           });
-
-          var model = {
-            jobId: active.id,
-            targetJobListId: overContainer,
-          };
-
-          setMoveJob(model);
         }
       }}
-      onDragEnd={async ({ active, over }) => {
-        if (moveJob) {
-          await clientApi.put("/Job/Move", moveJob, {
-            headers: {
-              Authorization: `Bearer ${await getToken()}`,
-            },
+      onDragEnd={({ active, over }) => {
+        if (active.id in items && over?.id) {
+          setContainers((containers) => {
+            const activeIndex = containers.indexOf(active.id);
+            const overIndex = containers.indexOf(over.id);
+
+            return arrayMove(containers, activeIndex, overIndex);
           });
         }
 
-        // We are moving a container.
-        if (active.id in containerDict && over?.id) {
-          const activeIndex = containerKeys.indexOf(active.id as string);
-          const overIndex = containerKeys.indexOf(over.id as string);
-
-          const updatedJobLists = arrayMove(
-            containerKeys,
-            activeIndex,
-            overIndex
-          );
-
-          const jobListIndexes = updatedJobLists.reduce(
-            (acc: { [key: string]: number }, list) => {
-              acc[list] = updatedJobLists.indexOf(list);
-              return acc;
-            },
-            {}
-          );
-
-          var model = {
-            boardId,
-            jobListIndexes,
-          };
-
-          await clientApi.put("/Board/ArrangeJobLists", model, {
-            headers: {
-              Authorization: `Bearer ${await getToken()}`,
-            },
-          });
-
-          setContainerKeys(updatedJobLists);
-
-          return;
-        }
-
-        const activeContainer = findContainer(active.id as string);
+        const activeContainer = findContainer(active.id);
 
         if (!activeContainer) {
           setActiveId(null);
           return;
         }
 
-        const overId = over?.id as string;
+        const overId = over?.id;
 
         if (overId == null) {
           setActiveId(null);
           return;
         }
 
+        if (overId === TRASH_ID) {
+          setItems((items) => ({
+            ...items,
+            [activeContainer]: items[activeContainer].filter(
+              (id) => id !== activeId
+            ),
+          }));
+          setActiveId(null);
+          return;
+        }
+
         if (overId === PLACEHOLDER_ID) {
-          const tempId = crypto.randomUUID();
-          setContainerDict((prevDict) => {
-            const jobToMove = Object.values(prevDict)
-              .flatMap((list) => list.jobs)
-              .find((j) => j.id === active.id);
+          const newContainerId = getNextContainerId();
 
-            if (!jobToMove) {
-              return prevDict;
-            }
-
-            const tempJobList: JobList = {
-              id: tempId,
-              createdDate: new Date(),
-              boardId: boardId,
-              name: "Loading...",
-              lastUpdated: new Date(),
-              jobs: [{ ...jobToMove, jobListId: tempId }],
-            };
-
-            return {
-              ...prevDict,
-              [jobToMove.jobListId]: {
-                ...prevDict[jobToMove.jobListId],
-                jobs: [
-                  ...prevDict[jobToMove.jobListId].jobs.filter(
-                    (j) => j.id !== jobToMove.id
-                  ),
-                ],
-              },
-              [tempJobList.id]: tempJobList,
-            };
-          });
-
-          setContainerKeys((prevKeys) => [...prevKeys, tempId]);
-
-          // TODO set up cloned items, incase we cancel the creation of the new Joblist.
-
+          setContainers((containers) => [...containers, newContainerId]);
+          setItems((items) => ({
+            ...items,
+            [activeContainer]: items[activeContainer].filter(
+              (id) => id !== activeId
+            ),
+            [newContainerId]: [active.id],
+          }));
+          setActiveId(null);
           return;
         }
 
         const overContainer = findContainer(overId);
 
         if (overContainer) {
-          const activeIndex = containerDict[activeContainer].jobs.findIndex(
-            (j) => j.id === active.id
-          );
-          const overIndex = containerDict[overContainer].jobs.findIndex(
-            (j) => j.id === overId
-          );
+          const activeIndex = items[activeContainer].indexOf(active.id);
+          const overIndex = items[overContainer].indexOf(overId);
 
           if (activeIndex !== overIndex) {
-            const updatedJobs = arrayMove(
-              containerDict[overContainer].jobs,
-              activeIndex,
-              overIndex
-            );
-
-            const jobIndexes = updatedJobs.reduce(
-              (acc: { [key: string]: number }, job) => {
-                acc[job.id] = updatedJobs.indexOf(job);
-                return acc;
-              },
-              {}
-            );
-
-            var arrangeJobsModel = {
-              jobListId: overContainer,
-              jobIndexes,
-            };
-
-            await clientApi.put("/JobList/ArrangeJobs", arrangeJobsModel, {
-              headers: {
-                Authorization: `Bearer ${await getToken()}`,
-              },
-            });
-
-            setContainerDict((containerDict) => {
-              {
-                return {
-                  ...containerDict,
-                  [overContainer]: {
-                    ...containerDict[overContainer],
-                    jobs: updatedJobs,
-                  },
-                };
-              }
-            });
-          } else {
-            const jobIndexes = containerDict[overContainer].jobs.reduce(
-              (acc: { [key: string]: number }, job) => {
-                acc[job.id] = containerDict[overContainer].jobs.indexOf(job);
-                return acc;
-              },
-              {}
-            );
-
-            var sussyModel = {
-              jobListId: overContainer,
-              jobIndexes,
-            };
-
-            await clientApi.put("/JobList/ArrangeJobs", sussyModel, {
-              headers: {
-                Authorization: `Bearer ${await getToken()}`,
-              },
-            });
+            setItems((items) => ({
+              ...items,
+              [overContainer]: arrayMove(
+                items[overContainer],
+                activeIndex,
+                overIndex
+              ),
+            }));
           }
         }
 
         setActiveId(null);
       }}
+      onDragCancel={onDragCancel}
     >
-      <div className="relative mt-16 flex h-full w-[calc(100vw-250px)] flex-row divide-x overflow-x-scroll border border-t-0 border-l-0 border-gray-300 bg-[#f5f5f4]">
+      <div className="mt-16 flex min-h-[calc(100vh-4rem)] w-[calc(100vw-250px)] flex-row overflow-x-scroll border border-x-0 border-t-0 border-gray-300 bg-[#f5f5f4]">
         <SortableContext
-          items={[...containerKeys, PLACEHOLDER_ID]}
+          items={[...containers, PLACEHOLDER_ID]}
           strategy={horizontalListSortingStrategy}
         >
-          {containerKeys.map((containerId) => {
-            return (
-              <DroppableContainer
-                key={containerId}
-                id={containerId}
-                list={containerDict[containerId]}
-                items={containerDict[containerId].jobs}
-                boardId={boardId}
-                onRemove={
-                  containerDict[containerId].jobs.length === 0
-                    ? () => handleRemove(containerId)
-                    : undefined
-                }
+          {containers.map((containerId) => (
+            <DroppableContainer
+              key={containerId}
+              id={containerId}
+              label={`Column ${containerId}`}
+              items={items[containerId]}
+              onRemove={() => handleRemoveContainer(containerId)}
+            >
+              <SortableContext
+                items={items[containerId]}
+                strategy={verticalListSortingStrategy}
               >
-                <SortableContext
-                  items={containerDict[containerId].jobs}
-                  strategy={verticalListSortingStrategy}
-                >
-                  {containerDict[containerId].jobs.map((job, index) => {
-                    return (
-                      <SortableItem
-                        key={job.id}
-                        id={job.id}
-                        index={index}
-                        disabled={isSortingContainer}
-                        job={job}
-                      />
-                    );
-                  })}
-                </SortableContext>
-              </DroppableContainer>
-            );
-          })}
+                {items[containerId].map((value, index) => {
+                  return (
+                    <SortableItem
+                      disabled={isSortingContainer}
+                      key={value}
+                      id={value}
+                      index={index}
+                    />
+                  );
+                })}
+              </SortableContext>
+            </DroppableContainer>
+          ))}
           <DroppableContainer
             id={PLACEHOLDER_ID}
             disabled={isSortingContainer}
-            items={[]}
-            onClick={() => {}}
+            items={empty}
+            onClick={handleAddContainer}
             placeholder
-            boardId={boardId}
           >
             <p>+ Add column</p>
           </DroppableContainer>
@@ -510,13 +418,135 @@ export function Kanban({ lists, boardId }: Props) {
         createPortal(
           <DragOverlay dropAnimation={dropAnimation}>
             {activeId
-              ? containerKeys.includes(activeId)
+              ? containers.includes(activeId)
                 ? renderContainerDragOverlay(activeId)
                 : renderSortableItemDragOverlay(activeId)
               : null}
           </DragOverlay>,
           portalElement
         )}
+      {activeId && !containers.includes(activeId) && <Trash id={TRASH_ID} />}
     </DndContext>
   );
+
+  function renderSortableItemDragOverlay(id: UniqueIdentifier) {
+    return <Item value={id} dragOverlay />;
+  }
+
+  function renderContainerDragOverlay(containerId: UniqueIdentifier) {
+    return (
+      <Container
+        label={`Column ${containerId}`}
+        style={{
+          height: "100%",
+        }}
+        shadow
+      >
+        {items[containerId].map((item, index) => (
+          <Item key={item} value={item} />
+        ))}
+      </Container>
+    );
+  }
+
+  function handleRemoveContainer(containerID: UniqueIdentifier) {
+    setContainers((containers) =>
+      containers.filter((id) => id !== containerID)
+    );
+  }
+
+  function handleAddContainer() {
+    const newContainerId = getNextContainerId();
+
+    setContainers((containers) => [...containers, newContainerId]);
+    setItems((items) => ({
+      ...items,
+      [newContainerId]: [],
+    }));
+  }
+
+  function getNextContainerId() {
+    const containerIds = Object.keys(items);
+    const lastContainerId = containerIds[containerIds.length - 1];
+
+    return String.fromCharCode(lastContainerId.charCodeAt(0) + 1);
+  }
+}
+
+function Trash({ id }: { id: UniqueIdentifier }) {
+  const { setNodeRef, isOver } = useDroppable({
+    id,
+  });
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={{
+        backgroundColor: "#fff",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        position: "fixed",
+        left: "50%",
+        marginLeft: -150,
+        bottom: 20,
+        width: 300,
+        height: 60,
+        borderRadius: 5,
+        border: "1px solid",
+        borderColor: isOver ? "red" : "#DDD",
+      }}
+    >
+      Drop here to delete
+    </div>
+  );
+}
+
+interface SortableItemProps {
+  id: UniqueIdentifier;
+  index: number;
+  disabled?: boolean;
+}
+
+function SortableItem({ disabled, id, index }: SortableItemProps) {
+  const {
+    setNodeRef,
+    setActivatorNodeRef,
+    listeners,
+    isDragging,
+    isSorting,
+    transform,
+    transition,
+  } = useSortable({
+    id,
+  });
+  const mounted = useMountStatus();
+  const mountedWhileDragging = isDragging && !mounted;
+
+  return (
+    <Item
+      ref={disabled ? undefined : setNodeRef}
+      value={id}
+      dragging={isDragging}
+      sorting={isSorting}
+      handleProps={{ ref: setActivatorNodeRef }}
+      index={index}
+      transition={transition}
+      transform={transform}
+      fadeIn={mountedWhileDragging}
+      listeners={listeners}
+    />
+  );
+}
+
+function useMountStatus() {
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => setIsMounted(true), 500);
+
+    return () => clearTimeout(timeout);
+  }, []);
+
+  return isMounted;
 }
