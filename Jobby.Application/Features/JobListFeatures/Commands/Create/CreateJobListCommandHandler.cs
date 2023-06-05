@@ -58,7 +58,8 @@ internal sealed class CreateJobListCommandHandler : IRequestHandler<CreateJobLis
             CreatedDate = createdJobList.CreatedDate,
             Index = createdJobList.Index,
             LastUpdated = createdJobList.LastUpdated,
-            Name = createdJobList.Name  
+            Name = createdJobList.Name,
+            BoardId = createdJobList.BoardId
         };
     }
 }

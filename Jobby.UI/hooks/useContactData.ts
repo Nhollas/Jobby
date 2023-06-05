@@ -99,16 +99,6 @@ export const useDeleteContact = () => {
 
   return useMutation(deleteContact, {
     onSuccess: async (_, contactId) => {
-      // const previousQueries = queryClient.getQueriesData<Contact[]>(["/contacts"]);
-
-      // previousQueries.map((query) => {
-      //   queryClient.setQueryData(query[0], (prevContacts: Contact[] | undefined) =>
-      //     prevContacts?.filter((contact) => contact?.id !== contactId)
-      //   );
-      // })
-
-      // The above commented out implementation was expensive.
-      // This one is simple but has been having weird issues where it sometimes doesn't refetch.
       await queryClient.invalidateQueries({
         queryKey: ["/contacts"],
         refetchType: "all"

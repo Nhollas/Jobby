@@ -1,5 +1,6 @@
 import { Activity } from "types";
 import { serverApi } from "@/lib/clients/serverApi";
+import { Activities } from "@/components";
 
 export async function Page({
   params: { boardId },
@@ -10,8 +11,7 @@ export async function Page({
     `/board/${boardId}/activities`
   );
 
-  // return <Activities activities={activities} />;
-  return <div>Activities</div>;
+  return <Activities activities={activities} boardId={boardId} />;
 }
 
 export default Page;

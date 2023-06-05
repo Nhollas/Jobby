@@ -85,11 +85,14 @@ export const useBoardsQuery = (initialBoards?: Board[]) => {
   const { getToken } = useAuth();
 
   const getBoards = async () => {
+    console.log("We are getting the boards again.")
     const response = await clientApi.get<Board[]>("/boards", {
       headers: {
         Authorization: `Bearer ${await getToken()}`,
       },
     });
+
+    console.log("We got the boards again.", response)
 
     return response.data;
   };
@@ -98,6 +101,8 @@ export const useBoardsQuery = (initialBoards?: Board[]) => {
     queryKey: ["boards"],
     queryFn: getBoards,
     initialData: initialBoards,
+    staleTime: Infinity,
+    cacheTime: Infinity,
   });
 };
 

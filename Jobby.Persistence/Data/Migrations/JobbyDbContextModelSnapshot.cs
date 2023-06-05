@@ -178,9 +178,6 @@ namespace Jobby.Persistence.Data.Migrations
                     b.Property<Guid>("BoardId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Colour")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Company")
                         .HasColumnType("nvarchar(max)");
 

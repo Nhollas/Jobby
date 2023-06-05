@@ -32,7 +32,7 @@ export type Job = {
   company: string;
   title: string;
   postUrl: string;
-  salary: number;
+  salary?: number;
   location?: string;
   colour: string;
   description?: string;

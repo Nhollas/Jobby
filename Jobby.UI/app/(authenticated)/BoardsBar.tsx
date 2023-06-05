@@ -37,10 +37,7 @@ import {
   UserPlus,
   Users,
 } from "lucide-react";
-import { useAuth, useUser } from "@clerk/nextjs";
-import { useQuery } from "@tanstack/react-query";
-import { Board } from "@/types";
-import { clientApi } from "@/lib/clients/clientApi";
+import { useUser } from "@clerk/nextjs";
 import { useBoardsQuery } from "@/hooks/useBoardsData";
 
 export const BoardsBar = () => {
@@ -65,16 +62,6 @@ export const BoardsBar = () => {
                 <Link href={`/contacts`}>
                   <Users className="mr-2 h-4 w-4" />
                   Contacts
-                </Link>
-              </Button>
-              <Button
-                asChild
-                variant="ghost"
-                className="w-full justify-start font-normal"
-              >
-                <Link href={`/activities`}>
-                  <List className="mr-2 h-4 w-4" />
-                  Activities
                 </Link>
               </Button>
             </div>

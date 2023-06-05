@@ -7,7 +7,6 @@ public sealed record CreateJobCommand : IRequest<JobDto>
 {
     public string Company { get; set; }
     public string Title { get; set; }
-    public string Colour { get; set; } = string.Empty;
     public Guid BoardId { get; set; }
     public Guid JobListId { get; set; }
 }

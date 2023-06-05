@@ -8,9 +8,15 @@ export default async function Page({
   params: { jobId: string; boardId: string };
 }) {
   const url = `/job/${jobId}/contacts`;
-  const { data: contacts } = await serverApi.get<Contact[]>(
-    url
-  );
+  const { data: contacts } = await serverApi.get<Contact[]>(url);
 
-  return <Contacts contacts={contacts} boardId={boardId} url={url} querykeyVariable={url} />;
+  return (
+    <Contacts
+      contacts={contacts}
+      boardId={boardId}
+      jobId={jobId}
+      url={url}
+      querykeyVariable={url}
+    />
+  );
 }

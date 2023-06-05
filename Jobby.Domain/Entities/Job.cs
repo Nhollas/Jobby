@@ -18,7 +18,6 @@ public class Job : Entity
         DateTime createdDate,
         string ownerId,
         string company,
-        string colour,
         string jobTitle,
         int index,
         JobList jobList,
@@ -32,7 +31,6 @@ public class Job : Entity
         Index = index;
         JobList = jobList;
         Board = board;
-        Colour = colour ?? "rgb(255 255 255)";
     }
 
     public string Company { get; private set; }
@@ -40,7 +38,6 @@ public class Job : Entity
     public string PostUrl { get; private set; }
     public double Salary { get; private set; }
     public string Location { get; private set; }
-    public string Colour { get; private set; }
     public string Description { get; private set; }
     public DateTime? Deadline { get; private set; }
     public int Index { get; private set; }
@@ -62,7 +59,6 @@ public class Job : Entity
         DateTime createdDate,
         string ownerId,
         string company,
-        string colour,
         string jobTitle,
         int index,
         JobList jobList,
@@ -73,7 +69,6 @@ public class Job : Entity
             createdDate,
             ownerId,
             company,
-            colour,
             jobTitle,
             index,
             jobList,

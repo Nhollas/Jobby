@@ -106,6 +106,7 @@ export const CreateContactModal = ({ boards, jobs }: Props) => {
   const searchParams = useSearchParams();
 
   const boardId = searchParams.get("boardId");
+  const jobId = searchParams.get("jobId");
 
   const router = useRouter();
 
@@ -113,7 +114,7 @@ export const CreateContactModal = ({ boards, jobs }: Props) => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       boardId: boardId || null,
-      jobIds: [],
+      jobIds: [jobId || undefined],
       firstName: "",
       lastName: "",
       jobTitle: "",

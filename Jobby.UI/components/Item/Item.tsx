@@ -2,10 +2,10 @@ import React, { useEffect } from "react";
 import type { DraggableSyntheticListeners } from "@dnd-kit/core";
 import type { Transform } from "@dnd-kit/utilities";
 
-import { Remove } from "./components";
-
 import styles from "./Item.module.css";
 import clsx from "clsx";
+import { Job } from "@/types";
+import Link from "next/link";
 
 export interface Props {
   dragOverlay?: boolean;
@@ -19,8 +19,7 @@ export interface Props {
   listeners?: DraggableSyntheticListeners;
   sorting?: boolean;
   transition?: string | null;
-  value: React.ReactNode;
-  onRemove?(): void;
+  job: Job;
 }
 
 export const Item = React.memo(
@@ -35,11 +34,10 @@ export const Item = React.memo(
         height,
         index,
         listeners,
-        onRemove,
         sorting,
         transition,
         transform,
-        value,
+        job,
         ...props
       },
       ref
@@ -84,9 +82,11 @@ export const Item = React.memo(
           }
           ref={ref}
         >
-          <div
+          <Link
+            href={`/board/${job.boardId}/job/${job.id}/info`}
             className={clsx(
               styles.Item,
+              "flex w-full flex-col gap-y-2",
               dragging && styles.dragging,
               dragOverlay && styles.dragOverlay,
               disabled && styles.disabled
@@ -96,13 +96,12 @@ export const Item = React.memo(
             {...props}
             tabIndex={0}
           >
-            {value}
-            <span className={styles.Actions}>
-              {onRemove ? (
-                <Remove className={styles.Remove} onClick={onRemove} />
-              ) : null}
-            </span>
-          </div>
+            <h1 className="w-full truncate text-lg font-medium">{job.title}</h1>
+            <h2 className="">{job.company}</h2>
+            <p className="ml-auto w-max text-sm">
+              {new Date(job.createdDate).toDateString()}
+            </p>
+          </Link>
         </li>
       );
     }

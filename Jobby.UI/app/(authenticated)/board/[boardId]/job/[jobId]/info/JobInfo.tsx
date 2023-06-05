@@ -33,24 +33,30 @@ const formSchema = z.object({
   id: z.string(),
   company: z.string(),
   title: z.string().nonempty({ message: "The Title field is required." }),
-  postUrl: z.string().url(),
-  salary: z.string().transform((val) => parseInt(val)),
-  colour: z.string(),
-  description: z.string(),
+  postUrl: z.string().url().optional(),
+  salary: z.number().optional(),
+  description: z.string().optional(),
   deadline: z.date().optional(),
 });
 
 function JobInfo({ jobId }: Props) {
   const { data: jobData } = useJobQuery(jobId);
 
+  console.log({ jobData });
+
   const { mutateAsync } = useUpdateJob();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: jobData,
+    defaultValues: {
+      ...jobData,
+      deadline: jobData?.deadline ? new Date(jobData.deadline) : undefined,
+    },
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    console.log(values);
+
     await mutateAsync(values);
   }
 
@@ -110,22 +116,15 @@ function JobInfo({ jobId }: Props) {
                 <FormItem>
                   <FormLabel>Salary</FormLabel>
                   <FormControl>
-                    <Input placeholder="Salary" {...field} />
-                  </FormControl>
-                  <FormMessage className="text-xs" />
-                </FormItem>
-              )}
-            />
-          </div>
-          <div className="grid gap-y-6 gap-x-2 @md:grid-cols-2">
-            <FormField
-              control={form.control}
-              name="colour"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Colour</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Colour" {...field} />
+                    <Input
+                      placeholder="Salary"
+                      {...field}
+                      type="number"
+                      onChange={(e) => {
+                        const output = parseInt(e.target.value, 10);
+                        return field.onChange(isNaN(output) ? 0 : output);
+                      }}
+                    />
                   </FormControl>
                   <FormMessage className="text-xs" />
                 </FormItem>

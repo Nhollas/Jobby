@@ -2,7 +2,6 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { BoardDictionaryResponse } from "types/responses/Board";
-import ColourPicker from "../ColourPicker";
 import { useRouter } from "next/navigation";
 import { Modal } from "@/components/Modal";
 import {
@@ -43,7 +42,6 @@ interface Props {
 const formSchema = z.object({
   title: z.string().nonempty(),
   company: z.string().nonempty(),
-  colour: z.string(),
   jobListId: z.string(),
   boardId: z.string(),
 });
@@ -58,7 +56,6 @@ export const CreateJobModal = ({
     defaultValues: {
       title: "",
       company: "",
-      colour: "#ffffff",
       jobListId,
       boardId,
     },
@@ -111,9 +108,6 @@ export const CreateJobModal = ({
                     <FormMessage />
                   </FormItem>
                 )}
-              />
-              <ColourPicker
-                onChange={(value) => form.setValue("colour", value)}
               />
               <FormField
                 control={form.control}

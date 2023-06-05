@@ -1,9 +1,6 @@
 "use client";
 
 import { useContactsQuery } from "@/hooks/useContactData";
-import { clientApi } from "@/lib/clients/clientApi";
-import { useAuth } from "@clerk/nextjs";
-import { useQuery } from "@tanstack/react-query";
 import { MoreVertical, Mail, Phone, Eye, Trash2, Layout } from "lucide-react";
 import Link from "next/link";
 import { Contact, Social } from "types";
@@ -31,6 +28,7 @@ type Props = {
   contacts: Contact[];
   url: string;
   boardId?: string;
+  jobId?: string;
   querykeyVariable?: any;
 };
 
@@ -41,8 +39,27 @@ const contactNameToInitials = (name: string | undefined) => {
   return `${firstName[0]}${lastName[0]}`;
 };
 
-export function Contacts({ contacts: initialContacts, boardId, url, querykeyVariable }: Props) {
-  const { data: contacts } = useContactsQuery(initialContacts, url, querykeyVariable);
+const createUrl = (boardId?: string, jobId?: string) => {
+  const params = new URLSearchParams();
+
+  if (boardId) params.set("boardId", boardId);
+  if (jobId) params.set("jobId", jobId);
+
+  return `/create-contact${params.toString() ? `?${params.toString()}` : ""}`;
+};
+
+export function Contacts({
+  contacts: initialContacts,
+  boardId,
+  jobId,
+  url,
+  querykeyVariable,
+}: Props) {
+  const { data: contacts } = useContactsQuery(
+    initialContacts,
+    url,
+    querykeyVariable
+  );
 
   return (
     <div className="flex flex-col gap-y-6 overscroll-contain border-gray-300 p-4 lg:px-8">
@@ -54,11 +71,7 @@ export function Contacts({ contacts: initialContacts, boardId, url, querykeyVari
         <Input type="text" placeholder="Search.." className="w-full max-w-xs" />
         <Button asChild>
           <Link
-            href={
-              !boardId
-                ? "/create-contact"
-                : `/create-contact?boardId=${boardId}`
-            }
+            href={createUrl(boardId, jobId)}
             className="w-max whitespace-nowrap"
           >
             Create Contact

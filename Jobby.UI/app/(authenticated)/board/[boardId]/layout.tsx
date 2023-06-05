@@ -11,7 +11,7 @@ export default async function BoardLayout({
     <div className="relative h-screen w-[calc(100vw-250px)]">
       {modal}
       <BoardNavigation />
-      {children}
+      <div className="mt-16">{children}</div>
     </div>
   );
 }

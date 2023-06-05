@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Jobby.Persistence.Data.Migrations
 {
     [DbContext(typeof(JobbyDbContext))]
-    [Migration("20230526171130_DateChange")]
-    partial class DateChange
+    [Migration("20230604090709_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -180,9 +180,6 @@ namespace Jobby.Persistence.Data.Migrations
 
                     b.Property<Guid>("BoardId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Colour")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Company")
                         .HasColumnType("nvarchar(max)");
