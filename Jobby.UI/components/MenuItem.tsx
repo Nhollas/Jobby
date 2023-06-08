@@ -11,7 +11,6 @@ interface MenuItemProps {
   name: string;
   href: string;
   layoutId: string;
-
 }
 
 export const MenuItem = ({
@@ -40,7 +39,7 @@ export const MenuItem = ({
     </Button>
     {selected && (
       <motion.div
-        className="absolute bg-muted inset-0 h-full w-full rounded-lg -z-10"
+        className="absolute inset-0 -z-10 h-full w-full rounded-lg bg-muted"
         layoutId={layoutId}
       />
     )}

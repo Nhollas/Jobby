@@ -35,6 +35,9 @@ export const BoardNavigation = () => {
 
   let leaf = pathnameSections[3] || "/";
 
+  console.log(pathnameSections);
+  console.log(leaf);
+
   if (leaf === "job") {
     leaf = "/";
   }
@@ -53,7 +56,9 @@ export const BoardNavigation = () => {
           icon={icon}
           name={name}
           key={leaf}
-          href={`/board/${pathnameSections[2]}/${leaf}`}
+          href={`/board/${pathnameSections[2]}/${
+            leaf === "activities" ? `${leaf}/all` : leaf
+          }`}
           layoutId={pathnameSections[2]}
         />
       ))}

@@ -41,9 +41,6 @@ const formSchema = z.object({
 
 function JobInfo({ jobId }: Props) {
   const { data: jobData } = useJobQuery(jobId);
-
-  console.log({ jobData });
-
   const { mutateAsync } = useUpdateJob();
 
   const form = useForm<z.infer<typeof formSchema>>({

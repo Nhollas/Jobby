@@ -16,8 +16,6 @@ export const useUpdateJob = () => {
         updatedJob
       );
 
-      console.log("updatedJob", updatedJob)
-
       // Invalidate the board query this job belongs to.
       await queryClient.invalidateQueries({
         queryKey: ["board", updatedJob.boardId],
@@ -40,11 +38,7 @@ export const useCreateJob = () => {
   return useMutation(createJob, {
     onSuccess: async ({ data: createdJob }) => {
 
-      console.log("createdJob", createdJob)
-
       queryClient.setQueryData(["board", createdJob.boardId], (oldBoard: Board | undefined) => {
-        console.log("oldBoard", oldBoard)
-
         if (!oldBoard) {
           return oldBoard;
         }
@@ -58,8 +52,6 @@ export const useCreateJob = () => {
           }
           return jobList;
         });
-
-        console.log("updatedJobLists", updatedJobLists)
 
         return {
           ...oldBoard,

@@ -34,8 +34,6 @@ export const useCreateContact = () => {
         });
       }
 
-      console.log("queryKeys", queryKeys);
-
       // Only invalidate the queries that are affected by the new contact.
       await Promise.all(queryKeys.map((key) => queryClient.invalidateQueries({
         queryKey: key,

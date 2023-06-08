@@ -122,8 +122,6 @@ export const CreateJobModal = ({
                           (board) => board.id === value
                         )?.jobLists[0].id;
 
-                        console.log("firstJoblistId", firstJoblistId);
-
                         if (firstJoblistId) {
                           form.setValue("jobListId", firstJoblistId);
                         } else {

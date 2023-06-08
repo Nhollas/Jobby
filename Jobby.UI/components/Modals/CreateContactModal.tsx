@@ -550,8 +550,6 @@ export const CreateContactModal = ({ boards, jobs }: Props) => {
                                               jobIds = [...field.value, jobId];
                                             }
 
-                                            console.log(jobIds);
-
                                             form.setValue("jobIds", jobIds);
                                           }}
                                         >

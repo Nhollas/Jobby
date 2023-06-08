@@ -25,7 +25,6 @@ export default async function Layout({
   const initialBoards = await fetchBoards();
 
   if (initialBoards instanceof Error) {
-    console.log(initialBoards.message);
     return <h1>Temp error penis</h1>;
   } else {
     return (

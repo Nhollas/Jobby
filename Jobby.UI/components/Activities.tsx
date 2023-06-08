@@ -22,6 +22,7 @@ type Props = {
   activities: Activity[];
   boardId: string;
   jobId?: string;
+  filter: string;
 };
 
 const createUrl = (boardId?: string, jobId?: string) => {
@@ -33,9 +34,55 @@ const createUrl = (boardId?: string, jobId?: string) => {
   return `/create-activity${params ? `?${params}` : ""}`;
 };
 
-export const Activities = ({ activities, boardId, jobId }: Props) => {
+export const Activities = ({ activities, boardId, jobId, filter }: Props) => {
+  const filterActivities = (filter: string) => {
+    switch (filter) {
+      case "all":
+        return activities;
+      case "completed":
+        return activities.filter((activity) => activity.completed === true);
+      case "pending":
+        return activities.filter((activity) => activity.completed === false);
+      case "applications":
+        return activities.filter((activity) => activity.type === 0);
+      case "interviews":
+        return activities.filter(
+          (activity) =>
+            activity.type === 1 || activity.type === 2 || activity.type === 3
+        );
+      case "offers":
+        return activities.filter((activity) => activity.type === 4);
+      case "networking":
+        return activities.filter(
+          (activity) => activity.type === 16 || activity.type === 20
+        );
+      case "due-today":
+        return activities.filter((activity) => {
+          const today = new Date();
+          const activityDate = new Date(activity.createdDate);
+          return (
+            activityDate.getDate() === today.getDate() &&
+            activityDate.getMonth() === today.getMonth() &&
+            activityDate.getFullYear() === today.getFullYear()
+          );
+        });
+      case "past-due":
+        return activities.filter((activity) => {
+          const today = new Date();
+          const activityDate = new Date(activity.createdDate);
+          return (
+            activityDate.getDate() < today.getDate() &&
+            activityDate.getMonth() <= today.getMonth() &&
+            activityDate.getFullYear() <= today.getFullYear()
+          );
+        });
+      default:
+        return activities;
+    }
+  };
+
   return (
-    <div className="flex flex-col gap-y-6 overscroll-contain p-4 lg:px-8">
+    <div className="flex min-h-[calc(100vh-4rem)] flex-col gap-y-6 border-l p-5">
       <div className="flex flex-col gap-y-2">
         <h1 className="text-2xl font-medium">Activities</h1>
         <p className="text-sm text-gray-500">View and manage activities</p>
@@ -52,7 +99,7 @@ export const Activities = ({ activities, boardId, jobId }: Props) => {
         </Button>
       </div>
       <section className="grid w-full grid-cols-1 gap-4">
-        {activities.map((activity) => (
+        {filterActivities(filter).map((activity) => (
           <Activity activity={activity} key={activity.id} />
         ))}
       </section>

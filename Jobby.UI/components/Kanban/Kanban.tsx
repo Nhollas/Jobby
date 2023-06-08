@@ -253,7 +253,6 @@ export function Kanban({ initialBoard }: Props) {
         const overId = over?.id;
 
         if (overId == null || active.id in containerDict) {
-          console.log("returning");
           return;
         }
 
