@@ -1,4 +1,4 @@
-import { serverApi } from "@/lib/clients/serverApi";
+import { serverApi } from "@/lib/clients";
 import { Job } from "@/types";
 import { JobNavigation } from "./JobNavigation";
 import JobTitle from "./JobTitle";

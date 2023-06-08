@@ -1,4 +1,4 @@
-import { serverApi } from "@/lib/clients/serverApi";
+import { serverApi } from "@/lib/clients";
 import { Board, Job } from "@/types";
 import { CreateContactModal } from "@/components/modals/CreateContactModal";
 

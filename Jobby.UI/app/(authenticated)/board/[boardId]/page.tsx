@@ -1,4 +1,4 @@
-import { serverApi } from "@/lib/clients/serverApi";
+import { serverApi } from "@/lib/clients";
 import { Kanban } from "@/components/Kanban";
 import { Board } from "types";
 

@@ -1,18 +1,33 @@
-import axios, { AxiosInstance } from "axios";
+import { useAuth } from '@clerk/nextjs';
+import axios, { AxiosInstance } from 'axios';
+import https from 'https';
 
-import https from "https";
+const createClient = (getToken: any): AxiosInstance => {
+    const instance = axios.create({
+      baseURL: "https://localhost:6001/api",
+    });
+  
+    instance.interceptors.request.use(async (config) => { 
+      config.headers.Authorization = `Bearer ${await getToken()}`;
+  
+      return config;
+    });
+  
+    /**
+     * Disable only in development mode
+     */
+    if (process.env.NODE_ENV === 'development') {
+      const httpsAgent = new https.Agent({
+        rejectUnauthorized: false,
+      })
+      instance.defaults.httpsAgent = httpsAgent
+    }
+  
+    return instance;
+  };
 
-const createAuthorizedInstance = (): AxiosInstance => {
-  const agent = new https.Agent({
-    rejectUnauthorized: false,
-  });
+export function useClientApi() {
+    const { getToken } = useAuth();
 
-  const instance = axios.create({
-    baseURL: "https://localhost:6001/api",
-    httpAgent: agent,
-  });
-
-  return instance;
-};
-
-export const clientApi = createAuthorizedInstance();
+    return createClient(getToken);
+}

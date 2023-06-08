@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Board } from "@/types";
 import { useBoardsQuery } from "@/hooks/useBoardsData";
 
-export const Boards = ({ boards: initialBoards }: { boards: Board[] }) => {
+export const Boards = ({ initialBoards }: { initialBoards?: Board[] }) => {
   const { data: boards } = useBoardsQuery(initialBoards);
 
   return (
@@ -66,4 +66,4 @@ export const Boards = ({ boards: initialBoards }: { boards: Board[] }) => {
       </div>
     </div>
   );
-}
+};

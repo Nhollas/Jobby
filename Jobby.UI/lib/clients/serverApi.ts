@@ -1,18 +1,11 @@
-"use server";
-
 import axios, { AxiosInstance } from "axios";
 import { auth } from "@clerk/nextjs";
 
 import https from "https";
 
 const createAuthorizedInstance = (): AxiosInstance => {
-  const agent = new https.Agent({
-    rejectUnauthorized: false,
-  });
-
   const instance = axios.create({
     baseURL: "https://localhost:6001/api",
-    httpAgent: agent,
   });
 
   instance.interceptors.request.use(async (config) => {
@@ -22,6 +15,16 @@ const createAuthorizedInstance = (): AxiosInstance => {
 
     return config;
   });
+
+    /**
+   * Disable only in development mode
+   */
+    if (process.env.NODE_ENV === 'development') {
+        const httpsAgent = new https.Agent({
+          rejectUnauthorized: false,
+        })
+        instance.defaults.httpsAgent = httpsAgent
+    }
 
   return instance;
 };

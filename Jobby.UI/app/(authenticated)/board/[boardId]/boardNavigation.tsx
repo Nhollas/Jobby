@@ -46,7 +46,7 @@ export const BoardNavigation = () => {
   }, [leaf]);
 
   return (
-    <div className="fixed top-0 z-10 flex h-16 w-full flex-row flex-wrap items-center gap-4 border-b border-gray-300 bg-white px-4">
+    <div className="fixed top-0 z-10 flex h-16 w-full flex-row flex-wrap items-center gap-4 border-b border-gray-200 bg-white px-4">
       {navItems.map(({ icon, leaf, name }) => (
         <MenuItem
           selected={selected === leaf}

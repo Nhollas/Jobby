@@ -39,9 +39,10 @@ import {
 } from "lucide-react";
 import { useUser } from "@clerk/nextjs";
 import { useBoardsQuery } from "@/hooks/useBoardsData";
+import { Board } from "@/types";
 
-export const BoardsBar = () => {
-  const { data: boards } = useBoardsQuery();
+export const BoardsBar = ({ initialBoards }: { initialBoards?: Board[] }) => {
+  const { data: boards } = useBoardsQuery(initialBoards);
 
   const { user } = useUser();
 
@@ -102,7 +103,7 @@ export const BoardsBar = () => {
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="mx-2">
                 <UserCircle2 className="mr-2 h-5 w-5" />
-                <p className="mr-auto">{user?.username}</p>
+                <p className="mr-auto">{user ? user.username : "Username"}</p>
                 <ChevronsUpDown className="ml-2 h-5 w-5 shrink-0 bg-gray-50 opacity-50" />
               </Button>
             </DropdownMenuTrigger>

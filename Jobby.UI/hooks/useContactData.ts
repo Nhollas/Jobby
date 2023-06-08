@@ -1,22 +1,17 @@
-import { clientApi } from "@/lib/clients/clientApi";
+import { useClientApi } from "@/lib/clients";
 import { Contact } from "@/types";
-import { useAuth } from "@clerk/nextjs";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosResponse } from "axios";
 
 export const useCreateContact = () => {
   const queryClient = useQueryClient();
-  const { getToken } = useAuth();
+  const clientApi = useClientApi();
+
 
   async function createContact(values: any) {
     return await clientApi.post<any, AxiosResponse<Contact>>(
       "/contact/create",
-      values,
-      {
-        headers: {
-          Authorization: `Bearer ${await getToken()}`,
-        },
-      }
+      values
     );
   }
 
@@ -54,14 +49,10 @@ export const useCreateContact = () => {
 
 export const useUpdateContact = () => {
   const queryClient = useQueryClient();
-  const { getToken } = useAuth();
+  const clientApi = useClientApi();
 
   async function updateContact(values: any) {
-    return await clientApi.put<any, AxiosResponse<Contact>>("/contact/update", values, {
-      headers: {
-        Authorization: `Bearer ${await getToken()}`,
-      },
-    });
+    return await clientApi.put<any, AxiosResponse<Contact>>("/contact/update", values);
   }
 
   return useMutation(updateContact, {
@@ -85,14 +76,10 @@ export const useUpdateContact = () => {
 
 export const useDeleteContact = () => {
   const queryClient = useQueryClient();
-  const { getToken } = useAuth();
+  const clientApi = useClientApi();
 
   async function deleteContact(contactId: string) {
-    const response = await clientApi.delete(`/contact/delete/${contactId}`, {
-      headers: {
-        Authorization: `Bearer ${await getToken()}`,
-      },
-    });
+    const response = await clientApi.delete(`/contact/delete/${contactId}`);
 
     return [response, contactId];
   }
@@ -108,14 +95,10 @@ export const useDeleteContact = () => {
 };
 
 export const useContactsQuery = (initialContacts: Contact[], url: string, queryKeyVariable?: string) => {
-  const { getToken } = useAuth();
+  const clientApi = useClientApi();
 
   const getContacts = async () => {
-    const response = await clientApi.get<Contact[]>(url, {
-      headers: {
-        Authorization: `Bearer ${await getToken()}`,
-      },
-    });
+    const response = await clientApi.get<Contact[]>(url);
 
     return response.data;
   };

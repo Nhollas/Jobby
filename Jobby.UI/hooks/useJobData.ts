@@ -1,18 +1,13 @@
 import { AxiosResponse } from "axios";
-import { useAuth } from "@clerk/nextjs";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { clientApi } from "@/lib/clients/clientApi";
+import { useClientApi } from "@/lib/clients";
 import { Board, Job } from "@/types";
 
 export const useUpdateJob = () => {
   const queryClient = useQueryClient();
-  const { getToken } = useAuth();
+  const clientApi = useClientApi();
   async function updateJob(values: any) {
-    return await clientApi.put<any, AxiosResponse<Job>>("/job/update", values, {
-      headers: {
-        Authorization: `Bearer ${await getToken()}`,
-      },
-    });
+    return await clientApi.put<any, AxiosResponse<Job>>("/job/update", values);
   }
   return useMutation(updateJob, {
     onSuccess:  async({ data: updatedJob }) => {
@@ -34,14 +29,10 @@ export const useUpdateJob = () => {
 
 export const useCreateJob = () => {
   const queryClient = useQueryClient();
-  const { getToken } = useAuth();
+  const clientApi = useClientApi();
 
   async function createJob(values: any) {
-    return await clientApi.post<any, AxiosResponse<Job>>("/job/create", values, {
-      headers: {
-        Authorization: `Bearer ${await getToken()}`,
-      },
-    });
+    return await clientApi.post<any, AxiosResponse<Job>>("/job/create", values);
   }
 
 
@@ -81,14 +72,10 @@ export const useCreateJob = () => {
 
 
 export const useJobQuery = (jobId: string, initialJob?: Job) => {
-  const { getToken } = useAuth();
+  const clientApi = useClientApi();
 
   const getJob = async () => {
-    const response = await clientApi.get<Job>(`/job/${jobId}`, {
-      headers: {
-        Authorization: `Bearer ${await getToken()}`,
-      },
-    });
+    const response = await clientApi.get<Job>(`/job/${jobId}`);
 
     return response.data;
   };

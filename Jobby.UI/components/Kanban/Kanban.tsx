@@ -32,8 +32,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { Container, ContainerProps } from "../Container";
 import { Item } from "../Item";
 import { Board, Job, JobList } from "@/types";
-import { clientApi } from "@/lib/clients/clientApi";
-import { useAuth } from "@clerk/nextjs";
+import { useClientApi } from "@/lib/clients";
 
 const animateLayoutChanges: AnimateLayoutChanges = (args) =>
   defaultAnimateLayoutChanges({ ...args, wasDragging: true });
@@ -106,6 +105,7 @@ interface Props {
 }
 
 export function Kanban({ initialBoard }: Props) {
+  const clientApi = useClientApi();
   const [containerDict, setContainerDict] = useState<
     Record<UniqueIdentifier, JobList>
   >(
@@ -118,13 +118,9 @@ export function Kanban({ initialBoard }: Props) {
     )
   );
 
-  console.log("containerDict", containerDict);
-
   const [containerKeys, setContainerKeys] = useState<UniqueIdentifier[]>(
     Object.keys(containerDict).map((key) => containerDict[key].id)
   );
-
-  const { getToken } = useAuth();
 
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
   const [moveJob, setMoveJob] = useState<{
@@ -330,11 +326,7 @@ export function Kanban({ initialBoard }: Props) {
       }}
       onDragEnd={async ({ active, over }) => {
         if (moveJob) {
-          await clientApi.put("job/move", moveJob, {
-            headers: {
-              Authorization: `Bearer ${await getToken()}`,
-            },
-          });
+          await clientApi.put("job/move", moveJob);
 
           setMoveJob(null);
         }
@@ -392,11 +384,7 @@ export function Kanban({ initialBoard }: Props) {
               jobIndexes,
             };
 
-            await clientApi.put("/JobList/ArrangeJobs", arrangeJobsModel, {
-              headers: {
-                Authorization: `Bearer ${await getToken()}`,
-              },
-            });
+            await clientApi.put("/JobList/ArrangeJobs", arrangeJobsModel);
 
             setContainerDict((prevContainerDict) => {
               return {
@@ -413,7 +401,7 @@ export function Kanban({ initialBoard }: Props) {
         setActiveId(null);
       }}
     >
-      <div className="flex min-h-[calc(100vh-4rem)] w-[calc(100vw-250px)] flex-row overflow-x-scroll border border-x-0 border-t-0 border-r-0 border-gray-300 bg-[#f5f5f4]">
+      <div className="flex min-h-[calc(100vh-4rem)] w-[calc(100vw-250px)] flex-row overflow-x-scroll border border-x-0 border-t-0 border-r-0 border-gray-200 bg-[#f5f5f4]">
         <SortableContext
           items={[...containerKeys]}
           strategy={horizontalListSortingStrategy}
@@ -489,11 +477,7 @@ export function Kanban({ initialBoard }: Props) {
   }
 
   async function handleRemoveContainer(containerID: UniqueIdentifier) {
-    await clientApi.delete(`/joblist/delete/${containerID}`, {
-      headers: {
-        Authorization: `Bearer ${await getToken()}`,
-      },
-    });
+    await clientApi.delete(`/joblist/delete/${containerID}`);
 
     setContainerKeys((prevContainerKeys) =>
       prevContainerKeys.filter((id) => id !== containerID)

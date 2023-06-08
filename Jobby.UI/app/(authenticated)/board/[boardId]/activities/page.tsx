@@ -1,5 +1,5 @@
 import { Activity } from "types";
-import { serverApi } from "@/lib/clients/serverApi";
+import { serverApi } from "@/lib/clients";
 import { Activities } from "@/components";
 
 export async function Page({

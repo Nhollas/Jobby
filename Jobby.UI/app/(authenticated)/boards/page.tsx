@@ -1,14 +1,19 @@
-import { PageContainer } from "@/components/PageContainer";
 import { Boards } from "@/components";
-import { serverApi } from "@/lib/clients/serverApi";
+import { serverApi } from "@/lib/clients";
 import { Board } from "@/types";
 
-export default async function Page() {
-  const { data: boards } = await serverApi.get<Board[]>("/boards");
+async function fetchBoards() {
+  try {
+    const { data: boards } = await serverApi.get<Board[]>("/boards");
 
-  return (
-    <PageContainer>
-      <Boards boards={boards} />
-    </PageContainer>
-  );
+    return boards;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export default async function Page() {
+  const boards = await fetchBoards();
+
+  return <Boards initialBoards={boards} />;
 }

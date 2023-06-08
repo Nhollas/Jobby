@@ -1,27 +1,28 @@
-import { clientApi } from "@/lib/clients/clientApi";
+import { useToast } from "@/components/ui/use-toast";
+import { useClientApi } from "@/lib/clients";
 import { Board } from "@/types";
-import { useAuth } from "@clerk/nextjs";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosResponse } from "axios";
 
 export const useCreateBoard = () => {
   const queryClient = useQueryClient();
-  const { getToken } = useAuth();
+  const clientApi = useClientApi();
+  const { toast } = useToast();
 
   async function createBoard(values: any) {
     return await clientApi.post<any, AxiosResponse<Board>>(
       "/board/create",
-      values,
-      {
-        headers: {
-          Authorization: `Bearer ${await getToken()}`,
-        },
-      }
+      values
     );
   }
 
   return useMutation(createBoard, {
     onSuccess: ({ data: createdBoard }) => {
+      toast({
+        title: "Board created successfully.",
+        description: "We've created your board for you.",
+      })
+
       queryClient.setQueryData(["boards"], (prevData: Board[] | undefined) => {
         return prevData ? [...prevData, createdBoard] : [createdBoard];
       });
@@ -31,14 +32,10 @@ export const useCreateBoard = () => {
 
 export const useUpdateBoard = () => {
   const queryClient = useQueryClient();
-  const { getToken } = useAuth();
+  const clientApi = useClientApi();
 
   async function updateBoard(values: any) {
-    return await clientApi.post<any, Board>("/board/update", values, {
-      headers: {
-        Authorization: `Bearer ${await getToken()}`,
-      },
-    });
+    return await clientApi.post<any, Board>("/board/update", values);
   }
 
   return useMutation(updateBoard, {
@@ -60,39 +57,41 @@ export const useUpdateBoard = () => {
 
 export const useDeleteBoard = () => {
   const queryClient = useQueryClient();
-  const { getToken } = useAuth();
+  const clientApi = useClientApi();
+  const { toast } = useToast();
 
   async function deleteBoard(BoardId: string) {
-    const response = await clientApi.delete(`/board/delete/${BoardId}`, {
-      headers: {
-        Authorization: `Bearer ${await getToken()}`,
-      },
-    });
+    const response = await clientApi.delete(`/board/delete/${BoardId}`);
 
     return [response, BoardId];
   }
 
   return useMutation(deleteBoard, {
     onSuccess: ([_, BoardId]) => {
+      toast({
+        title: "Board delete event.",
+        description: "Successfully deleted your board.",
+      })
+
       queryClient.setQueryData(["boards"], (prevData: Board[] | undefined) =>
         prevData?.filter((Board) => Board.id !== BoardId)
       );
     },
+    onError: () => {
+      toast({
+        variant: "destructive",
+        title: "Board delete event.",
+      })
+    }
+
   });
 };
 
 export const useBoardsQuery = (initialBoards?: Board[]) => {
-  const { getToken } = useAuth();
+  const clientApi = useClientApi();
 
   const getBoards = async () => {
-    console.log("We are getting the boards again.")
-    const response = await clientApi.get<Board[]>("/boards", {
-      headers: {
-        Authorization: `Bearer ${await getToken()}`,
-      },
-    });
-
-    console.log("We got the boards again.", response)
+    const response = await clientApi.get<Board[]>("/boards");
 
     return response.data;
   };
@@ -107,14 +106,10 @@ export const useBoardsQuery = (initialBoards?: Board[]) => {
 };
 
 export const useBoardQuery = (boardId: string, initialBoard?: Board) => {
-  const { getToken } = useAuth();
+  const clientApi = useClientApi();
 
   const getBoard = async () => {
-    const response = await clientApi.get<Board>(`/board/${boardId}`, {
-      headers: {
-        Authorization: `Bearer ${await getToken()}`,
-      },
-    });
+    const response = await clientApi.get<Board>(`/board/${boardId}`);
 
     return response.data;
   }

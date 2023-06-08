@@ -1,5 +1,5 @@
 import { Activity } from "types";
-import { serverApi } from "@/lib/clients/serverApi";
+import { serverApi } from "@/lib/clients";
 
 // create a delay function to simulate loading for 5 secs.
 

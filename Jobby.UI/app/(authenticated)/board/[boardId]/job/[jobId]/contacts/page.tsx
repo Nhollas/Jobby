@@ -1,6 +1,6 @@
 import { Contacts } from "components";
 import { Contact } from "types";
-import { serverApi } from "@/lib/clients/serverApi";
+import { serverApi } from "@/lib/clients";
 
 export default async function Page({
   params: { jobId, boardId },
