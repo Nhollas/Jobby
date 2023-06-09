@@ -114,7 +114,7 @@ export const CreateContactModal = ({ boards, jobs }: Props) => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       boardId: boardId || null,
-      jobIds: [jobId || undefined],
+      jobIds: jobId ? [jobId] : [],
       firstName: "",
       lastName: "",
       jobTitle: "",

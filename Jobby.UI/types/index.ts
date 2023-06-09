@@ -26,6 +26,8 @@ export type Activity = {
   completed: boolean;
   board: Board;
   job: Job;
+  startDate: Date;
+  endDate: Date;
 } & Entity;
 
 export type Job = {

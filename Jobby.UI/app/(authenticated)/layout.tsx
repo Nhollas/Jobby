@@ -29,7 +29,7 @@ export default async function Layout({
   } else {
     return (
       <Providers>
-        <main className="grid min-h-screen lg:grid-cols-[250px,1fr]">
+        <main className="grid min-h-screen grid-cols-[250px,1fr]">
           <BoardsBar initialBoards={initialBoards} />
           {children}
           <Toaster />

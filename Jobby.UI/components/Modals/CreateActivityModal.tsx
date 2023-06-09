@@ -58,13 +58,7 @@ import {
 import { useClientApi } from "@/lib/clients";
 
 export type ActivityFilter = keyof typeof activityFilters;
-
-interface Props {
-  board: Board;
-  jobId?: string;
-  jobs: Job[];
-  filter: ActivityFilter;
-}
+type ActivityType = keyof typeof activityTypes.Values;
 
 const activityTypes = z.enum([
   "Apply",
@@ -92,8 +86,8 @@ const activityTypes = z.enum([
   "Other",
 ]);
 
-const activityFilters = {
-  all: activityTypes.Values,
+const activityFilters: Record<string, ActivityType[]> = {
+  all: Object.values(activityTypes.Values),
   applications: [activityTypes.Values["Apply"]],
   interviews: [
     activityTypes.Values["Phone Screen"],
@@ -102,17 +96,14 @@ const activityFilters = {
   ],
   offers: [activityTypes.Values["Offer Received"]],
   networking: [
-    activityTypes.Values["Reach Out"],
+    activityTypes.Values["Meeting"],
     activityTypes.Values["Networking Event"],
   ],
 };
 
 const formSchema = z.object({
   title: z.string().nonempty(),
-  type: activityTypes.transform(
-    (val) =>
-      Object.keys(activityTypes)[Object.values(activityTypes).indexOf(val)]
-  ),
+  type: activityTypes,
   startDate: z.date().optional(),
   endDate: z.date().optional(),
   jobId: z.string().optional(),
@@ -121,12 +112,19 @@ const formSchema = z.object({
   boardId: z.string(),
 });
 
+interface Props {
+  board: Board;
+  jobId?: string;
+  jobs: Job[];
+  filter: ActivityFilter;
+}
+
 export const CreateActivityModal = ({ jobId, board, filter, jobs }: Props) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: "",
-      type: "Apply",
+      type: activityFilters[filter][0],
       completed: false,
       jobId,
       boardId: board.id,
@@ -136,12 +134,11 @@ export const CreateActivityModal = ({ jobId, board, filter, jobs }: Props) => {
   const clientApi = useClientApi();
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-
-    const test = await clientApi.post("/activity/create", values);
+    const test = await clientApi.post("/activity/create", {
+      ...values,
+      type: Object.keys(activityTypes.Values).indexOf(values.type),
+    });
   }
-
-  console.log(activityFilters[filter]);
 
   return (
     <Modal>
@@ -273,7 +270,7 @@ export const CreateActivityModal = ({ jobId, board, filter, jobs }: Props) => {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {Object.values(activityFilters[filter]).map((type) => (
+                        {activityFilters[filter].map((type) => (
                           <SelectItem key={type} value={type}>
                             {type}
                           </SelectItem>

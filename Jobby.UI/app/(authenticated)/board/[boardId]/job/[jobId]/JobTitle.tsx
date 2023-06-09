@@ -6,8 +6,6 @@ import { Job } from "@/types";
 function JobTitle({ jobId, initialJob }: { jobId: string; initialJob: Job }) {
   const { data: job } = useJobQuery(jobId, initialJob);
 
-  console.log("jobFromTitle", job);
-
   return (
     <div className="flex w-full flex-col items-start justify-start p-4 pb-0">
       <h1 className="text-2xl font-medium">{job?.title}</h1>

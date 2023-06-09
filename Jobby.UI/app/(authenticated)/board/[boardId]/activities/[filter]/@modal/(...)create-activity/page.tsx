@@ -14,7 +14,7 @@ export default async function Page({
   const { data: board } = await serverApi.get<Board>(
     `/board/${searchParams.boardId}`
   );
-  const { filter, boardId, jobId } = searchParams;
+  const { filter, jobId } = searchParams;
 
   return (
     <CreateActivityModal

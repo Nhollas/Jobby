@@ -35,9 +35,6 @@ export const BoardNavigation = () => {
 
   let leaf = pathnameSections[3] || "/";
 
-  console.log(pathnameSections);
-  console.log(leaf);
-
   if (leaf === "job") {
     leaf = "/";
   }

@@ -61,6 +61,7 @@ const FramerTabsTrigger = React.forwardRef<
       // Single axis animations. https://github.com/framer/motion/issues/1112
       <motion.div layout layoutRoot>
         <motion.div
+          layoutScroll
           className={`absolute inset-0 -z-0 rounded-sm bg-background`}
           layoutId={layoutId}
         />
