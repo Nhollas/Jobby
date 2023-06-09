@@ -57,20 +57,24 @@ export const JobNavigation = ({
   }, [pathnameSections]);
 
   return (
-    <ScrollArea className="w-screen rounded-md px-4 pt-4 sm:w-max">
-      <div className="flex items-center justify-center gap-x-2">
-        {navItems.map(({ icon, leaf, name }) => (
-          <MenuItem
-            selected={selected === leaf}
-            icon={icon}
-            name={name}
-            key={leaf}
-            href={`/board/${boardId}/job/${jobId}/${leaf}`}
-            layoutId={jobId}
-          />
-        ))}
-      </div>
-      <ScrollBar orientation="horizontal" className="invisible" />
-    </ScrollArea>
+    <div className="border-b border-gray-200 p-4">
+      <ScrollArea className="w-screen rounded-md sm:w-max">
+        <div className="flex items-center justify-center gap-x-2">
+          {navItems.map(({ icon, leaf, name }) => (
+            <MenuItem
+              selected={selected === leaf}
+              icon={icon}
+              name={name}
+              key={leaf}
+              href={`/board/${boardId}/job/${jobId}/${
+                leaf === "activities" ? `${leaf}/all` : leaf
+              }`}
+              layoutId={jobId}
+            />
+          ))}
+        </div>
+        <ScrollBar orientation="horizontal" className="invisible" />
+      </ScrollArea>
+    </div>
   );
 };

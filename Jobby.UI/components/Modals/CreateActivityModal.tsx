@@ -20,7 +20,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "../ui/input";
+import { Input } from "@/components/ui/input";
 import {
   Popover,
   PopoverContent,
@@ -38,7 +38,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "../ui/checkbox";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Command,
   CommandEmpty,
@@ -47,7 +47,7 @@ import {
   CommandItem,
 } from "../ui/command";
 import { ScrollArea } from "../ui/scroll-area";
-import { Job } from "@/types";
+import { Board, Job } from "@/types";
 import {
   Select,
   SelectContent,
@@ -57,11 +57,13 @@ import {
 } from "../ui/select";
 import { useClientApi } from "@/lib/clients";
 
+export type ActivityFilter = keyof typeof activityFilters;
+
 interface Props {
-  boardId: string;
+  board: Board;
   jobId?: string;
   jobs: Job[];
-  actvityType?: z.infer<typeof activityTypes>;
+  filter: ActivityFilter;
 }
 
 const activityTypes = z.enum([
@@ -90,6 +92,21 @@ const activityTypes = z.enum([
   "Other",
 ]);
 
+const activityFilters = {
+  all: activityTypes.Values,
+  applications: [activityTypes.Values["Apply"]],
+  interviews: [
+    activityTypes.Values["Phone Screen"],
+    activityTypes.Values["Phone Interview"],
+    activityTypes.Values["On Site Interview"],
+  ],
+  offers: [activityTypes.Values["Offer Received"]],
+  networking: [
+    activityTypes.Values["Reach Out"],
+    activityTypes.Values["Networking Event"],
+  ],
+};
+
 const formSchema = z.object({
   title: z.string().nonempty(),
   type: activityTypes.transform(
@@ -104,20 +121,15 @@ const formSchema = z.object({
   boardId: z.string(),
 });
 
-export const CreateActivityModal = ({
-  jobId,
-  boardId,
-  actvityType,
-  jobs,
-}: Props) => {
+export const CreateActivityModal = ({ jobId, board, filter, jobs }: Props) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: "",
-      type: actvityType || "Apply",
+      type: "Apply",
       completed: false,
       jobId,
-      boardId,
+      boardId: board.id,
     },
   });
 
@@ -128,6 +140,8 @@ export const CreateActivityModal = ({
 
     const test = await clientApi.post("/activity/create", values);
   }
+
+  console.log(activityFilters[filter]);
 
   return (
     <Modal>
@@ -259,7 +273,7 @@ export const CreateActivityModal = ({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {Object.values(activityTypes.Values).map((type) => (
+                        {Object.values(activityFilters[filter]).map((type) => (
                           <SelectItem key={type} value={type}>
                             {type}
                           </SelectItem>
@@ -330,7 +344,7 @@ export const CreateActivityModal = ({
                               >
                                 <div className="flex flex-row items-center gap-3">
                                   <Layout className="h-4 w-4" />
-                                  {field.value}
+                                  {board.name}
                                 </div>
                               </Button>
                             </FormControl>

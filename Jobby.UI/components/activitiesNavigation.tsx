@@ -51,37 +51,41 @@ const ActivityItem = ({ title, href, active }: ActivityItemProps) => {
 export function ActivitiesNavigation({
   filter,
   boardId,
+  jobId,
 }: {
   filter: string;
   boardId: string;
+  jobId?: string;
 }) {
+  const jobPath = jobId ? `/job/${jobId}` : "";
+
   return (
-    <div className="w-[250px]">
+    <div className="w-[250px] pt-4">
       <div className="fixed flex w-[250px] flex-col gap-y-2">
         <div className="flex flex-col gap-y-1 p-2">
           <ActivityItem
             title="All"
-            href={`/board/${boardId}/activities/all`}
+            href={`/board/${boardId}${jobPath}/activities/all`}
             active={filter === "all"}
           />
           <ActivityItem
             title="Due Today"
-            href={`/board/${boardId}/activities/due-today`}
+            href={`/board/${boardId}${jobPath}/activities/due-today`}
             active={filter === "due-today"}
           />
           <ActivityItem
             title="Past Due"
-            href={`/board/${boardId}/activities/past-due`}
+            href={`/board/${boardId}${jobPath}/activities/past-due`}
             active={filter === "past-due"}
           />
           <ActivityItem
             title="Completed"
-            href={`/board/${boardId}/activities/completed`}
+            href={`/board/${boardId}${jobPath}/activities/completed`}
             active={filter === "completed"}
           />
           <ActivityItem
             title="Pending"
-            href={`/board/${boardId}/activities/pending`}
+            href={`/board/${boardId}${jobPath}/activities/pending`}
             active={filter === "pending"}
           />
         </div>
@@ -89,22 +93,22 @@ export function ActivitiesNavigation({
         <div className="flex flex-col gap-y-1 p-2">
           <ActivityItem
             title="Applications"
-            href={`/board/${boardId}/activities/applications`}
+            href={`/board/${boardId}${jobPath}/activities/applications`}
             active={filter === "applications"}
           />
           <ActivityItem
             title="Interviews"
-            href={`/board/${boardId}/activities/interviews`}
+            href={`/board/${boardId}${jobPath}/activities/interviews`}
             active={filter === "interviews"}
           />
           <ActivityItem
             title="Offers"
-            href={`/board/${boardId}/activities/offers`}
+            href={`/board/${boardId}${jobPath}/activities/offers`}
             active={filter === "offers"}
           />
           <ActivityItem
             title="Networking"
-            href={`/board/${boardId}/activities/networking`}
+            href={`/board/${boardId}${jobPath}/activities/networking`}
             active={filter === "networking"}
           />
         </div>

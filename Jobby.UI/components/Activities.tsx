@@ -25,11 +25,12 @@ type Props = {
   filter: string;
 };
 
-const createUrl = (boardId?: string, jobId?: string) => {
+const createUrl = (filter: string, boardId: string, jobId?: string) => {
   const params = new URLSearchParams();
 
   if (boardId) params.set("boardId", boardId);
   if (jobId) params.set("jobId", jobId);
+  params.set("filter", filter);
 
   return `/create-activity${params ? `?${params}` : ""}`;
 };
@@ -91,7 +92,7 @@ export const Activities = ({ activities, boardId, jobId, filter }: Props) => {
         <Input type="text" placeholder="Search.." className="w-full max-w-xs" />
         <Button asChild>
           <Link
-            href={createUrl(boardId, jobId)}
+            href={createUrl(filter, boardId, jobId)}
             className="w-max whitespace-nowrap"
           >
             Create Activity

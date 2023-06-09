@@ -1,14 +1,27 @@
-import { CreateActivityModal } from "@/components/modals/CreateActivityModal";
+import {
+  ActivityFilter,
+  CreateActivityModal,
+} from "@/components/modals/CreateActivityModal";
 import { serverApi } from "@/lib/clients";
-import { Job } from "@/types";
+import { Board, Job } from "@/types";
 
 export default async function Page({
   searchParams,
 }: {
-  searchParams: { boardId: string; activityCategory: string | undefined };
+  searchParams: { boardId: string; filter: ActivityFilter; jobId?: string };
 }) {
   const { data: jobs } = await serverApi.get<Job[]>("/jobs");
-  const { activityCategory, boardId } = searchParams;
+  const { data: board } = await serverApi.get<Board>(
+    `/board/${searchParams.boardId}`
+  );
+  const { filter, boardId, jobId } = searchParams;
 
-  return <CreateActivityModal jobs={jobs} boardId={boardId} />;
+  return (
+    <CreateActivityModal
+      jobs={jobs}
+      board={board}
+      jobId={jobId}
+      filter={filter}
+    />
+  );
 }
