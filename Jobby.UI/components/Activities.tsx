@@ -21,7 +21,7 @@ import { Badge } from "@/components/ui/badge";
 import { AnimatePresence, motion, Variants } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
-import { useActivitiesQuery, useUpdateActivity } from "@/hooks/useActivityData";
+import { UpdateActivityDetailsRequest } from "@/contracts";
 
 type Props = {
   activities: Activity[];
@@ -40,23 +40,7 @@ const createUrl = (filter: string, boardId: string, jobId?: string) => {
   return `/create-activity${params ? `?${params}` : ""}`;
 };
 
-const fetchUrl = (boardId: string, jobId?: string) => {
-  if (jobId) return `/job/${jobId}/activities`;
-
-  return `/board/${boardId}/activities`;
-};
-
-export const Activities = ({
-  activities: initialActivities,
-  boardId,
-  jobId,
-  filter,
-}: Props) => {
-  const { data: activities } = useActivitiesQuery(
-    fetchUrl(boardId, jobId),
-    initialActivities
-  );
-
+export const Activities = ({ activities, boardId, jobId, filter }: Props) => {
   const filterActivities = (filter: string) => {
     switch (filter) {
       case "all":
@@ -163,8 +147,6 @@ function Activity({
   active: boolean;
   setActiveActivity: (activity: Activity) => void;
 }) {
-  const { mutateAsync } = useUpdateActivity();
-
   const activitySchema = z.object({
     id: z.string(),
     title: z.string(),
@@ -175,13 +157,11 @@ function Activity({
     completed: z.boolean(),
   });
 
-  async function onSubmit(values: z.infer<typeof activitySchema>) {
+  async function onSubmit(values: UpdateActivityDetailsRequest) {
     console.log(values);
-
-    await mutateAsync(values);
   }
 
-  const form = useForm<z.infer<typeof activitySchema>>({
+  const form = useForm<UpdateActivityDetailsRequest>({
     resolver: zodResolver(activitySchema),
     defaultValues: {
       ...activity,
@@ -205,120 +185,119 @@ function Activity({
 
   return (
     <Form {...form} key={activity.id}>
-      <div onClick={() => setActiveActivity(activity)}>
-        <form
-          // variants={formVariants}
-          // initial="closed"
-          // animate={active ? "open" : "closed"}
-          onSubmit={form.handleSubmit(onSubmit)}
-          className="flex w-full flex-col  overflow-hidden rounded-md border"
-        >
-          <div className="flex w-full flex-row items-center gap-2">
-            <FormField
-              control={form.control}
-              name="completed"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                  <FormControl>
-                    <Checkbox
-                      className="h-5 w-5"
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="title"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input placeholder="Title" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            {activity.job && (
+      <motion.form
+        onClick={() => setActiveActivity(activity)}
+        variants={formVariants}
+        initial="closed"
+        animate={active ? "open" : "closed"}
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="flex w-full flex-col  overflow-hidden rounded-md border"
+      >
+        <div className="flex w-full flex-row items-center gap-2">
+          <FormField
+            control={form.control}
+            name="completed"
+            render={({ field }) => (
+              <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                <FormControl>
+                  <Checkbox
+                    className="h-5 w-5"
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="title"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <Input placeholder="Title" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          {activity.job && (
+            <Button
+              asChild
+              variant="ghost"
+              className="flex flex-row justify-start gap-x-3"
+            >
+              <Link
+                href={`/board/${activity.job.boardId}/job/${activity.job.id}/info`}
+              >
+                <Briefcase className="h-4 w-4 shrink-0" />
+                <p>{activity.job.title}</p>
+              </Link>
+            </Button>
+          )}
+          <Badge className="ml-auto shrink-0">{activity.name}</Badge>
+          <Badge variant="outline" className="shrink-0">
+            {new Date(activity.createdDate).toDateString()}
+          </Badge>
+        </div>
+        <AnimatePresence mode="wait">
+          {active && (
+            <motion.div
+              initial={{
+                height: 0,
+                opacity: 0,
+              }}
+              animate={{
+                height: "auto",
+                opacity: 1,
+                transition: {
+                  height: {
+                    duration: 0.4,
+                  },
+                  opacity: {
+                    duration: 0.25,
+                    delay: 0.15,
+                  },
+                },
+              }}
+              exit={{
+                height: 0,
+                opacity: 0,
+                transition: {
+                  height: {
+                    duration: 0.4,
+                  },
+                  opacity: {
+                    duration: 0.25,
+                  },
+                },
+              }}
+              className="grid gap-y-4"
+            >
+              <FormField
+                control={form.control}
+                name="note"
+                render={({ field }) => (
+                  <FormItem className="pt-4">
+                    <FormLabel>Note</FormLabel>
+                    <FormControl>
+                      <Textarea placeholder="Note" {...field} />
+                    </FormControl>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
               <Button
-                asChild
-                variant="ghost"
-                className="flex flex-row justify-start gap-x-3"
+                type="submit"
+                className="w-max justify-self-end px-6"
+                disabled={!isFormEdited}
               >
-                <Link
-                  href={`/board/${activity.job.boardId}/job/${activity.job.id}/info`}
-                >
-                  <Briefcase className="h-4 w-4 shrink-0" />
-                  <p>{activity.job.title}</p>
-                </Link>
+                Save
               </Button>
-            )}
-            <Badge className="ml-auto shrink-0">{activity.name}</Badge>
-            <Badge variant="outline" className="shrink-0">
-              {new Date(activity.createdDate).toDateString()}
-            </Badge>
-          </div>
-          <AnimatePresence mode="wait">
-            {active && (
-              <motion.div
-                initial={{
-                  height: 0,
-                  opacity: 0,
-                }}
-                animate={{
-                  height: "auto",
-                  opacity: 1,
-                  transition: {
-                    height: {
-                      duration: 0.4,
-                    },
-                    opacity: {
-                      duration: 0.25,
-                      delay: 0.15,
-                    },
-                  },
-                }}
-                exit={{
-                  height: 0,
-                  opacity: 0,
-                  transition: {
-                    height: {
-                      duration: 0.4,
-                    },
-                    opacity: {
-                      duration: 0.25,
-                    },
-                  },
-                }}
-                className="grid gap-y-4"
-              >
-                <FormField
-                  control={form.control}
-                  name="note"
-                  render={({ field }) => (
-                    <FormItem className="pt-4">
-                      <FormLabel>Note</FormLabel>
-                      <FormControl>
-                        <Textarea placeholder="Note" {...field} />
-                      </FormControl>
-                      <FormMessage className="text-xs" />
-                    </FormItem>
-                  )}
-                />
-                <Button
-                  type="submit"
-                  className="w-max justify-self-end px-6"
-                  disabled={!isFormEdited}
-                >
-                  Save
-                </Button>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </form>
-      </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.form>
     </Form>
   );
 }

@@ -3,19 +3,23 @@
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
-import { set } from "date-fns";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 interface ActivityItemProps {
   title: string;
   href: string;
   active: boolean;
+  layoutId: string;
 }
 
-const ActivityItem = ({ title, href, active }: ActivityItemProps) => {
+const ActivityItem = ({ title, href, active, layoutId }: ActivityItemProps) => {
   const [isAnimating, setIsAnimating] = useState(true);
+  const params = useParams();
+
+  console.log(params);
 
   useEffect(() => {
     setIsAnimating(false);
@@ -41,7 +45,7 @@ const ActivityItem = ({ title, href, active }: ActivityItemProps) => {
           onLayoutAnimationStart={() => setIsAnimating(true)}
           onLayoutAnimationComplete={() => setIsAnimating(false)}
           className="absolute inset-0 -z-10 h-full w-full rounded-lg bg-primary"
-          layoutId={"activity-item"}
+          layoutId={layoutId}
         />
       )}
     </div>
@@ -67,26 +71,31 @@ export function ActivitiesNavigation({
             title="All"
             href={`/board/${boardId}${jobPath}/activities/all`}
             active={filter === "all"}
+            layoutId={jobId ? jobId : boardId}
           />
           <ActivityItem
             title="Due Today"
             href={`/board/${boardId}${jobPath}/activities/due-today`}
             active={filter === "due-today"}
+            layoutId={jobId ? jobId : boardId}
           />
           <ActivityItem
             title="Past Due"
             href={`/board/${boardId}${jobPath}/activities/past-due`}
             active={filter === "past-due"}
+            layoutId={jobId ? jobId : boardId}
           />
           <ActivityItem
             title="Completed"
             href={`/board/${boardId}${jobPath}/activities/completed`}
             active={filter === "completed"}
+            layoutId={jobId ? jobId : boardId}
           />
           <ActivityItem
             title="Pending"
             href={`/board/${boardId}${jobPath}/activities/pending`}
             active={filter === "pending"}
+            layoutId={jobId ? jobId : boardId}
           />
         </div>
         <Separator className="-z-20" />
@@ -95,21 +104,25 @@ export function ActivitiesNavigation({
             title="Applications"
             href={`/board/${boardId}${jobPath}/activities/applications`}
             active={filter === "applications"}
+            layoutId={jobId ? jobId : boardId}
           />
           <ActivityItem
             title="Interviews"
             href={`/board/${boardId}${jobPath}/activities/interviews`}
             active={filter === "interviews"}
+            layoutId={jobId ? jobId : boardId}
           />
           <ActivityItem
             title="Offers"
             href={`/board/${boardId}${jobPath}/activities/offers`}
             active={filter === "offers"}
+            layoutId={jobId ? jobId : boardId}
           />
           <ActivityItem
             title="Networking"
             href={`/board/${boardId}${jobPath}/activities/networking`}
             active={filter === "networking"}
+            layoutId={jobId ? jobId : boardId}
           />
         </div>
       </div>

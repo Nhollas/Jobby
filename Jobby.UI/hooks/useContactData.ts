@@ -1,21 +1,15 @@
+import { createContact, CreateContactRequest } from "@/contracts/CreateContact";
+import { updateContact, UpdateContactDetailsRequest } from "@/contracts/UpdateContactDetailsRequest";
 import { useClientApi } from "@/lib/clients";
 import { Contact } from "@/types";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { AxiosResponse } from "axios";
+import { QueryFilters, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const useCreateContact = () => {
   const queryClient = useQueryClient();
   const clientApi = useClientApi();
 
-
-  async function createContact(values: any) {
-    return await clientApi.post<any, AxiosResponse<Contact>>(
-      "/contact/create",
-      values
-    );
-  }
-
-  return useMutation(createContact, {
+  return useMutation({
+    mutationFn: (values: CreateContactRequest) => createContact(values, clientApi),
     onSuccess: async  ({ data: createdContact}) => {
       const queryKeys = [];
 
@@ -39,8 +33,6 @@ export const useCreateContact = () => {
         queryKey: key,
         refetchType: "all"
       })));
-
-      // await queryClient.invalidateQueries(["/contacts"]);
     },
   });
 };
@@ -49,18 +41,18 @@ export const useUpdateContact = () => {
   const queryClient = useQueryClient();
   const clientApi = useClientApi();
 
-  async function updateContact(values: any) {
-    return await clientApi.put<any, AxiosResponse<Contact>>("/contact/update", values);
-  }
+  return useMutation({
+    mutationFn: (values: UpdateContactDetailsRequest) => updateContact(values, clientApi),
+    onSuccess: async  ({ data: updatedContact }) => {
+      console.log("updatedContact",updatedContact)
 
-  return useMutation(updateContact, {
-    onSuccess: async  ({ data: updatedContact}) => {
-      const previousQueries = queryClient.getQueriesData<Contact[]>(["contacts"]);
+      const previousQueries = queryClient.getQueriesData({ queryKey: ["/contacts"]});
+      console.log("prevContactQueries",previousQueries)
 
       previousQueries.map((query) => {
         queryClient.setQueryData(query[0], (prevContacts: Contact[] | undefined) =>
           prevContacts?.map((contact) => {
-            if (contact?.id === updatedContact.id) {
+            if (contact.id === updatedContact.id) {
               return updatedContact;
             }
             
@@ -107,5 +99,7 @@ export const useContactsQuery = (initialContacts: Contact[], url: string, queryK
     queryKey,
     queryFn: getContacts,
     initialData: initialContacts,
+    staleTime: Infinity,
+    cacheTime: Infinity,
   });
 };

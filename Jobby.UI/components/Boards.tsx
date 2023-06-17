@@ -10,31 +10,27 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Board } from "@/types";
 import { useBoardsQuery } from "@/hooks/useBoardsData";
+import { GetBoardsResponse } from "@/contracts/queries/GetBoards";
 
-export const Boards = ({ initialBoards }: { initialBoards?: Board[] }) => {
+export const Boards = ({
+  initialBoards,
+}: {
+  initialBoards?: GetBoardsResponse;
+}) => {
   const { data: boards } = useBoardsQuery(initialBoards);
 
   return (
-    <div className="flex flex-col gap-y-6 p-4 lg:px-8">
+    <div className="flex flex-col gap-y-6 p-6">
       <div className="flex flex-col gap-y-2">
-        <h1 className="text-2xl font-medium">Boards</h1>
+        <h1 className="text-lg font-semibold tracking-tight">Boards</h1>
         <p className="text-sm text-gray-500">View and manage boards</p>
       </div>
-      <div className="flex flex-row gap-x-4">
-        <Input
-          type="email"
-          placeholder="Search.."
-          className="w-full max-w-xs"
-        />
-        <Button asChild>
-          <Link href="/create-board" className="w-max">
-            Create Board
-          </Link>
-        </Button>
-      </div>
+      <Button asChild>
+        <Link href="/create-board" className="w-max">
+          Create Board
+        </Link>
+      </Button>
       <div className="grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-8">
         {boards?.map((board) => (
           <Card key={board.id}>

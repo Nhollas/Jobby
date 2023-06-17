@@ -2,6 +2,8 @@ import { AxiosResponse } from "axios";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useClientApi } from "@/lib/clients";
 import { Board, Job } from "@/types";
+import { CreateJobRequest } from "@/contracts";
+import { createJob } from "@/contracts/CreateJob";
 
 export const useUpdateJob = () => {
   const queryClient = useQueryClient();
@@ -28,14 +30,9 @@ export const useUpdateJob = () => {
 export const useCreateJob = () => {
   const queryClient = useQueryClient();
   const clientApi = useClientApi();
-
-  async function createJob(values: any) {
-    return await clientApi.post<any, AxiosResponse<Job>>("/job/create", values);
-  }
-
-
-  // We simply need to set the query data on the boardId query to include the new job.
-  return useMutation(createJob, {
+  
+  return useMutation({
+    mutationFn: (values: CreateJobRequest) => createJob(values, clientApi),
     onSuccess: async ({ data: createdJob }) => {
 
       queryClient.setQueryData(["board", createdJob.boardId], (oldBoard: Board | undefined) => {

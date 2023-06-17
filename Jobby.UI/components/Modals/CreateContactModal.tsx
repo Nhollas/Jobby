@@ -1,17 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Board, Job } from "types";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Button } from "../ui/button";
-import { Input } from "../ui/input";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "../ui/card";
+} from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import {
   Check,
@@ -39,9 +39,14 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { FramerTabsTrigger, Tabs, TabsContent, TabsList } from "../ui/tabs";
+import {
+  FramerTabsTrigger,
+  Tabs,
+  TabsContent,
+  TabsList,
+} from "@/components/ui/tabs";
 import React from "react";
-import { ScrollArea } from "../ui/scroll-area";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Modal } from "../Modal";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -53,56 +58,39 @@ import {
   FormLabel,
   FormControl,
   FormMessage,
-} from "../ui/form";
-import MultiInput from "../ui/multi-input";
+} from "@/components/ui/form";
+import MultiInput from "@/components/ui/multi-input";
 import { useCreateContact } from "@/hooks/useContactData";
+import { CreateContactRequest } from "@/contracts";
+import { formSchema } from "@/contracts/CreateContact";
+import { useClientApi } from "@/lib/clients";
 
-interface Props {
-  boards: Board[];
-  jobs: Job[];
-}
+export const CreateContactModal = () => {
+  const [boards, setBoards] = useState<Board[] | undefined>(undefined);
+  const [jobs, setJobs] = useState<Job[] | undefined>(undefined);
 
-const formSchema = z.object({
-  boardId: z.string().nullable(),
-  jobIds: z.array(z.string()),
-  firstName: z
-    .string()
-    .nonempty({ message: "The First Name field is required." }),
-  lastName: z
-    .string()
-    .nonempty({ message: "The Last Name field is required." }),
-  jobTitle: z.string().nonempty({ message: "The Title field is required." }),
-  location: z.string(),
-  socials: z.object({
-    twitterUrl: z.string().url().or(z.literal("")),
-    facebookUrl: z.string().url().or(z.literal("")),
-    linkedInUrl: z.string().url().or(z.literal("")),
-    githubUrl: z.string().url().or(z.literal("")),
-  }),
-  emails: z.array(
-    z.object({
-      name: z.string().email({ message: "Invalid email address." }),
-      type: z.string().transform((val) => parseInt(val)),
-    })
-  ),
-  phones: z.array(
-    z.object({
-      number: z.string(),
-      type: z.string().transform((val) => parseInt(val)),
-    })
-  ),
-  companies: z
-    .array(
-      z.object({
-        value: z
-          .string()
-          .nonempty({ message: "The Company field is required." }),
-      })
-    )
-    .transform((val) => val.map((v) => v.value)),
-});
+  const clientApi = useClientApi();
 
-export const CreateContactModal = ({ boards, jobs }: Props) => {
+  useEffect(() => {
+    async function fetchBoardsAndJobs() {
+      const { data: boards } = await clientApi.get<Board[]>("/boards");
+      const { data: jobs } = await clientApi.get<Job[]>("/jobs");
+
+      // add a delay of 1 second to simulate a slow network
+
+      await new Promise((resolve) => setTimeout(resolve, 5000));
+      setFilteredBoards(boards);
+      setBoards(boards);
+      setFilteredJobs(jobs);
+      setJobs(jobs);
+    }
+
+    fetchBoardsAndJobs();
+  }, []);
+
+  console.log(boards);
+  console.log(jobs);
+
   const searchParams = useSearchParams();
 
   const boardId = searchParams.get("boardId");
@@ -110,10 +98,10 @@ export const CreateContactModal = ({ boards, jobs }: Props) => {
 
   const router = useRouter();
 
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<CreateContactRequest>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      boardId: boardId || null,
+      boardId: boardId || undefined,
       jobIds: jobId ? [jobId] : [],
       firstName: "",
       lastName: "",
@@ -409,69 +397,82 @@ export const CreateContactModal = ({ boards, jobs }: Props) => {
                                   >
                                     <div className="flex flex-row items-center gap-3">
                                       <Layout className="h-4 w-4" />
-                                      {field.value
-                                        ? filteredBoards.find(
-                                            (board) => board.id === field.value
-                                          )?.name
-                                        : "Choose board..."}
+                                      {boards
+                                        ? field.value
+                                          ? boards.find(
+                                              (board) =>
+                                                board.id === field.value
+                                            )?.name
+                                          : "Choose board..."
+                                        : "Loading boards..."}
                                     </div>
                                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                   </Button>
                                 </FormControl>
                               </PopoverTrigger>
-                              <PopoverContent className="p-0">
-                                <Command>
-                                  <CommandInput
-                                    placeholder="Search boards..."
-                                    onChangeCapture={(event) => {
-                                      const inputValue =
-                                        // @ts-ignore
-                                        event.target.value.toLowerCase();
-                                      const filteredBoards = boards.filter(
-                                        (board) =>
-                                          board.name
-                                            .toLowerCase()
-                                            .includes(inputValue)
-                                      );
+                              {boards && (
+                                <PopoverContent className="p-0">
+                                  <Command>
+                                    <CommandInput
+                                      placeholder="Search boards..."
+                                      onChangeCapture={(event) => {
+                                        const inputValue =
+                                          // @ts-ignore
+                                          event.target.value.toLowerCase();
+                                        const filteredBoards = boards.filter(
+                                          (board) =>
+                                            board.name
+                                              .toLowerCase()
+                                              .includes(inputValue)
+                                        );
 
-                                      setFilteredBoards(filteredBoards);
-                                    }}
-                                  />
-                                  <CommandEmpty>No Boards Found.</CommandEmpty>
-                                  <CommandGroup>
-                                    <ScrollArea className="h-72">
-                                      {filteredBoards.map((board) => (
-                                        <CommandItem
-                                          key={board.id}
-                                          value={`${board.name}${board.id}`}
-                                          onSelect={(value) => {
-                                            const boardId = value.substring(
-                                              value.length - 36
-                                            );
+                                        setFilteredBoards(filteredBoards);
+                                      }}
+                                    />
+                                    <CommandEmpty>
+                                      No Boards Found.
+                                    </CommandEmpty>
+                                    <CommandGroup>
+                                      <ScrollArea className="h-72">
+                                        {filteredBoards?.map((board) => (
+                                          <CommandItem
+                                            key={board.id}
+                                            value={`${board.name}${board.id}`}
+                                            onSelect={(value) => {
+                                              const boardId = value.substring(
+                                                value.length - 36
+                                              );
 
-                                            if (boardId === field.value) {
-                                              form.setValue("boardId", null);
-                                            } else {
-                                              form.setValue("boardId", boardId);
-                                            }
-                                          }}
-                                        >
-                                          <Layout className="mr-2 h-4 w-4" />
-                                          <Check
-                                            className={cn(
-                                              "mr-2 h-4 w-4",
-                                              field.value === board.id
-                                                ? "opacity-100"
-                                                : "opacity-0"
-                                            )}
-                                          />
-                                          {board.name}
-                                        </CommandItem>
-                                      ))}
-                                    </ScrollArea>
-                                  </CommandGroup>
-                                </Command>
-                              </PopoverContent>
+                                              if (boardId === field.value) {
+                                                form.setValue(
+                                                  "boardId",
+                                                  undefined
+                                                );
+                                              } else {
+                                                form.setValue(
+                                                  "boardId",
+                                                  boardId
+                                                );
+                                              }
+                                            }}
+                                          >
+                                            <Layout className="mr-2 h-4 w-4" />
+                                            <Check
+                                              className={cn(
+                                                "mr-2 h-4 w-4",
+                                                field.value === board.id
+                                                  ? "opacity-100"
+                                                  : "opacity-0"
+                                              )}
+                                            />
+                                            {board.name}
+                                          </CommandItem>
+                                        ))}
+                                      </ScrollArea>
+                                    </CommandGroup>
+                                  </Command>
+                                </PopoverContent>
+                              )}
                             </Popover>
                             <FormMessage className="text-xs" />
                           </FormItem>
@@ -493,89 +494,97 @@ export const CreateContactModal = ({ boards, jobs }: Props) => {
                                   >
                                     <Briefcase className="h-4 w-4 shrink-0" />
                                     <p className="truncate">
-                                      {field.value.length === 0
-                                        ? "Select Jobs..."
-                                        : field.value
-                                            .map((jobId) => {
-                                              const job = jobs.find(
-                                                (job) => job.id === jobId
-                                              );
+                                      {jobs
+                                        ? field.value.length === 0
+                                          ? "Select Jobs..."
+                                          : field.value
+                                              .map((jobId) => {
+                                                const job = jobs.find(
+                                                  (job) => job.id === jobId
+                                                );
 
-                                              return job?.title;
-                                            })
-                                            .join(", ")}
+                                                return job?.title;
+                                              })
+                                              .join(", ")
+                                        : "Loading jobs..."}
                                     </p>
                                     <ChevronsUpDown className="ml-auto h-4 w-4 shrink-0 opacity-50" />
                                   </Button>
                                 </FormControl>
                               </PopoverTrigger>
-                              <PopoverContent className="p-0">
-                                <Command>
-                                  <CommandInput
-                                    placeholder="Search jobs..."
-                                    onChangeCapture={(event) => {
-                                      const inputValue =
-                                        // @ts-ignore
-                                        event.target.value.toLowerCase();
+                              {jobs && (
+                                <PopoverContent className="p-0">
+                                  <Command>
+                                    <CommandInput
+                                      placeholder="Search jobs..."
+                                      onChangeCapture={(event) => {
+                                        const inputValue =
+                                          // @ts-ignore
+                                          event.target.value.toLowerCase();
 
-                                      const filteredJobs = jobs.filter((job) =>
-                                        job.title
-                                          .toLowerCase()
-                                          .includes(inputValue)
-                                      );
+                                        const filteredJobs = jobs.filter(
+                                          (job) =>
+                                            job.title
+                                              .toLowerCase()
+                                              .includes(inputValue)
+                                        );
 
-                                      setFilteredJobs(filteredJobs);
-                                    }}
-                                  />
-                                  <CommandEmpty>No Jobs Found.</CommandEmpty>
-                                  <CommandGroup>
-                                    <ScrollArea className="h-72">
-                                      {filteredJobs.map((job) => (
-                                        <CommandItem
-                                          key={job.id}
-                                          value={`${job.title}${job.id}`}
-                                          onSelect={(currentValue) => {
-                                            const jobId =
-                                              currentValue.substring(
-                                                currentValue.length - 36
-                                              );
+                                        setFilteredJobs(filteredJobs);
+                                      }}
+                                    />
+                                    <CommandEmpty>No Jobs Found.</CommandEmpty>
+                                    <CommandGroup>
+                                      <ScrollArea className="h-72">
+                                        {filteredJobs?.map((job) => (
+                                          <CommandItem
+                                            key={job.id}
+                                            value={`${job.title}${job.id}`}
+                                            onSelect={(currentValue) => {
+                                              const jobId =
+                                                currentValue.substring(
+                                                  currentValue.length - 36
+                                                );
 
-                                            let jobIds = [...field.value];
+                                              let jobIds = [...field.value];
 
-                                            if (jobIds.includes(jobId)) {
-                                              jobIds = jobIds.filter(
-                                                (id) => id !== jobId
-                                              );
-                                            } else {
-                                              jobIds = [...field.value, jobId];
-                                            }
+                                              if (jobIds.includes(jobId)) {
+                                                jobIds = jobIds.filter(
+                                                  (id) => id !== jobId
+                                                );
+                                              } else {
+                                                jobIds = [
+                                                  ...field.value,
+                                                  jobId,
+                                                ];
+                                              }
 
-                                            form.setValue("jobIds", jobIds);
-                                          }}
-                                        >
-                                          <Briefcase className="mr-2 h-4 w-4" />
-                                          <Check
-                                            className={cn(
-                                              "mr-2 h-4 w-4",
-                                              field.value.includes(job.id)
-                                                ? "opacity-100"
-                                                : "opacity-0"
-                                            )}
-                                          />
-                                          <div>
-                                            <h2 className="text-sm font-semibold leading-none tracking-tight">
-                                              {job.title}
-                                            </h2>
-                                            <p className="text-xs text-muted-foreground">
-                                              {job.company}
-                                            </p>
-                                          </div>
-                                        </CommandItem>
-                                      ))}
-                                    </ScrollArea>
-                                  </CommandGroup>
-                                </Command>
-                              </PopoverContent>
+                                              form.setValue("jobIds", jobIds);
+                                            }}
+                                          >
+                                            <Briefcase className="mr-2 h-4 w-4" />
+                                            <Check
+                                              className={cn(
+                                                "mr-2 h-4 w-4",
+                                                field.value.includes(job.id)
+                                                  ? "opacity-100"
+                                                  : "opacity-0"
+                                              )}
+                                            />
+                                            <div>
+                                              <h2 className="text-sm font-semibold leading-none tracking-tight">
+                                                {job.title}
+                                              </h2>
+                                              <p className="text-xs text-muted-foreground">
+                                                {job.company}
+                                              </p>
+                                            </div>
+                                          </CommandItem>
+                                        ))}
+                                      </ScrollArea>
+                                    </CommandGroup>
+                                  </Command>
+                                </PopoverContent>
+                              )}
                             </Popover>
                             <FormMessage className="text-xs" />
                           </FormItem>

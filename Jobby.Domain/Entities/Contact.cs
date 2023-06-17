@@ -87,6 +87,11 @@ public class Contact : Entity
 
         return contact;
     }
+    
+    public void SetBoard(Board board)
+    {
+        Board = board;
+    }
 
     public void Update(
         string firstName,

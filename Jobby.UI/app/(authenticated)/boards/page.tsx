@@ -1,19 +1,9 @@
 import { Boards } from "@/components";
+import { getBoards } from "@/contracts/queries/GetBoards";
 import { serverApi } from "@/lib/clients";
-import { Board } from "@/types";
-
-async function fetchBoards() {
-  try {
-    const { data: boards } = await serverApi.get<Board[]>("/boards");
-
-    return boards;
-  } catch (error) {
-    console.error(error);
-  }
-}
 
 export default async function Page() {
-  const boards = await fetchBoards();
+  const boards = await getBoards(serverApi);
 
   return <Boards initialBoards={boards} />;
 }

@@ -11,6 +11,13 @@ public class ContactConfiguration : IEntityTypeConfiguration<Contact>
         builder.HasKey(contact => contact.Id);
 
         builder.OwnsOne(p => p.Socials);
+        
+        builder.HasOne(x => x.Board)
+            .WithMany(x => x.Contacts)
+            .HasForeignKey(x => x.BoardId)
+            .OnDelete(DeleteBehavior.NoAction);
+        
+        builder.Navigation(contact => contact.Board).AutoInclude();
 
         builder.HasMany(p => p.Emails)
             .WithOne(x => x.Contact)

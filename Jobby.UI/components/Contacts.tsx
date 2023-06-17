@@ -134,8 +134,13 @@ export function Contacts({
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem>
-                          <Eye className="mr-2 h-4 w-4" />
-                          <span>View</span>
+                          <Link
+                            href={`/contact/${contact.id}`}
+                            className="flex w-full flex-row"
+                          >
+                            <Eye className="mr-2 h-4 w-4" />
+                            <span>View</span>
+                          </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem>
                           <Link

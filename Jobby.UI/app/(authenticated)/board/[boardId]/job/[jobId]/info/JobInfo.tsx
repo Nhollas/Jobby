@@ -13,7 +13,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
+import { Button, ButtonLoading } from "@/components/ui/button";
 import {
   Popover,
   PopoverContent,
@@ -51,8 +51,13 @@ function JobInfo({ jobId }: Props) {
     },
   });
 
+  const { formState } = form;
+  const { isSubmitting } = formState;
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
+    // delay by 5 secs
+    await new Promise((resolve) => setTimeout(resolve, 500));
 
     await mutateAsync(values);
   }
@@ -183,7 +188,7 @@ function JobInfo({ jobId }: Props) {
               </FormItem>
             )}
           />
-          <Button>Update</Button>
+          {isSubmitting ? <ButtonLoading /> : <Button>Update</Button>}
         </form>
       </Form>
     </div>

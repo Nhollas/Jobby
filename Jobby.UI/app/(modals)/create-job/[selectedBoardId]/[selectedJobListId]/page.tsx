@@ -1,5 +1,5 @@
 import { CreateJobModal } from "@/components/modals/CreateJobModal";
-import { BoardDictionaryResponse } from "types/responses/Board";
+import { GetBoardDictionaryResponse } from "@/contracts";
 import { serverApi } from "@/lib/clients";
 
 export default async function Page({
@@ -8,7 +8,7 @@ export default async function Page({
   params: { selectedBoardId: string; selectedJobListId: string };
 }) {
   const { data: boardDictionaries } = await serverApi.get<
-    BoardDictionaryResponse[]
+    GetBoardDictionaryResponse[]
   >("/boardDictionaries");
 
   return (

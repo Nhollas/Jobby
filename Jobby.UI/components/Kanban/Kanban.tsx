@@ -33,6 +33,8 @@ import { Container, ContainerProps } from "../Container";
 import { Item } from "../Item";
 import { Board, Job, JobList } from "@/types";
 import { useClientApi } from "@/lib/clients";
+import { GetBoardResponse } from "@/contracts/queries/GetBoard";
+import { useBoardQuery, useBoardsQuery } from "@/hooks/useBoardsData";
 
 const animateLayoutChanges: AnimateLayoutChanges = (args) =>
   defaultAnimateLayoutChanges({ ...args, wasDragging: true });
@@ -101,11 +103,13 @@ const dropAnimation: DropAnimation = {
 };
 
 interface Props {
-  initialBoard: Board;
+  initialBoard: GetBoardResponse;
 }
 
 export function Kanban({ initialBoard }: Props) {
   const clientApi = useClientApi();
+  const sus = useBoardQuery(initialBoard.id, initialBoard);
+
   const [containerDict, setContainerDict] = useState<
     Record<UniqueIdentifier, JobList>
   >(

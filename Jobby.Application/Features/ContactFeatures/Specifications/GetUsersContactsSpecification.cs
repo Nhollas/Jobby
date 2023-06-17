@@ -11,7 +11,6 @@ public class GetUsersContactsSpecification : Specification<Contact>
             .Include(x => x.Companies)
             .Include(x => x.Phones)
             .Include(x => x.Emails)
-            .Include(x => x.Board)
             .Include(x => x.Jobs)
             .AsNoTracking()
             .Where(contact => contact.OwnerId == UserId)

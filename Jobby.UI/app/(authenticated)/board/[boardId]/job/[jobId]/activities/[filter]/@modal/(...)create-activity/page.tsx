@@ -8,7 +8,7 @@ import { Board, Job } from "@/types";
 export default async function Page({
   searchParams,
 }: {
-  searchParams: { boardId: string; filter: ActivityFilter; jobId?: string };
+  searchParams: { boardId: string; filter: ActivityFilter; jobId: string };
 }) {
   const { data: jobs } = await serverApi.get<Job[]>("/jobs");
   const { data: board } = await serverApi.get<Board>(

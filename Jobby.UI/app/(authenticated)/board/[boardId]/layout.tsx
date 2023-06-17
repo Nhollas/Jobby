@@ -5,7 +5,7 @@ export default async function BoardLayout({
   modal,
 }: {
   children: React.ReactNode;
-  modal?: React.ReactNode;
+  modal: React.ReactNode;
 }) {
   return (
     <div className="relative h-screen w-[calc(100vw-250px)]">

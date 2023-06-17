@@ -2,7 +2,7 @@ import { Contact } from "types";
 import { Contacts } from "components";
 import { serverApi } from "@/lib/clients";
 
-export async function Page({
+export default async function Page({
   params: { boardId },
 }: {
   params: { boardId: string };
@@ -19,5 +19,3 @@ export async function Page({
     />
   );
 }
-
-export default Page;

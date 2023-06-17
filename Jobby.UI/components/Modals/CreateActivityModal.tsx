@@ -2,7 +2,6 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { Modal } from "@/components/Modal";
 import {
   Card,
@@ -45,7 +44,7 @@ import {
   CommandGroup,
   CommandInput,
   CommandItem,
-} from "../ui/command";
+} from "@/components/ui/command";
 import { ScrollArea } from "../ui/scroll-area";
 import { Board, Job } from "@/types";
 import {
@@ -56,35 +55,15 @@ import {
   SelectValue,
 } from "../ui/select";
 import { useClientApi } from "@/lib/clients";
+import {
+  activityTypes,
+  createActivity,
+  CreateActivityRequest,
+  formSchema,
+} from "@/contracts/CreateActivity";
 
 export type ActivityFilter = keyof typeof activityFilters;
 type ActivityType = keyof typeof activityTypes.Values;
-
-const activityTypes = z.enum([
-  "Apply",
-  "Phone Screen",
-  "Phone Interview",
-  "On Site Interview",
-  "Offer Received",
-  "Accept Offer",
-  "Prep Cover Letter",
-  "Prep Resume",
-  "Reach Out",
-  "Get Reference",
-  "Follow Up",
-  "Prep For Interview",
-  "Decline Offer",
-  "Rejected",
-  "Send Thank You",
-  "Email",
-  "Meeting",
-  "Phone Call",
-  "Send Availability",
-  "Assignment",
-  "Networking Event",
-  "Application Withdrawn",
-  "Other",
-]);
 
 const activityFilters: Record<string, ActivityType[]> = {
   all: Object.values(activityTypes.Values),
@@ -101,17 +80,6 @@ const activityFilters: Record<string, ActivityType[]> = {
   ],
 };
 
-const formSchema = z.object({
-  title: z.string().nonempty(),
-  type: activityTypes,
-  startDate: z.date().optional(),
-  endDate: z.date().optional(),
-  jobId: z.string().optional(),
-  note: z.string().optional(),
-  completed: z.boolean(),
-  boardId: z.string(),
-});
-
 interface Props {
   board: Board;
   jobId?: string;
@@ -120,11 +88,13 @@ interface Props {
 }
 
 export const CreateActivityModal = ({ jobId, board, filter, jobs }: Props) => {
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<CreateActivityRequest>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: "",
-      type: activityFilters[filter][0],
+      type: Object.keys(activityTypes.Values).indexOf(
+        activityFilters[filter][0]
+      ),
       completed: false,
       jobId,
       boardId: board.id,
@@ -133,11 +103,8 @@ export const CreateActivityModal = ({ jobId, board, filter, jobs }: Props) => {
 
   const clientApi = useClientApi();
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    const test = await clientApi.post("/activity/create", {
-      ...values,
-      type: Object.keys(activityTypes.Values).indexOf(values.type),
-    });
+  async function onSubmit(values: CreateActivityRequest) {
+    const createdActivity = await createActivity(values, clientApi);
   }
 
   return (
@@ -262,7 +229,7 @@ export const CreateActivityModal = ({ jobId, board, filter, jobs }: Props) => {
                     <FormLabel>Type</FormLabel>
                     <Select
                       onValueChange={field.onChange}
-                      defaultValue={field.value}
+                      defaultValue={activityFilters[filter][0]}
                     >
                       <FormControl>
                         <SelectTrigger>

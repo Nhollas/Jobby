@@ -1,4 +1,6 @@
 import { useToast } from "@/components/ui/use-toast";
+import { getBoard, GetBoardResponse } from "@/contracts/queries/GetBoard";
+import { getBoards, GetBoardsResponse } from "@/contracts/queries/GetBoards";
 import { useClientApi } from "@/lib/clients";
 import { Board } from "@/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -60,21 +62,16 @@ export const useDeleteBoard = () => {
   const clientApi = useClientApi();
   const { toast } = useToast();
 
-  async function deleteBoard(BoardId: string) {
-    const response = await clientApi.delete(`/board/delete/${BoardId}`);
+  async function deleteBoard(boardId: string) {
+    await clientApi.delete(`/board/delete/${boardId}`);
 
-    return [response, BoardId];
+    return boardId;
   }
 
   return useMutation(deleteBoard, {
-    onSuccess: ([_, BoardId]) => {
-      toast({
-        title: "Board delete event.",
-        description: "Successfully deleted your board.",
-      })
-
+    onSuccess: (boardId) => {
       queryClient.setQueryData(["boards"], (prevData: Board[] | undefined) =>
-        prevData?.filter((Board) => Board.id !== BoardId)
+        prevData?.filter((board) => board.id !== boardId)
       );
     },
     onError: () => {
@@ -87,36 +84,24 @@ export const useDeleteBoard = () => {
   });
 };
 
-export const useBoardsQuery = (initialBoards?: Board[]) => {
+export const useBoardsQuery = (initialBoards?: GetBoardsResponse) => {
   const clientApi = useClientApi();
 
-  const getBoards = async () => {
-    const response = await clientApi.get<Board[]>("/boards");
-
-    return response.data;
-  };
-
-  return useQuery<Board[]>({
+  return useQuery<GetBoardsResponse>({
     queryKey: ["boards"],
-    queryFn: getBoards,
+    queryFn: () => getBoards(clientApi),
     initialData: initialBoards,
     staleTime: Infinity,
     cacheTime: Infinity,
   });
 };
 
-export const useBoardQuery = (boardId: string, initialBoard?: Board) => {
+export const useBoardQuery = (boardId: string, initialBoard?: GetBoardResponse) => {
   const clientApi = useClientApi();
 
-  const getBoard = async () => {
-    const response = await clientApi.get<Board>(`/board/${boardId}`);
-
-    return response.data;
-  }
-
-  return useQuery<Board>({
+  return useQuery<GetBoardResponse>({
     queryKey: ["board", boardId],
-    queryFn: getBoard,
+    queryFn: () => getBoard(boardId, clientApi),
     initialData: initialBoard,
     staleTime: Infinity,
     cacheTime: Infinity,

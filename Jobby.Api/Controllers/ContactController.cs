@@ -39,8 +39,8 @@ public class ContactController : ApiController
     [HttpPut("Update", Name = "UpdateContact")]
     public async Task<IActionResult> UpdateContact([FromBody] UpdateContactCommand command)
     {
-        await Sender.Send(command);
-        return NoContent();
+        var updatedContact =  await Sender.Send(command);
+        return Ok(updatedContact);
     }
     
     [Route("~/api/contacts", Name = "ListContacts")]

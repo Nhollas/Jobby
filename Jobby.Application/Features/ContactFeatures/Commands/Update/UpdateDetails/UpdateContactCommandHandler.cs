@@ -1,4 +1,6 @@
-﻿using Jobby.Application.Abstractions.Specification;
+﻿using AutoMapper;
+using Jobby.Application.Abstractions.Specification;
+using Jobby.Application.Contracts.Contact;
 using Jobby.Application.Exceptions.Base;
 using Jobby.Application.Features.BoardFeatures.Specifications;
 using Jobby.Application.Features.ContactFeatures.Specifications;
@@ -10,30 +12,33 @@ using static Jobby.Domain.Static.ContactConstants;
 
 namespace Jobby.Application.Features.ContactFeatures.Commands.Update.UpdateDetails;
 
-internal sealed class UpdateContactCommandHandler : IRequestHandler<UpdateContactCommand, Unit>
+internal sealed class UpdateContactCommandHandler : IRequestHandler<UpdateContactCommand, GetContactResponse>
 {
     private readonly IRepository<Contact> _contactRepository;
     private readonly IRepository<Board> _boardRepository;
     private readonly IDateTimeProvider _timeProvider;
     private readonly string _userId;
+    private readonly IMapper _mapper;
 
     public UpdateContactCommandHandler(
         IUserService userService,
         IDateTimeProvider timeProvider,
         IRepository<Contact> contactRepository,
-        IRepository<Board> boardRepository)
+        IRepository<Board> boardRepository,
+        IMapper mapper)
     {
         _userId = userService.UserId();
         _timeProvider = timeProvider;
         _contactRepository = contactRepository;
         _boardRepository = boardRepository;
+        _mapper = mapper;
     }
 
-    public async Task<Unit> Handle(UpdateContactCommand request, CancellationToken cancellationToken)
+    public async Task<GetContactResponse> Handle(UpdateContactCommand request, CancellationToken cancellationToken)
     {
         Contact contactToUpdate = await ResourceProvider<Contact>
             .GetBySpec(_contactRepository.FirstOrDefaultAsync)
-            .ApplySpecification(new GetContactWithSocialsSpecification(request.ContactId))
+            .ApplySpecification(new GetContactWithSocialsSpecification(request.Id))
             .Check(_userId, cancellationToken);
 
         contactToUpdate.Update(
@@ -46,6 +51,15 @@ internal sealed class UpdateContactCommandHandler : IRequestHandler<UpdateContac
                 request.Socials.FacebookUrl,
                 request.Socials.LinkedInUrl,
                 request.Socials.GithubUrl));
+        
+        if (request.BoardId.HasValue && request.BoardId.Value != contactToUpdate.BoardId)
+        {
+            var newBoard = await ResourceProvider<Board>
+                .GetById(_boardRepository.GetByIdAsync)
+                .Check(_userId, request.BoardId.Value, cancellationToken);
+            
+            contactToUpdate.SetBoard(newBoard);
+        }
 
         if (request.JobIds.Count > 0 && contactToUpdate.BoardId.HasValue)
         {
@@ -100,6 +114,6 @@ internal sealed class UpdateContactCommandHandler : IRequestHandler<UpdateContac
 
         await _contactRepository.UpdateAsync(contactToUpdate, cancellationToken);
 
-        return Unit.Value;
+        return _mapper.Map<GetContactResponse>(contactToUpdate);
     }
 }

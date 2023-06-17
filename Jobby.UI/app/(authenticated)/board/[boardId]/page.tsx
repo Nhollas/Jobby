@@ -1,13 +1,13 @@
 import { serverApi } from "@/lib/clients";
 import { Kanban } from "@/components/Kanban";
-import { Board } from "types";
+import { getBoard } from "@/contracts/queries/GetBoard";
 
 export default async function Page({
   params: { boardId },
 }: {
   params: { boardId: string };
 }) {
-  const { data: board } = await serverApi.get<Board>(`/board/${boardId}`);
+  const board = await getBoard(boardId, serverApi);
   if (!board) {
     return <div>Board not found</div>;
   }

@@ -1,7 +1,6 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { BoardDictionaryResponse } from "types/responses/Board";
 import { useRouter } from "next/navigation";
 import { Modal } from "@/components/Modal";
 import {
@@ -10,16 +9,16 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "../ui/card";
-import { Input } from "../ui/input";
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../ui/select";
-import { Button } from "../ui/button";
+} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import {
@@ -29,29 +28,24 @@ import {
   FormLabel,
   FormControl,
   FormMessage,
-} from "../ui/form";
+} from "@/components/ui/form";
 import { Layout, List } from "lucide-react";
 import { useCreateJob } from "@/hooks/useJobData";
+import { CreateJobRequest, GetBoardDictionaryResponse } from "@/contracts";
+import { formSchema } from "@/contracts/CreateJob";
 
 interface Props {
   boardId: string;
   jobListId: string;
-  boardsDictionary: BoardDictionaryResponse[];
+  boardsDictionary: GetBoardDictionaryResponse[];
 }
-
-const formSchema = z.object({
-  title: z.string().nonempty(),
-  company: z.string().nonempty(),
-  jobListId: z.string(),
-  boardId: z.string(),
-});
 
 export const CreateJobModal = ({
   boardId,
   jobListId,
   boardsDictionary,
 }: Props) => {
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<CreateJobRequest>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: "",
@@ -65,7 +59,7 @@ export const CreateJobModal = ({
 
   const { mutateAsync } = useCreateJob();
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: CreateJobRequest) {
     console.log(values);
 
     await mutateAsync(values);
