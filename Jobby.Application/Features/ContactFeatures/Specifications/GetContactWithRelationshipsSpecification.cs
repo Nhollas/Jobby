@@ -7,10 +7,11 @@ public sealed class GetContactWithRelationshipsSpecification : Specification<Con
     public GetContactWithRelationshipsSpecification(Guid contactId)
     {
         Query
-            .Include(x => x.Jobs)
-            .Include(x => x.Phones)
-            .Include(x => x.Emails)
-            .Include(x => x.Companies)
+            .Include(contact => contact.Jobs)
+            .Include(contact => contact.Phones)
+            .Include(contact => contact.Emails)
+            .Include(contact => contact.Companies)
+            .Include(contact => contact.Board)
             .AsNoTracking()
             .Where(contact => contact.Id == contactId);
     }

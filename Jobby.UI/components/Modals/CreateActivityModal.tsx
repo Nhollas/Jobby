@@ -92,14 +92,15 @@ export const CreateActivityModal = ({ jobId, board, filter, jobs }: Props) => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: "",
-      type: Object.keys(activityTypes.Values).indexOf(
-        activityFilters[filter][0]
-      ),
+      // @ts-ignore - doesn't like using string as type. Expects transformed type...
+      type: activityFilters[filter][0],
       completed: false,
       jobId,
       boardId: board.id,
     },
   });
+
+  console.log("form", form.getValues());
 
   const clientApi = useClientApi();
 
@@ -372,7 +373,7 @@ export const CreateActivityModal = ({ jobId, board, filter, jobs }: Props) => {
                                       <Check
                                         className={cn(
                                           "mr-2 h-4 w-4",
-                                          field.value
+                                          field.value === job.id
                                             ? "opacity-100"
                                             : "opacity-0"
                                         )}

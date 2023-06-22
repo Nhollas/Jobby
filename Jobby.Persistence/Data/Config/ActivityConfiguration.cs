@@ -15,8 +15,6 @@ public class ActivityConfiguration : IEntityTypeConfiguration<Activity>
             .HasForeignKey(x => x.BoardId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.Navigation(activity => activity.Board).AutoInclude();
-
         builder.HasOne(x => x.Job)
             .WithMany(x => x.Activities)
             .HasForeignKey(x => x.JobId)

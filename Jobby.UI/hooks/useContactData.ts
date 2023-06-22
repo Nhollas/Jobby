@@ -2,7 +2,7 @@ import { createContact, CreateContactRequest } from "@/contracts/CreateContact";
 import { updateContact, UpdateContactDetailsRequest } from "@/contracts/UpdateContactDetailsRequest";
 import { useClientApi } from "@/lib/clients";
 import { Contact } from "@/types";
-import { QueryFilters, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 export const useCreateContact = () => {
   const queryClient = useQueryClient();
@@ -27,6 +27,8 @@ export const useCreateContact = () => {
           queryKeys.push(["/contacts", `/job/${job.id}/contacts`]);
         });
       }
+
+      console.log("queryKeys",queryKeys)
 
       // Only invalidate the queries that are affected by the new contact.
       await Promise.all(queryKeys.map((key) => queryClient.invalidateQueries({
@@ -76,6 +78,8 @@ export const useDeleteContact = () => {
 
   return useMutation(deleteContact, {
     onSuccess: async (_, contactId) => {
+      console.log("sus")
+
       await queryClient.invalidateQueries({
         queryKey: ["/contacts"],
         refetchType: "all"

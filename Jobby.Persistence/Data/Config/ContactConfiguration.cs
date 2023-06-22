@@ -16,8 +16,6 @@ public class ContactConfiguration : IEntityTypeConfiguration<Contact>
             .WithMany(x => x.Contacts)
             .HasForeignKey(x => x.BoardId)
             .OnDelete(DeleteBehavior.NoAction);
-        
-        builder.Navigation(contact => contact.Board).AutoInclude();
 
         builder.HasMany(p => p.Emails)
             .WithOne(x => x.Contact)

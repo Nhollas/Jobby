@@ -19,8 +19,6 @@ const ActivityItem = ({ title, href, active, layoutId }: ActivityItemProps) => {
   const [isAnimating, setIsAnimating] = useState(true);
   const params = useParams();
 
-  console.log(params);
-
   useEffect(() => {
     setIsAnimating(false);
   }, []);

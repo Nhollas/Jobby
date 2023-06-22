@@ -7,11 +7,12 @@ public class GetContactsFromBoardSpecification : Specification<Contact>
     public GetContactsFromBoardSpecification(Guid BoardId, string UserId)
     {
         Query
-            .Include(x => x.Companies)
-            .Include(x => x.Phones)
-            .Include(x => x.Emails)
+            .Include(contact => contact.Companies)
+            .Include(contact => contact.Phones)
+            .Include(contact => contact.Emails)
+            .Include(contact => contact.Board)
             .AsNoTracking()
-            .Where(b => b.BoardId == BoardId && b.OwnerId == UserId)
+            .Where(contact => contact.BoardId == BoardId && contact.OwnerId == UserId)
             .OrderBy(x => x.CreatedDate);
     }
 }

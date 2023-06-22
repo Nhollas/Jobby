@@ -5,15 +5,16 @@ namespace Jobby.Application.Features.ContactFeatures.Specifications;
 
 public class GetUsersContactsSpecification : Specification<Contact>
 {
-    public GetUsersContactsSpecification(string UserId)
+    public GetUsersContactsSpecification(string userId)
     {
         Query
-            .Include(x => x.Companies)
-            .Include(x => x.Phones)
-            .Include(x => x.Emails)
-            .Include(x => x.Jobs)
+            .Include(contact => contact.Companies)
+            .Include(contact => contact.Phones)
+            .Include(contact => contact.Emails)
+            .Include(contact => contact.Jobs)
+            .Include(contact => contact.Board)
             .AsNoTracking()
-            .Where(contact => contact.OwnerId == UserId)
+            .Where(contact => contact.OwnerId == userId)
             .OrderBy(x => x.CreatedDate);
     }
 }

@@ -14,8 +14,6 @@ public class JobConfiguration : IEntityTypeConfiguration<Job>
             .HasForeignKey(x => x.JobId)
             .IsRequired(false)
             .OnDelete(DeleteBehavior.Cascade);
-        
-        builder.Navigation(job => job.Board).AutoInclude();
 
         builder.HasMany(x => x.Contacts)
             .WithMany(x => x.Jobs)

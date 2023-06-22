@@ -4,16 +4,15 @@ import { useContactsQuery } from "@/hooks/useContactData";
 import { MoreVertical, Mail, Phone, Eye, Trash2, Layout } from "lucide-react";
 import Link from "next/link";
 import { Contact, Social } from "types";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { Badge } from "./ui/badge";
-import { Button } from "./ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "./ui/card";
+} from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,8 +20,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
-import { Input } from "./ui/input";
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
 
 type Props = {
   contacts: Contact[];
@@ -30,13 +29,6 @@ type Props = {
   boardId?: string;
   jobId?: string;
   querykeyVariable?: any;
-};
-
-const contactNameToInitials = (name: string | undefined) => {
-  if (!name) return "";
-
-  const [firstName, lastName] = name?.split(" ");
-  return `${firstName[0]}${lastName[0]}`;
 };
 
 const createUrl = (boardId?: string, jobId?: string) => {
@@ -96,17 +88,6 @@ export function Contacts({
               <Card key={contact.id}>
                 <CardHeader className="flex flex-col items-start gap-4 space-y-0 p-4 pb-2">
                   <div className="flex w-full flex-row items-center gap-x-4">
-                    <Avatar>
-                      <AvatarImage
-                        src="https://github.com/nhollas.png"
-                        alt="@nhollas"
-                      />
-                      <AvatarFallback>
-                        {contactNameToInitials(
-                          `${contact.firstName} ${contact.lastName}`
-                        )}
-                      </AvatarFallback>
-                    </Avatar>
                     <div className="flex flex-col gap-y-1 truncate">
                       <CardTitle className="">
                         {contact.firstName} {contact.lastName}
