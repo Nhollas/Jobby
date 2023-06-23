@@ -37,8 +37,6 @@ test('should delete a board and remove it from the boards list', async ({ page }
     });
   });
 
-  console.log({updatedBoards})
-
   // Check that the deleted board is no longer in the list
   expect(updatedBoards).not.toContainEqual(boardToDelete);
 });

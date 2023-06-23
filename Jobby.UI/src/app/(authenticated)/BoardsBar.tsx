@@ -13,22 +13,23 @@ export const BoardsBar = ({
 }) => {
   const { data: boards } = useBoardsQuery(initialBoards);
   return (
-    <>
-      <div dir="ltr" className="relative h-[300px] overflow-hidden px-2">
-        {boards?.map((board) => (
-          <Button
-            asChild
-            variant="ghost"
-            key={board.id}
-            className="w-full justify-start font-normal"
-          >
-            <Link href={`/board/${board.id}`}>
-              <Layout className="mr-2 h-4 w-4" />
-              {board.name}
-            </Link>
-          </Button>
-        ))}
-      </div>
-    </>
+    <div
+      dir="ltr"
+      className="relative h-[300px] overflow-y-scroll overscroll-contain px-2"
+    >
+      {boards?.map((board) => (
+        <Button
+          asChild
+          variant="ghost"
+          key={board.id}
+          className="w-full justify-start font-normal"
+        >
+          <Link href={`/board/${board.id}`} className="flex flex-row">
+            <Layout className="mr-2 h-4 w-4 shrink-0" />
+            <span className="truncate">{board.name}</span>
+          </Link>
+        </Button>
+      ))}
+    </div>
   );
 };

@@ -5,8 +5,8 @@ const authFile = 'playwright/.auth/user.json';
 setup('authenticate', async ({ page }) => {
   // Perform authentication steps. Replace these actions with your own.
   await page.goto('http://localhost:3000/sign-in');
-  await page.getByLabel("Email address or username").fill('nicholashollas@yahoo.co.uk');
-  await page.getByLabel('Password', { exact: true }).fill('Rodan2001?');
+  await page.getByLabel("Email address or username").fill('test@test.com');
+  await page.getByLabel('Password', { exact: true }).fill('Password123');
   await page.getByRole('button', { name: 'continue' }).click();
   // Wait until the page receives the cookies.
   //
