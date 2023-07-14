@@ -1,15 +1,6 @@
-import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
-
+import { type ClassValue, clsx } from "clsx"
+import { twMerge } from "tailwind-merge"
+ 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
-
-const defaultInitializer = (index: number) => index;
-
-export function createRange<T = number>(
-  length: number,
-  initializer: (index: number) => any = defaultInitializer
-): T[] {
-  return [...new Array(length)].map((_, index) => initializer(index));
+  return twMerge(clsx(inputs))
 }

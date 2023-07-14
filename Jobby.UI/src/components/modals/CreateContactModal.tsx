@@ -76,9 +76,6 @@ export const CreateContactModal = () => {
       const { data: boards } = await clientApi.get<Board[]>("/boards");
       const { data: jobs } = await clientApi.get<Job[]>("/jobs");
 
-      // add a delay of 1 second to simulate a slow network
-
-      await new Promise((resolve) => setTimeout(resolve, 5000));
       setFilteredBoards(boards);
       setBoards(boards);
       setFilteredJobs(jobs);
@@ -86,7 +83,7 @@ export const CreateContactModal = () => {
     }
 
     fetchBoardsAndJobs();
-  }, []);
+  }, [clientApi]);
 
   console.log(boards);
   console.log(jobs);
@@ -119,8 +116,12 @@ export const CreateContactModal = () => {
     },
   });
 
-  const [filteredBoards, setFilteredBoards] = useState(boards);
-  const [filteredJobs, setFilteredJobs] = useState(jobs);
+  const [filteredBoards, setFilteredBoards] = useState<Board[] | undefined>(
+    undefined
+  );
+  const [filteredJobs, setFilteredJobs] = useState<Job[] | undefined>(
+    undefined
+  );
   const [activeTab, setActiveTab] = useState("socials");
   const [activeTab2, setActiveTab2] = useState("companies");
 

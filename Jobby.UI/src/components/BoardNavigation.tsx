@@ -3,7 +3,11 @@
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { MenuItem } from "@/components/MenuItem";
-import { Layout, List, Users } from "lucide-react";
+import { Layout, List, PanelLeft, Users } from "lucide-react";
+import { SheetTrigger, Sheet } from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
+import { GetBoardsResponse } from "@/contracts/queries/GetBoards";
+import { MobileNavigationContent } from "./MobileNavigation";
 
 type NavItem = {
   leaf: string;
@@ -29,9 +33,14 @@ const navItems: NavItem[] = [
   },
 ];
 
-export const BoardNavigation = () => {
+export const BoardNavigation = ({
+  initialBoards,
+}: {
+  initialBoards: GetBoardsResponse;
+}) => {
   const pathname = usePathname() || "/";
   const pathnameSections = pathname.split("/");
+  const [open, setOpen] = useState(false);
 
   let leaf = pathnameSections[3] || "/";
 
@@ -46,7 +55,19 @@ export const BoardNavigation = () => {
   }, [leaf]);
 
   return (
-    <div className="fixed top-0 z-10 flex h-16 w-full flex-row flex-wrap items-center gap-4 border-b border-gray-200 bg-white px-4">
+    <div className="z-10 flex h-16 w-full flex-row items-center gap-4 overflow-x-scroll border-b border-gray-200 px-4">
+      <Sheet open={open} onOpenChange={setOpen}>
+        <SheetTrigger asChild>
+          <Button
+            variant="outline"
+            className="flex h-10 w-10 items-center gap-x-2 rounded-md px-2 py-1 text-sm md:hidden"
+          >
+            <PanelLeft className="h-5 w-5" />
+            <span className="sr-only">Toggle Menu</span>
+          </Button>
+        </SheetTrigger>
+        <MobileNavigationContent initialBoards={initialBoards} />
+      </Sheet>
       {navItems.map(({ icon, leaf, name }) => (
         <MenuItem
           selected={selected === leaf}

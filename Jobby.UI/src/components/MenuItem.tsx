@@ -26,7 +26,7 @@ export const MenuItem = ({
       size="sm"
       variant="outline"
       className={cn(
-        "flex items-center gap-x-2 rounded-md px-4 py-2 text-sm",
+        "flex h-10 items-center gap-x-2 rounded-md px-4 py-2 text-sm",
         selected
           ? "bg-white font-medium text-primary"
           : "font-medium text-muted-foreground"

@@ -1,4 +1,6 @@
-import { BoardNavigation } from "./boardNavigation";
+import { BoardNavigation } from "@/components/BoardNavigation";
+import { getBoards } from "@/contracts/queries/GetBoards";
+import { serverApi } from "@/lib/clients";
 
 export default async function BoardLayout({
   children,
@@ -7,11 +9,16 @@ export default async function BoardLayout({
   children: React.ReactNode;
   modal: React.ReactNode;
 }) {
+  const initialBoards = await getBoards(serverApi);
+
   return (
-    <div className="relative h-screen w-[calc(100vw-250px)]">
+    <section
+      id="BoardLayout"
+      className="relative h-screen w-screen md:w-[calc(100vw-250px)]"
+    >
       {modal}
-      <BoardNavigation />
-      <div className="mt-16">{children}</div>
-    </div>
+      <BoardNavigation initialBoards={initialBoards} />
+      {children}
+    </section>
   );
 }

@@ -15,14 +15,14 @@ export const BoardsBar = ({
   return (
     <div
       dir="ltr"
-      className="relative h-[300px] overflow-y-scroll overscroll-contain px-2"
+      className="relative h-[300px] overflow-y-scroll overscroll-contain px-4"
     >
       {boards?.map((board) => (
         <Button
           asChild
           variant="ghost"
           key={board.id}
-          className="w-full justify-start font-normal"
+          className="w-full justify-start px-4 font-normal"
         >
           <Link href={`/board/${board.id}`} className="flex flex-row">
             <Layout className="mr-2 h-4 w-4 shrink-0" />

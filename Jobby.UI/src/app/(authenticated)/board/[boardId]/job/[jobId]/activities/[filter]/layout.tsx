@@ -10,7 +10,7 @@ export default async function Layout({
   params: { boardId: string; filter: string; jobId: string };
 }) {
   return (
-    <div className="relative grid h-full grid-cols-[250px,1fr]">
+    <div className="relative grid grid-cols-[250px,1fr]">
       {modal}
       <ActivitiesNavigation boardId={boardId} filter={filter} jobId={jobId} />
       {children}

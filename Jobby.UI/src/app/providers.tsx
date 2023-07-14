@@ -1,4 +1,4 @@
-import { ClerkProvider } from "@clerk/nextjs/app-beta";
+import { ClerkProvider } from "@clerk/nextjs";
 import QueryClientProviderContext from "./QueryClientProviderContext";
 
 const Providers = ({ children }: { children: React.ReactNode }) => {
