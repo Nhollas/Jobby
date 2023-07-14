@@ -5,7 +5,7 @@ test.describe("Board tests", () => {
     page,
   }) => {
     // Go to the Boards page
-    await page.goto("http://localhost:3000/boards");
+    await page.goto("http://localhost:3000/track/boards");
 
     // Click the link to open the Create Board Modal
     await page.click('a[href="/create-board"]');

@@ -37,7 +37,9 @@ const createUrl = (boardId?: string, jobId?: string) => {
   if (boardId) params.set("boardId", boardId);
   if (jobId) params.set("jobId", jobId);
 
-  return `/create-contact${params.toString() ? `?${params.toString()}` : ""}`;
+  return `/track/create-contact${
+    params.toString() ? `?${params.toString()}` : ""
+  }`;
 };
 
 export function Contacts({
@@ -54,7 +56,7 @@ export function Contacts({
   );
 
   return (
-    <div className="flex flex-col gap-y-6 overscroll-contain border-gray-300 p-4 lg:px-8">
+    <div className="flex flex-col gap-y-6 overscroll-contain border-gray-300 p-4 md:px-6">
       <div className="flex flex-col gap-y-2">
         <h1 className="text-2xl font-medium">Contacts</h1>
         <p className="text-sm text-gray-500">View and manage contacts</p>
@@ -73,7 +75,7 @@ export function Contacts({
       {contacts.length === 0 ? (
         <h1>No Contacts Found.</h1>
       ) : (
-        <section className="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-8">
+        <section className="grid grid-cols-[repeat(auto-fill,minmax(275px,1fr))] gap-8">
           {contacts.map((contact) => {
             const socials = [];
 
@@ -86,7 +88,7 @@ export function Contacts({
 
             return (
               <Card key={contact.id}>
-                <CardHeader className="flex flex-col items-start gap-4 space-y-0 p-4 pb-2">
+                <CardHeader className="relative flex flex-col items-start gap-4 space-y-0 p-4 pb-2">
                   <div className="flex w-full flex-row items-center gap-x-4">
                     <div className="flex flex-col gap-y-1 truncate">
                       <CardTitle className="">
@@ -101,7 +103,7 @@ export function Contacts({
                       <DropdownMenuTrigger asChild>
                         <Button
                           variant="outline"
-                          className="ml-auto w-10 flex-shrink-0 rounded-full p-0"
+                          className="absolute top-4 right-4 w-10 rounded-full p-0"
                         >
                           <MoreVertical className="h-4 w-4 text-secondary-foreground" />
                           <span className="sr-only">Actions</span>
@@ -116,7 +118,7 @@ export function Contacts({
                         <DropdownMenuSeparator />
                         <DropdownMenuItem>
                           <Link
-                            href={`/contact/${contact.id}`}
+                            href={`/track/contact/${contact.id}`}
                             className="flex w-full flex-row"
                           >
                             <Eye className="mr-2 h-4 w-4" />
@@ -125,7 +127,7 @@ export function Contacts({
                         </DropdownMenuItem>
                         <DropdownMenuItem>
                           <Link
-                            href={`/delete-contact/${contact.id}`}
+                            href={`/track/delete-contact/${contact.id}`}
                             className="flex w-full flex-row"
                           >
                             <Trash2 className="mr-2 h-4 w-4" />
@@ -172,11 +174,13 @@ export function Contacts({
                   {contact.board && (
                     <Button variant="outline" asChild>
                       <Link
-                        href={`/board/${contact.board.id}`}
-                        className="ml-auto flex h-7 w-max items-center gap-x-2 text-xs"
+                        href={`/track/board/${contact.board.id}`}
+                        className="ml-auto flex h-7 flex-row items-center gap-x-2 text-xs"
                       >
                         <Layout className="h-4 w-4" />
-                        <p>{contact.board.name}</p>
+                        <p className="w-full max-w-[6rem] truncate">
+                          {contact.board.name}
+                        </p>
                       </Link>
                     </Button>
                   )}

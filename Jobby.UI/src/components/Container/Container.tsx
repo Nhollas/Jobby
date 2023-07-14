@@ -73,7 +73,7 @@ export const Container = forwardRef<HTMLDivElement, Props>(
             <p>{jobList.jobs.length} Jobs</p>
             <Button variant="default" asChild>
               <Link
-                href={`/create-job/${boardId}/${jobList.id}`}
+                href={`/track/create-job/${boardId}/${jobList.id}`}
                 className="flex flex-row items-center gap-x-2 rounded-full"
               >
                 <Plus className="h-4 w-4" />

@@ -42,7 +42,7 @@ export const BoardNavigation = ({
   const pathnameSections = pathname.split("/");
   const [open, setOpen] = useState(false);
 
-  let leaf = pathnameSections[3] || "/";
+  let leaf = pathnameSections[4] || "/";
 
   if (leaf === "job") {
     leaf = "/";
@@ -55,7 +55,7 @@ export const BoardNavigation = ({
   }, [leaf]);
 
   return (
-    <div className="z-10 flex h-16 w-full flex-row items-center gap-4 overflow-x-scroll border-b border-gray-200 px-4">
+    <div className="z-10 flex h-16 w-full flex-row items-center gap-4 overflow-x-auto border-b border-gray-200 px-4">
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetTrigger asChild>
           <Button
@@ -74,7 +74,7 @@ export const BoardNavigation = ({
           icon={icon}
           name={name}
           key={leaf}
-          href={`/board/${pathnameSections[2]}/${
+          href={`/track/board/${pathnameSections[3]}/${
             leaf === "activities" ? `${leaf}/all` : leaf
           }`}
           layoutId={pathnameSections[2]}

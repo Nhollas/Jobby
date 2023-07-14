@@ -23,11 +23,11 @@ export const Boards = ({
   return (
     <div className="flex flex-col gap-y-6 p-6">
       <div className="flex flex-col gap-y-2">
-        <h1 className="text-lg font-semibold tracking-tight">Boards</h1>
+        <h1 className="text-2xl font-medium">Boards</h1>
         <p className="text-sm text-gray-500">View and manage boards</p>
       </div>
       <Button asChild>
-        <Link href="/create-board" className="w-max">
+        <Link href="/track/create-board" className="w-max">
           Create Board
         </Link>
       </Button>
@@ -35,7 +35,9 @@ export const Boards = ({
         {boards?.map((board) => (
           <Card key={board.id} className="card" data-board-id={board.id}>
             <CardHeader>
-              <CardTitle className="card-title">{board.name}</CardTitle>
+              <CardTitle className="card-title truncate">
+                {board.name}
+              </CardTitle>
               <CardDescription className="card-description">
                 {new Date(board.createdDate).toDateString()}
               </CardDescription>
@@ -43,7 +45,7 @@ export const Boards = ({
             <CardFooter>
               <div className="flex w-full flex-row gap-x-3">
                 <Button asChild size="sm" variant="outline">
-                  <Link href={`/delete-board/${board.id}`}>
+                  <Link href={`/track/delete-board/${board.id}`}>
                     <Trash2 size={18} />
                   </Link>
                 </Button>
@@ -53,7 +55,7 @@ export const Boards = ({
                   className="flex w-full"
                   size="sm"
                 >
-                  <Link href={`/board/${board.id}`}>View</Link>
+                  <Link href={`/track/board/${board.id}`}>View</Link>
                 </Button>
               </div>
             </CardFooter>

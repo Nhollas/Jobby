@@ -34,7 +34,7 @@ export const DeleteBoardModal = ({ boardId }: Props) => {
 
     await mutateAsync(boardId);
 
-    router.back();
+    router.push("/boards");
   };
 
   return (
@@ -47,7 +47,9 @@ export const DeleteBoardModal = ({ boardId }: Props) => {
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel onClick={router.back}>Cancel</AlertDialogCancel>
+          <AlertDialogCancel onClick={() => router.push("/boards")}>
+            Cancel
+          </AlertDialogCancel>
           <AlertDialogAction onClick={handleSubmit}>Delete</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

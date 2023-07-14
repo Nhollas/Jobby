@@ -1,4 +1,3 @@
-import { SetupServer } from 'msw/node';
 import { defineConfig, devices } from '@playwright/test';
 
 /**

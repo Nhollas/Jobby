@@ -85,9 +85,6 @@ export const CreateContactModal = () => {
     fetchBoardsAndJobs();
   }, [clientApi]);
 
-  console.log(boards);
-  console.log(jobs);
-
   const searchParams = useSearchParams();
 
   const boardId = searchParams.get("boardId");
@@ -144,9 +141,9 @@ export const CreateContactModal = () => {
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(onSubmit)}
-              className="space-y-6 @container"
+              className="@container space-y-6"
             >
-              <div className="grid gap-y-6 gap-x-2 @md:grid-cols-2">
+              <div className="@md:grid-cols-2 grid gap-y-6 gap-x-2">
                 <FormField
                   control={form.control}
                   name="firstName"
@@ -174,7 +171,7 @@ export const CreateContactModal = () => {
                   )}
                 />
               </div>
-              <div className="grid gap-y-6 gap-x-2 @md:grid-cols-2">
+              <div className="@md:grid-cols-2 grid gap-y-6 gap-x-2">
                 <FormField
                   control={form.control}
                   name="jobTitle"

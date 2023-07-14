@@ -24,7 +24,7 @@ export function MainNavigation({
               variant="ghost"
               className="mx-4 w-[calc(100%-2rem)] justify-start font-normal"
             >
-              <Link href="/contacts">
+              <Link href="/track/contacts">
                 <Users className="mr-2 h-4 w-4" />
                 Contacts
               </Link>
@@ -37,7 +37,7 @@ export function MainNavigation({
               asChild
               className="h-max px-8 py-0 text-lg font-semibold tracking-tight"
             >
-              <Link href="/boards">Boards</Link>
+              <Link href="/track/boards">Boards</Link>
             </Button>
             <BoardsBar initialBoards={initialBoards} />
           </div>

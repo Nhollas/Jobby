@@ -17,14 +17,17 @@ export function MobileNavigation({
   initialBoards: GetBoardsResponse;
 }) {
   const [open, setOpen] = useState(false);
-
   const pathname = usePathname() || "/";
   const isBoardRoute = pathname.includes("/board");
-  const isBoardsRoute = pathname.includes("/boards");
+  const isBoardsRoute = pathname === "/track/boards";
+  const isContactsRoute = pathname === "/track/contacts";
+  const isContactRoute = pathname.includes("/track/contact");
+
+  const requiredNavRoute =
+    (isBoardRoute && isBoardsRoute) || isContactRoute || isContactsRoute;
 
   return (
-    !isBoardRoute ||
-    (isBoardsRoute && (
+    requiredNavRoute && (
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetTrigger asChild>
           <Button
@@ -37,7 +40,7 @@ export function MobileNavigation({
         </SheetTrigger>
         <MobileNavigationContent initialBoards={initialBoards} />
       </Sheet>
-    ))
+    )
   );
 }
 
@@ -57,7 +60,7 @@ export function MobileNavigationContent({
               variant="ghost"
               className="w-full justify-start font-normal"
             >
-              <Link href="/contacts">
+              <Link href="/track/contacts">
                 <Users className="mr-2 h-4 w-4" />
                 Contacts
               </Link>
@@ -71,7 +74,7 @@ export function MobileNavigationContent({
             asChild
             className="h-max px-8 py-0 text-lg font-semibold tracking-tight"
           >
-            <Link href="/boards">Boards</Link>
+            <Link href="/track/boards">Boards</Link>
           </Button>
           <BoardsBar initialBoards={initialBoards} />
         </div>

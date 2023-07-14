@@ -1,4 +1,4 @@
-import { ActivitiesNavigation } from "@/components/activitiesNavigation";
+import { ActivitiesNavigation } from "@/components/ActivitiesNavigation";
 
 export default async function Layout({
   children,

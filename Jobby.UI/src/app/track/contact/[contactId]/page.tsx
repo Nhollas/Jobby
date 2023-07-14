@@ -13,10 +13,9 @@ export default async function Page({
   const boards = await getBoards(serverApi);
   const jobs = await getJobs(serverApi);
 
-  console.log(contact);
   if (!contact) {
     return <div>Board not found</div>;
   }
 
-  return <Contact contact={contact} boards={boards} jobs={[]} />;
+  return <Contact contact={contact} boards={boards} jobs={jobs} />;
 }

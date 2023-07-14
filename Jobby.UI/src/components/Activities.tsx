@@ -37,7 +37,7 @@ const createUrl = (filter: string, boardId: string, jobId?: string) => {
   if (jobId) params.set("jobId", jobId);
   params.set("filter", filter);
 
-  return `/create-activity${params ? `?${params}` : ""}`;
+  return `/track/create-activity${params ? `?${params}` : ""}`;
 };
 
 export const Activities = ({ activities, boardId, jobId, filter }: Props) => {
@@ -228,7 +228,7 @@ function Activity({
               className="flex flex-row justify-start gap-x-3"
             >
               <Link
-                href={`/board/${activity.job.boardId}/job/${activity.job.id}/info`}
+                href={`/track/board/${activity.job.boardId}/job/${activity.job.id}/info`}
               >
                 <Briefcase className="h-4 w-4 shrink-0" />
                 <p>{activity.job.title}</p>

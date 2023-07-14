@@ -24,7 +24,7 @@ export const BoardsBar = ({
           key={board.id}
           className="w-full justify-start px-4 font-normal"
         >
-          <Link href={`/board/${board.id}`} className="flex flex-row">
+          <Link href={`/track/board/${board.id}`} className="flex flex-row">
             <Layout className="mr-2 h-4 w-4 shrink-0" />
             <span className="truncate">{board.name}</span>
           </Link>
