@@ -312,27 +312,6 @@ namespace Jobby.Persistence.Data.Migrations
                     b.ToTable("Phone");
                 });
 
-            modelBuilder.Entity("Jobby.Domain.Entities.User", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("OAuthId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Provider")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Users");
-                });
-
             modelBuilder.Entity("Jobby.Domain.Entities.Activity", b =>
                 {
                     b.HasOne("Jobby.Domain.Entities.Board", "Board")

@@ -56,7 +56,7 @@ export function Contacts({
   );
 
   return (
-    <div className="flex flex-col gap-y-6 overscroll-contain border-gray-300 p-4 md:px-6">
+    <div className="flex flex-col gap-y-6 overscroll-contain border-gray-300 p-6">
       <div className="flex flex-col gap-y-2">
         <h1 className="text-2xl font-medium">Contacts</h1>
         <p className="text-sm text-gray-500">View and manage contacts</p>

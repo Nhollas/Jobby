@@ -4,10 +4,13 @@ using Jobby.Application.Contracts.Contact;
 using Jobby.Application.Exceptions.Base;
 using Jobby.Application.Features.BoardFeatures.Specifications;
 using Jobby.Application.Features.ContactFeatures.Specifications;
+using Jobby.Application.Features.JobFeatures.Specifications;
+using Jobby.Application.Interfaces.Repositories;
 using Jobby.Application.Interfaces.Services;
 using Jobby.Application.Services;
 using Jobby.Domain.Entities;
 using MediatR;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using static Jobby.Domain.Static.ContactConstants;
 
 namespace Jobby.Application.Features.ContactFeatures.Commands.Update.UpdateDetails;
@@ -16,7 +19,9 @@ internal sealed class UpdateContactCommandHandler : IRequestHandler<UpdateContac
 {
     private readonly IRepository<Contact> _contactRepository;
     private readonly IRepository<Board> _boardRepository;
+    private readonly IRepository<Job> _jobRepository;
     private readonly IDateTimeProvider _timeProvider;
+    private readonly IContactRepository _contactRepositoryAsync;
     private readonly string _userId;
     private readonly IMapper _mapper;
 
@@ -25,13 +30,17 @@ internal sealed class UpdateContactCommandHandler : IRequestHandler<UpdateContac
         IDateTimeProvider timeProvider,
         IRepository<Contact> contactRepository,
         IRepository<Board> boardRepository,
-        IMapper mapper)
+        IRepository<Job> jobRepository,
+        IMapper mapper, 
+        IContactRepository contactRepositoryAsync)
     {
         _userId = userService.UserId();
         _timeProvider = timeProvider;
         _contactRepository = contactRepository;
         _boardRepository = boardRepository;
+        _jobRepository = jobRepository;
         _mapper = mapper;
+        _contactRepositoryAsync = contactRepositoryAsync;
     }
 
     public async Task<GetContactResponse> Handle(UpdateContactCommand request, CancellationToken cancellationToken)
@@ -61,24 +70,11 @@ internal sealed class UpdateContactCommandHandler : IRequestHandler<UpdateContac
             contactToUpdate.SetBoard(newBoard);
         }
 
-        if (request.JobIds.Count > 0 && contactToUpdate.BoardId.HasValue)
+        var contactJobIds = contactToUpdate.JobContacts.Select(x => x.Job.Id).ToList();
+        var equal = contactJobIds.SequenceEqual(request.JobIds);
+        if (request.JobIds.Count > 0 && !contactJobIds.SequenceEqual(request.JobIds))
         {
-            Guid boardId = contactToUpdate.BoardId.Value;
-            
-            Board board = await ResourceProvider<Board>
-                .GetBySpec(_boardRepository.FirstOrDefaultAsync)
-                .ApplySpecification(new GetBoardWithJobsSpecification(boardId))
-                .Check(_userId, cancellationToken);
-
-            if (!board.BoardOwnsJobs(request.JobIds))
-            {
-                throw new NotFoundException($"The {nameof(List<Job>)} {request.JobIds} you wanted to link doesn't exist in the Board {contactToUpdate.Board.Id}.");
-            }
-
-            var jobsToLink = board.JobLists
-                .SelectMany(x => x.Jobs)
-                .Where(x => request.JobIds.Contains(x.Id))
-                .ToList();
+            var jobsToLink = await _jobRepository.ListAsync(new GetJobsFromIdsSpecification(request.JobIds, _userId), cancellationToken);
 
             contactToUpdate.SetJobs(jobsToLink);
         }
@@ -112,7 +108,7 @@ internal sealed class UpdateContactCommandHandler : IRequestHandler<UpdateContac
 
         contactToUpdate.UpdateEntity(_timeProvider.UtcNow);
 
-        await _contactRepository.UpdateAsync(contactToUpdate, cancellationToken);
+        await _contactRepository.SaveChangesAsync(cancellationToken);
 
         return _mapper.Map<GetContactResponse>(contactToUpdate);
     }

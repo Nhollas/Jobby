@@ -4,10 +4,6 @@ namespace Jobby.Domain.Entities;
 
 public class Job : Entity
 {
-    private readonly List<Activity> _activities = new();
-    private readonly List<Contact> _contacts = new();
-    private readonly List<Note> _notes = new();
-
     public Job()
     {
 
@@ -41,14 +37,14 @@ public class Job : Entity
     public string Description { get; private set; }
     public DateTime? Deadline { get; private set; }
     public int Index { get; private set; }
-    public IReadOnlyCollection<Note> Notes => _notes;
-    public IReadOnlyCollection<Activity> Activities => _activities;
-    public IReadOnlyCollection<Contact> Contacts => _contacts;
+    public List<Note> Notes { get; } = new();
+    public List<Activity> Activities { get; } = new();
+    public List<Contact> Contacts { get; } = new();
 
 
     // Database Relationship Properties
-    public List<JobContact> JobContacts { get; set; }
     public JobList JobList { get; set; }
+    public List<JobContact> JobContacts { get; } = new();
     public Guid JobListId { get; set; }
     public Board Board { get; private set; }
     public Guid BoardId { get; private set; }

@@ -4,11 +4,6 @@ namespace Jobby.Domain.Entities;
 
 public class Contact : Entity
 {
-    private readonly List<Job> _jobs = new();
-    private readonly List<Company> _companies = new();
-    private readonly List<Email> _emails = new();
-    private readonly List<Phone> _phones = new();
-
     private Contact()
     {
 
@@ -35,9 +30,9 @@ public class Contact : Entity
         Location = location;
         Socials = socials;
         Board = board;
-        _companies = companies;
-        _emails = emails;
-        _phones = phones;
+        Companies = companies;
+        Emails = emails;
+        Phones = phones;
     }
 
     public string FirstName { get; private set; }
@@ -45,14 +40,14 @@ public class Contact : Entity
     public string JobTitle { get; private set; }
     public string Location { get; private set; }
     public Social Socials { get; private set; }
-    public IReadOnlyCollection<Job> Jobs => _jobs;
-    public IReadOnlyCollection<Company> Companies => _companies;
-    public IReadOnlyCollection<Email> Emails => _emails;
-    public IReadOnlyCollection<Phone> Phones => _phones;
+    public List<Job> Jobs { get; } = new();
+    public List<Company> Companies { get; } = new();
+    public List<Email> Emails { get; } = new();
+    public List<Phone> Phones { get; } = new();
 
 
     // Database Relationship Properties
-    public List<JobContact> JobContacts { get; set; }
+    public List<JobContact> JobContacts { get; } = new();
     public Board Board { get; private set; }
     public Guid? BoardId { get; private set; }
 
@@ -107,49 +102,51 @@ public class Contact : Entity
         Location = location;
         Socials = socials;
 
-        _companies.Clear();
-        _emails.Clear();
-        _phones.Clear();
-        _jobs.Clear();
+        Companies.Clear();
+        Emails.Clear();
+        Phones.Clear();
+        Jobs.Clear();
     }
 
     public void UpdateCompanies(List<Company> companies)
     {
-        _companies.Clear();
+        Companies.Clear();
 
         foreach (var company in companies)
         {
-            _companies.Add(company);
+            Companies.Add(company);
         }
     }
 
     public void UpdateEmails(List<Email> emails)
     {
-        _emails.Clear();
+        Emails.Clear();
 
         foreach (var email in emails)
         {
-            _emails.Add(email);
+            Emails.Add(email);
         }
     }
 
     public void UpdatePhones(List<Phone> phones)
     {
-        _phones.Clear();
+        Phones.Clear();
 
         foreach (var phone in phones)
         {
-            _phones.Add(phone);
+            Phones.Add(phone);
         }
     }
 
     public void SetJobs(List<Job> jobs)
     {
-        _jobs.Clear();
+        Jobs.Clear();
+        JobContacts.Clear();
 
         foreach (var job in jobs)
         {
-            _jobs.Add(job);
+            JobContacts.Add(new JobContact(this, job));
+            Jobs.Add(job);
         }
     }
 }

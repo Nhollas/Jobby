@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Jobby.Persistence.Data.Migrations
 {
     [DbContext(typeof(JobbyDbContext))]
-    [Migration("20230604090709_Initial")]
+    [Migration("20230715175209_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -313,27 +313,6 @@ namespace Jobby.Persistence.Data.Migrations
                     b.HasIndex("ContactId");
 
                     b.ToTable("Phone");
-                });
-
-            modelBuilder.Entity("Jobby.Domain.Entities.User", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("OAuthId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Provider")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("Jobby.Domain.Entities.Activity", b =>

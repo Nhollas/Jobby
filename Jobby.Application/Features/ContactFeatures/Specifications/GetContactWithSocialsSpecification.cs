@@ -9,7 +9,7 @@ public sealed class GetContactWithSocialsSpecification : Specification<Contact>
 	{
 		Query
 			.Include(contact => contact.Socials)
-			.AsNoTracking()
+			.Include(contact => contact.Jobs)
 			.Where(contact => contact.Id == contactId);
 	}
 }
