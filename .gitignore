@@ -13,7 +13,5 @@ bin/
 **/appsettings.json
 **/appsettings.Development.json
 **/.next
-
-
 .DS_Store
 
