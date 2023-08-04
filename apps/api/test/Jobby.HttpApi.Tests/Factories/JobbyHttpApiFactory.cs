@@ -13,32 +13,19 @@ namespace Jobby.HttpApi.Tests.Factories;
 
 public class JobbyHttpApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
-    public string JobbyDbConnectionString { get; set; } = string.Empty;
-    private readonly MsSqlContainer _mssqlContainer;
-    private readonly IConfiguration _configuration;
+    public string DbConnectionString { get; set; } = string.Empty;
+    
+    private readonly MsSqlContainer _mssqlContainer = new MsSqlBuilder()
+        .WithImage("mcr.microsoft.com/mssql/server:latest")
+        .WithCleanUp(true)
+        .WithName("JobbyTestContainer")
+        .Build();
+    
+    private readonly IConfiguration _configuration = new ConfigurationBuilder()
+        .AddJsonFile("appsettings.json", false, false)
+        .Build();
     public HttpClient HttpClient { get; private set; } = null!;
 
-    public JobbyHttpApiFactory()
-    {
-        _mssqlContainer = new MsSqlBuilder()
-            .WithImage("mcr.microsoft.com/mssql/server:latest")
-            .WithCleanUp(true)
-            .WithName("JobbyTestContainer")
-            .Build();
-        
-        _configuration = new ConfigurationBuilder()
-            .AddJsonFile("appsettings.json", false, false)
-            .Build();
-    }
-
-    public async Task InitializeDatabaseAsync()
-    {
-        using var context = new JobbyDbContext(new DbContextOptionsBuilder<JobbyDbContext>()
-            .UseSqlServer(JobbyDbConnectionString)
-            .Options);
-        
-        await context.Database.EnsureCreatedAsync();
-    }
     public async Task InitializeAsync()
     {
         await _mssqlContainer.StartAsync();
@@ -46,7 +33,7 @@ public class JobbyHttpApiFactory : WebApplicationFactory<Program>, IAsyncLifetim
         HttpClient = CreateClient();
         HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _configuration["Jwt:TestToken"]);
         
-        JobbyDbConnectionString = _mssqlContainer.GetConnectionString();
+        DbConnectionString = _mssqlContainer.GetConnectionString();
     }
 
     public new async Task DisposeAsync()
@@ -58,6 +45,8 @@ public class JobbyHttpApiFactory : WebApplicationFactory<Program>, IAsyncLifetim
     {
         builder.ConfigureTestServices(services =>
         {
+            // TODO: Fake our authentication too. So we don't need to use a real clerk JWT token.
+            
             services.RemoveDbContext<JobbyDbContext>();
             
             services.AddDbContext<JobbyDbContext>(options =>
