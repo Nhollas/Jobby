@@ -21,9 +21,9 @@ public class JobbyHttpApiFactory : WebApplicationFactory<Program>, IAsyncLifetim
     public JobbyHttpApiFactory()
     {
         _mssqlContainer = new MsSqlBuilder()
-            .WithImage("mcr.microsoft.com/azure-sql-edge:latest")
-            .WithCleanUp(false)
-            .WithName("JobbyContainer")
+            .WithImage("mcr.microsoft.com/mssql/server:latest")
+            .WithCleanUp(true)
+            .WithName("JobbyTestContainer")
             .Build();
         
         _configuration = new ConfigurationBuilder()
