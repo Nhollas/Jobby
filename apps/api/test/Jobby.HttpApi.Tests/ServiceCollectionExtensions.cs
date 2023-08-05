@@ -1,5 +1,7 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Jobby.HttpApi.Tests;
 
@@ -23,6 +25,12 @@ public static class ServiceCollectionExtensions
             services.Remove(dbContextService);
         }
     }
+    
+    public static void RemoveJwtAuthentication(this IServiceCollection services)
+    {
+        services.RemoveAll<JwtBearerOptions>();
+    }
+
     
     public static async Task EnsureDbCreatedAsync<T>(this IServiceCollection services) where T : DbContext
     {

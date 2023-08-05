@@ -1,7 +1,5 @@
 using System.Net;
 using System.Net.Http.Json;
-using System.Text.Json;
-using Jobby.Application.Dtos;
 using Jobby.Application.Features.ActivityFeatures.Commands.Create;
 using Jobby.Domain.Static;
 using Jobby.HttpApi.Tests.Factories;
@@ -10,16 +8,16 @@ using Xunit;
 namespace Jobby.HttpApi.Tests.Features.Activity.Create;
 
 [Collection("SqlCollection")]
-public class Given_New_Activity_When_Create_Is_Called : IAsyncLifetime
+public class Given_Request_With_BoardId_Not_Found : IAsyncLifetime
 {
     private readonly JobbyHttpApiFactory _factory;
 
-    public Given_New_Activity_When_Create_Is_Called(JobbyHttpApiFactory factory)
+    public Given_Request_With_BoardId_Not_Found(JobbyHttpApiFactory factory)
     {
         _factory = factory;
     }
 
-    public HttpClient HttpClient => _factory.HttpClient;
+    private HttpClient HttpClient => _factory.HttpClient;
     
 
     public Task InitializeAsync() => Task.CompletedTask;
@@ -27,12 +25,13 @@ public class Given_New_Activity_When_Create_Is_Called : IAsyncLifetime
     public Task DisposeAsync() => Task.CompletedTask;
     
     [Fact]
-    public async Task Then_Created_Activity_Is_Returned_And_Is_Stored()
+    public async Task Then_Returns_404_NotFound()
     {
-        var activityToCreate  = new CreateActivityCommand()
+        var randomBoardId = Guid.NewGuid();
+        
+        var body = new CreateActivityCommand()
         {
-            BoardId = Guid.NewGuid(),
-            JobId = Guid.NewGuid(),
+            BoardId = randomBoardId,
             Title = "Test Activity",
             Type = ActivityConstants.Types.Apply,
             StartDate = DateTime.UtcNow,
@@ -41,13 +40,8 @@ public class Given_New_Activity_When_Create_Is_Called : IAsyncLifetime
             Completed = false
         };
 
-        var response = await HttpClient.PostAsJsonAsync("/api/activity/create", activityToCreate);
-        
-        var content = await response.Content.ReadAsStringAsync();
+        var response = await HttpClient.PostAsJsonAsync("/api/activity/create", body);
 
-        var createdActivity = JsonSerializer.Deserialize<ActivityDto>(content);
-        
-        // Check that we get 201 Created
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
 }

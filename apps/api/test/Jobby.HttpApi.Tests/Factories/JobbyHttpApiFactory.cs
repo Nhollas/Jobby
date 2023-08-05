@@ -1,11 +1,16 @@
 using System.Net.Http.Headers;
+using System.Text;
+using Jobby.Domain.Entities;
+using Jobby.HttpApi.Tests.Helpers;
 using Jobby.Persistence.Data;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using Testcontainers.MsSql;
 using Xunit;
 
@@ -31,9 +36,16 @@ public class JobbyHttpApiFactory : WebApplicationFactory<Program>, IAsyncLifetim
         await _mssqlContainer.StartAsync();
         
         HttpClient = CreateClient();
-        HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _configuration["Jwt:TestToken"]);
+        HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", JwtHelper.Generate("TestUserId"));
         
         DbConnectionString = _mssqlContainer.GetConnectionString();
+        
+        await using var context = new JobbyDbContext(new DbContextOptionsBuilder<JobbyDbContext>()
+            .UseSqlServer(DbConnectionString).Options);
+        
+        await context.Database.EnsureCreatedAsync();
+
+        await SeedDataHelper.AddSeedDataAsync(this);
     }
 
     public new async Task DisposeAsync()
@@ -45,7 +57,24 @@ public class JobbyHttpApiFactory : WebApplicationFactory<Program>, IAsyncLifetim
     {
         builder.ConfigureTestServices(services =>
         {
-            // TODO: Fake our authentication too. So we don't need to use a real clerk JWT token.
+            services.RemoveJwtAuthentication();
+            
+            services.Configure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme, options =>
+                    {
+                        SecurityKey issuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("9f7b309b-1dcc-4a96-a292-dbe6e830d8c3"));
+
+                        options.TokenValidationParameters = new TokenValidationParameters
+                        {
+                            ValidIssuer = "TestIssuer",
+                            ValidAudience = "TestAudience",
+                            ValidateIssuer = true,
+                            ValidateLifetime = true,
+                            ValidateIssuerSigningKey = true,
+                            ClockSkew = TimeSpan.Zero,
+                            IssuerSigningKey = issuerSigningKey
+                        };
+                    }
+                );
             
             services.RemoveDbContext<JobbyDbContext>();
             
@@ -53,8 +82,8 @@ public class JobbyHttpApiFactory : WebApplicationFactory<Program>, IAsyncLifetim
             {
                 options.UseSqlServer(_mssqlContainer.GetConnectionString());
             });
-
-            services.EnsureDbCreatedAsync<JobbyDbContext>().ConfigureAwait(true);
         });
     }
+    
+    public List<Board> SeededBoards { get; set; } = new List<Board>();
 }

@@ -21,6 +21,6 @@ public sealed class CreateActivityCommandValidator : AbstractValidator<CreateAct
 
         // DateTime is a value type, so we don't need any other checks than null.
         RuleFor(command => command.StartDate)
-            .NotNull().WithMessage("This property is required.");
+            .NotEmpty().WithMessage("This property is required.");
     }
 }
