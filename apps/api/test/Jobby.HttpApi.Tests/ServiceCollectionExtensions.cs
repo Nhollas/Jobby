@@ -25,17 +25,4 @@ public static class ServiceCollectionExtensions
             services.Remove(dbContextService);
         }
     }
-    
-    public static void RemoveJwtAuthentication(this IServiceCollection services)
-    {
-        services.RemoveAll<JwtBearerOptions>();
-    }
-
-    
-    public static async Task EnsureDbCreatedAsync<T>(this IServiceCollection services) where T : DbContext
-    {
-        using var scope = services.BuildServiceProvider().CreateScope();
-        var context = scope.ServiceProvider.GetRequiredService<T>();
-        await context.Database.EnsureCreatedAsync();
-    }
 }

@@ -44,8 +44,6 @@ public class JobbyHttpApiFactory : WebApplicationFactory<Program>, IAsyncLifetim
             .UseSqlServer(DbConnectionString).Options);
         
         await context.Database.EnsureCreatedAsync();
-
-        await SeedDataHelper.AddSeedDataAsync(this);
     }
 
     public new async Task DisposeAsync()
@@ -57,8 +55,6 @@ public class JobbyHttpApiFactory : WebApplicationFactory<Program>, IAsyncLifetim
     {
         builder.ConfigureTestServices(services =>
         {
-            services.RemoveJwtAuthentication();
-            
             services.Configure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme, options =>
                     {
                         SecurityKey issuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("9f7b309b-1dcc-4a96-a292-dbe6e830d8c3"));
@@ -84,6 +80,4 @@ public class JobbyHttpApiFactory : WebApplicationFactory<Program>, IAsyncLifetim
             });
         });
     }
-    
-    public List<Board> SeededBoards { get; set; } = new List<Board>();
 }

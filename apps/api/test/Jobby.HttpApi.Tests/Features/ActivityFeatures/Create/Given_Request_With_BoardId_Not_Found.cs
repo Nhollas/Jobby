@@ -5,14 +5,14 @@ using Jobby.Domain.Static;
 using Jobby.HttpApi.Tests.Factories;
 using Xunit;
 
-namespace Jobby.HttpApi.Tests.Features.Activity.Create;
+namespace Jobby.HttpApi.Tests.Features.ActivityFeatures.Create;
 
 [Collection("SqlCollection")]
-public class Given_Request_With_BoardId_Not_Owned : IAsyncLifetime
+public class Given_Request_With_BoardId_Not_Found : IAsyncLifetime
 {
     private readonly JobbyHttpApiFactory _factory;
 
-    public Given_Request_With_BoardId_Not_Owned(JobbyHttpApiFactory factory)
+    public Given_Request_With_BoardId_Not_Found(JobbyHttpApiFactory factory)
     {
         _factory = factory;
     }
@@ -25,13 +25,13 @@ public class Given_Request_With_BoardId_Not_Owned : IAsyncLifetime
     public Task DisposeAsync() => Task.CompletedTask;
     
     [Fact]
-    public async Task Then_Returns_403_Forbidden()
+    public async Task Then_Returns_404_NotFound()
     {
-        var user2BoardId = Guid.Parse("01685b73-0b18-4ef7-a358-37c13f254a28");
+        var randomBoardId = Guid.NewGuid();
         
         var body = new CreateActivityCommand()
         {
-            BoardId = user2BoardId,
+            BoardId = randomBoardId,
             Title = "Test Activity",
             Type = ActivityConstants.Types.Apply,
             StartDate = DateTime.UtcNow,
@@ -42,6 +42,6 @@ public class Given_Request_With_BoardId_Not_Owned : IAsyncLifetime
 
         var response = await HttpClient.PostAsJsonAsync("/api/activity/create", body);
 
-        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
 }

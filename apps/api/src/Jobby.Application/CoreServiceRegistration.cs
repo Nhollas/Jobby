@@ -20,7 +20,7 @@ public static class CoreServiceRegistration
         services.AddScoped<IUserService, UserService>();
         services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
         services.AddSingleton<IGuidProvider, GuidProvider>();
-        services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+        // services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
         services.AddScoped(typeof(IPipelineBehavior<,>), typeof(AuthorisedBehavior<,>));
 
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(applicationAssembly));

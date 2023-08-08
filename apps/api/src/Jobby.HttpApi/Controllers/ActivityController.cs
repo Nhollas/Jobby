@@ -1,8 +1,8 @@
-﻿using Jobby.Application.Dtos;
-using Jobby.Application.Features.ActivityFeatures.Commands.Create;
+﻿using Jobby.Application.Features.ActivityFeatures.Commands.Create;
 using Jobby.Application.Features.ActivityFeatures.Commands.Delete;
 using Jobby.Application.Features.ActivityFeatures.Commands.Update.LinkJob;
 using Jobby.Application.Features.ActivityFeatures.Commands.Update.UpdateDetails;
+using Jobby.Application.Responses.Activity;
 using Jobby.HttpApi.Controllers.Base;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,11 +15,30 @@ namespace Jobby.HttpApi.Controllers;
 public class ActivityController : ApiController
 {
     [HttpPost("Create", Name = "CreateActivity")]
-    public async Task<ActionResult<ActivityDto>> CreateActivity(CreateActivityCommand command)
+    public async Task<ActionResult<CreateActivityResponse>> CreateActivity(CreateActivityCommand command)
     {
-        var createdActivity = await Sender.Send(command);
+        try
+        {
+            var createActivityResult = await Sender.Send(command);
 
-        return CreatedAtAction(nameof(CreateActivity), createdActivity);
+            if (!createActivityResult.IsSuccess)
+            {
+                return createActivityResult.Outcome switch
+                {
+                    CreateActivityOutcome.UnauthorizedBoardAccess => Unauthorized(createActivityResult.ErrorMessage),
+                    CreateActivityOutcome.UnknownBoardId => NotFound(createActivityResult.ErrorMessage),
+                    CreateActivityOutcome.JobDoesNotExistInBoard => NotFound(createActivityResult.ErrorMessage),
+                    CreateActivityOutcome.ValidationFailure => UnprocessableEntity(createActivityResult.ValidationResult),
+                    _ => BadRequest(createActivityResult.Response)
+                };
+            }
+
+            return CreatedAtAction(nameof(CreateActivity), createActivityResult.Response);
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
     }
 
     [HttpDelete("Delete/{activityId:guid}", Name = "DeleteActivity")]

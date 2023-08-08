@@ -3,7 +3,7 @@ using System.Text;
 using Jobby.HttpApi.Tests.Factories;
 using Xunit;
 
-namespace Jobby.HttpApi.Tests.Features.Activity.Create;
+namespace Jobby.HttpApi.Tests.Features.ActivityFeatures.Create;
 
 [Collection("SqlCollection")]
 public class Given_Request_With_Validation_Errors : IAsyncLifetime

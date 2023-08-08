@@ -30,6 +30,7 @@ public class Activity : Entity
         Note = note;
         Completed = completed;
         Board = board;
+        BoardId = board.Id;
     }
 
     public string Title { get; private set; }

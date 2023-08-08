@@ -8,6 +8,7 @@ using Jobby.Application.Dtos.Base;
 using Jobby.Application.Features.ActivityFeatures.Commands.Create;
 using Jobby.Application.Features.ActivityFeatures.Commands.Update.UpdateDetails;
 using Jobby.Application.Features.JobFeatures.Commands.Update.UpdateDetails;
+using Jobby.Application.Responses.Activity;
 using Jobby.Domain.Entities;
 using Jobby.Domain.Primitives;
 
@@ -39,6 +40,7 @@ public class MappingProfile : Profile
         CreateMap<Activity, ActivityDto>();
         CreateMap<CreateActivityCommand, Activity>();
         CreateMap<UpdateActivityCommand, Activity>();
+        CreateMap<Activity, CreateActivityResponse>();
 
         // Contact Maps
         CreateMap<Contact, GetContactResponse>();
