@@ -67,31 +67,31 @@ export function ActivitiesNavigation({
         <div className="flex flex-col gap-y-1 p-2">
           <ActivityItem
             title="All"
-            href={`/board/${boardId}${jobPath}/activities/all`}
+            href={`/track/board/${boardId}${jobPath}/activities/all`}
             active={filter === "all"}
             layoutId={jobId ? jobId : boardId}
           />
           <ActivityItem
             title="Due Today"
-            href={`/board/${boardId}${jobPath}/activities/due-today`}
+            href={`/track/board/${boardId}${jobPath}/activities/due-today`}
             active={filter === "due-today"}
             layoutId={jobId ? jobId : boardId}
           />
           <ActivityItem
             title="Past Due"
-            href={`/board/${boardId}${jobPath}/activities/past-due`}
+            href={`/track/board/${boardId}${jobPath}/activities/past-due`}
             active={filter === "past-due"}
             layoutId={jobId ? jobId : boardId}
           />
           <ActivityItem
             title="Completed"
-            href={`/board/${boardId}${jobPath}/activities/completed`}
+            href={`/track/board/${boardId}${jobPath}/activities/completed`}
             active={filter === "completed"}
             layoutId={jobId ? jobId : boardId}
           />
           <ActivityItem
             title="Pending"
-            href={`/board/${boardId}${jobPath}/activities/pending`}
+            href={`/track/board/${boardId}${jobPath}/activities/pending`}
             active={filter === "pending"}
             layoutId={jobId ? jobId : boardId}
           />
@@ -100,25 +100,25 @@ export function ActivitiesNavigation({
         <div className="flex flex-col gap-y-1 p-2">
           <ActivityItem
             title="Applications"
-            href={`/board/${boardId}${jobPath}/activities/applications`}
+            href={`/track/board/${boardId}${jobPath}/activities/applications`}
             active={filter === "applications"}
             layoutId={jobId ? jobId : boardId}
           />
           <ActivityItem
             title="Interviews"
-            href={`/board/${boardId}${jobPath}/activities/interviews`}
+            href={`/track/board/${boardId}${jobPath}/activities/interviews`}
             active={filter === "interviews"}
             layoutId={jobId ? jobId : boardId}
           />
           <ActivityItem
             title="Offers"
-            href={`/board/${boardId}${jobPath}/activities/offers`}
+            href={`/track/board/${boardId}${jobPath}/activities/offers`}
             active={filter === "offers"}
             layoutId={jobId ? jobId : boardId}
           />
           <ActivityItem
             title="Networking"
-            href={`/board/${boardId}${jobPath}/activities/networking`}
+            href={`/track/board/${boardId}${jobPath}/activities/networking`}
             active={filter === "networking"}
             layoutId={jobId ? jobId : boardId}
           />

@@ -66,7 +66,7 @@ export const JobNavigation = ({
               icon={icon}
               name={name}
               key={leaf}
-              href={`/board/${boardId}/job/${jobId}/${
+              href={`/track/board/${boardId}/job/${jobId}/${
                 leaf === "activities" ? `${leaf}/all` : leaf
               }`}
               layoutId={jobId}

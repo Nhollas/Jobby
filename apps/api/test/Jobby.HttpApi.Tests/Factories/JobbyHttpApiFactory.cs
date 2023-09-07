@@ -1,6 +1,5 @@
 using System.Net.Http.Headers;
 using System.Text;
-using Jobby.Domain.Entities;
 using Jobby.HttpApi.Tests.Helpers;
 using Jobby.Persistence.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -29,14 +28,10 @@ public class JobbyHttpApiFactory : WebApplicationFactory<Program>, IAsyncLifetim
     private readonly IConfiguration _configuration = new ConfigurationBuilder()
         .AddJsonFile("appsettings.json", false, false)
         .Build();
-    public HttpClient HttpClient { get; private set; } = null!;
 
     public async Task InitializeAsync()
     {
         await _mssqlContainer.StartAsync();
-        
-        HttpClient = CreateClient();
-        HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", JwtHelper.Generate("TestUserId"));
         
         DbConnectionString = _mssqlContainer.GetConnectionString();
         
@@ -50,6 +45,14 @@ public class JobbyHttpApiFactory : WebApplicationFactory<Program>, IAsyncLifetim
     {
         await _mssqlContainer.DisposeAsync();
     }
+
+    public HttpClient SetupClient()
+    {
+        var client = CreateClient();
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", JwtHelper.Generate("TestUserId"));
+        
+        return client;
+    }
     
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
@@ -57,13 +60,14 @@ public class JobbyHttpApiFactory : WebApplicationFactory<Program>, IAsyncLifetim
         {
             services.Configure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme, options =>
                     {
-                        SecurityKey issuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("9f7b309b-1dcc-4a96-a292-dbe6e830d8c3"));
+                        SecurityKey issuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtHelper.DefaultSecurityKey));
 
                         options.TokenValidationParameters = new TokenValidationParameters
                         {
                             ValidIssuer = "TestIssuer",
                             ValidAudience = "TestAudience",
                             ValidateIssuer = true,
+                            ValidateAudience = true,
                             ValidateLifetime = true,
                             ValidateIssuerSigningKey = true,
                             ClockSkew = TimeSpan.Zero,

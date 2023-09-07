@@ -21,7 +21,7 @@ public class Given_Request_With_BoardId_Not_Owned : IAsyncLifetime
         _factory = factory;
     }
 
-    private HttpClient HttpClient => _factory.HttpClient;
+    private HttpClient HttpClient => _factory.SetupClient();
     
 
     public Task InitializeAsync() => Task.CompletedTask;

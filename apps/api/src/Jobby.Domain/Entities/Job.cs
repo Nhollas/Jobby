@@ -31,11 +31,11 @@ public class Job : Entity
 
     public string Company { get; private set; }
     public string Title { get; private set; }
-    public string PostUrl { get; private set; }
-    public double Salary { get; private set; }
+    public string PostUrl { get; private set; } = string.Empty;
+    public double Salary { get; private set; } = 0;
     public string Location { get; private set; }
-    public string Description { get; private set; }
-    public DateTime? Deadline { get; private set; }
+    public string Description { get; private set; } = string.Empty;
+    public DateTime? Deadline { get; private set; } 
     public int Index { get; private set; }
     public List<Note> Notes { get; } = new();
     public List<Activity> Activities { get; } = new();

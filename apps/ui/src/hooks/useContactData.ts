@@ -1,5 +1,8 @@
 import { createContact, CreateContactRequest } from "@/contracts/CreateContact";
-import { updateContact, UpdateContactDetailsRequest } from "@/contracts/UpdateContactDetailsRequest";
+import {
+  updateContact,
+  UpdateContactDetailsRequest,
+} from "@/contracts/UpdateContactDetailsRequest";
 import { useClientApi } from "@/lib/clients";
 import { Contact } from "@/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -9,8 +12,9 @@ export const useCreateContact = () => {
   const clientApi = useClientApi();
 
   return useMutation({
-    mutationFn: (values: CreateContactRequest) => createContact(values, clientApi),
-    onSuccess: async  ({ data: createdContact}) => {
+    mutationFn: (values: CreateContactRequest) =>
+      createContact(values, clientApi),
+    onSuccess: async ({ data: createdContact }) => {
       const queryKeys = [];
 
       // Global Contacts
@@ -18,7 +22,10 @@ export const useCreateContact = () => {
 
       // Board Contacts
       if (createdContact.board?.id) {
-        queryKeys.push(["/contacts", `/board/${createdContact.board.id}/contacts`]);
+        queryKeys.push([
+          "/contacts",
+          `/board/${createdContact.board.id}/contacts`,
+        ]);
       }
 
       // Job Contacts
@@ -28,13 +35,17 @@ export const useCreateContact = () => {
         });
       }
 
-      console.log("queryKeys",queryKeys)
+      console.log("queryKeys", queryKeys);
 
       // Only invalidate the queries that are affected by the new contact.
-      await Promise.all(queryKeys.map((key) => queryClient.invalidateQueries({
-        queryKey: key,
-        refetchType: "all"
-      })));
+      await Promise.all(
+        queryKeys.map((key) =>
+          queryClient.invalidateQueries({
+            queryKey: key,
+            refetchType: "all",
+          })
+        )
+      );
     },
   });
 };
@@ -44,24 +55,29 @@ export const useUpdateContact = () => {
   const clientApi = useClientApi();
 
   return useMutation({
-    mutationFn: (values: UpdateContactDetailsRequest) => updateContact(values, clientApi),
-    onSuccess: async  ({ data: updatedContact }) => {
-      console.log("updatedContact",updatedContact)
+    mutationFn: (values: UpdateContactDetailsRequest) =>
+      updateContact(values, clientApi),
+    onSuccess: async ({ data: updatedContact }) => {
+      console.log("updatedContact", updatedContact);
 
-      const previousQueries = queryClient.getQueriesData({ queryKey: ["/contacts"]});
-      console.log("prevContactQueries",previousQueries)
+      const previousQueries = queryClient.getQueriesData({
+        queryKey: ["/contacts"],
+      });
+      console.log("prevContactQueries", previousQueries);
 
       previousQueries.map((query) => {
-        queryClient.setQueryData(query[0], (prevContacts: Contact[] | undefined) =>
-          prevContacts?.map((contact) => {
-            if (contact.id === updatedContact.id) {
-              return updatedContact;
-            }
-            
-            return contact;
-          })
+        queryClient.setQueryData(
+          query[0],
+          (prevContacts: Contact[] | undefined) =>
+            prevContacts?.map((contact) => {
+              if (contact.id === updatedContact.id) {
+                return updatedContact;
+              }
+
+              return contact;
+            })
         );
-      })
+      });
     },
   });
 };
@@ -78,17 +94,19 @@ export const useDeleteContact = () => {
 
   return useMutation(deleteContact, {
     onSuccess: async (_, contactId) => {
-      console.log("sus")
-
       await queryClient.invalidateQueries({
         queryKey: ["/contacts"],
-        refetchType: "all"
+        refetchType: "all",
       });
     },
   });
 };
 
-export const useContactsQuery = (initialContacts: Contact[], url: string, queryKeyVariable?: string) => {
+export const useContactsQuery = (
+  initialContacts: Contact[],
+  url: string,
+  queryKeyVariable?: string
+) => {
   const clientApi = useClientApi();
 
   const getContacts = async () => {
@@ -97,9 +115,11 @@ export const useContactsQuery = (initialContacts: Contact[], url: string, queryK
     return response.data;
   };
 
-  const queryKey = queryKeyVariable ? ["/contacts", queryKeyVariable] : ["/contacts"];
+  const queryKey = queryKeyVariable
+    ? ["/contacts", queryKeyVariable]
+    : ["/contacts"];
 
-   return useQuery<Contact[]>({
+  return useQuery<Contact[]>({
     queryKey,
     queryFn: getContacts,
     initialData: initialContacts,

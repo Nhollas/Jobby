@@ -15,7 +15,7 @@ public class Given_Request_With_Validation_Errors : IAsyncLifetime
         _factory = factory;
     }
 
-    private HttpClient HttpClient => _factory.HttpClient;
+    private HttpClient HttpClient => _factory.SetupClient();
     
 
     public Task InitializeAsync() => Task.CompletedTask;
@@ -49,7 +49,7 @@ public class Given_Request_With_Validation_Errors : IAsyncLifetime
     [Fact]
     public async Task When_BoardId_Property_Is_Missing_Then_Returns_422_Unprocessable_Entity_And_BoardId_Property_Validation_Message()
     {
-        const string json = """
+        const string withoutBoardId = """
                             {
                               "title": "k",
                               "type": 12,
@@ -59,7 +59,7 @@ public class Given_Request_With_Validation_Errors : IAsyncLifetime
                             }
                             """;
 
-        var body = new StringContent(json, Encoding.UTF8, "application/json");
+        var body = new StringContent(withoutBoardId, Encoding.UTF8, "application/json");
         
         var response = await HttpClient.PostAsync("/api/activity/create", body);
         

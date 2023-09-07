@@ -11,8 +11,6 @@ const createAuthorizedInstance = (): AxiosInstance => {
   instance.interceptors.request.use(async (config) => {
     const token = await auth().getToken();
 
-    console.log("token", token);
-
     config.headers.Authorization = `Bearer ${token}`;
 
     return config;

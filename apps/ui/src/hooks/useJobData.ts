@@ -12,16 +12,13 @@ export const useUpdateJob = () => {
     return await clientApi.put<any, AxiosResponse<Job>>("/job/update", values);
   }
   return useMutation(updateJob, {
-    onSuccess:  async({ data: updatedJob }) => {
-      queryClient.setQueryData(
-        ["job", updatedJob.id],
-        updatedJob
-      );
+    onSuccess: async ({ data: updatedJob }) => {
+      queryClient.setQueryData(["job", updatedJob.id], updatedJob);
 
       // Invalidate the board query this job belongs to.
       await queryClient.invalidateQueries({
         queryKey: ["board", updatedJob.boardId],
-        type: 'all'
+        type: "all",
       });
     },
   });
@@ -30,41 +27,44 @@ export const useUpdateJob = () => {
 export const useCreateJob = () => {
   const queryClient = useQueryClient();
   const clientApi = useClientApi();
-  
+
   return useMutation({
     mutationFn: (values: CreateJobRequest) => createJob(values, clientApi),
     onSuccess: async ({ data: createdJob }) => {
-
-      queryClient.setQueryData(["board", createdJob.boardId], (oldBoard: Board | undefined) => {
-        if (!oldBoard) {
-          return oldBoard;
-        }
-
-        const updatedJobLists = oldBoard.jobLists.map((jobList) => {
-          if (jobList.id === createdJob.jobListId) {
-            return {
-              ...jobList,
-              jobs: [...jobList.jobs, createdJob],
-            };
+      queryClient.setQueryData(
+        ["board", createdJob.boardId],
+        (oldBoard: Board | undefined) => {
+          if (!oldBoard) {
+            return oldBoard;
           }
-          return jobList;
-        });
 
-        return {
-          ...oldBoard,
-          jobLists: updatedJobLists,
-        };
-      });
+          const updatedJobLists = oldBoard.jobLists.map((jobList) => {
+            if (jobList.id === createdJob.jobListId) {
+              return {
+                ...jobList,
+                jobs: [...jobList.jobs, createdJob],
+              };
+            }
+            return jobList;
+          });
+
+          return {
+            ...oldBoard,
+            jobLists: updatedJobLists,
+          };
+        }
+      );
     },
   });
 };
-
 
 export const useJobQuery = (jobId: string, initialJob?: Job) => {
   const clientApi = useClientApi();
 
   const getJob = async () => {
     const response = await clientApi.get<Job>(`/job/${jobId}`);
+
+    console.log(response.data);
 
     return response.data;
   };

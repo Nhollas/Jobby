@@ -7,7 +7,14 @@ namespace Jobby.HttpApi.Tests.Helpers;
 
 public static class JwtHelper
 {
-    public static string Generate(string userId)
+    public static string DefaultSecurityKey = "YVlGeptVBTTm4iIGZp9nm3xgWcczjmio";
+    
+    public static string Generate(
+        string userId, 
+        DateTime? expires = null, 
+        string? issuer = null, 
+        string? audience = null,
+        string? secret = null)
     {
         var claims = new List<Claim>
         {
@@ -15,12 +22,12 @@ public static class JwtHelper
         };
         
         var token = new JwtSecurityToken(
-            issuer: "TestIssuer",
-            audience: "TestAudience",
+            issuer: issuer ?? "TestIssuer",
+            audience: audience ?? "TestAudience",
             claims: claims,
-            expires: DateTime.Now.AddDays(1),
+            expires: expires ?? DateTime.Now.AddDays(1),
             signingCredentials: new SigningCredentials(
-                new SymmetricSecurityKey(Encoding.UTF8.GetBytes("9f7b309b-1dcc-4a96-a292-dbe6e830d8c3")),
+                new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret ?? DefaultSecurityKey)),
                 SecurityAlgorithms.HmacSha256Signature)
             );
         

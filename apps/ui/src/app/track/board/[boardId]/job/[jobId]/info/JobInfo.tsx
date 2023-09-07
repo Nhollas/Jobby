@@ -41,6 +41,8 @@ const formSchema = z.object({
 
 function JobInfo({ jobId }: Props) {
   const { data: jobData } = useJobQuery(jobId);
+  console.log("jobData", jobData);
+
   const { mutateAsync } = useUpdateJob();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -51,8 +53,11 @@ function JobInfo({ jobId }: Props) {
     },
   });
 
+  console.log("default values", form.formState.defaultValues);
+  console.log("formstate", form.watch());
+
   const { formState } = form;
-  const { isSubmitting } = formState;
+  const { isSubmitting, isDirty } = formState;
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     console.log(values);
@@ -188,7 +193,12 @@ function JobInfo({ jobId }: Props) {
               </FormItem>
             )}
           />
-          {isSubmitting ? <ButtonLoading /> : <Button>Update</Button>}
+
+          {isDirty && isSubmitting ? (
+            <ButtonLoading />
+          ) : isDirty ? (
+            <Button>Update</Button>
+          ) : null}
         </form>
       </Form>
     </div>

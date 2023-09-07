@@ -14,7 +14,7 @@ public class Given_Request_With_ActivityId_Not_Found : IAsyncLifetime
         _factory = factory;
     }
 
-    private HttpClient HttpClient => _factory.HttpClient;
+    private HttpClient HttpClient => _factory.SetupClient();
     
 
     public Task InitializeAsync() => Task.CompletedTask;

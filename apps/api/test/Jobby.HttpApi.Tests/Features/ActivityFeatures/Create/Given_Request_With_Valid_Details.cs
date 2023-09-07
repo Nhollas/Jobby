@@ -21,7 +21,7 @@ public class Given_Request_With_Valid_Details : IAsyncLifetime
         _factory = factory;
     }
 
-    private HttpClient HttpClient => _factory.HttpClient;
+    private HttpClient HttpClient => _factory.SetupClient();
     
     public Task InitializeAsync() => Task.CompletedTask;
 

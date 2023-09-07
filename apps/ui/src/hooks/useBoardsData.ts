@@ -23,7 +23,7 @@ export const useCreateBoard = () => {
       toast({
         title: "Board created successfully.",
         description: "We've created your board for you.",
-      })
+      });
 
       queryClient.setQueryData(["boards"], (prevData: Board[] | undefined) => {
         return prevData ? [...prevData, createdBoard] : [createdBoard];
@@ -78,9 +78,8 @@ export const useDeleteBoard = () => {
       toast({
         variant: "destructive",
         title: "Board delete event.",
-      })
-    }
-
+      });
+    },
   });
 };
 
@@ -96,7 +95,10 @@ export const useBoardsQuery = (initialBoards?: GetBoardsResponse) => {
   });
 };
 
-export const useBoardQuery = (boardId: string, initialBoard?: GetBoardResponse) => {
+export const useBoardQuery = (
+  boardId: string,
+  initialBoard?: GetBoardResponse
+) => {
   const clientApi = useClientApi();
 
   return useQuery<GetBoardResponse | undefined>({

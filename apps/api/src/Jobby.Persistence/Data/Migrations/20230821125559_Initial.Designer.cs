@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Jobby.Persistence.Data.Migrations
 {
     [DbContext(typeof(JobbyDbContext))]
-    [Migration("20230715175209_Initial")]
+    [Migration("20230821125559_Initial")]
     partial class Initial
     {
         /// <inheritdoc />

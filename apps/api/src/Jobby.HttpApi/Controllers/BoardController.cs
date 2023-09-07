@@ -12,6 +12,7 @@ using Jobby.Application.Features.BoardFeatures.Queries.ListActivities;
 using Jobby.Application.Features.BoardFeatures.Queries.ListContacts;
 using Jobby.HttpApi.Controllers.Base;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,7 +20,7 @@ namespace Jobby.HttpApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize]
+[Authorize(AuthenticationSchemes = "CombinedScheme")]
 public class BoardController : ApiController
 {
     private readonly IMediator _mediator;
