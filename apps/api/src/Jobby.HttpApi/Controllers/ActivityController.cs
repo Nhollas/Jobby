@@ -1,8 +1,6 @@
 ﻿using Jobby.Application.Features.ActivityFeatures.Commands.Create;
 using Jobby.Application.Features.ActivityFeatures.Commands.Delete;
-using Jobby.Application.Features.ActivityFeatures.Commands.Update.LinkJob;
-using Jobby.Application.Features.ActivityFeatures.Commands.Update.UpdateDetails;
-using Jobby.Application.Responses.Activity;
+using Jobby.Application.Features.ActivityFeatures.Commands.Update;
 using Jobby.HttpApi.Controllers.Base;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,7 +12,7 @@ namespace Jobby.HttpApi.Controllers;
 [Authorize]
 public class ActivityController : ApiController
 {
-    [HttpPost("Create", Name = "CreateActivity")]
+    [HttpPost(Name = "CreateActivity")]
     public async Task<ActionResult<CreateActivityResponse>> CreateActivity(CreateActivityCommand command)
     {
         try
@@ -25,11 +23,11 @@ public class ActivityController : ApiController
             {
                 return createActivityResult.Outcome switch
                 {
-                    CreateActivityOutcome.UnauthorizedBoardAccess => Unauthorized(createActivityResult.ErrorMessage),
-                    CreateActivityOutcome.UnknownBoardId => NotFound(createActivityResult.ErrorMessage),
-                    CreateActivityOutcome.JobDoesNotExistInBoard => NotFound(createActivityResult.ErrorMessage),
-                    CreateActivityOutcome.ValidationFailure => UnprocessableEntity(createActivityResult.ValidationResult),
-                    _ => BadRequest(createActivityResult.Response)
+                    CreateActivityOutcomes.UnauthorizedBoardAccess => Unauthorized(createActivityResult.ErrorMessage),
+                    CreateActivityOutcomes.UnknownBoardId => NotFound(createActivityResult.ErrorMessage),
+                    CreateActivityOutcomes.JobDoesNotExistInBoard => NotFound(createActivityResult.ErrorMessage),
+                    CreateActivityOutcomes.ValidationFailure => UnprocessableEntity(createActivityResult.ValidationResult),
+                    _ => BadRequest(createActivityResult.ErrorMessage)
                 };
             }
 
@@ -41,26 +39,37 @@ public class ActivityController : ApiController
         }
     }
 
-    [HttpDelete("Delete/{activityId:guid}", Name = "DeleteActivity")]
+    [HttpDelete("{activityId:guid}", Name = "DeleteActivity")]
     public async Task<IActionResult> DeleteActivity(Guid activityId)
     {
         await Sender.Send(new DeleteActivityCommand(activityId));
         return NoContent();
     }
 
-    [HttpPut("Update", Name = "UpdateActivity")]
-    public async Task<IActionResult> UpdateActivity([FromBody] UpdateActivityCommand command)
+    [HttpPut(Name = "UpdateActivity")]
+    public async Task<ActionResult<UpdateActivityResponse>> UpdateActivity([FromBody] UpdateActivityCommand command)
     {
-        await Sender.Send(command);
-        return NoContent();
-    }
+        try
+        {
+            var updateActivityResult = await Sender.Send(command);
 
-    [HttpPut("{activityId:guid}/LinkJob/{jobId:guid}", Name = "LinkJob")]
-    public async Task<IActionResult> LinkJob([FromRoute] Guid activityId, [FromRoute] Guid jobId)
-    {
-        var command = new LinkJobCommand(activityId, jobId);
+            if (!updateActivityResult.IsSuccess)
+            {
+                return updateActivityResult.Outcome switch
+                {
+                    UpdateActivityOutcomes.UnauthorizedJobAccess => Unauthorized(updateActivityResult.ErrorMessage),
+                    UpdateActivityOutcomes.JobDoesNotBelongToBoard => BadRequest(updateActivityResult.ErrorMessage),
+                    UpdateActivityOutcomes.JobDoesNotExist => NotFound(updateActivityResult.ErrorMessage),
+                    UpdateActivityOutcomes.ValidationFailure => UnprocessableEntity(updateActivityResult.ValidationResult),
+                    _ => BadRequest(updateActivityResult.ErrorMessage)
+                };
+            }
 
-        await Sender.Send(command);
-        return NoContent();
+            return Ok(updateActivityResult.Response);
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
     }
 }

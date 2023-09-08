@@ -38,7 +38,7 @@ public class Given_Request_With_Validation_Errors : IAsyncLifetime
 
         var body = new StringContent(json, Encoding.UTF8, "application/json");
         
-        var response = await HttpClient.PostAsync("/api/activity/create", body);
+        var response = await HttpClient.PostAsync("/api/activity", body);
         
         var content = await response.Content.ReadAsStringAsync();
 
@@ -61,7 +61,7 @@ public class Given_Request_With_Validation_Errors : IAsyncLifetime
 
         var body = new StringContent(withoutBoardId, Encoding.UTF8, "application/json");
         
-        var response = await HttpClient.PostAsync("/api/activity/create", body);
+        var response = await HttpClient.PostAsync("/api/activity", body);
         
         var content = await response.Content.ReadAsStringAsync();
 
@@ -84,7 +84,7 @@ public class Given_Request_With_Validation_Errors : IAsyncLifetime
 
         var body = new StringContent(json, Encoding.UTF8, "application/json");
         
-        var response = await HttpClient.PostAsync("/api/activity/create", body);
+        var response = await HttpClient.PostAsync("/api/activity", body);
         
         var content = await response.Content.ReadAsStringAsync();
 

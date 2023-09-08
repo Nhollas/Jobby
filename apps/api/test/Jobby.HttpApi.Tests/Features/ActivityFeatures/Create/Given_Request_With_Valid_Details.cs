@@ -46,7 +46,7 @@ public class Given_Request_With_Valid_Details : IAsyncLifetime
             Completed = false
         };
 
-        var response = await HttpClient.PostAsJsonAsync("/api/activity/create", body);
+        var response = await HttpClient.PostAsJsonAsync("/api/activity", body);
 
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
     }

@@ -1,17 +1,14 @@
 ﻿using AutoMapper;
 using Jobby.Application.Abstractions.Specification;
-using Jobby.Application.Dtos;
-using Jobby.Application.Exceptions.Base;
 using Jobby.Application.Features.BoardFeatures.Specifications;
 using Jobby.Application.Interfaces.Services;
-using Jobby.Application.Responses.Activity;
-using Jobby.Application.Services;
+using Jobby.Application.Responses.Common;
 using Jobby.Domain.Entities;
 using MediatR;
 
 namespace Jobby.Application.Features.ActivityFeatures.Commands.Create;
 
-internal sealed class CreateActivityCommandHandler : IRequestHandler<CreateActivityCommand, CreateActivityResult>
+internal sealed class CreateActivityCommandHandler : IRequestHandler<CreateActivityCommand, BaseResult<CreateActivityResponse, CreateActivityOutcomes>>
 {
     private readonly IRepository<Board> _boardRepository;
     private readonly IRepository<Activity> _activityRepository;
@@ -36,16 +33,16 @@ internal sealed class CreateActivityCommandHandler : IRequestHandler<CreateActiv
         _mapper = mapper;
     }
 
-    public async Task<CreateActivityResult> Handle(CreateActivityCommand request, CancellationToken cancellationToken)
+    public async Task<BaseResult<CreateActivityResponse, CreateActivityOutcomes>> Handle(CreateActivityCommand request, CancellationToken cancellationToken)
     {
         var validator = new CreateActivityCommandValidator();
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
         
         if (!validationResult.IsValid)
         {
-            return new CreateActivityResult(
+            return new BaseResult<CreateActivityResponse, CreateActivityOutcomes>(
                 IsSuccess: false,
-                Outcome: CreateActivityOutcome.ValidationFailure,
+                Outcome: CreateActivityOutcomes.ValidationFailure,
                 ValidationResult: validationResult
             );
         }
@@ -56,18 +53,18 @@ internal sealed class CreateActivityCommandHandler : IRequestHandler<CreateActiv
         
         if (boardToLink is null)
         {
-            return new CreateActivityResult(
+            return new BaseResult<CreateActivityResponse, CreateActivityOutcomes>(
                 IsSuccess: false,
-                Outcome: CreateActivityOutcome.UnknownBoardId,
+                Outcome: CreateActivityOutcomes.UnknownBoardId,
                 ErrorMessage: $"The {nameof(Board)} {request.BoardId} you wanted to link doesn't exist."
             );
         }
         
         if (boardToLink.OwnerId != _userId)
         {
-            return new CreateActivityResult(
+            return new BaseResult<CreateActivityResponse, CreateActivityOutcomes>(
                 IsSuccess: false,
-                Outcome: CreateActivityOutcome.UnauthorizedBoardAccess,
+                Outcome: CreateActivityOutcomes.UnauthorizedBoardAccess,
                 ErrorMessage: $"The {nameof(Board)} {request.BoardId} you wanted to link doesn't belong to you."
             );
         }
@@ -88,9 +85,9 @@ internal sealed class CreateActivityCommandHandler : IRequestHandler<CreateActiv
         {
             if (!boardToLink.BoardOwnsJob(request.JobId))
             {
-                return new CreateActivityResult(
+                return new BaseResult<CreateActivityResponse, CreateActivityOutcomes>(
                     IsSuccess: false,
-                    Outcome: CreateActivityOutcome.JobDoesNotExistInBoard,
+                    Outcome: CreateActivityOutcomes.JobDoesNotExistInBoard,
                     ErrorMessage: $"The {nameof(Job)} {request.JobId} you wanted to link doesn't exist in the Board {request.BoardId}."
                 );
             }
@@ -104,9 +101,9 @@ internal sealed class CreateActivityCommandHandler : IRequestHandler<CreateActiv
 
         await _activityRepository.AddAsync(createdActivity, cancellationToken);
 
-        return new CreateActivityResult(
+        return new BaseResult<CreateActivityResponse, CreateActivityOutcomes>(
             IsSuccess: true, 
-            Outcome: CreateActivityOutcome.ActivityCreated,
+            Outcome: CreateActivityOutcomes.ActivityCreated,
             Response: _mapper.Map<CreateActivityResponse>(createdActivity)
         );
     }

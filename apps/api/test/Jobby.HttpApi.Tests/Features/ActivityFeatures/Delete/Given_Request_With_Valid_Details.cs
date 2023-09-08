@@ -47,7 +47,7 @@ public class Given_Request_With_Valid_Details : IAsyncLifetime
         
         var preLoadedActivity = await SeedDataHelper<Activity>.AddAsync(activityToDelete, context);
         
-        var response = await HttpClient.DeleteAsync($"/api/activity/delete/{preLoadedActivity.Id}");
+        var response = await HttpClient.DeleteAsync($"/api/activity/{preLoadedActivity.Id}");
 
         Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
     }

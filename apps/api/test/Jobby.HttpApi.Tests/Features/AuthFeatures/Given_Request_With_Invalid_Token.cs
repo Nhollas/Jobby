@@ -43,7 +43,7 @@ public class Given_Request_With_Invalid_Token : IAsyncLifetime
 
         var body = new StringContent(json, Encoding.UTF8, "application/json");
         
-        var response = await httpClient.PostAsync("/api/activity/create", body);
+        var response = await httpClient.PostAsync("/api/activity", body);
         
         string expectedErrorMessage = $"Bearer error=\"invalid_token\", error_description=\"The token expired at '{DateTime.UtcNow.AddDays(-1).ToString("MM/dd/yyyy HH:mm:ss")}'\"";
         
@@ -75,7 +75,7 @@ public class Given_Request_With_Invalid_Token : IAsyncLifetime
 
         var body = new StringContent(json, Encoding.UTF8, "application/json");
         
-        var response = await httpClient.PostAsync("/api/activity/create", body);
+        var response = await httpClient.PostAsync("/api/activity", body);
         
         string expectedErrorMessage = $"Bearer error=\"invalid_token\", error_description=\"The signature key was not found\"";
         
@@ -107,7 +107,7 @@ public class Given_Request_With_Invalid_Token : IAsyncLifetime
 
         var body = new StringContent(json, Encoding.UTF8, "application/json");
         
-        var response = await httpClient.PostAsync("/api/activity/create", body);
+        var response = await httpClient.PostAsync("/api/activity", body);
         
         string expectedErrorMessage = $"Bearer error=\"invalid_token\", error_description=\"The issuer 'InvalidIssuer' is invalid\"";
         
@@ -139,7 +139,7 @@ public class Given_Request_With_Invalid_Token : IAsyncLifetime
 
         var body = new StringContent(json, Encoding.UTF8, "application/json");
         
-        var response = await httpClient.PostAsync("/api/activity/create", body);
+        var response = await httpClient.PostAsync("/api/activity", body);
         
         string expectedErrorMessage = $"Bearer error=\"invalid_token\", error_description=\"The audience 'InvalidAudience' is invalid\"";
         

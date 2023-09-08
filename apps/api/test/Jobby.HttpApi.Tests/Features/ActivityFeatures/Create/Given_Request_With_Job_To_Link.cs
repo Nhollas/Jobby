@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
+using System.Text.Json;
 using Jobby.Application.Features.ActivityFeatures.Commands.Create;
 using Jobby.Domain.Entities;
 using Jobby.Domain.Static;
@@ -12,34 +13,38 @@ using Xunit;
 namespace Jobby.HttpApi.Tests.Features.ActivityFeatures.Create;
 
 [Collection("SqlCollection")]
-public class Given_Request_With_BoardId_Not_Owned : IAsyncLifetime
+public class Given_Request_With_Job_To_Link : IAsyncLifetime
 {
     private readonly JobbyHttpApiFactory _factory;
 
-    public Given_Request_With_BoardId_Not_Owned(JobbyHttpApiFactory factory)
+    public Given_Request_With_Job_To_Link(JobbyHttpApiFactory factory)
     {
         _factory = factory;
     }
 
     private HttpClient HttpClient => _factory.SetupClient();
     
-
     public Task InitializeAsync() => Task.CompletedTask;
 
     public Task DisposeAsync() => Task.CompletedTask;
     
     [Fact]
-    public async Task Then_Returns_401_Unauthorized()
+    public async Task Then_Returns_201_Created_And_Activity_With_Job_Is_Stored()
     {
         await using var context = new JobbyDbContext(new DbContextOptionsBuilder<JobbyDbContext>()
             .UseSqlServer(_factory.DbConnectionString).Options);
+        var boardId = Guid.NewGuid();
         
-        var preLoadedBoard = await SeedDataHelper<Board>.AddAsync(Board.Create(Guid.NewGuid(), DateTime.UtcNow, "TestUser2Id", "TestBoard", new List<JobList>()), context);
+        var preLoadedJobList = JobList.Create(Guid.NewGuid(), DateTime.UtcNow, "TestUserId", "TestJobList", 0, boardId);
+        var preLoadedBoard = await SeedDataHelper<Board>.AddAsync(Board.Create(boardId, DateTime.UtcNow, "TestUserId", "TestBoard", new List<JobList>{ preLoadedJobList }), context);
+        var preLoadedJob = await SeedDataHelper<Job>.AddAsync(Job.Create(Guid.NewGuid(), DateTime.UtcNow, "TestUserId", "TestCompany", "TestTitle", 0, preLoadedJobList, preLoadedBoard), context);
         
         var body = new CreateActivityCommand()
         {
+            
             BoardId = preLoadedBoard.Id,
             Title = "Test Activity",
+            JobId = preLoadedJob.Id,
             Type = ActivityConstants.Types.Apply,
             StartDate = DateTime.UtcNow,
             EndDate = DateTime.UtcNow.AddDays(1),
@@ -48,7 +53,10 @@ public class Given_Request_With_BoardId_Not_Owned : IAsyncLifetime
         };
 
         var response = await HttpClient.PostAsJsonAsync("/api/activity", body);
-
-        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+        
+        var createdActivity = await response.Content.ReadFromJsonAsync<CreateActivityResponse>();
+        
+        Assert.Equal(preLoadedJob.Id, createdActivity.JobId);
+        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
     }
 }

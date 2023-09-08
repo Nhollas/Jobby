@@ -1,6 +1,6 @@
-namespace Jobby.Application.Responses.Activity;
+namespace Jobby.Application.Features.ActivityFeatures.Commands.Create;
 
-public enum CreateActivityOutcome
+public enum CreateActivityOutcomes
 {
     ActivityCreated,
     UnknownBoardId,

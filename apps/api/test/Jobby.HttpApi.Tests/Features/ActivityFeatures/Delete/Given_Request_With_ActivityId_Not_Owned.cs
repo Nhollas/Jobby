@@ -48,7 +48,7 @@ public class Given_Request_With_ActivityId_Not_Owned : IAsyncLifetime
         
         var preLoadedActivity = await SeedDataHelper<Activity>.AddAsync(activityToDelete, context);
         
-        var response = await HttpClient.DeleteAsync($"/api/activity/delete/{preLoadedActivity.Id}");
+        var response = await HttpClient.DeleteAsync($"/api/activity/{preLoadedActivity.Id}");
 
         Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
     }

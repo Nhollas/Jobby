@@ -106,5 +106,6 @@ public class Activity : Entity
     public void SetJob(Job job)
     {
         Job = job;
+        JobId = job.Id;
     }
 }
