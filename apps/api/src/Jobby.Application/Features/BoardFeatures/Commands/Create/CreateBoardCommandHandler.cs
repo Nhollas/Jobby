@@ -1,12 +1,12 @@
 ﻿using Jobby.Application.Abstractions.Specification;
-using Jobby.Application.Contracts.Board;
 using Jobby.Application.Interfaces.Services;
+using Jobby.Application.Responses.Common;
 using Jobby.Domain.Entities;
 using MediatR;
 
 namespace Jobby.Application.Features.BoardFeatures.Commands.Create;
 
-internal sealed class CreateBoardCommandHandler : IRequestHandler<CreateBoardCommand, CreateBoardResponse>
+internal sealed class CreateBoardCommandHandler : IRequestHandler<CreateBoardCommand, BaseResult<CreateBoardResponse, CreateBoardOutcomes>>
 {
     private readonly IRepository<Board> _boardRepository;
     private readonly IGuidProvider _guidProvider;
@@ -25,7 +25,7 @@ internal sealed class CreateBoardCommandHandler : IRequestHandler<CreateBoardCom
         _guidProvider = guidProvider;
     }
 
-    public async Task<CreateBoardResponse> Handle(CreateBoardCommand request, CancellationToken cancellationToken)
+    public async Task<BaseResult<CreateBoardResponse, CreateBoardOutcomes>> Handle(CreateBoardCommand request, CancellationToken cancellationToken)
     {
         Guid boardId = _guidProvider.Create();
 
@@ -47,9 +47,9 @@ internal sealed class CreateBoardCommandHandler : IRequestHandler<CreateBoardCom
 
         await _boardRepository.AddAsync(board, cancellationToken);
 
-        return new CreateBoardResponse(
-            board.Id,
-            board.Name,
-            board.CreatedDate);
+        return new BaseResult<CreateBoardResponse, CreateBoardOutcomes>(
+            IsSuccess: true,
+            Outcome: CreateBoardOutcomes.BoardCreated,
+            Response: new CreateBoardResponse(boardId, board.Name, board.CreatedDate));
     }
 }

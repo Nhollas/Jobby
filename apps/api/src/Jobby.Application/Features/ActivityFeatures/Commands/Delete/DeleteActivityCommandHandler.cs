@@ -1,12 +1,13 @@
 ﻿using Jobby.Application.Abstractions.Specification;
 using Jobby.Application.Interfaces.Services;
+using Jobby.Application.Responses.Common;
 using Jobby.Application.Services;
 using Jobby.Domain.Entities;
 using MediatR;
 
 namespace Jobby.Application.Features.ActivityFeatures.Commands.Delete;
 
-internal sealed class DeleteActivityCommandHandler : IRequestHandler<DeleteActivityCommand, Unit>
+internal sealed class DeleteActivityCommandHandler : IRequestHandler<DeleteActivityCommand, BaseResult<DeleteActivityResponse, DeleteActivityOutcomes>>
 {
     private readonly IRepository<Activity> _activityRepository;
     private readonly string _userId;
@@ -19,14 +20,34 @@ internal sealed class DeleteActivityCommandHandler : IRequestHandler<DeleteActiv
         _userId = userService.UserId();
     }
 
-    public async Task<Unit> Handle(DeleteActivityCommand request, CancellationToken cancellationToken)
+    public async Task<BaseResult<DeleteActivityResponse, DeleteActivityOutcomes>> Handle(DeleteActivityCommand request, CancellationToken cancellationToken)
     {
-        Activity activityToDelete = await ResourceProvider<Activity>
+        var activityResourceResult = await ResourceProvider<Activity>
             .GetById(_activityRepository.GetByIdAsync)
             .Check(_userId, request.ActivityId, cancellationToken);
 
+        if (!activityResourceResult.IsSuccess)
+        {
+            return new BaseResult<DeleteActivityResponse, DeleteActivityOutcomes>(
+                IsSuccess: false,
+                Outcome: activityResourceResult.Outcome switch
+                {
+                    Outcome.Unauthorised => DeleteActivityOutcomes.UnauthorizedActivityAccess,
+                    Outcome.NotFound => DeleteActivityOutcomes.UnknownActivity,
+                    _ => DeleteActivityOutcomes.UnknownError
+                },
+                ErrorMessage: activityResourceResult.ErrorMessage
+            );
+        }
+        
+        var activityToDelete = activityResourceResult.Response;
+
         await _activityRepository.DeleteAsync(activityToDelete, cancellationToken);
 
-        return Unit.Value;
+        return new BaseResult<DeleteActivityResponse, DeleteActivityOutcomes>(
+            IsSuccess: true,
+            Outcome: DeleteActivityOutcomes.ActivityDeleted,
+            Response: new DeleteActivityResponse()
+        );
     }
 }

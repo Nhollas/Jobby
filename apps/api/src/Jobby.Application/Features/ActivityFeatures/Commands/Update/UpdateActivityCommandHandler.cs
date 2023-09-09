@@ -45,10 +45,26 @@ internal sealed class UpdateActivityCommandHandler : IRequestHandler<UpdateActiv
             );
         }
         
-        var activityToUpdate = await ResourceProvider<Activity>
+        var activityResourceResult = await ResourceProvider<Activity>
             .GetById(_activityRepository.GetByIdAsync)
             .Check(_userId, request.Id, cancellationToken);
 
+        if (!activityResourceResult.IsSuccess)
+        {
+            return new BaseResult<UpdateActivityResponse, UpdateActivityOutcomes>(
+                IsSuccess: false,
+                Outcome: activityResourceResult.Outcome switch
+                {
+                    Outcome.Unauthorised => UpdateActivityOutcomes.UnauthorizedActivityAccess,
+                    Outcome.NotFound => UpdateActivityOutcomes.UnknownActivity,
+                    _ => UpdateActivityOutcomes.UnknownError
+                },
+                ErrorMessage: activityResourceResult.ErrorMessage
+            );
+        }
+        
+        var activityToUpdate = activityResourceResult.Response;
+        
         activityToUpdate.Update(
             request.Title,
             request.Type,
@@ -59,32 +75,32 @@ internal sealed class UpdateActivityCommandHandler : IRequestHandler<UpdateActiv
         
         if (request.JobId != Guid.Empty && request.JobId != activityToUpdate.JobId)
         {
-            var jobToLink = await _jobRepository.GetByIdAsync(request.JobId, cancellationToken);
+            var jobResourceResult = await ResourceProvider<Job>
+                .GetById(_jobRepository.GetByIdAsync)
+                .Check(_userId, request.JobId, cancellationToken);
             
-            if (jobToLink == null)
+            if (!jobResourceResult.IsSuccess)
             {
                 return new BaseResult<UpdateActivityResponse, UpdateActivityOutcomes>(
                     IsSuccess: false,
-                    Outcome: UpdateActivityOutcomes.JobDoesNotExist,
-                    ErrorMessage: $"The {nameof(Job)} {request.JobId} you wanted to link doesn't exist."
+                    Outcome: jobResourceResult.Outcome switch
+                    {
+                        Outcome.Unauthorised => UpdateActivityOutcomes.UnauthorizedJobAccess,
+                        Outcome.NotFound => UpdateActivityOutcomes.UnknownJob,
+                        _ => UpdateActivityOutcomes.UnknownError
+                    },
+                    ErrorMessage: jobResourceResult.ErrorMessage
                 );
             }
-
-            if (jobToLink.OwnerId != _userId)
-            {
-                return new BaseResult<UpdateActivityResponse, UpdateActivityOutcomes>(
-                    IsSuccess: false,
-                    Outcome: UpdateActivityOutcomes.UnauthorizedJobAccess,
-                    ErrorMessage: $"The {nameof(Job)} {request.JobId} you wanted to link doesn't belong to you."
-                );
-            }
+            
+            var jobToLink = jobResourceResult.Response;
 
             if (jobToLink.BoardId != activityToUpdate.BoardId)
             {
                 return new BaseResult<UpdateActivityResponse, UpdateActivityOutcomes>(
                     IsSuccess: false,
                     Outcome: UpdateActivityOutcomes.JobDoesNotBelongToBoard,
-                    ErrorMessage: $"The {nameof(Job)} {request.JobId} you wanted to link doesn't belong to the Board {activityToUpdate.BoardId}."
+                    ErrorMessage: $"The {nameof(Job)} you wanted to link doesn't have the same Board as the {nameof(Activity)} you provided."
                 );
             }
 

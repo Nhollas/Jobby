@@ -1,7 +1,8 @@
-﻿using Jobby.Domain.Primitives;
+﻿using Jobby.Application.Services;
+using Jobby.Domain.Primitives;
 
 namespace Jobby.Application.Abstractions.Authorization;
 public interface IApplySpecification<TEntity> where TEntity : Entity
 {
-    Task<TEntity> Check(string userId, CancellationToken cancellationToken = default);
+    Task<ResourceResult<TEntity>> Check(string userId, CancellationToken cancellationToken = default);
 }

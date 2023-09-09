@@ -3,8 +3,9 @@ namespace Jobby.Application.Features.ActivityFeatures.Commands.Create;
 public enum CreateActivityOutcomes
 {
     ActivityCreated,
-    UnknownBoardId,
+    UnknownBoard,
     JobDoesNotExistInBoard,
     UnauthorizedBoardAccess,
-    ValidationFailure
+    ValidationFailure,
+    UnknownError
 }

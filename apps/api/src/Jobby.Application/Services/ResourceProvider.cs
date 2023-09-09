@@ -1,6 +1,5 @@
-﻿using Ardalis.Specification;
+using Ardalis.Specification;
 using Jobby.Application.Abstractions.Authorization;
-using Jobby.Application.Exceptions.Base;
 using Jobby.Domain.Primitives;
 
 namespace Jobby.Application.Services;
@@ -41,37 +40,38 @@ public class ResourceProvider<TEntity> :
         return this;
     }
 
-    public async Task<TEntity> Check(string userId, Guid resourceId, CancellationToken cancellationToken = default)
+    public async Task<ResourceResult<TEntity>> Check(string userId, Guid resourceId, CancellationToken cancellationToken = default)
     {
         var resource = await _getById(resourceId, cancellationToken);
 
         if (resource is null)
         {
-            throw new NotFoundException($"A {typeof(TEntity).Name} with Id {resourceId} could not be found.");
+            return new ResourceResult<TEntity>(false, Outcome.NotFound, $"The {typeof(TEntity).Name} with Id {resourceId} could not be found.");
         }
 
         if (resource.OwnerId != userId)
         {
-            throw new NotAuthorisedException(userId);
+            return new ResourceResult<TEntity>(false, Outcome.Unauthorised, "You are not authorised to access this resource.");
         }
-
-        return resource;
+        
+        return new ResourceResult<TEntity>(true, Outcome.Success, response: resource);
     }
 
-    public async Task<TEntity> Check(string userId, CancellationToken cancellationToken = default)
+    public async Task<ResourceResult<TEntity>> Check(string userId, CancellationToken cancellationToken = default)
     {
         var resource = await _getBySpec(_spec, cancellationToken);
 
         if (resource is null)
         {
-            throw new NotFoundException($"No {typeof(TEntity).Name} with the provided could be found.");
+            
+            return new ResourceResult<TEntity>(false, Outcome.NotFound, $"The {typeof(TEntity).Name} with the provided spec could be found.");
         }
 
         if (resource.OwnerId != userId)
         {
-            throw new NotAuthorisedException(userId);
+            return new ResourceResult<TEntity>(false, Outcome.Unauthorised, "You are not authorised to access this resource.");
         }
 
-        return resource;
+        return new ResourceResult<TEntity>(true, Outcome.Success, response: resource);
     }
 }

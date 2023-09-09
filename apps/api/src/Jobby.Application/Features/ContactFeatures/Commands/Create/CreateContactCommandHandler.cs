@@ -4,6 +4,7 @@ using Jobby.Application.Dtos;
 using Jobby.Application.Features.BoardFeatures.Specifications;
 using Jobby.Application.Features.ContactFeatures.Specifications;
 using Jobby.Application.Interfaces.Services;
+using Jobby.Application.Responses.Common;
 using Jobby.Application.Services;
 using Jobby.Domain.Entities;
 using MediatR;
@@ -11,7 +12,7 @@ using static Jobby.Domain.Static.ContactConstants;
 
 namespace Jobby.Application.Features.ContactFeatures.Commands.Create;
 
-internal sealed class CreateContactCommandHandler : IRequestHandler<CreateContactCommand, ContactDto>
+internal sealed class CreateContactCommandHandler : IRequestHandler<CreateContactCommand, BaseResult<CreateContactResponse, CreateContactOutcomes>>
 {
     private readonly IDateTimeProvider _dateTimeProvider;
     private readonly IGuidProvider _guidProvider;
@@ -39,19 +40,47 @@ internal sealed class CreateContactCommandHandler : IRequestHandler<CreateContac
         _mapper = mapper;
     }
 
-    public async Task<ContactDto> Handle(CreateContactCommand request, CancellationToken cancellationToken)
+    public async Task<BaseResult<CreateContactResponse, CreateContactOutcomes>> Handle(CreateContactCommand request, CancellationToken cancellationToken)
     {
-        Board board = null; // initialize board to null
+        var validator = new CreateContactCommandValidator();
+        var validationResult = await validator.ValidateAsync(request, cancellationToken);
+        
+        if (!validationResult.IsValid)
+        {
+            return new BaseResult<CreateContactResponse, CreateContactOutcomes>(
+                IsSuccess: false,
+                Outcome: CreateContactOutcomes.ValidationFailure,
+                ValidationResult: validationResult
+            );
+        }
+        
+        ResourceResult<Board> boardResourceResult = null; // initialize board to null
 
         if (request.BoardId.HasValue)
         {
             Guid boardId = request.BoardId.Value;
             
-            board = await ResourceProvider<Board>
+            boardResourceResult = await ResourceProvider<Board>
                 .GetBySpec(_boardRepository.FirstOrDefaultAsync)
                 .ApplySpecification(new GetBoardWithJobsSpecification(boardId))
                 .Check(_userId, cancellationToken);
+
+            if (!boardResourceResult.IsSuccess)
+            {
+                return new BaseResult<CreateContactResponse, CreateContactOutcomes>(
+                    IsSuccess: false,
+                    Outcome: boardResourceResult.Outcome switch
+                    {
+                        Outcome.Unauthorised => CreateContactOutcomes.UnauthorizedBoardAccess,
+                        Outcome.NotFound => CreateContactOutcomes.UnknownBoard,
+                        _ => CreateContactOutcomes.UnknownError
+                    },
+                    ErrorMessage: boardResourceResult.ErrorMessage
+                );
+            }
         }
+
+        var board = boardResourceResult?.Response;
         
         Contact createdContact = Contact.Create(
             _guidProvider.Create(),
@@ -81,7 +110,11 @@ internal sealed class CreateContactCommandHandler : IRequestHandler<CreateContac
 
         await _contactRepository.AddAsync(createdContact, cancellationToken);
 
-        return _mapper.Map<ContactDto>(createdContact);
+        return new BaseResult<CreateContactResponse, CreateContactOutcomes>(
+            IsSuccess: true,
+            Outcome: CreateContactOutcomes.ContactCreated,
+            Response: _mapper.Map<CreateContactResponse>(createdContact)
+        );
     }
 
 

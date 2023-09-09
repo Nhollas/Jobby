@@ -3,6 +3,7 @@ using Jobby.Application.Abstractions.Specification;
 using Jobby.Application.Features.BoardFeatures.Specifications;
 using Jobby.Application.Interfaces.Services;
 using Jobby.Application.Responses.Common;
+using Jobby.Application.Services;
 using Jobby.Domain.Entities;
 using MediatR;
 
@@ -47,27 +48,25 @@ internal sealed class CreateActivityCommandHandler : IRequestHandler<CreateActiv
             );
         }
         
-        var boardToLink = await _boardRepository.FirstOrDefaultAsync(
-            new GetBoardWithJobsSpecification(request.BoardId),
-            cancellationToken);
-        
-        if (boardToLink is null)
+        var boardResourceResult = await ResourceProvider<Board>
+            .GetBySpec(_boardRepository.FirstOrDefaultAsync)
+            .ApplySpecification(new GetBoardWithJobsSpecification(request.BoardId))
+            .Check(_userId, cancellationToken);
+
+        if (!boardResourceResult.IsSuccess)
         {
             return new BaseResult<CreateActivityResponse, CreateActivityOutcomes>(
                 IsSuccess: false,
-                Outcome: CreateActivityOutcomes.UnknownBoardId,
-                ErrorMessage: $"The {nameof(Board)} {request.BoardId} you wanted to link doesn't exist."
-            );
+                Outcome: boardResourceResult.Outcome switch
+                {
+                    Outcome.Unauthorised => CreateActivityOutcomes.UnauthorizedBoardAccess,
+                    Outcome.NotFound => CreateActivityOutcomes.UnknownBoard,
+                    _ => CreateActivityOutcomes.UnknownError
+                },
+                ErrorMessage: boardResourceResult.ErrorMessage);
         }
         
-        if (boardToLink.OwnerId != _userId)
-        {
-            return new BaseResult<CreateActivityResponse, CreateActivityOutcomes>(
-                IsSuccess: false,
-                Outcome: CreateActivityOutcomes.UnauthorizedBoardAccess,
-                ErrorMessage: $"The {nameof(Board)} {request.BoardId} you wanted to link doesn't belong to you."
-            );
-        }
+        var boardToLink = boardResourceResult.Response;
 
         var createdActivity = Activity.Create(
             _guidProvider.Create(),

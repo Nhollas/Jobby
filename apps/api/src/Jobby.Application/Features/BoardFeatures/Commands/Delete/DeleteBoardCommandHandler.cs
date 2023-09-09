@@ -1,13 +1,14 @@
 ﻿using Jobby.Application.Abstractions.Specification;
 using Jobby.Application.Interfaces.Repositories;
 using Jobby.Application.Interfaces.Services;
+using Jobby.Application.Responses.Common;
 using Jobby.Application.Services;
 using Jobby.Domain.Entities;
 using MediatR;
 
 namespace Jobby.Application.Features.BoardFeatures.Commands.Delete;
 
-internal sealed class DeleteBoardCommandHandler : IRequestHandler<DeleteBoardCommand, Unit>
+internal sealed class DeleteBoardCommandHandler : IRequestHandler<DeleteBoardCommand, BaseResult<DeleteBoardResponse, DeleteBoardOutcomes>>
 {
     private readonly IRepository<Board> _boardRepository;
     private readonly IContactRepository _contactRepository;
@@ -23,16 +24,36 @@ internal sealed class DeleteBoardCommandHandler : IRequestHandler<DeleteBoardCom
         _userId = userService.UserId();
     }
 
-    public async Task<Unit> Handle(DeleteBoardCommand request, CancellationToken cancellationToken)
+    public async Task<BaseResult<DeleteBoardResponse, DeleteBoardOutcomes>> Handle(DeleteBoardCommand request, CancellationToken cancellationToken)
     {
-        Board boardToDelete = await ResourceProvider<Board>
+        var boardResourceResult = await ResourceProvider<Board>
             .GetById(_boardRepository.GetByIdAsync)
             .Check(_userId, request.BoardId, cancellationToken);
+        
+        if (!boardResourceResult.IsSuccess)
+        {
+            return new BaseResult<DeleteBoardResponse, DeleteBoardOutcomes>(
+                IsSuccess: false,
+                Outcome: boardResourceResult.Outcome switch
+                {
+                    Outcome.Unauthorised => DeleteBoardOutcomes.UnauthorizedBoardAccess,
+                    Outcome.NotFound => DeleteBoardOutcomes.UnknownBoard,
+                    _ => DeleteBoardOutcomes.UnknownError
+                },
+                ErrorMessage: boardResourceResult.ErrorMessage
+            );
+        }
 
         await _contactRepository.ClearBoardsAsync(request.BoardId, cancellationToken);
-
+        
+        var boardToDelete = boardResourceResult.Response;
+        
         await _boardRepository.DeleteAsync(boardToDelete, cancellationToken);
 
-        return Unit.Value;
+        return new BaseResult<DeleteBoardResponse, DeleteBoardOutcomes>(
+            IsSuccess: true,
+            Outcome: DeleteBoardOutcomes.BoardDeleted,
+            Response: new DeleteBoardResponse()
+        );
     }
 }
