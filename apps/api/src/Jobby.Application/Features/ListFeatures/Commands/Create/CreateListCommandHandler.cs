@@ -1,12 +1,12 @@
 ﻿using Jobby.Application.Abstractions.Specification;
-using Jobby.Application.Contracts.JobList;
 using Jobby.Application.Interfaces.Services;
+using Jobby.Application.Responses.Common;
 using Jobby.Application.Services;
 using Jobby.Domain.Entities;
 using MediatR;
 
-namespace Jobby.Application.Features.JobListFeatures.Commands.Create;
-internal sealed class CreateJobListCommandHandler : IRequestHandler<CreateJobListCommand, CreateJobListResponse>
+namespace Jobby.Application.Features.ListFeatures.Commands.Create;
+internal sealed class CreateListCommandHandler : IRequestHandler<CreateListCommand, BaseResult<CreateListResponse, CreateListOutcomes>>
 {
     private readonly IRepository<JobList> _jobListRepository;
     private readonly IRepository<Job> _jobRepository;
@@ -14,7 +14,7 @@ internal sealed class CreateJobListCommandHandler : IRequestHandler<CreateJobLis
     private readonly IDateTimeProvider _dateTimeProvider;
     private readonly string _userId;
 
-    public CreateJobListCommandHandler(
+    public CreateListCommandHandler(
         IRepository<JobList> jobListRepository,
         IRepository<Job> jobRepository,
         IUserService userService,
@@ -28,7 +28,7 @@ internal sealed class CreateJobListCommandHandler : IRequestHandler<CreateJobLis
         _guidProvider = guidProvider;
     }
 
-    public async Task<CreateJobListResponse> Handle(CreateJobListCommand request, CancellationToken cancellationToken)
+    public async Task<BaseResult<CreateListResponse, CreateListOutcomes>> Handle(CreateListCommand request, CancellationToken cancellationToken)
     {
         var createdJobList = JobList.Create(
             _guidProvider.Create(),
@@ -42,24 +42,36 @@ internal sealed class CreateJobListCommandHandler : IRequestHandler<CreateJobLis
 
         if (request.InitJobId != Guid.Empty)
         {
-            Job jobToUpdate = await ResourceProvider<Job>
+            var jobResourceResult = await ResourceProvider<Job>
                 .GetById(_jobRepository.GetByIdAsync)
                 .Check(_userId, request.InitJobId, cancellationToken);
+            
+            if (!jobResourceResult.IsSuccess)
+            {
+                return new BaseResult<CreateListResponse, CreateListOutcomes>(
+                    IsSuccess: false,
+                    Outcome: jobResourceResult.Outcome switch
+                    {
+                        Outcome.Unauthorised => CreateListOutcomes.UnauthorizedJobAccess,
+                        Outcome.NotFound => CreateListOutcomes.UnknownJob,
+                        _ => CreateListOutcomes.UnknownError
+                    },
+                    ErrorMessage: jobResourceResult.ErrorMessage
+                );
+            }
+            
+            var jobToUpdate = jobResourceResult.Response;
 
             jobToUpdate.SetJobList(createdJobList.Id);
             jobToUpdate.SetIndex(0);
 
             await _jobRepository.UpdateAsync(jobToUpdate, cancellationToken);
         }
-
-        return new CreateJobListResponse
-        {
-            Id = createdJobList.Id,
-            CreatedDate = createdJobList.CreatedDate,
-            Index = createdJobList.Index,
-            LastUpdated = createdJobList.LastUpdated,
-            Name = createdJobList.Name,
-            BoardId = createdJobList.BoardId
-        };
+        
+        return new BaseResult<CreateListResponse, CreateListOutcomes>(
+            IsSuccess: true,
+            Outcome: CreateListOutcomes.ListCreated,
+            Response: new CreateListResponse()
+        );
     }
 }

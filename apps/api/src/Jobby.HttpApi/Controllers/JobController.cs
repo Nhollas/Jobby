@@ -12,18 +12,18 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Jobby.HttpApi.Controllers;
 
-[Route("api/[controller]")]
+[Route("[controller]")]
 [ApiController]
 public class JobController : ApiController
 {
-    [HttpGet("~/api/jobs", Name = "ListJobs")]
+    [HttpGet("/jobs")]
     public async Task<ActionResult<List<PreviewJobDto>>> ListBoards()
     {
         var dtos = await Sender.Send(new GetJobListQuery());
         return Ok(dtos);
     }
     
-    [HttpGet("{jobId:guid}", Name = "GetJob")]
+    [HttpGet("{jobId:guid}")]
     public async Task<IActionResult> GetJob(Guid jobId)
     {
         var jobQuery = new GetJobDetailQuery(jobId);
@@ -32,21 +32,21 @@ public class JobController : ApiController
         return Ok(job);
     }
     
-    [HttpGet("{jobId:guid}/activities", Name = "GetJobActivities")]
+    [HttpGet("{jobId:guid}/activities")]
     public async Task<IActionResult> GetJobActivities(Guid jobId)
     {
         var jobQuery = new GetJobActivitiesQuery(jobId);
         return Ok(await Sender.Send(jobQuery));
     }
 
-    [HttpGet("{jobId:guid}/contacts", Name = "GetJobContacts")]
+    [HttpGet("{jobId:guid}/contacts")]
     public async Task<IActionResult> GetJobContacts(Guid jobId)
     {
         var jobQuery = new GetJobContactsQuery(jobId);
         return Ok(await Sender.Send(jobQuery));
     }
 
-    [HttpPost("Create", Name = "CreateJob")]
+    [HttpPost]
     public async Task<IActionResult> CreateJob([FromBody] CreateJobCommand command)
     {
         var job = await Sender.Send(command);
@@ -54,14 +54,14 @@ public class JobController : ApiController
         return CreatedAtAction(nameof(CreateJob), job);
     }
 
-    [HttpDelete("Delete/{jobId:guid}", Name = "DeleteJob")]
+    [HttpDelete("{jobId:guid}")]
     public async Task<IActionResult> DeleteJob(Guid jobId)
     {
         await Sender.Send(new DeleteJobCommand(jobId));
         return NoContent();
     }
 
-    [HttpPut("Update", Name = "UpdateJob")]
+    [HttpPut]
     public async Task<IActionResult> UpdateJob([FromBody] UpdateJobCommand command)
     {
         var updatedjob =  await Sender.Send(command);

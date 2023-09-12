@@ -2,12 +2,13 @@
 using Jobby.Application.Abstractions.Specification;
 using Jobby.Application.Contracts.Job;
 using Jobby.Application.Interfaces.Services;
+using Jobby.Application.Responses.Common;
 using Jobby.Application.Services;
 using Jobby.Domain.Entities;
 using MediatR;
 
 namespace Jobby.Application.Features.JobFeatures.Queries.GetById;
-internal sealed class GetJobDetailQueryHandler : IRequestHandler<GetJobDetailQuery, GetJobResponse>
+internal sealed class GetJobDetailQueryHandler : IRequestHandler<GetJobDetailQuery, BaseResult<GetJobDetailResponse, GetJobDetailOutcomes>>
 {
     private readonly IReadRepository<Job> _jobRepository;
     private readonly IMapper _mapper;
@@ -23,12 +24,30 @@ internal sealed class GetJobDetailQueryHandler : IRequestHandler<GetJobDetailQue
         _jobRepository = jobRepository;
     }
 
-    public async Task<GetJobResponse> Handle(GetJobDetailQuery request, CancellationToken cancellationToken)
+    public async Task<BaseResult<GetJobDetailResponse, GetJobDetailOutcomes>> Handle(GetJobDetailQuery request, CancellationToken cancellationToken)
     {
-        Job job = await ResourceProvider<Job>
+        var jobResourceResult = await ResourceProvider<Job>
             .GetById(_jobRepository.GetByIdAsync)
             .Check(_userId, request.JobId, cancellationToken);
 
-        return _mapper.Map<GetJobResponse>(job);
+        if (!jobResourceResult.IsSuccess)
+        {
+            return new BaseResult<GetJobDetailResponse, GetJobDetailOutcomes>(
+                IsSuccess: false,
+                Outcome: jobResourceResult.Outcome switch
+                {
+                    Outcome.Unauthorised => GetJobDetailOutcomes.UnauthorizedJobAccess,
+                    Outcome.NotFound => GetJobDetailOutcomes.UnknownJob,
+                    _ => GetJobDetailOutcomes.UnknownError
+                },
+                ErrorMessage: jobResourceResult.ErrorMessage
+            );
+        }
+        
+        return new BaseResult<GetJobDetailResponse, GetJobDetailOutcomes>(
+            IsSuccess: true,
+            Outcome: GetJobDetailOutcomes.JobFound,
+            Response: _mapper.Map<GetJobDetailResponse>(jobResourceResult.Response)
+        );
     }
 }

@@ -5,6 +5,7 @@ using Jobby.Application.Features.ContactFeatures.Specifications;
 using Jobby.Application.Features.JobFeatures.Specifications;
 using Jobby.Application.Interfaces.Repositories;
 using Jobby.Application.Interfaces.Services;
+using Jobby.Application.Responses.Common;
 using Jobby.Application.Services;
 using Jobby.Domain.Entities;
 using MediatR;
@@ -12,7 +13,7 @@ using static Jobby.Domain.Static.ContactConstants;
 
 namespace Jobby.Application.Features.ContactFeatures.Commands.Update.UpdateDetails;
 
-internal sealed class UpdateContactCommandHandler : IRequestHandler<UpdateContactCommand, GetContactResponse>
+internal sealed class UpdateContactCommandHandler : IRequestHandler<UpdateContactCommand, BaseResult<UpdateContactResponse, UpdateContactOutcomes>>
 {
     private readonly IRepository<Contact> _contactRepository;
     private readonly IRepository<Board> _boardRepository;
@@ -37,12 +38,28 @@ internal sealed class UpdateContactCommandHandler : IRequestHandler<UpdateContac
         _mapper = mapper;
     }
 
-    public async Task<GetContactResponse> Handle(UpdateContactCommand request, CancellationToken cancellationToken)
+    public async Task<BaseResult<UpdateContactResponse, UpdateContactOutcomes>> Handle(UpdateContactCommand request, CancellationToken cancellationToken)
     {
-        Contact contactToUpdate = await ResourceProvider<Contact>
+        var contactResourceResult = await ResourceProvider<Contact>
             .GetBySpec(_contactRepository.FirstOrDefaultAsync)
             .ApplySpecification(new GetContactWithSocialsSpecification(request.Id))
             .Check(_userId, cancellationToken);
+
+        if (!contactResourceResult.IsSuccess)
+        {
+            return new BaseResult<UpdateContactResponse, UpdateContactOutcomes>(
+                IsSuccess: false,
+                Outcome: contactResourceResult.Outcome switch
+                {
+                    Outcome.Unauthorised => UpdateContactOutcomes.UnauthorizedContactAccess,
+                    Outcome.NotFound => UpdateContactOutcomes.UnknownContact,
+                    _ => UpdateContactOutcomes.UnknownError
+                },
+                ErrorMessage: contactResourceResult.ErrorMessage
+            );
+        }
+        
+        var contactToUpdate = contactResourceResult.Response;
 
         contactToUpdate.Update(
             request.FirstName,
@@ -57,9 +74,25 @@ internal sealed class UpdateContactCommandHandler : IRequestHandler<UpdateContac
         
         if (request.BoardId.HasValue && request.BoardId.Value != contactToUpdate.BoardId)
         {
-            var newBoard = await ResourceProvider<Board>
+            var boardResourceResult = await ResourceProvider<Board>
                 .GetById(_boardRepository.GetByIdAsync)
                 .Check(_userId, request.BoardId.Value, cancellationToken);
+            
+            if (!boardResourceResult.IsSuccess)
+            {
+                return new BaseResult<UpdateContactResponse, UpdateContactOutcomes>(
+                    IsSuccess: false,
+                    Outcome: boardResourceResult.Outcome switch
+                    {
+                        Outcome.Unauthorised => UpdateContactOutcomes.UnauthorizedBoardAccess,
+                        Outcome.NotFound => UpdateContactOutcomes.UnknownBoard,
+                        _ => UpdateContactOutcomes.UnknownError
+                    },
+                    ErrorMessage: boardResourceResult.ErrorMessage
+                );
+            }
+            
+            var newBoard = boardResourceResult.Response;
             
             contactToUpdate.SetBoard(newBoard);
         }
@@ -103,7 +136,11 @@ internal sealed class UpdateContactCommandHandler : IRequestHandler<UpdateContac
         contactToUpdate.UpdateEntity(_timeProvider.UtcNow);
 
         await _contactRepository.SaveChangesAsync(cancellationToken);
-
-        return _mapper.Map<GetContactResponse>(contactToUpdate);
+        
+        return new BaseResult<UpdateContactResponse, UpdateContactOutcomes>(
+            IsSuccess: true,
+            Outcome: UpdateContactOutcomes.ContactUpdated,
+            Response: _mapper.Map<UpdateContactResponse>(contactToUpdate)
+        );
     }
 }

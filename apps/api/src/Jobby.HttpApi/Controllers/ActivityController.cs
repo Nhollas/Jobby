@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Jobby.HttpApi.Controllers;
 
-[Route("api/[controller]")]
+[Route("[controller]")]
 [ApiController]
 [Authorize]
 public class ActivityController : ApiController
@@ -25,6 +25,9 @@ public class ActivityController : ApiController
     /// <returns>The newly created Activity</returns>
     /// <response code="201">Returns the created Activity.</response>
     /// <response code="401">If you do not own the Job you want to link.</response>
+    /// <response code="404">If the Job or Board does not exist.</response>
+    /// <response code="422">If the request is invalid.</response>
+    /// <response code="400">If an unknown error occurs.</response>
     [HttpPost]
     public async Task<ActionResult<CreateActivityResponse>> CreateActivity(CreateActivityCommand command)
     {

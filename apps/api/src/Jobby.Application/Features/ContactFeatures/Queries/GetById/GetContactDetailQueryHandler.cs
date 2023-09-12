@@ -1,14 +1,14 @@
 ﻿using AutoMapper;
 using Jobby.Application.Abstractions.Specification;
-using Jobby.Application.Contracts.Contact;
 using Jobby.Application.Features.ContactFeatures.Specifications;
 using Jobby.Application.Interfaces.Services;
+using Jobby.Application.Responses.Common;
 using Jobby.Application.Services;
 using Jobby.Domain.Entities;
 using MediatR;
 
 namespace Jobby.Application.Features.ContactFeatures.Queries.GetById;
-internal sealed class GetContactDetailQueryHandler : IRequestHandler<GetContactDetailQuery, GetContactResponse>
+internal sealed class GetContactDetailQueryHandler : IRequestHandler<GetContactDetailQuery, BaseResult<GetContactDetailResponse, GetContactDetailOutcomes>>
 {
     private readonly IReadRepository<Contact> _contactRepository;
     private readonly IMapper _mapper;
@@ -24,13 +24,31 @@ internal sealed class GetContactDetailQueryHandler : IRequestHandler<GetContactD
         _contactRepository = contactRepository;
     }
 
-    public async Task<GetContactResponse> Handle(GetContactDetailQuery request, CancellationToken cancellationToken)
+    public async Task<BaseResult<GetContactDetailResponse, GetContactDetailOutcomes>> Handle(GetContactDetailQuery request, CancellationToken cancellationToken)
     {
-        Contact contact = await ResourceProvider<Contact>
+        var contactResourceResult = await ResourceProvider<Contact>
             .GetBySpec(_contactRepository.FirstOrDefaultAsync)
             .ApplySpecification(new GetContactWithRelationshipsSpecification(request.ContactId))
             .Check(_userId, cancellationToken);
 
-        return _mapper.Map<GetContactResponse>(contact);
+        if (!contactResourceResult.IsSuccess)
+        {
+            return new BaseResult<GetContactDetailResponse, GetContactDetailOutcomes>(
+                IsSuccess: false,
+                Outcome: contactResourceResult.Outcome switch
+                {
+                    Outcome.Unauthorised => GetContactDetailOutcomes.UnauthorizedContactAccess,
+                    Outcome.NotFound => GetContactDetailOutcomes.UnknownContact,
+                    _ => GetContactDetailOutcomes.UnknownError
+                },
+                ErrorMessage: contactResourceResult.ErrorMessage
+            );
+        }
+
+        return new BaseResult<GetContactDetailResponse, GetContactDetailOutcomes>(
+            IsSuccess: true,
+            Outcome: GetContactDetailOutcomes.ContactFound,
+            Response: _mapper.Map<GetContactDetailResponse>(contactResourceResult.Response)
+        );
     }
 }

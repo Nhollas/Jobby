@@ -1,11 +1,12 @@
 ﻿using Jobby.Application.Abstractions.Specification;
 using Jobby.Application.Interfaces.Services;
+using Jobby.Application.Responses.Common;
 using Jobby.Application.Services;
 using Jobby.Domain.Entities;
 using MediatR;
 
 namespace Jobby.Application.Features.JobFeatures.Commands.Update.MoveJob;
-internal sealed class MoveJobCommandHandler : IRequestHandler<MoveJobCommand, Unit>
+internal sealed class MoveJobCommandHandler : IRequestHandler<MoveJobCommand, BaseResult<MoveJobResponse, MoveJobOutcomes>>
 {
     private readonly IRepository<Job> _jobRepository;
     private readonly IDateTimeProvider _timeProvider;
@@ -21,19 +22,37 @@ internal sealed class MoveJobCommandHandler : IRequestHandler<MoveJobCommand, Un
         _timeProvider = timeProvider;
     }
 
-    public async Task<Unit> Handle(MoveJobCommand request, CancellationToken cancellationToken)
+    public async Task<BaseResult<MoveJobResponse, MoveJobOutcomes>> Handle(MoveJobCommand request, CancellationToken cancellationToken)
     {
-        
-        
-        Job jobToMove = await ResourceProvider<Job>
+        var jobResourceResult = await ResourceProvider<Job>
             .GetById(_jobRepository.GetByIdAsync)
             .Check(_userId, request.JobId, cancellationToken);
+
+        if (!jobResourceResult.IsSuccess)
+        {
+            return new BaseResult<MoveJobResponse, MoveJobOutcomes>(
+                IsSuccess: false,
+                Outcome: jobResourceResult.Outcome switch
+                {
+                    Outcome.Unauthorised => MoveJobOutcomes.UnauthorizedJobAccess,
+                    Outcome.NotFound => MoveJobOutcomes.UnknownJob,
+                    _ => MoveJobOutcomes.UnknownError
+                },
+                ErrorMessage: jobResourceResult.ErrorMessage
+            );
+        }
+
+        var jobToMove = jobResourceResult.Response;
 
         jobToMove.SetJobList(request.TargetJobListId);
         jobToMove.UpdateEntity(_timeProvider.UtcNow);
 
         await _jobRepository.UpdateAsync(jobToMove, cancellationToken);
 
-        return Unit.Value;
+        return new BaseResult<MoveJobResponse, MoveJobOutcomes>(
+            IsSuccess: true,
+            Outcome: MoveJobOutcomes.JobMoved,
+            Response: new MoveJobResponse()
+        );
     }
 }

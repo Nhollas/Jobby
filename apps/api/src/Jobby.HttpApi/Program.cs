@@ -1,5 +1,4 @@
 using System.Security.Cryptography;
-using Jobby.HttpApi.Middleware;
 using Jobby.Application;
 using Jobby.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -22,8 +21,6 @@ builder.Services.AddControllers()
     });
 
 
-builder.Services.AddTransient<ExceptionHandlingMiddleware>();
-
 builder.Services.AddCors();
 
 builder.Services.AddEndpointsApiExplorer();
@@ -31,20 +28,19 @@ builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo
+    c.SwaggerDoc("V1", new OpenApiInfo
     {
         Title = "Jobby API",
         Version = "V1"
     });
 
-    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+    c.AddSecurityDefinition(name: "Bearer", securityScheme: new OpenApiSecurityScheme
     {
         Name = "Authorization",
-        Type = SecuritySchemeType.ApiKey,
-        Scheme = "Bearer",
-        BearerFormat = "JWT",
+        Description = "Enter the Bearer Authorization string as following: `Bearer Generated-JWT-Token`",
         In = ParameterLocation.Header,
-        Description = "JWT Authorization header using the Bearer scheme."
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
     });
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
@@ -97,8 +93,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
     app.UseDeveloperExceptionPage();
 }
-
-app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseHttpsRedirection();
 app.UseRouting();

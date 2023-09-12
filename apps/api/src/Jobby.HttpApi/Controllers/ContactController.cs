@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Jobby.HttpApi.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("[controller]")]
 [Authorize]
 public class ContactController : ApiController
 {
@@ -22,28 +22,28 @@ public class ContactController : ApiController
         return Ok(await Sender.Send(contactQuery));
     }
     
-    [HttpPost("Create", Name = "CreateContact")]
+    [HttpPost]
     public async Task<IActionResult> CreateContact([FromBody] CreateContactCommand command)
     {
         var createdContact = await Sender.Send(command);
         return CreatedAtAction(nameof(CreateContact), createdContact);
     }
 
-    [HttpDelete("Delete/{contactId:guid}", Name = "DeleteContact")]
+    [HttpDelete("{contactId:guid}")]
     public async Task<IActionResult> DeleteContact(Guid contactId)
     {
         await Sender.Send(new DeleteContactCommand(contactId));
         return NoContent();
     }
 
-    [HttpPut("Update", Name = "UpdateContact")]
+    [HttpPut]
     public async Task<IActionResult> UpdateContact([FromBody] UpdateContactCommand command)
     {
         var updatedContact =  await Sender.Send(command);
         return Ok(updatedContact);
     }
     
-    [HttpGet("~/api/contacts", Name = "ListContacts")]
+    [HttpGet("/contacts", Name = "ListContacts")]
     public async Task<ActionResult<List<GetContactResponse>>> GetAllContacts()
     {
         var contactQuery = new GetContactsQuery();

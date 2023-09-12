@@ -2,12 +2,13 @@
 using Jobby.Application.Abstractions.Specification;
 using Jobby.Application.Dtos;
 using Jobby.Application.Interfaces.Services;
+using Jobby.Application.Responses.Common;
 using Jobby.Application.Services;
 using Jobby.Domain.Entities;
 using MediatR;
 
 namespace Jobby.Application.Features.JobFeatures.Commands.Update.UpdateDetails;
-internal sealed class UpdateJobCommandHandler : IRequestHandler<UpdateJobCommand, JobDto>
+internal sealed class UpdateJobCommandHandler : IRequestHandler<UpdateJobCommand, BaseResult<UpdateJobResponse, UpdateJobOutcomes>>
 {
     private readonly IRepository<Job> _jobRepository;
     private readonly IDateTimeProvider _timeProvider;
@@ -26,11 +27,27 @@ internal sealed class UpdateJobCommandHandler : IRequestHandler<UpdateJobCommand
         _timeProvider = timeProvider;
     }
 
-    public async Task<JobDto> Handle(UpdateJobCommand request, CancellationToken cancellationToken)
+    public async Task<BaseResult<UpdateJobResponse, UpdateJobOutcomes>> Handle(UpdateJobCommand request, CancellationToken cancellationToken)
     {
-        Job jobToUpdate = await ResourceProvider<Job>
+        var jobResourceResult = await ResourceProvider<Job>
             .GetById(_jobRepository.GetByIdAsync)
             .Check(_userId, request.Id, cancellationToken);
+
+        if (!jobResourceResult.IsSuccess)
+        {
+            return new BaseResult<UpdateJobResponse, UpdateJobOutcomes>(
+                IsSuccess: false,
+                Outcome: jobResourceResult.Outcome switch
+                {
+                    Outcome.Unauthorised => UpdateJobOutcomes.UnauthorizedJobAccess,
+                    Outcome.NotFound => UpdateJobOutcomes.UnknownJob,
+                    _ => UpdateJobOutcomes.UnknownError
+                },
+                ErrorMessage: jobResourceResult.ErrorMessage
+            );
+        }
+        
+        var jobToUpdate = jobResourceResult.Response;
 
         _mapper.Map(request, jobToUpdate, typeof(UpdateJobCommand), typeof(Job));
 
@@ -38,6 +55,10 @@ internal sealed class UpdateJobCommandHandler : IRequestHandler<UpdateJobCommand
 
         await _jobRepository.UpdateAsync(jobToUpdate, cancellationToken);
         
-        return _mapper.Map<JobDto>(jobToUpdate);
+        return new BaseResult<UpdateJobResponse, UpdateJobOutcomes>(
+            IsSuccess: true,
+            Outcome: UpdateJobOutcomes.JobUpdated,
+            Response: new UpdateJobResponse()
+        );
     }
 }
