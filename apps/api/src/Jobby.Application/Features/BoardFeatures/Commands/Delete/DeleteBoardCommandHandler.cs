@@ -1,6 +1,7 @@
 ﻿using Jobby.Application.Abstractions.Specification;
 using Jobby.Application.Interfaces.Repositories;
 using Jobby.Application.Interfaces.Services;
+using Jobby.Application.Responses;
 using Jobby.Application.Responses.Common;
 using Jobby.Application.Services;
 using Jobby.Domain.Entities;

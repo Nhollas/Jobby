@@ -1,11 +1,11 @@
-﻿using Jobby.Application.Contracts.Contact;
-using Jobby.Application.Dtos;
+﻿using Jobby.Application.Dtos;
+using Jobby.Application.Features.ContactFeatures.Commands.Create;
 using Jobby.Application.Responses.Common;
 using MediatR;
 
 namespace Jobby.Application.Features.ContactFeatures.Commands.Update.UpdateDetails;
 
-public sealed record UpdateContactCommand : IRequest<BaseResult<UpdateContactResponse, UpdateContactOutcomes>>
+public sealed record UpdateContactCommand : IRequest<BaseResult<ContactDto, UpdateContactOutcomes>>
 {
     public Guid Id { get; set; }
     public string FirstName { get; set; }

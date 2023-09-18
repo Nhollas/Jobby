@@ -1,6 +1,6 @@
 using Jobby.Domain.Primitives;
 
-namespace Jobby.Application.Services;
+namespace Jobby.Application.Responses;
 
 public class ResourceResult<TEntity> : Entity
     where TEntity : Entity

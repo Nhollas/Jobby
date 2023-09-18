@@ -1,4 +1,4 @@
-﻿using Jobby.Application.Contracts.Contact;
+﻿using Jobby.Application.Dtos;
 using Jobby.Application.Features.ContactFeatures.Commands.Create;
 using Jobby.Application.Features.ContactFeatures.Commands.Delete;
 using Jobby.Application.Features.ContactFeatures.Commands.Update.UpdateDetails;
@@ -16,37 +16,37 @@ namespace Jobby.HttpApi.Controllers;
 public class ContactController : ApiController
 {
     [HttpGet("{contactId:guid}", Name = "GetContact")]
-    public async Task<ActionResult<GetContactResponse>> GetContact(Guid contactId)
+    public async Task<ActionResult<ContactDto>> GetContact(Guid contactId)
     {
         var contactQuery = new GetContactDetailQuery(contactId);
         return Ok(await Sender.Send(contactQuery));
     }
     
     [HttpPost]
-    public async Task<IActionResult> CreateContact([FromBody] CreateContactCommand command)
+    public async Task<ActionResult<ContactDto>> CreateContact([FromBody] CreateContactCommand command)
     {
         var createdContact = await Sender.Send(command);
         return CreatedAtAction(nameof(CreateContact), createdContact);
     }
 
     [HttpDelete("{contactId:guid}")]
-    public async Task<IActionResult> DeleteContact(Guid contactId)
+    public async Task<ActionResult<DeleteContactResponse>> DeleteContact(Guid contactId)
     {
         await Sender.Send(new DeleteContactCommand(contactId));
         return NoContent();
     }
 
     [HttpPut]
-    public async Task<IActionResult> UpdateContact([FromBody] UpdateContactCommand command)
+    public async Task<ActionResult<ContactDto>> UpdateContact([FromBody] UpdateContactCommand command)
     {
         var updatedContact =  await Sender.Send(command);
         return Ok(updatedContact);
     }
     
     [HttpGet("/contacts", Name = "ListContacts")]
-    public async Task<ActionResult<List<GetContactResponse>>> GetAllContacts()
+    public async Task<ActionResult<List<ContactDto>>> GetAllContacts()
     {
-        var contactQuery = new GetContactsQuery();
+        var contactQuery = new GetContactListQuery();
         return Ok(await Sender.Send(contactQuery));
     }
 }

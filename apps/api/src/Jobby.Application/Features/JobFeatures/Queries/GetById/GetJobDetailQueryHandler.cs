@@ -1,14 +1,15 @@
 ﻿using AutoMapper;
 using Jobby.Application.Abstractions.Specification;
-using Jobby.Application.Contracts.Job;
+using Jobby.Application.Dtos;
 using Jobby.Application.Interfaces.Services;
+using Jobby.Application.Responses;
 using Jobby.Application.Responses.Common;
 using Jobby.Application.Services;
 using Jobby.Domain.Entities;
 using MediatR;
 
 namespace Jobby.Application.Features.JobFeatures.Queries.GetById;
-internal sealed class GetJobDetailQueryHandler : IRequestHandler<GetJobDetailQuery, BaseResult<GetJobDetailResponse, GetJobDetailOutcomes>>
+internal sealed class GetJobDetailQueryHandler : IRequestHandler<GetJobDetailQuery, BaseResult<JobDto, GetJobDetailOutcomes>>
 {
     private readonly IReadRepository<Job> _jobRepository;
     private readonly IMapper _mapper;
@@ -24,7 +25,7 @@ internal sealed class GetJobDetailQueryHandler : IRequestHandler<GetJobDetailQue
         _jobRepository = jobRepository;
     }
 
-    public async Task<BaseResult<GetJobDetailResponse, GetJobDetailOutcomes>> Handle(GetJobDetailQuery request, CancellationToken cancellationToken)
+    public async Task<BaseResult<JobDto, GetJobDetailOutcomes>> Handle(GetJobDetailQuery request, CancellationToken cancellationToken)
     {
         var jobResourceResult = await ResourceProvider<Job>
             .GetById(_jobRepository.GetByIdAsync)
@@ -32,7 +33,7 @@ internal sealed class GetJobDetailQueryHandler : IRequestHandler<GetJobDetailQue
 
         if (!jobResourceResult.IsSuccess)
         {
-            return new BaseResult<GetJobDetailResponse, GetJobDetailOutcomes>(
+            return new BaseResult<JobDto, GetJobDetailOutcomes>(
                 IsSuccess: false,
                 Outcome: jobResourceResult.Outcome switch
                 {
@@ -44,10 +45,10 @@ internal sealed class GetJobDetailQueryHandler : IRequestHandler<GetJobDetailQue
             );
         }
         
-        return new BaseResult<GetJobDetailResponse, GetJobDetailOutcomes>(
+        return new BaseResult<JobDto, GetJobDetailOutcomes>(
             IsSuccess: true,
             Outcome: GetJobDetailOutcomes.JobFound,
-            Response: _mapper.Map<GetJobDetailResponse>(jobResourceResult.Response)
+            Response: _mapper.Map<JobDto>(jobResourceResult.Response)
         );
     }
 }

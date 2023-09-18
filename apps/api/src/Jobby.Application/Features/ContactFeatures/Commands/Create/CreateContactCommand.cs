@@ -4,7 +4,7 @@ using MediatR;
 
 namespace Jobby.Application.Features.ContactFeatures.Commands.Create;
 
-public sealed record CreateContactCommand : IRequest<BaseResult<CreateContactResponse, CreateContactOutcomes>>
+public sealed record CreateContactCommand : IRequest<BaseResult<ContactDto, CreateContactOutcomes>>
 {
     public Guid? BoardId { get; set; }
     public List<Guid> JobIds { get; set; } = new();

@@ -9,7 +9,7 @@ public class BoardConfiguration : IEntityTypeConfiguration<Board>
     {
         builder.HasKey(board => board.Id);
 
-        builder.HasMany(x => x.JobLists)
+        builder.HasMany(x => x.Lists)
             .WithOne(x => x.Board)
             .HasForeignKey(x => x.BoardId)
             .OnDelete(DeleteBehavior.Cascade);

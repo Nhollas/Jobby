@@ -4,6 +4,7 @@ using Jobby.Application.Dtos;
 using Jobby.Application.Features.BoardFeatures.Specifications;
 using Jobby.Application.Features.ContactFeatures.Specifications;
 using Jobby.Application.Interfaces.Services;
+using Jobby.Application.Responses;
 using Jobby.Application.Responses.Common;
 using Jobby.Application.Services;
 using Jobby.Domain.Entities;
@@ -12,7 +13,7 @@ using static Jobby.Domain.Static.ContactConstants;
 
 namespace Jobby.Application.Features.ContactFeatures.Commands.Create;
 
-internal sealed class CreateContactCommandHandler : IRequestHandler<CreateContactCommand, BaseResult<CreateContactResponse, CreateContactOutcomes>>
+internal sealed class CreateContactCommandHandler : IRequestHandler<CreateContactCommand, BaseResult<ContactDto, CreateContactOutcomes>>
 {
     private readonly IDateTimeProvider _dateTimeProvider;
     private readonly IGuidProvider _guidProvider;
@@ -40,14 +41,14 @@ internal sealed class CreateContactCommandHandler : IRequestHandler<CreateContac
         _mapper = mapper;
     }
 
-    public async Task<BaseResult<CreateContactResponse, CreateContactOutcomes>> Handle(CreateContactCommand request, CancellationToken cancellationToken)
+    public async Task<BaseResult<ContactDto, CreateContactOutcomes>> Handle(CreateContactCommand request, CancellationToken cancellationToken)
     {
         var validator = new CreateContactCommandValidator();
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
         
         if (!validationResult.IsValid)
         {
-            return new BaseResult<CreateContactResponse, CreateContactOutcomes>(
+            return new BaseResult<ContactDto, CreateContactOutcomes>(
                 IsSuccess: false,
                 Outcome: CreateContactOutcomes.ValidationFailure,
                 ValidationResult: validationResult
@@ -67,7 +68,7 @@ internal sealed class CreateContactCommandHandler : IRequestHandler<CreateContac
 
             if (!boardResourceResult.IsSuccess)
             {
-                return new BaseResult<CreateContactResponse, CreateContactOutcomes>(
+                return new BaseResult<ContactDto, CreateContactOutcomes>(
                     IsSuccess: false,
                     Outcome: boardResourceResult.Outcome switch
                     {
@@ -110,10 +111,10 @@ internal sealed class CreateContactCommandHandler : IRequestHandler<CreateContac
 
         await _contactRepository.AddAsync(createdContact, cancellationToken);
 
-        return new BaseResult<CreateContactResponse, CreateContactOutcomes>(
+        return new BaseResult<ContactDto, CreateContactOutcomes>(
             IsSuccess: true,
             Outcome: CreateContactOutcomes.ContactCreated,
-            Response: _mapper.Map<CreateContactResponse>(createdContact)
+            Response: _mapper.Map<ContactDto>(createdContact)
         );
     }
 

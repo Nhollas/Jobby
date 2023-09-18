@@ -3,4 +3,4 @@ using MediatR;
 
 namespace Jobby.Application.Features.JobFeatures.Queries.ListActivities;
 
-public record GetJobActivitiesQuery(Guid JobId) : IRequest<List<ActivityDto>>;
+public record GetJobActivityListQuery(Guid JobId) : IRequest<List<ActivityDto>>;

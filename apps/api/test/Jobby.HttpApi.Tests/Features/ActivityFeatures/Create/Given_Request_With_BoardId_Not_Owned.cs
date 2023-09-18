@@ -47,7 +47,7 @@ public class Given_Request_With_BoardId_Not_Owned : IAsyncLifetime
             Completed = false
         };
 
-        var response = await HttpClient.PostAsJsonAsync("/api/activity", body);
+        var response = await HttpClient.PostAsJsonAsync("/activity", body);
 
         Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }

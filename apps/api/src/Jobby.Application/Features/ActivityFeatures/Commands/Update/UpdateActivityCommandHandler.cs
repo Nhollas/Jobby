@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using Jobby.Application.Abstractions.Specification;
+using Jobby.Application.Dtos;
 using Jobby.Application.Interfaces.Services;
+using Jobby.Application.Responses;
 using Jobby.Application.Responses.Common;
 using Jobby.Application.Services;
 using Jobby.Domain.Entities;
@@ -8,7 +10,7 @@ using MediatR;
 
 namespace Jobby.Application.Features.ActivityFeatures.Commands.Update;
 
-internal sealed class UpdateActivityCommandHandler : IRequestHandler<UpdateActivityCommand, BaseResult<UpdateActivityResponse, UpdateActivityOutcomes>>
+internal sealed class UpdateActivityCommandHandler : IRequestHandler<UpdateActivityCommand, BaseResult<ActivityDto, UpdateActivityOutcomes>>
 {
     private readonly IRepository<Activity> _activityRepository;
     private readonly IRepository<Job> _jobRepository;
@@ -31,14 +33,14 @@ internal sealed class UpdateActivityCommandHandler : IRequestHandler<UpdateActiv
         _mapper = mapper;
     }
 
-    public async Task<BaseResult<UpdateActivityResponse, UpdateActivityOutcomes>> Handle(UpdateActivityCommand request, CancellationToken cancellationToken)
+    public async Task<BaseResult<ActivityDto, UpdateActivityOutcomes>> Handle(UpdateActivityCommand request, CancellationToken cancellationToken)
     {
         var validator = new UpdateActivityCommandValidator();
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
         
         if (!validationResult.IsValid)
         {
-            return new BaseResult<UpdateActivityResponse, UpdateActivityOutcomes>(
+            return new BaseResult<ActivityDto, UpdateActivityOutcomes>(
                 IsSuccess: false,
                 Outcome: UpdateActivityOutcomes.ValidationFailure,
                 ValidationResult: validationResult
@@ -51,7 +53,7 @@ internal sealed class UpdateActivityCommandHandler : IRequestHandler<UpdateActiv
 
         if (!activityResourceResult.IsSuccess)
         {
-            return new BaseResult<UpdateActivityResponse, UpdateActivityOutcomes>(
+            return new BaseResult<ActivityDto, UpdateActivityOutcomes>(
                 IsSuccess: false,
                 Outcome: activityResourceResult.Outcome switch
                 {
@@ -81,7 +83,7 @@ internal sealed class UpdateActivityCommandHandler : IRequestHandler<UpdateActiv
             
             if (!jobResourceResult.IsSuccess)
             {
-                return new BaseResult<UpdateActivityResponse, UpdateActivityOutcomes>(
+                return new BaseResult<ActivityDto, UpdateActivityOutcomes>(
                     IsSuccess: false,
                     Outcome: jobResourceResult.Outcome switch
                     {
@@ -97,7 +99,7 @@ internal sealed class UpdateActivityCommandHandler : IRequestHandler<UpdateActiv
 
             if (jobToLink.BoardId != activityToUpdate.BoardId)
             {
-                return new BaseResult<UpdateActivityResponse, UpdateActivityOutcomes>(
+                return new BaseResult<ActivityDto, UpdateActivityOutcomes>(
                     IsSuccess: false,
                     Outcome: UpdateActivityOutcomes.JobDoesNotBelongToBoard,
                     ErrorMessage: $"The {nameof(Job)} you wanted to link doesn't have the same Board as the {nameof(Activity)} you provided."
@@ -111,10 +113,10 @@ internal sealed class UpdateActivityCommandHandler : IRequestHandler<UpdateActiv
 
         await _activityRepository.UpdateAsync(activityToUpdate, cancellationToken);
 
-        return new BaseResult<UpdateActivityResponse, UpdateActivityOutcomes>(
+        return new BaseResult<ActivityDto, UpdateActivityOutcomes>(
             IsSuccess: true,
             Outcome: UpdateActivityOutcomes.ActivityUpdated,
-            Response: _mapper.Map<UpdateActivityResponse>(activityToUpdate)
+            Response: _mapper.Map<ActivityDto>(activityToUpdate)
         );
     }
 }

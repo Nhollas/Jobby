@@ -1,9 +1,10 @@
-﻿using Jobby.Application.Responses.Common;
+﻿using Jobby.Application.Dtos;
+using Jobby.Application.Responses.Common;
 using MediatR;
 
 namespace Jobby.Application.Features.ActivityFeatures.Commands.Update;
 
-public sealed record UpdateActivityCommand : IRequest<BaseResult<UpdateActivityResponse, UpdateActivityOutcomes>>
+public sealed record UpdateActivityCommand : IRequest<BaseResult<ActivityDto, UpdateActivityOutcomes>>
 {
     public Guid Id { get; set; }
     public string Title { get; set; }

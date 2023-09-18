@@ -8,7 +8,7 @@ public sealed class GetBoardWithRelationshipsSpecification : Specification<Board
     public GetBoardWithRelationshipsSpecification(Guid boardId)
     {
         Query
-            .Include(board => board.JobLists
+            .Include(board => board.Lists
                 .OrderBy(list => list.Index)
                 )
                 .ThenInclude(

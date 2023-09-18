@@ -9,6 +9,6 @@ public class GetBoardWithJobListsSpecification : Specification<Board>
         Query
             .AsNoTracking()
             .Where(b => b.Id == boardId)
-            .Include(l => l.JobLists);
+            .Include(l => l.Lists);
     }
 }

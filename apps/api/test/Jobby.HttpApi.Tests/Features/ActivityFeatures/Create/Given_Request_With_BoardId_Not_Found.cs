@@ -40,7 +40,7 @@ public class Given_Request_With_BoardId_Not_Found : IAsyncLifetime
             Completed = false
         };
 
-        var response = await HttpClient.PostAsJsonAsync("/api/activity", body);
+        var response = await HttpClient.PostAsJsonAsync("/activity", body);
 
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }

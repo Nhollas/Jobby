@@ -1,8 +1,6 @@
 ﻿using FluentValidation;
-using Jobby.Application.Behaviours;
 using Jobby.Application.Interfaces.Services;
 using Jobby.Application.Services;
-using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -20,8 +18,6 @@ public static class CoreServiceRegistration
         services.AddScoped<IUserService, UserService>();
         services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
         services.AddSingleton<IGuidProvider, GuidProvider>();
-        // services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
-        services.AddScoped(typeof(IPipelineBehavior<,>), typeof(AuthorisedBehavior<,>));
 
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(applicationAssembly));
         services.AddValidatorsFromAssembly(applicationAssembly);

@@ -10,6 +10,7 @@ using System.Text.RegularExpressions;
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
 
+builder.Services.AddLogging();
 builder.Services.AddApplicationServices();
 builder.Services.AddPersistenceServices(config);
 
@@ -28,10 +29,10 @@ builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("V1", new OpenApiInfo
+    c.SwaggerDoc("v1", new OpenApiInfo
     {
         Title = "Jobby API",
-        Version = "V1"
+        Version = "v1"
     });
 
     c.AddSecurityDefinition(name: "Bearer", securityScheme: new OpenApiSecurityScheme

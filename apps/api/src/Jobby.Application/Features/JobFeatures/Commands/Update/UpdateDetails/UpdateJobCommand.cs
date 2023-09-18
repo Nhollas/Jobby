@@ -3,7 +3,7 @@ using Jobby.Application.Responses.Common;
 using MediatR;
 
 namespace Jobby.Application.Features.JobFeatures.Commands.Update.UpdateDetails;
-public sealed record UpdateJobCommand : IRequest<BaseResult<UpdateJobResponse, UpdateJobOutcomes>>
+public sealed record UpdateJobCommand : IRequest<BaseResult<JobDto, UpdateJobOutcomes>>
 {
     public Guid Id { get; set; }
     public string Company { get; set; }

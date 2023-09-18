@@ -8,7 +8,7 @@ using MediatR;
 
 namespace Jobby.Application.Features.JobFeatures.Queries.GetList;
 
-internal sealed class GetJobListQueryHandler : IRequestHandler<GetJobListQuery, List<PreviewJobDto>>
+internal sealed class GetJobListQueryHandler : IRequestHandler<GetJobListQuery, List<JobDto>>
 {
     private readonly IReadRepository<Job> _jobRepository;
     private readonly IMapper _mapper;
@@ -24,10 +24,10 @@ internal sealed class GetJobListQueryHandler : IRequestHandler<GetJobListQuery, 
         _jobRepository = jobRepository;
     }
     
-    public async Task<List<PreviewJobDto>> Handle(GetJobListQuery request, CancellationToken cancellationToken)
+    public async Task<List<JobDto>> Handle(GetJobListQuery request, CancellationToken cancellationToken)
     {
         var jobs = await _jobRepository.ListAsync(new GetJobsFromUserSpecification(_userId), cancellationToken);
         
-        return _mapper.Map<List<PreviewJobDto>>(jobs);
+        return _mapper.Map<List<JobDto>>(jobs);
     }
 }

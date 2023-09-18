@@ -1,4 +1,6 @@
-﻿using Jobby.Application.Abstractions.Specification;
+﻿using AutoMapper;
+using Jobby.Application.Abstractions.Specification;
+using Jobby.Application.Dtos;
 using Jobby.Application.Interfaces.Services;
 using Jobby.Application.Responses.Common;
 using Jobby.Domain.Entities;
@@ -6,26 +8,29 @@ using MediatR;
 
 namespace Jobby.Application.Features.BoardFeatures.Commands.Create;
 
-internal sealed class CreateBoardCommandHandler : IRequestHandler<CreateBoardCommand, BaseResult<CreateBoardResponse, CreateBoardOutcomes>>
+internal sealed class CreateBoardCommandHandler : IRequestHandler<CreateBoardCommand, BaseResult<BoardDto, CreateBoardOutcomes>>
 {
     private readonly IRepository<Board> _boardRepository;
     private readonly IGuidProvider _guidProvider;
     private readonly IDateTimeProvider _dateTimeProvider;
+    private readonly IMapper _mapper;
     private readonly string _userId;
 
     public CreateBoardCommandHandler(
         IRepository<Board> boardRepository,
         IUserService userService,
         IDateTimeProvider dateTimeProvider,
-        IGuidProvider guidProvider)
+        IGuidProvider guidProvider, 
+        IMapper mapper)
     {
         _boardRepository = boardRepository;
         _userId = userService.UserId();
         _dateTimeProvider = dateTimeProvider;
         _guidProvider = guidProvider;
+        _mapper = mapper;
     }
 
-    public async Task<BaseResult<CreateBoardResponse, CreateBoardOutcomes>> Handle(CreateBoardCommand request, CancellationToken cancellationToken)
+    public async Task<BaseResult<BoardDto, CreateBoardOutcomes>> Handle(CreateBoardCommand request, CancellationToken cancellationToken)
     {
         Guid boardId = _guidProvider.Create();
 
@@ -47,9 +52,9 @@ internal sealed class CreateBoardCommandHandler : IRequestHandler<CreateBoardCom
 
         await _boardRepository.AddAsync(board, cancellationToken);
 
-        return new BaseResult<CreateBoardResponse, CreateBoardOutcomes>(
+        return new BaseResult<BoardDto, CreateBoardOutcomes>(
             IsSuccess: true,
             Outcome: CreateBoardOutcomes.BoardCreated,
-            Response: new CreateBoardResponse(boardId, board.Name, board.CreatedDate));
+            Response: _mapper.Map<BoardDto>(board));
     }
 }

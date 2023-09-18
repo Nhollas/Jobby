@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
+using Jobby.Application.Dtos;
 using Jobby.Application.Features.ActivityFeatures.Commands.Create;
 using Jobby.Domain.Entities;
 using Jobby.Domain.Static;
@@ -52,11 +53,11 @@ public class Given_Request_With_Job_To_Link : IAsyncLifetime
             Completed = false
         };
 
-        var response = await HttpClient.PostAsJsonAsync("/api/activity", body);
+        var response = await HttpClient.PostAsJsonAsync("/activity", body);
         
-        var createdActivity = await response.Content.ReadFromJsonAsync<CreateActivityResponse>();
+        var createdActivity = await response.Content.ReadFromJsonAsync<ActivityDto>();
         
-        Assert.Equal(preLoadedJob.Id, createdActivity.JobId);
+        Assert.Equal(preLoadedJob.Id, createdActivity.Job.Id);
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
     }
 }

@@ -25,20 +25,21 @@ public class Given_Request_With_Validation_Errors : IAsyncLifetime
     [Fact]
     public async Task When_Type_Property_Is_Invalid_Then_Returns_422_Unprocessable_Entity_And_Type_Property_Validation_Message()
     {
-        const string json = """
-                            {
-                              "title": "k",
-                              "boardId": "2d97a782-24a6-2962-e7cd-3a0c759c3d29",
-                              "type": 41,
-                              "startDate": "2023-08-15T23:00:00.000Z",
-                              "endDate": "2023-08-15T23:00:00.000Z",
-                              "note": "jhakhsdjksad"
-                            }
-                            """;
+        const string json = 
+        """
+        {
+          "title": "k",
+          "boardId": "2d97a782-24a6-2962-e7cd-3a0c759c3d29",
+          "type": 41,
+          "startDate": "2023-08-15T23:00:00.000Z",
+          "endDate": "2023-08-15T23:00:00.000Z",
+          "note": "jhakhsdjksad"
+        }
+        """;
 
         var body = new StringContent(json, Encoding.UTF8, "application/json");
         
-        var response = await HttpClient.PostAsync("/api/activity", body);
+        var response = await HttpClient.PostAsync("/activity", body);
         
         var content = await response.Content.ReadAsStringAsync();
 
@@ -61,7 +62,7 @@ public class Given_Request_With_Validation_Errors : IAsyncLifetime
 
         var body = new StringContent(withoutBoardId, Encoding.UTF8, "application/json");
         
-        var response = await HttpClient.PostAsync("/api/activity", body);
+        var response = await HttpClient.PostAsync("/activity", body);
         
         var content = await response.Content.ReadAsStringAsync();
 
@@ -84,7 +85,7 @@ public class Given_Request_With_Validation_Errors : IAsyncLifetime
 
         var body = new StringContent(json, Encoding.UTF8, "application/json");
         
-        var response = await HttpClient.PostAsync("/api/activity", body);
+        var response = await HttpClient.PostAsync("/activity", body);
         
         var content = await response.Content.ReadAsStringAsync();
 

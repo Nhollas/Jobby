@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using Jobby.Application.Abstractions.Specification;
+using Jobby.Application.Dtos;
 using Jobby.Application.Features.BoardFeatures.Specifications;
 using Jobby.Application.Interfaces.Services;
+using Jobby.Application.Responses;
 using Jobby.Application.Responses.Common;
 using Jobby.Application.Services;
 using Jobby.Domain.Entities;
@@ -9,7 +11,7 @@ using MediatR;
 
 namespace Jobby.Application.Features.JobFeatures.Commands.Create;
 
-internal sealed class CreateJobCommandHandler : IRequestHandler<CreateJobCommand, BaseResult<CreateJobResponse, CreateJobOutcomes>>
+internal sealed class CreateJobCommandHandler : IRequestHandler<CreateJobCommand, BaseResult<JobDto, CreateJobOutcomes>>
 {
     private readonly IReadRepository<Board> _boardRepository;
     private readonly IRepository<Job> _jobRepository;
@@ -34,7 +36,7 @@ internal sealed class CreateJobCommandHandler : IRequestHandler<CreateJobCommand
         _mapper = mapper;
     }
 
-    public async Task<BaseResult<CreateJobResponse, CreateJobOutcomes>> Handle(CreateJobCommand request, CancellationToken cancellationToken)
+    public async Task<BaseResult<JobDto, CreateJobOutcomes>> Handle(CreateJobCommand request, CancellationToken cancellationToken)
     {
         var boardResourceResult = await ResourceProvider<Board>
             .GetBySpec(_boardRepository.FirstOrDefaultAsync)
@@ -43,7 +45,7 @@ internal sealed class CreateJobCommandHandler : IRequestHandler<CreateJobCommand
         
         if (!boardResourceResult.IsSuccess)
         {
-            return new BaseResult<CreateJobResponse, CreateJobOutcomes>(
+            return new BaseResult<JobDto, CreateJobOutcomes>(
                 IsSuccess: false,
                 Outcome: boardResourceResult.Outcome switch
                 {
@@ -59,14 +61,14 @@ internal sealed class CreateJobCommandHandler : IRequestHandler<CreateJobCommand
 
         if (!board.BoardOwnsJoblist(request.JobListId))
         {
-            return new BaseResult<CreateJobResponse, CreateJobOutcomes>(
+            return new BaseResult<JobDto, CreateJobOutcomes>(
                 IsSuccess: false,
                 Outcome: CreateJobOutcomes.JobListNotFound,
                 ErrorMessage: $"The Board {request.BoardId} does not contain the JobList {request.JobListId}."
             );
         }
 
-        JobList selectedJobList = board.JobLists.First(x => x.Id == request.JobListId);
+        JobList selectedJobList = board.Lists.First(list => list.Id == request.JobListId);
 
         int newIndex;
 
@@ -85,10 +87,10 @@ internal sealed class CreateJobCommandHandler : IRequestHandler<CreateJobCommand
         await _jobRepository.AddAsync(createdJob, cancellationToken);
 
         
-        return new BaseResult<CreateJobResponse, CreateJobOutcomes>(
+        return new BaseResult<JobDto, CreateJobOutcomes>(
             IsSuccess: true,
             Outcome: CreateJobOutcomes.JobCreated,
-            Response: _mapper.Map<CreateJobResponse>(createdJob)
+            Response: _mapper.Map<JobDto>(createdJob)
         );        
     }
 }

@@ -26,7 +26,7 @@ public class Given_Request_With_ActivityId_Not_Found : IAsyncLifetime
     {
         var randomActivityId = Guid.NewGuid();
 
-        var response = await HttpClient.DeleteAsync($"/api/activity/{randomActivityId}");
+        var response = await HttpClient.DeleteAsync($"/activity/{randomActivityId}");
 
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }

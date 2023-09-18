@@ -4,7 +4,7 @@ namespace Jobby.Domain.Entities;
 
 public class Board : Entity
 {
-    private List<JobList> _jobLists = new();
+    private List<JobList> _lists = new();
     private readonly List<Activity> _activities = new();
     private readonly List<Job> _jobs = new();
     private readonly List<Contact> _contacts = new();
@@ -19,16 +19,16 @@ public class Board : Entity
         DateTime createdDate,
         string ownerId,
         string name,
-        List<JobList> jobLists)
+        List<JobList> lists)
         : base(id, createdDate, ownerId)
     {
-        _jobLists = jobLists;
+        _lists = lists;
         Name = name;
     }
 
     public string Name { get; private set; }
 
-    public IReadOnlyCollection<JobList> JobLists => _jobLists;
+    public IReadOnlyCollection<JobList> Lists => _lists;
 
     public IReadOnlyCollection<Activity> Activities => _activities;
 
@@ -60,18 +60,18 @@ public class Board : Entity
 
     public void ArrangeJobLists(Dictionary<Guid, int> jobListIndexes)
     {
-        foreach (var jobList in _jobLists)
+        foreach (var list in _lists)
         {
-            if (jobListIndexes.ContainsKey(jobList.Id))
+            if (jobListIndexes.ContainsKey(list.Id))
             {
-                jobList.SetIndex(jobListIndexes[jobList.Id]);
+                list.SetIndex(jobListIndexes[list.Id]);
             }
         }
     }
 
     public bool BoardOwnsJob(Guid jobId)
     {
-        return JobLists
+        return Lists
             .SelectMany(x => x.Jobs
             .Where(x => x.Id == jobId))
             .Any();
@@ -79,14 +79,14 @@ public class Board : Entity
 
     public bool BoardOwnsJoblist(Guid jobListId)
     {
-        return JobLists
+        return Lists
             .Select(x => x.Id == jobListId)
             .Any();
     }
 
     public bool BoardOwnsJobs(List<Guid> jobIds)
     {
-        return JobLists
+        return Lists
             .SelectMany(x => x.Jobs
             .Where(x => jobIds.Contains(x.Id)))
             .Any();

@@ -1,10 +1,11 @@
-﻿using Jobby.Application.Responses.Common;
+﻿using Jobby.Application.Dtos;
+using Jobby.Application.Responses.Common;
 using Jobby.Domain.Static;
 using MediatR;
 
 namespace Jobby.Application.Features.ActivityFeatures.Commands.Create;
 
-public sealed record CreateActivityCommand : IRequest<BaseResult<CreateActivityResponse, CreateActivityOutcomes>>
+public sealed record CreateActivityCommand : IRequest<BaseResult<ActivityDto, CreateActivityOutcomes>>
 {
     public Guid BoardId { get; set; }
     public Guid JobId { get; set; }

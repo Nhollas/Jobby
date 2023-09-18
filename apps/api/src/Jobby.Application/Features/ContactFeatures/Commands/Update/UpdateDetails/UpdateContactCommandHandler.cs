@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
 using Jobby.Application.Abstractions.Specification;
-using Jobby.Application.Contracts.Contact;
+using Jobby.Application.Dtos;
 using Jobby.Application.Features.ContactFeatures.Specifications;
 using Jobby.Application.Features.JobFeatures.Specifications;
-using Jobby.Application.Interfaces.Repositories;
 using Jobby.Application.Interfaces.Services;
+using Jobby.Application.Responses;
 using Jobby.Application.Responses.Common;
 using Jobby.Application.Services;
 using Jobby.Domain.Entities;
@@ -13,7 +13,7 @@ using static Jobby.Domain.Static.ContactConstants;
 
 namespace Jobby.Application.Features.ContactFeatures.Commands.Update.UpdateDetails;
 
-internal sealed class UpdateContactCommandHandler : IRequestHandler<UpdateContactCommand, BaseResult<UpdateContactResponse, UpdateContactOutcomes>>
+internal sealed class UpdateContactCommandHandler : IRequestHandler<UpdateContactCommand, BaseResult<ContactDto, UpdateContactOutcomes>>
 {
     private readonly IRepository<Contact> _contactRepository;
     private readonly IRepository<Board> _boardRepository;
@@ -38,7 +38,7 @@ internal sealed class UpdateContactCommandHandler : IRequestHandler<UpdateContac
         _mapper = mapper;
     }
 
-    public async Task<BaseResult<UpdateContactResponse, UpdateContactOutcomes>> Handle(UpdateContactCommand request, CancellationToken cancellationToken)
+    public async Task<BaseResult<ContactDto, UpdateContactOutcomes>> Handle(UpdateContactCommand request, CancellationToken cancellationToken)
     {
         var contactResourceResult = await ResourceProvider<Contact>
             .GetBySpec(_contactRepository.FirstOrDefaultAsync)
@@ -47,7 +47,7 @@ internal sealed class UpdateContactCommandHandler : IRequestHandler<UpdateContac
 
         if (!contactResourceResult.IsSuccess)
         {
-            return new BaseResult<UpdateContactResponse, UpdateContactOutcomes>(
+            return new BaseResult<ContactDto, UpdateContactOutcomes>(
                 IsSuccess: false,
                 Outcome: contactResourceResult.Outcome switch
                 {
@@ -80,7 +80,7 @@ internal sealed class UpdateContactCommandHandler : IRequestHandler<UpdateContac
             
             if (!boardResourceResult.IsSuccess)
             {
-                return new BaseResult<UpdateContactResponse, UpdateContactOutcomes>(
+                return new BaseResult<ContactDto, UpdateContactOutcomes>(
                     IsSuccess: false,
                     Outcome: boardResourceResult.Outcome switch
                     {
@@ -137,10 +137,10 @@ internal sealed class UpdateContactCommandHandler : IRequestHandler<UpdateContac
 
         await _contactRepository.SaveChangesAsync(cancellationToken);
         
-        return new BaseResult<UpdateContactResponse, UpdateContactOutcomes>(
+        return new BaseResult<ContactDto, UpdateContactOutcomes>(
             IsSuccess: true,
             Outcome: UpdateContactOutcomes.ContactUpdated,
-            Response: _mapper.Map<UpdateContactResponse>(contactToUpdate)
+            Response: _mapper.Map<ContactDto>(contactToUpdate)
         );
     }
 }

@@ -1,8 +1,9 @@
 ﻿using AutoMapper;
 using Jobby.Application.Abstractions.Specification;
-using Jobby.Application.Contracts.Board;
+using Jobby.Application.Dtos;
 using Jobby.Application.Features.BoardFeatures.Specifications;
 using Jobby.Application.Interfaces.Services;
+using Jobby.Application.Responses;
 using Jobby.Application.Responses.Common;
 using Jobby.Application.Services;
 using Jobby.Domain.Entities;
@@ -10,7 +11,7 @@ using MediatR;
 
 namespace Jobby.Application.Features.BoardFeatures.Queries.GetById;
 
-internal sealed class GetBoardDetailQueryHandler : IRequestHandler<GetBoardDetailQuery, BaseResult<GetBoardDetailResponse, GetBoardDetailOutcomes>>
+internal sealed class GetBoardDetailQueryHandler : IRequestHandler<GetBoardDetailQuery, BaseResult<BoardDto, GetBoardDetailOutcomes>>
 {
     private readonly IReadRepository<Board> _repository;
     private readonly IMapper _mapper;
@@ -26,7 +27,7 @@ internal sealed class GetBoardDetailQueryHandler : IRequestHandler<GetBoardDetai
         _mapper = mapper;
     }
 
-    public async Task<BaseResult<GetBoardDetailResponse, GetBoardDetailOutcomes>> Handle(GetBoardDetailQuery request, CancellationToken cancellationToken)
+    public async Task<BaseResult<BoardDto, GetBoardDetailOutcomes>> Handle(GetBoardDetailQuery request, CancellationToken cancellationToken)
     {
         var boardResourceResult = await ResourceProvider<Board>
             .GetBySpec(_repository.FirstOrDefaultAsync)
@@ -35,7 +36,7 @@ internal sealed class GetBoardDetailQueryHandler : IRequestHandler<GetBoardDetai
         
         if (!boardResourceResult.IsSuccess)
         {
-            return new BaseResult<GetBoardDetailResponse, GetBoardDetailOutcomes>(
+            return new BaseResult<BoardDto, GetBoardDetailOutcomes>(
                 IsSuccess: false,
                 Outcome: boardResourceResult.Outcome switch
                 {
@@ -47,10 +48,10 @@ internal sealed class GetBoardDetailQueryHandler : IRequestHandler<GetBoardDetai
             );
         }
         
-        return new BaseResult<GetBoardDetailResponse, GetBoardDetailOutcomes>(
+        return new BaseResult<BoardDto, GetBoardDetailOutcomes>(
             IsSuccess: true,
             Outcome: GetBoardDetailOutcomes.BoardFound,
-            Response: _mapper.Map<GetBoardDetailResponse>(boardResourceResult.Response)
+            Response: _mapper.Map<BoardDto>(boardResourceResult.Response)
         );
 
     }

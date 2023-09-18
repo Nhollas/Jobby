@@ -17,14 +17,14 @@ namespace Jobby.HttpApi.Controllers;
 public class JobController : ApiController
 {
     [HttpGet("/jobs")]
-    public async Task<ActionResult<List<PreviewJobDto>>> ListBoards()
+    public async Task<ActionResult<List<JobDto>>> ListBoards()
     {
         var dtos = await Sender.Send(new GetJobListQuery());
         return Ok(dtos);
     }
     
     [HttpGet("{jobId:guid}")]
-    public async Task<IActionResult> GetJob(Guid jobId)
+    public async Task<ActionResult<JobDto>> GetJob(Guid jobId)
     {
         var jobQuery = new GetJobDetailQuery(jobId);
         var job = await Sender.Send(jobQuery);
@@ -33,21 +33,21 @@ public class JobController : ApiController
     }
     
     [HttpGet("{jobId:guid}/activities")]
-    public async Task<IActionResult> GetJobActivities(Guid jobId)
+    public async Task<ActionResult<List<ActivityDto>>> GetJobActivities(Guid jobId)
     {
-        var jobQuery = new GetJobActivitiesQuery(jobId);
+        var jobQuery = new GetJobActivityListQuery(jobId);
         return Ok(await Sender.Send(jobQuery));
     }
 
     [HttpGet("{jobId:guid}/contacts")]
-    public async Task<IActionResult> GetJobContacts(Guid jobId)
+    public async Task<ActionResult<List<ContactDto>>> GetJobContacts(Guid jobId)
     {
-        var jobQuery = new GetJobContactsQuery(jobId);
+        var jobQuery = new GetJobContactListQuery(jobId);
         return Ok(await Sender.Send(jobQuery));
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateJob([FromBody] CreateJobCommand command)
+    public async Task<ActionResult<JobDto>> CreateJob([FromBody] CreateJobCommand command)
     {
         var job = await Sender.Send(command);
 
@@ -55,21 +55,21 @@ public class JobController : ApiController
     }
 
     [HttpDelete("{jobId:guid}")]
-    public async Task<IActionResult> DeleteJob(Guid jobId)
+    public async Task<ActionResult<DeleteJobResponse>> DeleteJob(Guid jobId)
     {
         await Sender.Send(new DeleteJobCommand(jobId));
         return NoContent();
     }
 
     [HttpPut]
-    public async Task<IActionResult> UpdateJob([FromBody] UpdateJobCommand command)
+    public async Task<ActionResult<JobDto>> UpdateJob([FromBody] UpdateJobCommand command)
     {
         var updatedjob =  await Sender.Send(command);
         return Ok(updatedjob);
     }
 
     [HttpPut("Move", Name = "MoveJob")]
-    public async Task<IActionResult> MoveJob([FromBody] MoveJobCommand command)
+    public async Task<ActionResult<MoveJobResponse>> MoveJob([FromBody] MoveJobCommand command)
     {
         await Sender.Send(command);
         return NoContent();

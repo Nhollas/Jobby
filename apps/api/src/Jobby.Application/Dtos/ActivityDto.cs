@@ -12,5 +12,5 @@ public sealed record ActivityDto : EntityDto
     public string Note { get; set; }
     public bool Completed { get; set; }
     public Guid BoardId { get; set; }
-    public PreviewJobDto Job { get; set; }
+    public JobDto Job { get; set; }
 }

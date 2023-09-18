@@ -1,13 +1,13 @@
 ﻿using AutoMapper;
 using Jobby.Application.Abstractions.Specification;
-using Jobby.Application.Contracts.Activity;
+using Jobby.Application.Dtos;
 using Jobby.Application.Features.BoardFeatures.Specifications;
 using Jobby.Application.Interfaces.Services;
 using Jobby.Domain.Entities;
 using MediatR;
 
 namespace Jobby.Application.Features.BoardFeatures.Queries.ListActivities;
-internal sealed class GetBoardActivityListQueryHandler : IRequestHandler<GetBoardActivityListQuery, List<ListActivitiesResponse>>
+internal sealed class GetBoardActivityListQueryHandler : IRequestHandler<GetBoardActivityListQuery, List<ActivityDto>>
 {
     private readonly IReadRepository<Activity> _repository;
     private readonly IMapper _mapper;
@@ -23,12 +23,12 @@ internal sealed class GetBoardActivityListQueryHandler : IRequestHandler<GetBoar
         _mapper = mapper;
     }
 
-    public async Task<List<ListActivitiesResponse>> Handle(GetBoardActivityListQuery request, CancellationToken cancellationToken)
+    public async Task<List<ActivityDto>> Handle(GetBoardActivityListQuery request, CancellationToken cancellationToken)
     {
         var activitySpec = new GetActivitiesFromBoardSpecification(request.BoardId, _userId);
 
         var activityList = await _repository.ListAsync(activitySpec, cancellationToken);
 
-        return _mapper.Map<List<ListActivitiesResponse>>(activityList);
+        return _mapper.Map<List<ActivityDto>>(activityList);
     }
 }

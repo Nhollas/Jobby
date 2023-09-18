@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using Jobby.Application.Abstractions.Specification;
+using Jobby.Application.Dtos;
 using Jobby.Application.Features.BoardFeatures.Specifications;
 using Jobby.Application.Interfaces.Services;
+using Jobby.Application.Responses;
 using Jobby.Application.Responses.Common;
 using Jobby.Application.Services;
 using Jobby.Domain.Entities;
@@ -9,7 +11,7 @@ using MediatR;
 
 namespace Jobby.Application.Features.ActivityFeatures.Commands.Create;
 
-internal sealed class CreateActivityCommandHandler : IRequestHandler<CreateActivityCommand, BaseResult<CreateActivityResponse, CreateActivityOutcomes>>
+internal sealed class CreateActivityCommandHandler : IRequestHandler<CreateActivityCommand, BaseResult<ActivityDto, CreateActivityOutcomes>>
 {
     private readonly IRepository<Board> _boardRepository;
     private readonly IRepository<Activity> _activityRepository;
@@ -34,14 +36,14 @@ internal sealed class CreateActivityCommandHandler : IRequestHandler<CreateActiv
         _mapper = mapper;
     }
 
-    public async Task<BaseResult<CreateActivityResponse, CreateActivityOutcomes>> Handle(CreateActivityCommand request, CancellationToken cancellationToken)
+    public async Task<BaseResult<ActivityDto, CreateActivityOutcomes>> Handle(CreateActivityCommand request, CancellationToken cancellationToken)
     {
         var validator = new CreateActivityCommandValidator();
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
         
         if (!validationResult.IsValid)
         {
-            return new BaseResult<CreateActivityResponse, CreateActivityOutcomes>(
+            return new BaseResult<ActivityDto, CreateActivityOutcomes>(
                 IsSuccess: false,
                 Outcome: CreateActivityOutcomes.ValidationFailure,
                 ValidationResult: validationResult
@@ -55,7 +57,7 @@ internal sealed class CreateActivityCommandHandler : IRequestHandler<CreateActiv
 
         if (!boardResourceResult.IsSuccess)
         {
-            return new BaseResult<CreateActivityResponse, CreateActivityOutcomes>(
+            return new BaseResult<ActivityDto, CreateActivityOutcomes>(
                 IsSuccess: false,
                 Outcome: boardResourceResult.Outcome switch
                 {
@@ -84,14 +86,14 @@ internal sealed class CreateActivityCommandHandler : IRequestHandler<CreateActiv
         {
             if (!boardToLink.BoardOwnsJob(request.JobId))
             {
-                return new BaseResult<CreateActivityResponse, CreateActivityOutcomes>(
+                return new BaseResult<ActivityDto, CreateActivityOutcomes>(
                     IsSuccess: false,
                     Outcome: CreateActivityOutcomes.JobDoesNotExistInBoard,
                     ErrorMessage: $"The {nameof(Job)} {request.JobId} you wanted to link doesn't exist in the Board {request.BoardId}."
                 );
             }
 
-            var jobToLink = boardToLink.JobLists
+            var jobToLink = boardToLink.Lists
                 .SelectMany(x => x.Jobs)
                 .First(x => x.Id == request.JobId);
 
@@ -100,10 +102,10 @@ internal sealed class CreateActivityCommandHandler : IRequestHandler<CreateActiv
 
         await _activityRepository.AddAsync(createdActivity, cancellationToken);
 
-        return new BaseResult<CreateActivityResponse, CreateActivityOutcomes>(
+        return new BaseResult<ActivityDto, CreateActivityOutcomes>(
             IsSuccess: true, 
             Outcome: CreateActivityOutcomes.ActivityCreated,
-            Response: _mapper.Map<CreateActivityResponse>(createdActivity)
+            Response: _mapper.Map<ActivityDto>(createdActivity)
         );
     }
 }

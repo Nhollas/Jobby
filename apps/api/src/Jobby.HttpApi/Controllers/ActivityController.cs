@@ -1,4 +1,5 @@
-﻿using Jobby.Application.Features.ActivityFeatures.Commands.Create;
+﻿using Jobby.Application.Dtos;
+using Jobby.Application.Features.ActivityFeatures.Commands.Create;
 using Jobby.Application.Features.ActivityFeatures.Commands.Delete;
 using Jobby.Application.Features.ActivityFeatures.Commands.Update;
 using Jobby.HttpApi.Controllers.Base;
@@ -19,17 +20,13 @@ public class ActivityController : ApiController
         _logger = logger;
     }
     
-    /// <summary>
-    /// Creates an Activity.
-    /// </summary>
-    /// <returns>The newly created Activity</returns>
-    /// <response code="201">Returns the created Activity.</response>
-    /// <response code="401">If you do not own the Job you want to link.</response>
-    /// <response code="404">If the Job or Board does not exist.</response>
-    /// <response code="422">If the request is invalid.</response>
-    /// <response code="400">If an unknown error occurs.</response>
     [HttpPost]
-    public async Task<ActionResult<CreateActivityResponse>> CreateActivity(CreateActivityCommand command)
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    public async Task<ActionResult<ActivityDto>> CreateActivity(CreateActivityCommand command)
     {
         try
         {
@@ -57,17 +54,12 @@ public class ActivityController : ApiController
         }
     }
     
-    /// <summary>
-    /// Deletes an Activity.
-    /// </summary>
-    /// <param name="activityId"></param>
-    /// <returns>No Content</returns>
-    /// <response code="200">Returns with No Content.</response>
-    /// <response code="401">If you do not own the Activity.</response>
-    /// <response code="404">If the Activity does not exist.</response>
-    /// <response code="400">If an unknown error occurs.</response>
     [HttpDelete("{activityId:guid}")]
-    public async Task<IActionResult> DeleteActivity(Guid activityId)
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<ActionResult<DeleteActivityResponse>> DeleteActivity(Guid activityId)
     {
         try
         {
@@ -92,23 +84,14 @@ public class ActivityController : ApiController
             return BadRequest("Unknown error");
         }
     }
-
-    /// <summary>
-    /// Updates an Activity.
-    /// </summary>
-    /// <returns>The updated Activity</returns>
-    /// <response code="201">Returns the newly created item</response>
-    /// <response code="401">If you do not own either the Activity or the Job you want to link.</response>
-    /// <response code="404">If the Activity or the Job does not exist.</response>
-    /// <response code="422">If the request is invalid.</response>
-    /// <response code="400">If an unknown error occurs. Or if you try to link a Job that lives on a different Board to the Activity.</response>
+    
     [HttpPut]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status201Created)]
-    public async Task<ActionResult<UpdateActivityResponse>> UpdateActivity([FromBody] UpdateActivityCommand command)
+    public async Task<ActionResult<ActivityDto>> UpdateActivity([FromBody] UpdateActivityCommand command)
     {
         try
         {

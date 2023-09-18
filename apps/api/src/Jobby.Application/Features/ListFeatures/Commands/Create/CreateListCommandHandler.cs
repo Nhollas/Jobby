@@ -1,12 +1,14 @@
 ﻿using Jobby.Application.Abstractions.Specification;
+using Jobby.Application.Dtos;
 using Jobby.Application.Interfaces.Services;
+using Jobby.Application.Responses;
 using Jobby.Application.Responses.Common;
 using Jobby.Application.Services;
 using Jobby.Domain.Entities;
 using MediatR;
 
 namespace Jobby.Application.Features.ListFeatures.Commands.Create;
-internal sealed class CreateListCommandHandler : IRequestHandler<CreateListCommand, BaseResult<CreateListResponse, CreateListOutcomes>>
+internal sealed class CreateListCommandHandler : IRequestHandler<CreateListCommand, BaseResult<JobListDto, CreateListOutcomes>>
 {
     private readonly IRepository<JobList> _jobListRepository;
     private readonly IRepository<Job> _jobRepository;
@@ -28,7 +30,7 @@ internal sealed class CreateListCommandHandler : IRequestHandler<CreateListComma
         _guidProvider = guidProvider;
     }
 
-    public async Task<BaseResult<CreateListResponse, CreateListOutcomes>> Handle(CreateListCommand request, CancellationToken cancellationToken)
+    public async Task<BaseResult<JobListDto, CreateListOutcomes>> Handle(CreateListCommand request, CancellationToken cancellationToken)
     {
         var createdJobList = JobList.Create(
             _guidProvider.Create(),
@@ -48,7 +50,7 @@ internal sealed class CreateListCommandHandler : IRequestHandler<CreateListComma
             
             if (!jobResourceResult.IsSuccess)
             {
-                return new BaseResult<CreateListResponse, CreateListOutcomes>(
+                return new BaseResult<JobListDto, CreateListOutcomes>(
                     IsSuccess: false,
                     Outcome: jobResourceResult.Outcome switch
                     {
@@ -68,10 +70,10 @@ internal sealed class CreateListCommandHandler : IRequestHandler<CreateListComma
             await _jobRepository.UpdateAsync(jobToUpdate, cancellationToken);
         }
         
-        return new BaseResult<CreateListResponse, CreateListOutcomes>(
+        return new BaseResult<JobListDto, CreateListOutcomes>(
             IsSuccess: true,
             Outcome: CreateListOutcomes.ListCreated,
-            Response: new CreateListResponse()
+            Response: new JobListDto()
         );
     }
 }

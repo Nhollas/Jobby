@@ -1,5 +1,6 @@
 using Ardalis.Specification;
 using Jobby.Application.Abstractions.Authorization;
+using Jobby.Application.Responses;
 using Jobby.Domain.Primitives;
 
 namespace Jobby.Application.Services;

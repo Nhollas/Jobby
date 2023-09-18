@@ -2,13 +2,14 @@
 using Jobby.Application.Abstractions.Specification;
 using Jobby.Application.Dtos;
 using Jobby.Application.Interfaces.Services;
+using Jobby.Application.Responses;
 using Jobby.Application.Responses.Common;
 using Jobby.Application.Services;
 using Jobby.Domain.Entities;
 using MediatR;
 
 namespace Jobby.Application.Features.JobFeatures.Commands.Update.UpdateDetails;
-internal sealed class UpdateJobCommandHandler : IRequestHandler<UpdateJobCommand, BaseResult<UpdateJobResponse, UpdateJobOutcomes>>
+internal sealed class UpdateJobCommandHandler : IRequestHandler<UpdateJobCommand, BaseResult<JobDto, UpdateJobOutcomes>>
 {
     private readonly IRepository<Job> _jobRepository;
     private readonly IDateTimeProvider _timeProvider;
@@ -27,7 +28,7 @@ internal sealed class UpdateJobCommandHandler : IRequestHandler<UpdateJobCommand
         _timeProvider = timeProvider;
     }
 
-    public async Task<BaseResult<UpdateJobResponse, UpdateJobOutcomes>> Handle(UpdateJobCommand request, CancellationToken cancellationToken)
+    public async Task<BaseResult<JobDto, UpdateJobOutcomes>> Handle(UpdateJobCommand request, CancellationToken cancellationToken)
     {
         var jobResourceResult = await ResourceProvider<Job>
             .GetById(_jobRepository.GetByIdAsync)
@@ -35,7 +36,7 @@ internal sealed class UpdateJobCommandHandler : IRequestHandler<UpdateJobCommand
 
         if (!jobResourceResult.IsSuccess)
         {
-            return new BaseResult<UpdateJobResponse, UpdateJobOutcomes>(
+            return new BaseResult<JobDto, UpdateJobOutcomes>(
                 IsSuccess: false,
                 Outcome: jobResourceResult.Outcome switch
                 {
@@ -55,10 +56,10 @@ internal sealed class UpdateJobCommandHandler : IRequestHandler<UpdateJobCommand
 
         await _jobRepository.UpdateAsync(jobToUpdate, cancellationToken);
         
-        return new BaseResult<UpdateJobResponse, UpdateJobOutcomes>(
+        return new BaseResult<JobDto, UpdateJobOutcomes>(
             IsSuccess: true,
             Outcome: UpdateJobOutcomes.JobUpdated,
-            Response: new UpdateJobResponse()
+            Response: new JobDto()
         );
     }
 }

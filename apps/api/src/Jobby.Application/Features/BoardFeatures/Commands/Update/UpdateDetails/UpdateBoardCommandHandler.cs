@@ -1,5 +1,8 @@
-﻿using Jobby.Application.Abstractions.Specification;
+﻿using AutoMapper;
+using Jobby.Application.Abstractions.Specification;
+using Jobby.Application.Dtos;
 using Jobby.Application.Interfaces.Services;
+using Jobby.Application.Responses;
 using Jobby.Application.Responses.Common;
 using Jobby.Application.Services;
 using Jobby.Domain.Entities;
@@ -7,23 +10,26 @@ using MediatR;
 
 namespace Jobby.Application.Features.BoardFeatures.Commands.Update.UpdateDetails;
 
-internal sealed class UpdateBoardCommandHandler : IRequestHandler<UpdateBoardCommand, BaseResult<UpdateBoardResponse, UpdateBoardOutcomes>>
+internal sealed class UpdateBoardCommandHandler : IRequestHandler<UpdateBoardCommand, BaseResult<BoardDto, UpdateBoardOutcomes>>
 {
     private readonly IRepository<Board> _boardRepository;
     private readonly IDateTimeProvider _timeProvider;
+    private readonly IMapper _mapper;
     private readonly string _userId;
 
     public UpdateBoardCommandHandler(
         IRepository<Board> boardRepository,
         IUserService userService,
-        IDateTimeProvider timeProvider)
+        IDateTimeProvider timeProvider, 
+        IMapper mapper)
     {
         _boardRepository = boardRepository;
         _userId = userService.UserId();
         _timeProvider = timeProvider;
+        _mapper = mapper;
     }
 
-    public async Task<BaseResult<UpdateBoardResponse, UpdateBoardOutcomes>> Handle(UpdateBoardCommand request, CancellationToken cancellationToken)
+    public async Task<BaseResult<BoardDto, UpdateBoardOutcomes>> Handle(UpdateBoardCommand request, CancellationToken cancellationToken)
     {
         var boardResourceResult = await ResourceProvider<Board>
             .GetById(_boardRepository.GetByIdAsync)
@@ -31,7 +37,7 @@ internal sealed class UpdateBoardCommandHandler : IRequestHandler<UpdateBoardCom
         
         if (!boardResourceResult.IsSuccess)
         {
-            return new BaseResult<UpdateBoardResponse, UpdateBoardOutcomes>(
+            return new BaseResult<BoardDto, UpdateBoardOutcomes>(
                 IsSuccess: false,
                 Outcome: boardResourceResult.Outcome switch
                 {
@@ -51,10 +57,10 @@ internal sealed class UpdateBoardCommandHandler : IRequestHandler<UpdateBoardCom
 
         await _boardRepository.UpdateAsync(boardToUpdate, cancellationToken);
 
-        return new BaseResult<UpdateBoardResponse, UpdateBoardOutcomes>(
+        return new BaseResult<BoardDto, UpdateBoardOutcomes>(
             IsSuccess: true,
             Outcome: UpdateBoardOutcomes.BoardUpdated,
-            Response: new UpdateBoardResponse()
+            Response: _mapper.Map<BoardDto>(boardToUpdate)
         );
     }
 }
