@@ -1,3 +1,4 @@
+using Jobby.Domain.Entities;
 using Jobby.Persistence.Data;
 
 namespace Jobby.HttpApi.Tests.Helpers;
@@ -20,5 +21,12 @@ public static class SeedDataHelper<T> where T : class
         await context.SaveChangesAsync();
 
         return entities;
+    }
+
+    public static async Task RemoveAsync(T entity, JobbyDbContext disposeContext)
+    {
+        disposeContext.Set<T>().Remove(entity);
+        
+        await disposeContext.SaveChangesAsync();
     }
 }

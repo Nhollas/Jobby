@@ -24,8 +24,8 @@ internal sealed class DeleteContactCommandHandler : IRequestHandler<DeleteContac
     public async Task<BaseResult<DeleteContactResponse, DeleteContactOutcomes>> Handle(DeleteContactCommand request, CancellationToken cancellationToken)
     {
         var contactResourceResult = await ResourceProvider<Contact>
-            .GetById(_contactRepository.GetByIdAsync)
-            .Check(_userId, request.ContactId, cancellationToken);
+            .GetByReference(_contactRepository.GetByReferenceAsync)
+            .Check(_userId, request.ContactReference, cancellationToken);
 
         if (!contactResourceResult.IsSuccess)
         {

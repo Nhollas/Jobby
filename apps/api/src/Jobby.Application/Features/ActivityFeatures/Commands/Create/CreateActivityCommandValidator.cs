@@ -16,7 +16,7 @@ public sealed class CreateActivityCommandValidator : AbstractValidator<CreateAct
             .IsInEnum().WithMessage("The provided activity type is not valid.");
 
         // Guid is a value type, so we don't need any other checks than null.
-        RuleFor(command => command.BoardId)
+        RuleFor(command => command.BoardReference)
             .NotEmpty().WithMessage("This property is required.");
 
         // DateTime is a value type, so we don't need any other checks than null.

@@ -40,7 +40,7 @@ internal sealed class CreateJobCommandHandler : IRequestHandler<CreateJobCommand
     {
         var boardResourceResult = await ResourceProvider<Board>
             .GetBySpec(_boardRepository.FirstOrDefaultAsync)
-            .ApplySpecification(new GetBoardWithJobsSpecification(request.BoardId))
+            .ApplySpecification(new GetBoardWithJobsSpecification(request.BoardReference))
             .Check(_userId, cancellationToken);
         
         if (!boardResourceResult.IsSuccess)
@@ -59,16 +59,16 @@ internal sealed class CreateJobCommandHandler : IRequestHandler<CreateJobCommand
         
         var board = boardResourceResult.Response;
 
-        if (!board.BoardOwnsJoblist(request.JobListId))
+        if (!board.BoardOwnsList(request.JobListReference))
         {
             return new BaseResult<JobDto, CreateJobOutcomes>(
                 IsSuccess: false,
                 Outcome: CreateJobOutcomes.JobListNotFound,
-                ErrorMessage: $"The Board {request.BoardId} does not contain the JobList {request.JobListId}."
+                ErrorMessage: $"The Board {request.BoardReference} does not contain the JobList {request.JobListReference}."
             );
         }
 
-        JobList selectedJobList = board.Lists.First(list => list.Id == request.JobListId);
+        JobList selectedJobList = board.Lists.First(list => list.Reference == request.JobListReference);
 
         int newIndex;
 

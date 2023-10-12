@@ -12,6 +12,7 @@ internal sealed class CreateListCommandHandler : IRequestHandler<CreateListComma
 {
     private readonly IRepository<JobList> _jobListRepository;
     private readonly IRepository<Job> _jobRepository;
+    private readonly IRepository<Board> _boardRepository;
     private readonly IGuidProvider _guidProvider;
     private readonly IDateTimeProvider _dateTimeProvider;
     private readonly string _userId;
@@ -21,32 +22,54 @@ internal sealed class CreateListCommandHandler : IRequestHandler<CreateListComma
         IRepository<Job> jobRepository,
         IUserService userService,
         IDateTimeProvider dateTimeProvider,
-        IGuidProvider guidProvider)
+        IGuidProvider guidProvider, 
+        IRepository<Board> boardRepository)
     {
         _jobListRepository = jobListRepository;
         _jobRepository = jobRepository;
         _userId = userService.UserId();
         _dateTimeProvider = dateTimeProvider;
         _guidProvider = guidProvider;
+        _boardRepository = boardRepository;
     }
 
     public async Task<BaseResult<JobListDto, CreateListOutcomes>> Handle(CreateListCommand request, CancellationToken cancellationToken)
     {
+        var boardResourceResult = await ResourceProvider<Board>
+            .GetByReference(_boardRepository.GetByReferenceAsync)
+            .Check(_userId, request.BoardReference, cancellationToken);
+
+        if (!boardResourceResult.IsSuccess)
+        {
+            return new BaseResult<JobListDto, CreateListOutcomes>(
+                IsSuccess: false,
+                Outcome: boardResourceResult.Outcome switch
+                {
+                    Outcome.Unauthorised => CreateListOutcomes.UnauthorizedBoardAccess,
+                    Outcome.NotFound => CreateListOutcomes.UnknownBoard,
+                    _ => CreateListOutcomes.UnknownError
+                },
+                ErrorMessage: boardResourceResult.ErrorMessage
+            );
+        }
+        
+        var board = boardResourceResult.Response;
+        
         var createdJobList = JobList.Create(
             _guidProvider.Create(),
             _dateTimeProvider.UtcNow,
             _userId,
             request.Name,
             request.Index,
-            request.BoardId);
+            board.Id);
 
         await _jobListRepository.AddAsync(createdJobList, cancellationToken);
 
-        if (request.InitJobId != Guid.Empty)
+        if (request.JobReference != string.Empty)
         {
             var jobResourceResult = await ResourceProvider<Job>
-                .GetById(_jobRepository.GetByIdAsync)
-                .Check(_userId, request.InitJobId, cancellationToken);
+                .GetByReference(_jobRepository.GetByReferenceAsync)
+                .Check(_userId, request.JobReference, cancellationToken);
             
             if (!jobResourceResult.IsSuccess)
             {

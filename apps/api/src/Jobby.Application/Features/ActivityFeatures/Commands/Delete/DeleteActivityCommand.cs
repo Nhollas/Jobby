@@ -3,4 +3,4 @@ using MediatR;
 
 namespace Jobby.Application.Features.ActivityFeatures.Commands.Delete;
 
-public sealed record DeleteActivityCommand(Guid ActivityId) : IRequest<BaseResult<DeleteActivityResponse, DeleteActivityOutcomes>>;
+public sealed record DeleteActivityCommand(string ActivityReference) : IRequest<BaseResult<DeleteActivityResponse, DeleteActivityOutcomes>>;

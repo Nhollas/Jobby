@@ -11,6 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
 
 builder.Services.AddLogging();
+builder.Services.AddSingleton(typeof(ILogger<>), typeof(Logger<>));
 builder.Services.AddApplicationServices();
 builder.Services.AddPersistenceServices(config);
 
@@ -38,9 +39,8 @@ builder.Services.AddSwaggerGen(c =>
     c.AddSecurityDefinition(name: "Bearer", securityScheme: new OpenApiSecurityScheme
     {
         Name = "Authorization",
-        Description = "Enter the Bearer Authorization string as following: `Bearer Generated-JWT-Token`",
         In = ParameterLocation.Header,
-        Type = SecuritySchemeType.ApiKey,
+        Type = SecuritySchemeType.Http,
         Scheme = "Bearer"
     });
     c.AddSecurityRequirement(new OpenApiSecurityRequirement

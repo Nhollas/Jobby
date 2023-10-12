@@ -3,4 +3,4 @@ using Jobby.Application.Responses.Common;
 using MediatR;
 
 namespace Jobby.Application.Features.JobFeatures.Queries.GetById;
-public sealed record GetJobDetailQuery(Guid JobId) : IRequest<BaseResult<JobDto, GetJobDetailOutcomes>>;
+public sealed record GetJobDetailQuery(string JobReference) : IRequest<BaseResult<JobDto, GetJobDetailOutcomes>>;

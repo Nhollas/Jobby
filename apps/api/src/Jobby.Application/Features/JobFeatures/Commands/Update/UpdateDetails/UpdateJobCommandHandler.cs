@@ -31,8 +31,8 @@ internal sealed class UpdateJobCommandHandler : IRequestHandler<UpdateJobCommand
     public async Task<BaseResult<JobDto, UpdateJobOutcomes>> Handle(UpdateJobCommand request, CancellationToken cancellationToken)
     {
         var jobResourceResult = await ResourceProvider<Job>
-            .GetById(_jobRepository.GetByIdAsync)
-            .Check(_userId, request.Id, cancellationToken);
+            .GetByReference(_jobRepository.GetByReferenceAsync)
+            .Check(_userId, request.Reference, cancellationToken);
 
         if (!jobResourceResult.IsSuccess)
         {

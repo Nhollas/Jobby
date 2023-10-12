@@ -1,4 +1,5 @@
 using System.Net;
+using Jobby.Application.Services;
 using Jobby.Domain.Entities;
 using Jobby.HttpApi.Tests.Factories;
 using Jobby.HttpApi.Tests.Helpers;
@@ -26,12 +27,14 @@ public class Given_Request_With_ActivityId_Not_Owned : IAsyncLifetime
     public Task DisposeAsync() => Task.CompletedTask;
     
     [Fact]
-    public async Task Then_Returns_403_Forbidden()
+    public async Task Then_Returns_404_Unauthorized()
     {
         await using var context = new JobbyDbContext(new DbContextOptionsBuilder<JobbyDbContext>()
             .UseSqlServer(_factory.DbConnectionString).Options);
         
-        var preLoadedBoard = await SeedDataHelper<Board>.AddAsync(Board.Create(Guid.NewGuid(), DateTime.UtcNow, "TestUserTwoId", "TestBoard", new List<JobList>()), context);
+        var preLoadedBoard = await SeedDataHelper<Board>.AddAsync(Board.Create(Guid.NewGuid(),
+       
+            DateTime.UtcNow, "TestUserTwoId", "TestBoard", new List<JobList>()), context);
         
         var activityToDelete = Activity.Create(
             id: Guid.NewGuid(),
@@ -48,8 +51,8 @@ public class Given_Request_With_ActivityId_Not_Owned : IAsyncLifetime
         
         var preLoadedActivity = await SeedDataHelper<Activity>.AddAsync(activityToDelete, context);
         
-        var response = await HttpClient.DeleteAsync($"/activity/{preLoadedActivity.Id}");
+        var response = await HttpClient.DeleteAsync($"/activity/{preLoadedActivity.Reference}");
 
-        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
     }
 }

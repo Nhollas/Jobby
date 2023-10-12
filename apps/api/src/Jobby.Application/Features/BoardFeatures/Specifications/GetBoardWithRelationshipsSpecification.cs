@@ -5,7 +5,7 @@ namespace Jobby.Application.Features.BoardFeatures.Specifications;
 
 public sealed class GetBoardWithRelationshipsSpecification : Specification<Board>
 {
-    public GetBoardWithRelationshipsSpecification(Guid boardId)
+    public GetBoardWithRelationshipsSpecification(string boardReference)
     {
         Query
             .Include(board => board.Lists
@@ -18,6 +18,6 @@ public sealed class GetBoardWithRelationshipsSpecification : Specification<Board
             .Include(board => board.Contacts)
             .Include(board => board.Activities)
             .AsNoTracking()
-            .Where(board => board.Id == boardId);
+            .Where(board => board.Reference == boardReference);
     }
 }

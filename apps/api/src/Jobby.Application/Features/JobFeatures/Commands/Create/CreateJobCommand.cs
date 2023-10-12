@@ -8,6 +8,6 @@ public sealed record CreateJobCommand : IRequest<BaseResult<JobDto, CreateJobOut
 {
     public string Company { get; set; }
     public string Title { get; set; }
-    public Guid BoardId { get; set; }
-    public Guid JobListId { get; set; }
+    public string BoardReference { get; set; }
+    public string JobListReference { get; set; }
 }

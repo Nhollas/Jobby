@@ -13,10 +13,10 @@ public class ContactRepository : IContactRepository
         _context = context;
     }
 
-    public async Task ClearBoardsAsync(Guid boardId, CancellationToken cancellationToken)
+    public async Task ClearBoardsAsync(string boardReference, CancellationToken cancellationToken)
     {
         await _context.Contacts
-            .Where(contact => contact.BoardId == boardId)
+            .Where(contact => contact.BoardReference == boardReference)
             .ExecuteUpdateAsync(p => p.SetProperty(x => x.BoardId,  x => null), cancellationToken);
     }
 

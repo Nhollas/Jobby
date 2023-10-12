@@ -12,6 +12,7 @@ public class Activity : Entity
 
     private Activity(
         Guid id,
+        string reference,
         DateTime createdDate,
         string ownerId,
         string title,
@@ -21,7 +22,7 @@ public class Activity : Entity
         string note,
         bool completed,
         Board board)
-        : base(id, createdDate, ownerId)
+        : base(id, reference, createdDate, ownerId)
     {
         Title = title;
         Type = type;
@@ -32,7 +33,7 @@ public class Activity : Entity
         Board = board;
         BoardId = board.Id;
     }
-
+    
     public string Title { get; private set; }
     public int Type { get; private set; }
     public string Name
@@ -56,7 +57,10 @@ public class Activity : Entity
     // Database Relationship Properties
     public Board Board { get; set; }
     public Job Job { get; set; }
+    public string JobReference { get; set; }
     public Guid? JobId { get; set; }
+    
+    public string BoardReference { get; set; }
     public Guid BoardId { get; set; }
 
 
@@ -74,6 +78,7 @@ public class Activity : Entity
     {
         var activity = new Activity(
             id,
+            reference: EntityReferenceProvider<Activity>.CreateReference(),
             createdDate,
             ownerId,
             title,
@@ -106,6 +111,7 @@ public class Activity : Entity
     public void SetJob(Job job)
     {
         Job = job;
+        JobReference = job.Reference;
         JobId = job.Id;
     }
 }

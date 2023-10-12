@@ -6,9 +6,9 @@ namespace Jobby.Application.Features.ActivityFeatures.Commands.Update;
 
 public sealed record UpdateActivityCommand : IRequest<BaseResult<ActivityDto, UpdateActivityOutcomes>>
 {
-    public Guid Id { get; set; }
+    public string Reference { get; set; }
     public string Title { get; set; }
-    public Guid JobId { get; set; } = Guid.Empty;
+    public string JobReference { get; set; } = string.Empty;
     public int Type { get; set; }
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }

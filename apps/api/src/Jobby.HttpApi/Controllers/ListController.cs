@@ -9,10 +9,10 @@ namespace Jobby.HttpApi.Controllers;
 [Route("[controller]")]
 public class ListController : ApiController
 {
-    [HttpDelete("{listId:guid}")]
-    public async Task<ActionResult<DeleteListResponse>> DeleteList(Guid listId)
+    [HttpDelete("{listReference}")]
+    public async Task<ActionResult<DeleteListResponse>> DeleteList(string listReference)
     {
-        await Sender.Send(new DeleteListCommand(listId));
+        await Sender.Send(new DeleteListCommand(listReference));
         return NoContent();
     }
 

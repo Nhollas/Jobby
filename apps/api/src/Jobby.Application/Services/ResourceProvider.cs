@@ -7,13 +7,13 @@ namespace Jobby.Application.Services;
 
 public class ResourceProvider<TEntity> : 
     IGetBySpec<TEntity>, 
-    IGetById<TEntity>, 
+    IGetByReference<TEntity>, 
     IApplySpecification<TEntity>
     where TEntity : Entity
 {
     private ISpecification<TEntity> _spec;
     private Func<ISpecification<TEntity>, CancellationToken, Task<TEntity>> _getBySpec;
-    private Func<Guid, CancellationToken, Task<TEntity>> _getById;
+    private Func<string, CancellationToken, Task<TEntity>> _getByReference;
     
     public static IGetBySpec<TEntity> GetBySpec(Func<ISpecification<TEntity>, CancellationToken, Task<TEntity>> getBySpec) 
     {
@@ -25,11 +25,11 @@ public class ResourceProvider<TEntity> :
         return provider;
     }
 
-    public static IGetById<TEntity> GetById(Func<Guid, CancellationToken, Task<TEntity>> getById) 
+    public static IGetByReference<TEntity> GetByReference(Func<string, CancellationToken, Task<TEntity>> getByReference) 
     {
         var provider = new ResourceProvider<TEntity>
         {
-            _getById = getById
+            _getByReference = getByReference
         };
 
         return provider;
@@ -41,21 +41,16 @@ public class ResourceProvider<TEntity> :
         return this;
     }
 
-    public async Task<ResourceResult<TEntity>> Check(string userId, Guid resourceId, CancellationToken cancellationToken = default)
+    public async Task<ResourceResult<TEntity>> Check(string userId, string resourceReference, CancellationToken cancellationToken = default)
     {
-        var resource = await _getById(resourceId, cancellationToken);
+        var resource = await _getByReference(resourceReference, cancellationToken);
 
         if (resource is null)
         {
-            return new ResourceResult<TEntity>(false, Outcome.NotFound, $"The {typeof(TEntity).Name} with Id {resourceId} could not be found.");
+            return new ResourceResult<TEntity>(false, Outcome.NotFound, $"The {typeof(TEntity).Name} with Reference {resourceReference} could not be found.");
         }
 
-        if (resource.OwnerId != userId)
-        {
-            return new ResourceResult<TEntity>(false, Outcome.Unauthorised, "You are not authorised to access this resource.");
-        }
-        
-        return new ResourceResult<TEntity>(true, Outcome.Success, response: resource);
+        return resource.OwnerId != userId ? new ResourceResult<TEntity>(false, Outcome.Unauthorised, "You are not authorised to access this resource.") : new ResourceResult<TEntity>(true, Outcome.Success, response: resource);
     }
 
     public async Task<ResourceResult<TEntity>> Check(string userId, CancellationToken cancellationToken = default)
@@ -68,11 +63,6 @@ public class ResourceProvider<TEntity> :
             return new ResourceResult<TEntity>(false, Outcome.NotFound, $"The {typeof(TEntity).Name} with the provided spec could be found.");
         }
 
-        if (resource.OwnerId != userId)
-        {
-            return new ResourceResult<TEntity>(false, Outcome.Unauthorised, "You are not authorised to access this resource.");
-        }
-
-        return new ResourceResult<TEntity>(true, Outcome.Success, response: resource);
+        return resource.OwnerId != userId ? new ResourceResult<TEntity>(false, Outcome.Unauthorised, "You are not authorised to access this resource.") : new ResourceResult<TEntity>(true, Outcome.Success, response: resource);
     }
 }

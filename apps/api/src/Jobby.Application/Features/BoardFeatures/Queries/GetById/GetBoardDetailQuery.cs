@@ -4,4 +4,4 @@ using MediatR;
 
 namespace Jobby.Application.Features.BoardFeatures.Queries.GetById;
 
-public sealed record GetBoardDetailQuery(Guid BoardId) : IRequest<BaseResult<BoardDto, GetBoardDetailOutcomes>>;
+public sealed record GetBoardDetailQuery(string BoardReference) : IRequest<BaseResult<BoardDto, GetBoardDetailOutcomes>>;

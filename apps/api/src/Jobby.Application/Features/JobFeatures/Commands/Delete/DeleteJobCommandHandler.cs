@@ -24,8 +24,8 @@ internal sealed class DeleteJobCommandHandler : IRequestHandler<DeleteJobCommand
     public async Task<BaseResult<DeleteJobResponse, DeleteJobOutcomes>> Handle(DeleteJobCommand request, CancellationToken cancellationToken)
     {
         var jobResourceResult = await ResourceProvider<Job>
-            .GetById(_jobRepository.GetByIdAsync)
-            .Check(_userId, request.JobId, cancellationToken);
+            .GetByReference(_jobRepository.GetByReferenceAsync)
+            .Check(_userId, request.JobReference, cancellationToken);
         
         if (!jobResourceResult.IsSuccess)
         {

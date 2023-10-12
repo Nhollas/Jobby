@@ -1,10 +1,11 @@
 ﻿using Jobby.Domain.Primitives;
+using Jobby.Domain.Static;
 
 namespace Jobby.Domain.Entities;
 
 public class Board : Entity
 {
-    private List<JobList> _lists = new();
+    private readonly List<JobList> _lists = new();
     private readonly List<Activity> _activities = new();
     private readonly List<Job> _jobs = new();
     private readonly List<Contact> _contacts = new();
@@ -16,11 +17,12 @@ public class Board : Entity
 
     private Board(
         Guid id,
+        string reference,
         DateTime createdDate,
         string ownerId,
         string name,
         List<JobList> lists)
-        : base(id, createdDate, ownerId)
+        : base(id, reference, createdDate, ownerId)
     {
         _lists = lists;
         Name = name;
@@ -45,6 +47,7 @@ public class Board : Entity
     {
         var board = new Board(
             id,
+            reference: EntityReferenceProvider<Board>.CreateReference(),
             createdDate,
             ownerId,
             name,
@@ -60,35 +63,32 @@ public class Board : Entity
 
     public void ArrangeJobLists(Dictionary<Guid, int> jobListIndexes)
     {
-        foreach (var list in _lists)
+        foreach (var list in _lists.Where(list => jobListIndexes.ContainsKey(list.Id)))
         {
-            if (jobListIndexes.ContainsKey(list.Id))
-            {
-                list.SetIndex(jobListIndexes[list.Id]);
-            }
+            list.SetIndex(jobListIndexes[list.Id]);
         }
     }
 
-    public bool BoardOwnsJob(Guid jobId)
+    public bool BoardOwnsJob(string jobReference)
     {
         return Lists
-            .SelectMany(x => x.Jobs
-            .Where(x => x.Id == jobId))
+            .SelectMany(list => list.Jobs
+            .Where(job => job.Reference == jobReference))
             .Any();
     }
 
-    public bool BoardOwnsJoblist(Guid jobListId)
+    public bool BoardOwnsList(string jobListReference)
     {
         return Lists
-            .Select(x => x.Id == jobListId)
+            .Select(list => list.Reference == jobListReference)
             .Any();
     }
 
     public bool BoardOwnsJobs(List<Guid> jobIds)
     {
         return Lists
-            .SelectMany(x => x.Jobs
-            .Where(x => jobIds.Contains(x.Id)))
+            .SelectMany(list => list.Jobs
+            .Where(job => jobIds.Contains(job.Id)))
             .Any();
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Jobby.Domain.Primitives;
+using Jobby.Domain.Static;
 
 namespace Jobby.Domain.Entities;
 
@@ -11,6 +12,7 @@ public class Contact : Entity
 
     private Contact(
         Guid id,
+        string reference,
         DateTime createdDate,
         string ownerId,
         string firstName,
@@ -22,7 +24,7 @@ public class Contact : Entity
         List<Company> companies,
         List<Email> emails,
         List<Phone> phones)
-        : base(id, createdDate, ownerId)
+        : base(id, reference, createdDate, ownerId)
     {
         FirstName = firstName;
         LastName = lastName;
@@ -49,6 +51,8 @@ public class Contact : Entity
     // Database Relationship Properties
     public List<JobContact> JobContacts { get; } = new();
     public Board Board { get; private set; }
+    
+    public string BoardReference { get; private set; }
     public Guid? BoardId { get; private set; }
 
 
@@ -68,6 +72,7 @@ public class Contact : Entity
     {
         var contact = new Contact(
             id,
+            reference: EntityReferenceProvider<Contact>.CreateReference(),
             createdDate,
             ownerId,
             firstName,
@@ -86,6 +91,8 @@ public class Contact : Entity
     public void SetBoard(Board board)
     {
         Board = board;
+        BoardId = board.Id;
+        BoardReference = board.Reference;
     }
 
     public void Update(

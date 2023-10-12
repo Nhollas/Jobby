@@ -5,5 +5,7 @@ public enum CreateListOutcomes
     UnknownError,
     UnauthorizedJobAccess,
     UnknownJob,
-    ListCreated
+    ListCreated,
+    UnauthorizedBoardAccess,
+    UnknownBoard
 }

@@ -23,8 +23,8 @@ internal sealed class DeleteListCommandHandler : IRequestHandler<DeleteListComma
     public async Task<BaseResult<DeleteListResponse, DeleteListOutcomes>> Handle(DeleteListCommand request, CancellationToken cancellationToken)
     {
         var listResourceResult = await ResourceProvider<JobList>
-            .GetById(_jobListRepository.GetByIdAsync)
-            .Check(_userId, request.Id, cancellationToken);
+            .GetByReference(_jobListRepository.GetByReferenceAsync)
+            .Check(_userId, request.ListReference, cancellationToken);
 
         if (!listResourceResult.IsSuccess)
         {

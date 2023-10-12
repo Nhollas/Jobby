@@ -5,9 +5,9 @@ namespace Jobby.Application.Features.JobFeatures.Specifications;
 
 public class GetJobsFromIdsSpecification : Specification<Job>
 {
-    public GetJobsFromIdsSpecification(List<Guid> jobIds, string userId)
+    public GetJobsFromIdsSpecification(List<string> jobReferences, string userId)
     {
         Query
-            .Where(job => jobIds.Contains(job.Id) && job.OwnerId == userId);
+            .Where(job => jobReferences.Contains(job.Reference) && job.OwnerId == userId);
     }
 }

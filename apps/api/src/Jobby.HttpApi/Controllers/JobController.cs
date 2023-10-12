@@ -23,10 +23,10 @@ public class JobController : ApiController
         return Ok(dtos);
     }
     
-    [HttpGet("{jobId:guid}")]
-    public async Task<ActionResult<JobDto>> GetJob(Guid jobId)
+    [HttpGet("{jobReference}")]
+    public async Task<ActionResult<JobDto>> GetJob(string jobReference)
     {
-        var jobQuery = new GetJobDetailQuery(jobId);
+        var jobQuery = new GetJobDetailQuery(jobReference);
         var job = await Sender.Send(jobQuery);
         
         return Ok(job);
@@ -54,10 +54,10 @@ public class JobController : ApiController
         return CreatedAtAction(nameof(CreateJob), job);
     }
 
-    [HttpDelete("{jobId:guid}")]
-    public async Task<ActionResult<DeleteJobResponse>> DeleteJob(Guid jobId)
+    [HttpDelete("{jobReference}")]
+    public async Task<ActionResult<DeleteJobResponse>> DeleteJob(string jobReference)
     {
-        await Sender.Send(new DeleteJobCommand(jobId));
+        await Sender.Send(new DeleteJobCommand(jobReference));
         return NoContent();
     }
 
@@ -68,7 +68,7 @@ public class JobController : ApiController
         return Ok(updatedjob);
     }
 
-    [HttpPut("Move", Name = "MoveJob")]
+    [HttpPut("List", Name = "ChangeJobList")]
     public async Task<ActionResult<MoveJobResponse>> MoveJob([FromBody] MoveJobCommand command)
     {
         await Sender.Send(command);

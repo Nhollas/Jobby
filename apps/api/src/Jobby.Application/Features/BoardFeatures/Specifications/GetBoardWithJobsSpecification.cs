@@ -5,10 +5,10 @@ namespace Jobby.Application.Features.BoardFeatures.Specifications;
 
 public class GetBoardWithJobsSpecification : Specification<Board>
 {
-    public GetBoardWithJobsSpecification(Guid BoardId)
+    public GetBoardWithJobsSpecification(string boardReference)
     {
         Query
-            .Where(b => b.Id == BoardId)
+            .Where(b => b.Reference == boardReference)
             .Include(x => x.Lists
                 .OrderBy(list => list.Index)
                 )

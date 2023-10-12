@@ -79,7 +79,7 @@ public class Given_Request_With_Validation_Errors : IAsyncLifetime
                               "type": 12,
                               "boardId": "2d97a782-24a6-2962-e7cd-3a0c759c3d29",
                               "endDate": "2023-08-15T23:00:00.000Z",
-                              "note": "jhakhsdjksad"
+                              "note": "test note"
                             }
                             """;
 

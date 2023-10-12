@@ -57,13 +57,11 @@ internal sealed class CreateContactCommandHandler : IRequestHandler<CreateContac
         
         ResourceResult<Board> boardResourceResult = null; // initialize board to null
 
-        if (request.BoardId.HasValue)
+        if (request.BoardReference != null)
         {
-            Guid boardId = request.BoardId.Value;
-            
             boardResourceResult = await ResourceProvider<Board>
                 .GetBySpec(_boardRepository.FirstOrDefaultAsync)
-                .ApplySpecification(new GetBoardWithJobsSpecification(boardId))
+                .ApplySpecification(new GetBoardWithJobsSpecification(request.BoardReference))
                 .Check(_userId, cancellationToken);
 
             if (!boardResourceResult.IsSuccess)
@@ -102,9 +100,9 @@ internal sealed class CreateContactCommandHandler : IRequestHandler<CreateContac
             FormatEmails(request.Emails),
             FormatPhones(request.Phones));
 
-        if (request.JobIds.Count > 0) // only link jobs to the contact if a board was retrieved
+        if (request.JobReferences.Count > 0) // only link jobs to the contact if a board was retrieved
         {
-            var jobsToLink = await _jobRepository.ListAsync(new GetJobsFromListSpecification(request.JobIds, _userId), cancellationToken);
+            var jobsToLink = await _jobRepository.ListAsync(new GetJobsFromListSpecification(request.JobReferences, _userId), cancellationToken);
 
             createdContact.SetJobs(jobsToLink);
         }

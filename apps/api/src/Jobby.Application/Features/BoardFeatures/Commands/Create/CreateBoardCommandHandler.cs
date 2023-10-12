@@ -3,6 +3,7 @@ using Jobby.Application.Abstractions.Specification;
 using Jobby.Application.Dtos;
 using Jobby.Application.Interfaces.Services;
 using Jobby.Application.Responses.Common;
+using Jobby.Application.Services;
 using Jobby.Domain.Entities;
 using MediatR;
 
@@ -32,6 +33,18 @@ internal sealed class CreateBoardCommandHandler : IRequestHandler<CreateBoardCom
 
     public async Task<BaseResult<BoardDto, CreateBoardOutcomes>> Handle(CreateBoardCommand request, CancellationToken cancellationToken)
     {
+        var validator = new CreateBoardCommandValidator();
+        var validationResult = await validator.ValidateAsync(request, cancellationToken);
+        
+        if (!validationResult.IsValid)
+        {
+            return new BaseResult<BoardDto, CreateBoardOutcomes>(
+                IsSuccess: false,
+                Outcome: CreateBoardOutcomes.ValidationFailure,
+                ValidationResult: validationResult
+            );
+        }
+        
         Guid boardId = _guidProvider.Create();
 
         List<JobList> defaultJobLists = new()

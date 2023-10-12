@@ -26,8 +26,8 @@ internal sealed class MoveJobCommandHandler : IRequestHandler<MoveJobCommand, Ba
     public async Task<BaseResult<MoveJobResponse, MoveJobOutcomes>> Handle(MoveJobCommand request, CancellationToken cancellationToken)
     {
         var jobResourceResult = await ResourceProvider<Job>
-            .GetById(_jobRepository.GetByIdAsync)
-            .Check(_userId, request.JobId, cancellationToken);
+            .GetByReference(_jobRepository.GetByReferenceAsync)
+            .Check(_userId, request.JobReference, cancellationToken);
 
         if (!jobResourceResult.IsSuccess)
         {
@@ -45,7 +45,8 @@ internal sealed class MoveJobCommandHandler : IRequestHandler<MoveJobCommand, Ba
 
         var jobToMove = jobResourceResult.Response;
 
-        jobToMove.SetJobList(request.TargetJobListId);
+        // TODO: Fetch the target job list and set it on the job
+        // jobToMove.SetJobList(request.TargetJobListId);
         jobToMove.UpdateEntity(_timeProvider.UtcNow);
 
         await _jobRepository.UpdateAsync(jobToMove, cancellationToken);

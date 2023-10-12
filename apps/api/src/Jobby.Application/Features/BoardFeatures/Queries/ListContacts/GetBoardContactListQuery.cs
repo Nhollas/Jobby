@@ -3,4 +3,4 @@ using MediatR;
 
 namespace Jobby.Application.Features.BoardFeatures.Queries.ListContacts;
 
-public sealed record GetBoardContactListQuery(Guid BoardId) : IRequest<List<ContactDto>>;
+public sealed record GetBoardContactListQuery(string BoardReference) : IRequest<List<ContactDto>>;

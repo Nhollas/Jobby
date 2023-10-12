@@ -1,4 +1,5 @@
 ﻿using Jobby.Domain.Primitives;
+using Jobby.Domain.Static;
 
 namespace Jobby.Domain.Entities;
 
@@ -13,12 +14,13 @@ public class JobList : Entity
 
     private JobList(
         Guid id,
+        string reference,
         DateTime createdDate,
         string ownerId,
         string listName, 
         int index,
         Guid boardId)
-        : base(id, createdDate, ownerId)
+        : base(id, reference, createdDate, ownerId)
     {
         Name = listName;
         Index = index;
@@ -45,6 +47,7 @@ public class JobList : Entity
     {
         return new JobList(
             id,
+            reference: EntityReferenceProvider<JobList>.CreateReference(),
             createdDate,
             ownerId,
             name,

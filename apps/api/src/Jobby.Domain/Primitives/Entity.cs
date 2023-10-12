@@ -4,10 +4,12 @@ public abstract class Entity
 {
     protected Entity(
         Guid id,
+        string reference,
         DateTime createdDate,
         string ownerId)
     {
         Id = id;
+        Reference = reference;
         CreatedDate = createdDate;
         OwnerId = ownerId;
     }
@@ -20,6 +22,8 @@ public abstract class Entity
     public DateTime CreatedDate { get; protected set; }
     public DateTime LastUpdated { get; private set; }
     public string OwnerId { get; protected set; }
+    
+    public string Reference { get; protected set; }
 
     public void UpdateEntity(DateTime updatedDate)
     {

@@ -32,8 +32,8 @@ internal sealed class UpdateBoardCommandHandler : IRequestHandler<UpdateBoardCom
     public async Task<BaseResult<BoardDto, UpdateBoardOutcomes>> Handle(UpdateBoardCommand request, CancellationToken cancellationToken)
     {
         var boardResourceResult = await ResourceProvider<Board>
-            .GetById(_boardRepository.GetByIdAsync)
-            .Check(_userId, request.Id, cancellationToken);
+            .GetByReference(_boardRepository.GetByReferenceAsync)
+            .Check(_userId, request.Reference, cancellationToken);
         
         if (!boardResourceResult.IsSuccess)
         {

@@ -42,7 +42,7 @@ internal sealed class UpdateContactCommandHandler : IRequestHandler<UpdateContac
     {
         var contactResourceResult = await ResourceProvider<Contact>
             .GetBySpec(_contactRepository.FirstOrDefaultAsync)
-            .ApplySpecification(new GetContactWithSocialsSpecification(request.Id))
+            .ApplySpecification(new GetContactWithSocialsSpecification(request.ContactReference))
             .Check(_userId, cancellationToken);
 
         if (!contactResourceResult.IsSuccess)
@@ -72,11 +72,11 @@ internal sealed class UpdateContactCommandHandler : IRequestHandler<UpdateContac
                 request.Socials.LinkedInUrl,
                 request.Socials.GithubUrl));
         
-        if (request.BoardId.HasValue && request.BoardId.Value != contactToUpdate.BoardId)
+        if (request.BoardReference != string.Empty && request.BoardReference != contactToUpdate.BoardReference)
         {
             var boardResourceResult = await ResourceProvider<Board>
-                .GetById(_boardRepository.GetByIdAsync)
-                .Check(_userId, request.BoardId.Value, cancellationToken);
+                .GetByReference(_boardRepository.GetByReferenceAsync)
+                .Check(_userId, request.BoardReference, cancellationToken);
             
             if (!boardResourceResult.IsSuccess)
             {
@@ -97,11 +97,11 @@ internal sealed class UpdateContactCommandHandler : IRequestHandler<UpdateContac
             contactToUpdate.SetBoard(newBoard);
         }
 
-        var contactJobIds = contactToUpdate.JobContacts.Select(x => x.Job.Id).ToList();
+        var contactJobIds = contactToUpdate.JobContacts.Select(x => x.Job.Reference).ToList();
         
-        if (request.JobIds.Count > 0 && !contactJobIds.SequenceEqual(request.JobIds))
+        if (request.JobReferences.Count > 0 && !contactJobIds.SequenceEqual(request.JobReferences))
         {
-            var jobsToLink = await _jobRepository.ListAsync(new GetJobsFromIdsSpecification(request.JobIds, _userId), cancellationToken);
+            var jobsToLink = await _jobRepository.ListAsync(new GetJobsFromIdsSpecification(request.JobReferences, _userId), cancellationToken);
 
             contactToUpdate.SetJobs(jobsToLink);
         }

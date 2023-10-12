@@ -48,8 +48,8 @@ internal sealed class UpdateActivityCommandHandler : IRequestHandler<UpdateActiv
         }
         
         var activityResourceResult = await ResourceProvider<Activity>
-            .GetById(_activityRepository.GetByIdAsync)
-            .Check(_userId, request.Id, cancellationToken);
+            .GetByReference(_activityRepository.GetByReferenceAsync)
+            .Check(_userId, request.Reference, cancellationToken);
 
         if (!activityResourceResult.IsSuccess)
         {
@@ -75,11 +75,11 @@ internal sealed class UpdateActivityCommandHandler : IRequestHandler<UpdateActiv
             request.Note,
             request.Completed);
         
-        if (request.JobId != Guid.Empty && request.JobId != activityToUpdate.JobId)
+        if (request.JobReference != string.Empty && request.JobReference != activityToUpdate.JobReference)
         {
             var jobResourceResult = await ResourceProvider<Job>
-                .GetById(_jobRepository.GetByIdAsync)
-                .Check(_userId, request.JobId, cancellationToken);
+                .GetByReference(_jobRepository.GetByReferenceAsync)
+                .Check(_userId, request.JobReference, cancellationToken);
             
             if (!jobResourceResult.IsSuccess)
             {

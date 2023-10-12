@@ -13,7 +13,7 @@ public class JobConfiguration : IEntityTypeConfiguration<Job>
             .WithOne(x => x.Job)
             .HasForeignKey(x => x.JobId)
             .IsRequired(false)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.NoAction);
 
         builder.HasMany(x => x.Contacts)
             .WithMany(x => x.Jobs)

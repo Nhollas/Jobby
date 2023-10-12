@@ -29,10 +29,10 @@ public class ContactController : ApiController
         return CreatedAtAction(nameof(CreateContact), createdContact);
     }
 
-    [HttpDelete("{contactId:guid}")]
-    public async Task<ActionResult<DeleteContactResponse>> DeleteContact(Guid contactId)
+    [HttpDelete("{contactReference}")]
+    public async Task<ActionResult<DeleteContactResponse>> DeleteContact(string contactReference)
     {
-        await Sender.Send(new DeleteContactCommand(contactId));
+        await Sender.Send(new DeleteContactCommand(contactReference));
         return NoContent();
     }
 

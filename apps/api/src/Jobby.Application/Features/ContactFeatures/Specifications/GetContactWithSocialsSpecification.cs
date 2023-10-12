@@ -5,11 +5,11 @@ namespace Jobby.Application.Features.ContactFeatures.Specifications;
 
 public sealed class GetContactWithSocialsSpecification : Specification<Contact>
 {
-	public GetContactWithSocialsSpecification(Guid contactId)
+	public GetContactWithSocialsSpecification(string contactReference)
 	{
 		Query
 			.Include(contact => contact.Socials)
 			.Include(contact => contact.Jobs)
-			.Where(contact => contact.Id == contactId);
+			.Where(contact => contact.Reference == contactReference);
 	}
 }

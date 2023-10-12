@@ -21,11 +21,18 @@ public class Given_Request_With_Invalid_Token : IAsyncLifetime
 
     public Task DisposeAsync() => Task.CompletedTask;
 
-    [Fact]
-    public async Task When_Token_Has_Expired_Then_Returns_401_Unauthorized()
+    private HttpClient SetupClient(string token)
     {
         var httpClient = _factory.CreateClient();
         
+        httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        
+        return httpClient;
+    }
+
+    [Fact]
+    public async Task When_Token_Has_Expired_Then_Returns_401_Unauthorized()
+    {
         const string json = """
                             {
                               "title": "k",
@@ -39,7 +46,7 @@ public class Given_Request_With_Invalid_Token : IAsyncLifetime
 
         var expiredToken = JwtHelper.Generate("TestUserId", expires: DateTime.UtcNow.AddDays(-1));
 
-        httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", expiredToken);
+        var httpClient = SetupClient(expiredToken);
 
         var body = new StringContent(json, Encoding.UTF8, "application/json");
         
@@ -55,8 +62,6 @@ public class Given_Request_With_Invalid_Token : IAsyncLifetime
     [Fact]
     public async Task When_Token_Has_Invalid_Signature_Then_Returns_401_Unauthorized()
     {
-        var httpClient = _factory.CreateClient();
-        
         const string json = """
                             {
                               "title": "k",
@@ -69,10 +74,10 @@ public class Given_Request_With_Invalid_Token : IAsyncLifetime
                             """;
 
         var invalidSecret = "Q5BkcNr4WncjhC1RiqwXmMF4zdFttEab";
-        var token = JwtHelper.Generate("TestUserId", secret: invalidSecret);
+        var tokenWithInvalidSecret = JwtHelper.Generate("TestUserId", secret: invalidSecret);
 
-        httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
+        var httpClient = SetupClient(tokenWithInvalidSecret);
+        
         var body = new StringContent(json, Encoding.UTF8, "application/json");
         
         var response = await httpClient.PostAsync("/activity", body);
@@ -87,8 +92,6 @@ public class Given_Request_With_Invalid_Token : IAsyncLifetime
     [Fact]
     public async Task When_Token_Has_Invalid_Issuer_Then_Returns_401_Unauthorized()
     {
-        var httpClient = _factory.CreateClient();
-        
         const string json = """
                             {
                               "title": "k",
@@ -101,10 +104,10 @@ public class Given_Request_With_Invalid_Token : IAsyncLifetime
                             """;
 
         var invalidIssuer = "InvalidIssuer";
-        var token = JwtHelper.Generate("TestUserId", issuer: invalidIssuer);
-
-        httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
+        var tokenWithInvalidIssuer = JwtHelper.Generate("TestUserId", issuer: invalidIssuer);
+        
+        var httpClient = SetupClient(tokenWithInvalidIssuer);
+        
         var body = new StringContent(json, Encoding.UTF8, "application/json");
         
         var response = await httpClient.PostAsync("/activity", body);
@@ -119,8 +122,6 @@ public class Given_Request_With_Invalid_Token : IAsyncLifetime
     [Fact]
     public async Task When_Token_Has_Invalid_Audience_Then_Returns_401_Unauthorized()
     {
-        var httpClient = _factory.CreateClient();
-        
         const string json = """
                             {
                               "title": "k",
@@ -133,10 +134,10 @@ public class Given_Request_With_Invalid_Token : IAsyncLifetime
                             """;
 
         var invalidAudience = "InvalidAudience";
-        var token = JwtHelper.Generate("TestUserId", audience: invalidAudience);
-
-        httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
+        var tokenWithInvalidAudience = JwtHelper.Generate("TestUserId", audience: invalidAudience);
+        
+        var httpClient = SetupClient(tokenWithInvalidAudience);
+        
         var body = new StringContent(json, Encoding.UTF8, "application/json");
         
         var response = await httpClient.PostAsync("/activity", body);

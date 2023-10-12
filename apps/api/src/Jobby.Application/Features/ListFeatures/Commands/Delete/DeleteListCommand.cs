@@ -2,4 +2,4 @@
 using MediatR;
 
 namespace Jobby.Application.Features.ListFeatures.Commands.Delete;
-public sealed record DeleteListCommand(Guid Id) : IRequest<BaseResult<DeleteListResponse, DeleteListOutcomes>>;
+public sealed record DeleteListCommand(string ListReference) : IRequest<BaseResult<DeleteListResponse, DeleteListOutcomes>>;

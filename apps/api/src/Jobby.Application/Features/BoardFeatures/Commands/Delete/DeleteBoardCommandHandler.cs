@@ -28,8 +28,8 @@ internal sealed class DeleteBoardCommandHandler : IRequestHandler<DeleteBoardCom
     public async Task<BaseResult<DeleteBoardResponse, DeleteBoardOutcomes>> Handle(DeleteBoardCommand request, CancellationToken cancellationToken)
     {
         var boardResourceResult = await ResourceProvider<Board>
-            .GetById(_boardRepository.GetByIdAsync)
-            .Check(_userId, request.BoardId, cancellationToken);
+            .GetByReference(_boardRepository.GetByReferenceAsync)
+            .Check(_userId, request.BoardReference, cancellationToken);
         
         if (!boardResourceResult.IsSuccess)
         {
@@ -45,7 +45,7 @@ internal sealed class DeleteBoardCommandHandler : IRequestHandler<DeleteBoardCom
             );
         }
 
-        await _contactRepository.ClearBoardsAsync(request.BoardId, cancellationToken);
+        await _contactRepository.ClearBoardsAsync(request.BoardReference, cancellationToken);
         
         var boardToDelete = boardResourceResult.Response;
         

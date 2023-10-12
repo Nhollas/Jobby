@@ -13,6 +13,7 @@ public class ActivityConfiguration : IEntityTypeConfiguration<Activity>
         builder.HasOne(x => x.Board)
             .WithMany(x => x.Activities)
             .HasForeignKey(x => x.BoardId)
+            .IsRequired()
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasOne(x => x.Job)

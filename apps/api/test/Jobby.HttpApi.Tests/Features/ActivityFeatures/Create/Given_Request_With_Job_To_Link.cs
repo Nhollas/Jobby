@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using Jobby.Application.Dtos;
 using Jobby.Application.Features.ActivityFeatures.Commands.Create;
+using Jobby.Application.Services;
 using Jobby.Domain.Entities;
 using Jobby.Domain.Static;
 using Jobby.HttpApi.Tests.Factories;
@@ -41,11 +42,10 @@ public class Given_Request_With_Job_To_Link : IAsyncLifetime
         var preLoadedJob = await SeedDataHelper<Job>.AddAsync(Job.Create(Guid.NewGuid(), DateTime.UtcNow, "TestUserId", "TestCompany", "TestTitle", 0, preLoadedJobList, preLoadedBoard), context);
         
         var body = new CreateActivityCommand()
-        {
-            
-            BoardId = preLoadedBoard.Id,
+        { 
+            BoardReference = preLoadedBoard.Reference,
             Title = "Test Activity",
-            JobId = preLoadedJob.Id,
+            JobReference = preLoadedJob.Reference,
             Type = ActivityConstants.Types.Apply,
             StartDate = DateTime.UtcNow,
             EndDate = DateTime.UtcNow.AddDays(1),
@@ -56,8 +56,10 @@ public class Given_Request_With_Job_To_Link : IAsyncLifetime
         var response = await HttpClient.PostAsJsonAsync("/activity", body);
         
         var createdActivity = await response.Content.ReadFromJsonAsync<ActivityDto>();
+
+        Assert.NotNull(createdActivity);
         
-        Assert.Equal(preLoadedJob.Id, createdActivity.Job.Id);
+        Assert.Equal(preLoadedJob.Reference, createdActivity.Job.Reference);
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
     }
 }

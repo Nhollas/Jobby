@@ -13,13 +13,6 @@ namespace Jobby.HttpApi.Controllers;
 [Authorize]
 public class ActivityController : ApiController
 {
-    private readonly ILogger _logger;
-
-    public ActivityController(ILogger logger)
-    {
-        _logger = logger;
-    }
-    
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -49,21 +42,20 @@ public class ActivityController : ApiController
         }
         catch (Exception e)
         {
-            _logger.LogError(e, e.Message);
-            return BadRequest("Unknown error");
+            return BadRequest(e.Message);
         }
     }
     
-    [HttpDelete("{activityId:guid}")]
+    [HttpDelete("{activityReference}")]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<ActionResult<DeleteActivityResponse>> DeleteActivity(Guid activityId)
+    public async Task<ActionResult<DeleteActivityResponse>> DeleteActivity(string activityReference)
     {
         try
         {
-            var deleteActivityResult = await Sender.Send(new DeleteActivityCommand(activityId));
+            var deleteActivityResult = await Sender.Send(new DeleteActivityCommand(activityReference));
             
             if(!deleteActivityResult.IsSuccess && deleteActivityResult.Outcome != DeleteActivityOutcomes.ActivityDeleted)
             {
@@ -78,13 +70,13 @@ public class ActivityController : ApiController
             
             return Ok(deleteActivityResult.Response);
             
-        } catch (Exception e)
+        } 
+        catch(Exception e)
         {
-            _logger.LogError(e, e.Message);
-            return BadRequest("Unknown error");
+            return BadRequest(e.Message);
         }
     }
-    
+
     [HttpPut]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -97,16 +89,19 @@ public class ActivityController : ApiController
         {
             var updateActivityResult = await Sender.Send(command);
 
-            if (!updateActivityResult.IsSuccess && updateActivityResult.Outcome != UpdateActivityOutcomes.ActivityUpdated)
+            if (!updateActivityResult.IsSuccess &&
+                updateActivityResult.Outcome != UpdateActivityOutcomes.ActivityUpdated)
             {
                 return updateActivityResult.Outcome switch
                 {
                     UpdateActivityOutcomes.UnauthorizedJobAccess => Unauthorized(updateActivityResult.ErrorMessage),
-                    UpdateActivityOutcomes.UnauthorizedActivityAccess => Unauthorized(updateActivityResult.ErrorMessage),
+                    UpdateActivityOutcomes.UnauthorizedActivityAccess =>
+                        Unauthorized(updateActivityResult.ErrorMessage),
                     UpdateActivityOutcomes.UnknownActivity => NotFound(updateActivityResult.ErrorMessage),
                     UpdateActivityOutcomes.JobDoesNotBelongToBoard => BadRequest(updateActivityResult.ErrorMessage),
                     UpdateActivityOutcomes.UnknownJob => NotFound(updateActivityResult.ErrorMessage),
-                    UpdateActivityOutcomes.ValidationFailure => UnprocessableEntity(updateActivityResult.ValidationResult),
+                    UpdateActivityOutcomes.ValidationFailure => UnprocessableEntity(updateActivityResult
+                        .ValidationResult),
                     UpdateActivityOutcomes.UnknownError => BadRequest(updateActivityResult.ErrorMessage),
                     _ => BadRequest(updateActivityResult.ErrorMessage)
                 };
@@ -116,8 +111,7 @@ public class ActivityController : ApiController
         }
         catch (Exception e)
         {
-            _logger.LogError(e, e.Message);
-            return BadRequest("Unknown error");
+            return BadRequest(e.Message);
         }
     }
 }

@@ -4,6 +4,6 @@ namespace Jobby.Application.Interfaces.Repositories;
 
 public interface IContactRepository
 {
-    Task ClearBoardsAsync(Guid boardId, CancellationToken cancellationToken);
+    Task ClearBoardsAsync(string boardReference, CancellationToken cancellationToken);
     Task ClearJobsAsync(Contact contact, CancellationToken cancellationToken);
 }

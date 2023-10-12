@@ -3,4 +3,4 @@ using MediatR;
 
 namespace Jobby.Application.Features.JobFeatures.Commands.Delete;
 
-public sealed record DeleteJobCommand(Guid JobId) : IRequest<BaseResult<DeleteJobResponse, DeleteJobOutcomes>>;
+public sealed record DeleteJobCommand(string JobReference) : IRequest<BaseResult<DeleteJobResponse, DeleteJobOutcomes>>;

@@ -1,4 +1,5 @@
 ﻿using Jobby.Domain.Primitives;
+using Jobby.Domain.Static;
 
 namespace Jobby.Domain.Entities;
 
@@ -11,6 +12,7 @@ public class Job : Entity
 
     private Job(
         Guid id,
+        string reference,
         DateTime createdDate,
         string ownerId,
         string company,
@@ -19,7 +21,7 @@ public class Job : Entity
         JobList jobList,
         Board board
         )
-        : base(id, createdDate, ownerId)
+        : base(id, reference, createdDate, ownerId)
 
     {
         Company = company;
@@ -62,6 +64,7 @@ public class Job : Entity
     {
         var job = new Job(
             id,
+            reference: EntityReferenceProvider<Job>.CreateReference(),
             createdDate,
             ownerId,
             company,

@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using Jobby.Application.Features.ActivityFeatures.Commands.Create;
+using Jobby.Application.Services;
 using Jobby.Domain.Entities;
 using Jobby.Domain.Static;
 using Jobby.HttpApi.Tests.Factories;
@@ -38,7 +39,7 @@ public class Given_Request_With_BoardId_Not_Owned : IAsyncLifetime
         
         var body = new CreateActivityCommand()
         {
-            BoardId = preLoadedBoard.Id,
+            BoardReference = preLoadedBoard.Reference,
             Title = "Test Activity",
             Type = ActivityConstants.Types.Apply,
             StartDate = DateTime.UtcNow,

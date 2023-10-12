@@ -31,7 +31,7 @@ internal sealed class GetBoardDetailQueryHandler : IRequestHandler<GetBoardDetai
     {
         var boardResourceResult = await ResourceProvider<Board>
             .GetBySpec(_repository.FirstOrDefaultAsync)
-            .ApplySpecification(new GetBoardWithRelationshipsSpecification(request.BoardId))
+            .ApplySpecification(new GetBoardWithRelationshipsSpecification(request.BoardReference))
             .Check(_userId, cancellationToken);
         
         if (!boardResourceResult.IsSuccess)

@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using Jobby.Application.Features.ActivityFeatures.Commands.Create;
+using Jobby.Domain.Entities;
 using Jobby.Domain.Static;
 using Jobby.HttpApi.Tests.Factories;
 using Xunit;
@@ -27,11 +28,11 @@ public class Given_Request_With_BoardId_Not_Found : IAsyncLifetime
     [Fact]
     public async Task Then_Returns_404_NotFound()
     {
-        var randomBoardId = Guid.NewGuid();
+        var randomBoardReference = EntityReferenceProvider<Board>.CreateReference();
         
         var body = new CreateActivityCommand()
         {
-            BoardId = randomBoardId,
+            BoardReference = randomBoardReference,
             Title = "Test Activity",
             Type = ActivityConstants.Types.Apply,
             StartDate = DateTime.UtcNow,

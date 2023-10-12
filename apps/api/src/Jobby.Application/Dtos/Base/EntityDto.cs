@@ -2,7 +2,7 @@
 
 public record EntityDto
 {
-    public Guid Id { get; set; }
+    public string Reference { get; set; }
     public DateTime CreatedDate { get; set; }
     public DateTime LastUpdated { get; set; }
 }

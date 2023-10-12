@@ -31,6 +31,9 @@ namespace Jobby.Persistence.Data.Migrations
                     b.Property<Guid>("BoardId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("BoardReference")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("Completed")
                         .HasColumnType("bit");
 
@@ -43,6 +46,9 @@ namespace Jobby.Persistence.Data.Migrations
                     b.Property<Guid?>("JobId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("JobReference")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("LastUpdated")
                         .HasColumnType("datetime2");
 
@@ -50,6 +56,9 @@ namespace Jobby.Persistence.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("OwnerId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Reference")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("StartDate")
@@ -88,6 +97,9 @@ namespace Jobby.Persistence.Data.Migrations
                     b.Property<string>("OwnerId")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Reference")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.ToTable("Boards");
@@ -120,6 +132,9 @@ namespace Jobby.Persistence.Data.Migrations
                     b.Property<Guid?>("BoardId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("BoardReference")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
@@ -139,6 +154,9 @@ namespace Jobby.Persistence.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("OwnerId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Reference")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -208,6 +226,9 @@ namespace Jobby.Persistence.Data.Migrations
                     b.Property<string>("PostUrl")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Reference")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<double>("Salary")
                         .HasColumnType("float");
 
@@ -260,6 +281,9 @@ namespace Jobby.Persistence.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("OwnerId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Reference")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -317,13 +341,13 @@ namespace Jobby.Persistence.Data.Migrations
                     b.HasOne("Jobby.Domain.Entities.Board", "Board")
                         .WithMany("Activities")
                         .HasForeignKey("BoardId")
-                        .OnDelete(DeleteBehavior.NoAction)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Jobby.Domain.Entities.Job", "Job")
                         .WithMany("Activities")
                         .HasForeignKey("JobId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Board");
 

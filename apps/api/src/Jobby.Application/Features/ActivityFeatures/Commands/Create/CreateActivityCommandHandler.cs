@@ -52,7 +52,7 @@ internal sealed class CreateActivityCommandHandler : IRequestHandler<CreateActiv
         
         var boardResourceResult = await ResourceProvider<Board>
             .GetBySpec(_boardRepository.FirstOrDefaultAsync)
-            .ApplySpecification(new GetBoardWithJobsSpecification(request.BoardId))
+            .ApplySpecification(new GetBoardWithJobsSpecification(request.BoardReference))
             .Check(_userId, cancellationToken);
 
         if (!boardResourceResult.IsSuccess)
@@ -82,20 +82,20 @@ internal sealed class CreateActivityCommandHandler : IRequestHandler<CreateActiv
             request.Completed,
             boardToLink);
 
-        if (request.JobId != Guid.Empty)
+        if (request.JobReference != string.Empty)
         {
-            if (!boardToLink.BoardOwnsJob(request.JobId))
+            if (!boardToLink.BoardOwnsJob(request.JobReference))
             {
                 return new BaseResult<ActivityDto, CreateActivityOutcomes>(
                     IsSuccess: false,
                     Outcome: CreateActivityOutcomes.JobDoesNotExistInBoard,
-                    ErrorMessage: $"The {nameof(Job)} {request.JobId} you wanted to link doesn't exist in the Board {request.BoardId}."
+                    ErrorMessage: $"The {nameof(Job)} {request.JobReference} you wanted to link doesn't exist in the Board {request.BoardReference}."
                 );
             }
 
             var jobToLink = boardToLink.Lists
                 .SelectMany(x => x.Jobs)
-                .First(x => x.Id == request.JobId);
+                .First(x => x.Reference == request.JobReference);
 
             createdActivity.SetJob(jobToLink);  
         }

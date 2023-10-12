@@ -28,7 +28,15 @@ public class BoardController : ApiController
 
             if (!createBoardResult.IsSuccess)
             {
-                return BadRequest(createBoardResult.ErrorMessage);
+                return createBoardResult.Outcome switch
+                {
+                    CreateBoardOutcomes.ValidationFailure => UnprocessableEntity(
+                        createBoardResult.ValidationResult.Errors.Select(error =>
+                            new ValidationError(error.PropertyName, error.ErrorMessage)
+                        ).ToList()
+                    ),
+                    _ => BadRequest(createBoardResult.ErrorMessage)
+                };
             }
 
             return CreatedAtAction(nameof(CreateBoard), createBoardResult.Response);
@@ -39,16 +47,16 @@ public class BoardController : ApiController
         }
     }
     
-    [HttpDelete("{boardId:guid}")]
+    [HttpDelete("{boardReference}")]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<ActionResult<DeleteBoardResponse>> DeleteBoard(Guid boardId)
+    public async Task<ActionResult<DeleteBoardResponse>> DeleteBoard(string boardReference)
     {
         try
         {
-            var deleteBoardResult = await Sender.Send(new DeleteBoardCommand(boardId));
+            var deleteBoardResult = await Sender.Send(new DeleteBoardCommand(boardReference));
 
             if(!deleteBoardResult.IsSuccess && deleteBoardResult.Outcome != DeleteBoardOutcomes.BoardDeleted)
             {
@@ -101,16 +109,16 @@ public class BoardController : ApiController
         }
     }
 
-    [HttpGet("{boardId:guid}")]
+    [HttpGet("{boardReference}")]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<ActionResult<BoardDto>> GetBoard(Guid boardId)
+    public async Task<ActionResult<BoardDto>> GetBoard(string boardReference)
     {
         try
         {
-            var getBoardResult = await Sender.Send(new GetBoardDetailQuery(boardId));
+            var getBoardResult = await Sender.Send(new GetBoardDetailQuery(boardReference));
             
             if (!getBoardResult.IsSuccess && getBoardResult.Outcome != GetBoardDetailOutcomes.BoardFound)
             {
@@ -139,17 +147,17 @@ public class BoardController : ApiController
         return Ok(boards);
     }
 
-    [HttpGet("{boardId:guid}/activities", Name = "ListActivities")]
-    public async Task<ActionResult<List<ActivityDto>>> ListActivities(Guid boardId)
+    [HttpGet("{boardReference}/activities", Name = "ListActivities")]
+    public async Task<ActionResult<List<ActivityDto>>> ListActivities(string boardReference)
     {
-        var activities = await Sender.Send(new GetBoardActivityListQuery(boardId));
+        var activities = await Sender.Send(new GetBoardActivityListQuery(boardReference));
         return Ok(activities);
     }
 
-    [HttpGet("{boardId:guid}/contacts", Name = "ListBoardContacts")]
-    public async Task<ActionResult<List<ContactDto>>> ListContacts(Guid boardId)
+    [HttpGet("{boardReference}/contacts", Name = "ListBoardContacts")]
+    public async Task<ActionResult<List<ContactDto>>> ListContacts(string boardReference)
     {
-        var contacts = await Sender.Send(new GetBoardContactListQuery(boardId));
+        var contacts = await Sender.Send(new GetBoardContactListQuery(boardReference));
         return Ok(contacts);
     }
 }
