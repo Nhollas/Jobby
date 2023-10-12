@@ -32,7 +32,7 @@ internal sealed class UpdateJobCommandHandler : IRequestHandler<UpdateJobCommand
     {
         var jobResourceResult = await ResourceProvider<Job>
             .GetByReference(_jobRepository.GetByReferenceAsync)
-            .Check(_userId, request.Reference, cancellationToken);
+            .Check(_userId, request.JobReference, cancellationToken);
 
         if (!jobResourceResult.IsSuccess)
         {

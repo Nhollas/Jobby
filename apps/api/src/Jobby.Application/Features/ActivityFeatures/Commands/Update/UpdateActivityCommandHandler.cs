@@ -49,7 +49,7 @@ internal sealed class UpdateActivityCommandHandler : IRequestHandler<UpdateActiv
         
         var activityResourceResult = await ResourceProvider<Activity>
             .GetByReference(_activityRepository.GetByReferenceAsync)
-            .Check(_userId, request.Reference, cancellationToken);
+            .Check(_userId, request.ActivityReference, cancellationToken);
 
         if (!activityResourceResult.IsSuccess)
         {

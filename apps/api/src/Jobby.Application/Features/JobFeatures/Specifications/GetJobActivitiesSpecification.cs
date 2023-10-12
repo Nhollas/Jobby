@@ -5,10 +5,10 @@ namespace Jobby.Application.Features.JobFeatures.Specifications;
 
 public class GetJobActivitiesSpecification : Specification<Activity>
 {
-    public GetJobActivitiesSpecification(Guid jobId, string userId)
+    public GetJobActivitiesSpecification(string jobReference, string userId)
     {
         Query
-            .Where(activity => activity.JobId == jobId && activity.OwnerId == userId)
+            .Where(activity => activity.JobReference == jobReference && activity.OwnerId == userId)
             .Include(activity => activity.Job)
             .AsNoTracking();
     }

@@ -5,7 +5,7 @@ using MediatR;
 namespace Jobby.Application.Features.JobFeatures.Commands.Update.UpdateDetails;
 public sealed record UpdateJobCommand : IRequest<BaseResult<JobDto, UpdateJobOutcomes>>
 {
-    public string Reference { get; set; }
+    public string JobReference { get; set; }
     public string Company { get; set; }
     public string Title { get; set; }
     public string PostUrl { get; set; }

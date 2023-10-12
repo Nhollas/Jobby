@@ -5,7 +5,7 @@ namespace Jobby.Application.Features.JobFeatures.Specifications;
 
 public sealed class GetJobContactsSpecification : Specification<Contact>
 {
-    public GetJobContactsSpecification(Guid jobId, string userId)
+    public GetJobContactsSpecification(string jobReference, string userId)
     {
         Query
             .Include(x => x.Companies)
@@ -13,6 +13,6 @@ public sealed class GetJobContactsSpecification : Specification<Contact>
             .Include(x => x.Emails)
             .AsSplitQuery()    
             .AsNoTracking()
-            .Where(contact=> contact.Jobs.Any(job => job.Id == jobId && job.OwnerId == userId));
+            .Where(contact=> contact.Jobs.Any(job => job.Reference == jobReference && job.OwnerId == userId));
     }
 }

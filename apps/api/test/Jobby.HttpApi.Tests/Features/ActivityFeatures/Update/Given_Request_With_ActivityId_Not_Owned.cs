@@ -59,7 +59,7 @@ public class Given_Request_With_ActivityId_Not_Owned : IAsyncLifetime
         
         var body = new UpdateActivityCommand()
         {
-            Reference = preLoadedActivity.Reference,
+            ActivityReference = preLoadedActivity.Reference,
             Title = "Test Activity",
             Type = (int)ActivityConstants.Types.Apply,
             StartDate = DateTime.UtcNow,

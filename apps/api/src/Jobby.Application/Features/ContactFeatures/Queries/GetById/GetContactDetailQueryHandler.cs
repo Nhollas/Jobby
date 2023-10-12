@@ -30,7 +30,7 @@ internal sealed class GetContactDetailQueryHandler : IRequestHandler<GetContactD
     {
         var contactResourceResult = await ResourceProvider<Contact>
             .GetBySpec(_contactRepository.FirstOrDefaultAsync)
-            .ApplySpecification(new GetContactWithRelationshipsSpecification(request.ContactId))
+            .ApplySpecification(new GetContactWithRelationshipsSpecification(request.ContactReference))
             .Check(_userId, cancellationToken);
 
         if (!contactResourceResult.IsSuccess)

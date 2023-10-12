@@ -26,7 +26,7 @@ internal sealed class GetJobActivityListQueryHandler : IRequestHandler<GetJobAct
 
     public async Task<List<ActivityDto>> Handle(GetJobActivityListQuery request, CancellationToken cancellationToken)
     {
-        var jobSpec = new GetJobActivitiesSpecification(request.JobId, _userId);
+        var jobSpec = new GetJobActivitiesSpecification(request.JobReference, _userId);
 
         var activities = await _activityRepository.ListAsync(jobSpec, cancellationToken);
 

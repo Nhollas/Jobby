@@ -26,9 +26,9 @@ public class Given_Request_With_Validation_Errors : IAsyncLifetime
     [Fact]
     public async Task When_Name_Property_Is_Missing_Then_Returns_422_Unprocessable_Entity_And_Name_Property_Validation_Message()
     {
-        const string withoutName = "{}";
+        const string withoutNameProperty = "{}";
 
-        var body = new StringContent(withoutName, Encoding.UTF8, "application/json");
+        var body = new StringContent(withoutNameProperty, Encoding.UTF8, "application/json");
         
         var response = await HttpClient.PostAsync("/board", body);
         

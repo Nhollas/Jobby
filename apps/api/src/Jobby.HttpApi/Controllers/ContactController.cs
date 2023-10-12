@@ -15,10 +15,10 @@ namespace Jobby.HttpApi.Controllers;
 [Authorize]
 public class ContactController : ApiController
 {
-    [HttpGet("{contactId:guid}", Name = "GetContact")]
-    public async Task<ActionResult<ContactDto>> GetContact(Guid contactId)
+    [HttpGet("{contactReference}", Name = "GetContact")]
+    public async Task<ActionResult<ContactDto>> GetContact(string contactReference)
     {
-        var contactQuery = new GetContactDetailQuery(contactId);
+        var contactQuery = new GetContactDetailQuery(contactReference);
         return Ok(await Sender.Send(contactQuery));
     }
     

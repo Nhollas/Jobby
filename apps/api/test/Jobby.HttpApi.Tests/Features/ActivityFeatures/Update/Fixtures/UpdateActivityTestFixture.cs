@@ -60,7 +60,7 @@ public class UpdateActivityTestFixture : IAsyncLifetime
         
         Body = new UpdateActivityCommand()
         {
-            Reference = PreloadedActivity.Reference,
+            ActivityReference = PreloadedActivity.Reference,
             Title = "Test Activity",
             Type = (int)ActivityConstants.Types.Apply,
             StartDate = DateTime.UtcNow,

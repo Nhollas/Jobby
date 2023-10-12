@@ -6,7 +6,7 @@ namespace Jobby.Application.Features.ActivityFeatures.Commands.Update;
 
 public sealed record UpdateActivityCommand : IRequest<BaseResult<ActivityDto, UpdateActivityOutcomes>>
 {
-    public string Reference { get; set; }
+    public string ActivityReference { get; set; }
     public string Title { get; set; }
     public string JobReference { get; set; } = string.Empty;
     public int Type { get; set; }

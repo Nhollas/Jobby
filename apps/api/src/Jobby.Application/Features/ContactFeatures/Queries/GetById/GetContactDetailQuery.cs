@@ -3,4 +3,4 @@ using Jobby.Application.Responses.Common;
 using MediatR;
 
 namespace Jobby.Application.Features.ContactFeatures.Queries.GetById;
-public sealed record GetContactDetailQuery(Guid ContactId) : IRequest<BaseResult<ContactDto, GetContactDetailOutcomes>>;
+public sealed record GetContactDetailQuery(string ContactReference) : IRequest<BaseResult<ContactDto, GetContactDetailOutcomes>>;

@@ -32,17 +32,17 @@ public class JobController : ApiController
         return Ok(job);
     }
     
-    [HttpGet("{jobId:guid}/activities")]
-    public async Task<ActionResult<List<ActivityDto>>> GetJobActivities(Guid jobId)
+    [HttpGet("{jobReference}/activities")]
+    public async Task<ActionResult<List<ActivityDto>>> GetJobActivities(string jobReference)
     {
-        var jobQuery = new GetJobActivityListQuery(jobId);
+        var jobQuery = new GetJobActivityListQuery(jobReference);
         return Ok(await Sender.Send(jobQuery));
     }
 
-    [HttpGet("{jobId:guid}/contacts")]
-    public async Task<ActionResult<List<ContactDto>>> GetJobContacts(Guid jobId)
+    [HttpGet("{jobReference}/contacts")]
+    public async Task<ActionResult<List<ContactDto>>> GetJobContacts(string jobReference)
     {
-        var jobQuery = new GetJobContactListQuery(jobId);
+        var jobQuery = new GetJobContactListQuery(jobReference);
         return Ok(await Sender.Send(jobQuery));
     }
 
