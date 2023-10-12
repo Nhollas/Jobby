@@ -61,7 +61,7 @@ internal sealed class CreateListCommandHandler : IRequestHandler<CreateListComma
             _userId,
             request.Name,
             request.Index,
-            board.Id);
+            board);
 
         await _jobListRepository.AddAsync(createdJobList, cancellationToken);
 

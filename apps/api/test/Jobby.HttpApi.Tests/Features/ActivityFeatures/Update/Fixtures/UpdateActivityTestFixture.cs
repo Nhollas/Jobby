@@ -26,13 +26,7 @@ public class UpdateActivityTestFixture : IAsyncLifetime
     
     private static string UserId = "TestUserId";
 
-    public static readonly Board PreloadedBoard = Board.Create(
-        Guid.NewGuid(),
-        DateTime.UtcNow,
-        UserId,
-        "TestBoard",
-        new List<JobList>()
-    );
+    public static readonly Board PreloadedBoard = Board.Create(Guid.NewGuid(), DateTime.UtcNow, UserId, "TestBoard");
     
     public UpdateActivityCommand Body { get; private set; }
     

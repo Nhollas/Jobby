@@ -32,9 +32,7 @@ public class Given_Request_With_ActivityId_Not_Owned : IAsyncLifetime
         await using var context = new JobbyDbContext(new DbContextOptionsBuilder<JobbyDbContext>()
             .UseSqlServer(_factory.DbConnectionString).Options);
         
-        var preLoadedBoard = await SeedDataHelper<Board>.AddAsync(Board.Create(Guid.NewGuid(),
-       
-            DateTime.UtcNow, "TestUserTwoId", "TestBoard", new List<JobList>()), context);
+        var preLoadedBoard = await SeedDataHelper<Board>.AddAsync(Board.Create(Guid.NewGuid(), DateTime.UtcNow, "TestUserTwoId", "TestBoard"), context);
         
         var activityToDelete = Activity.Create(
             id: Guid.NewGuid(),

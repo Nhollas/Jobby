@@ -19,22 +19,26 @@ public class JobList : Entity
         string ownerId,
         string listName, 
         int index,
-        Guid boardId)
+        Board board)
         : base(id, reference, createdDate, ownerId)
     {
         Name = listName;
         Index = index;
-        BoardId = boardId;
+        BoardId = board.Id;
+        Board = board;
+        BoardReference = board.Reference;
     }
 
     public string Name { get; set; }
     public int Index { get; set; }
     public IReadOnlyCollection<Job> Jobs => _jobs;
-
+    
 
     // Database Relationship Properties
     public Board Board { get; set; }
     public Guid BoardId { get; set; }
+    
+    public string BoardReference { get; set; }
 
 
     public static JobList Create(
@@ -43,7 +47,7 @@ public class JobList : Entity
         string ownerId,
         string name,
         int index,
-        Guid boardId)
+        Board board = null)
     {
         return new JobList(
             id,
@@ -52,7 +56,7 @@ public class JobList : Entity
             ownerId,
             name,
             index,
-            boardId);
+            board);
     }
 
     public void ArrangeJobs(Dictionary<Guid, int> jobIndexes)

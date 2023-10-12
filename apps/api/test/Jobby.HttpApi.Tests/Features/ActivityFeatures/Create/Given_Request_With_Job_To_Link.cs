@@ -37,8 +37,9 @@ public class Given_Request_With_Job_To_Link : IAsyncLifetime
             .UseSqlServer(_factory.DbConnectionString).Options);
         var boardId = Guid.NewGuid();
         
-        var preLoadedJobList = JobList.Create(Guid.NewGuid(), DateTime.UtcNow, "TestUserId", "TestJobList", 0, boardId);
-        var preLoadedBoard = await SeedDataHelper<Board>.AddAsync(Board.Create(boardId, DateTime.UtcNow, "TestUserId", "TestBoard", new List<JobList>{ preLoadedJobList }), context);
+        var board = Board.Create(boardId, DateTime.UtcNow, "TestUserId", "TestBoard");
+        var preLoadedJobList = JobList.Create(Guid.NewGuid(), DateTime.UtcNow, "TestUserId", "TestJobList", 0, board);
+        var preLoadedBoard = await SeedDataHelper<Board>.AddAsync(board, context);
         var preLoadedJob = await SeedDataHelper<Job>.AddAsync(Job.Create(Guid.NewGuid(), DateTime.UtcNow, "TestUserId", "TestCompany", "TestTitle", 0, preLoadedJobList, preLoadedBoard), context);
         
         var body = new CreateActivityCommand()

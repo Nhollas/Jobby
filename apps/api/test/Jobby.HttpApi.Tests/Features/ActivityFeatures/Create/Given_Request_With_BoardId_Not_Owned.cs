@@ -35,7 +35,7 @@ public class Given_Request_With_BoardId_Not_Owned : IAsyncLifetime
         await using var context = new JobbyDbContext(new DbContextOptionsBuilder<JobbyDbContext>()
             .UseSqlServer(_factory.DbConnectionString).Options);
         
-        var preLoadedBoard = await SeedDataHelper<Board>.AddAsync(Board.Create(Guid.NewGuid(), DateTime.UtcNow, "TestUser2Id", "TestBoard", new List<JobList>()), context);
+        var preLoadedBoard = await SeedDataHelper<Board>.AddAsync(Board.Create(Guid.NewGuid(), DateTime.UtcNow, "TestUser2Id", "TestBoard"), context);
         
         var body = new CreateActivityCommand()
         {

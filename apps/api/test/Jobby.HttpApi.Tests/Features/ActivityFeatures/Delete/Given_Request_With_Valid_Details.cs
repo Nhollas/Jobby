@@ -31,9 +31,7 @@ public class Given_Request_With_Valid_Details : IAsyncLifetime
         await using var initContext = new JobbyDbContext(new DbContextOptionsBuilder<JobbyDbContext>()
             .UseSqlServer(_factory.DbConnectionString).Options);
         
-        var preLoadedBoard = await SeedDataHelper<Board>.AddAsync(Board.Create(Guid.NewGuid(), 
-        
-            DateTime.UtcNow, "TestUserId", "TestBoard", new List<JobList>()), initContext);
+        var preLoadedBoard = await SeedDataHelper<Board>.AddAsync(Board.Create(Guid.NewGuid(), DateTime.UtcNow, "TestUserId", "TestBoard"), initContext);
         
         var activityToDelete = Activity.Create(
             id: Guid.NewGuid(),

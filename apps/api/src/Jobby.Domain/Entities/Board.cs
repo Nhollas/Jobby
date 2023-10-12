@@ -20,11 +20,9 @@ public class Board : Entity
         string reference,
         DateTime createdDate,
         string ownerId,
-        string name,
-        List<JobList> lists)
+        string name)
         : base(id, reference, createdDate, ownerId)
     {
-        _lists = lists;
         Name = name;
     }
 
@@ -42,16 +40,14 @@ public class Board : Entity
         Guid id,
         DateTime createdDate,
         string ownerId,
-        string name,
-        List<JobList> jobLists)
+        string name)
     {
         var board = new Board(
             id,
             reference: EntityReferenceProvider<Board>.CreateReference(),
             createdDate,
             ownerId,
-            name,
-            jobLists);
+            name);
 
         return board;
     }
@@ -90,5 +86,10 @@ public class Board : Entity
             .SelectMany(list => list.Jobs
             .Where(job => jobIds.Contains(job.Id)))
             .Any();
+    }
+
+    public void SetJobLists(List<JobList> defaultJobLists)
+    {
+        _lists.AddRange(defaultJobLists);
     }
 }

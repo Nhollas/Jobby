@@ -32,6 +32,7 @@ public class Activity : Entity
         Completed = completed;
         Board = board;
         BoardId = board.Id;
+        BoardReference = board.Reference;
     }
     
     public string Title { get; private set; }
