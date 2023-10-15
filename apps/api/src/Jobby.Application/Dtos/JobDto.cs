@@ -13,8 +13,8 @@ public sealed record JobDto : EntityDto
     public string Description { get; set; }
     public DateTime? Deadline { get; set; }
     public int Index { get; set; }
-    public Guid BoardId { get; set; }
-    public Guid JobListId { get; set; }
+    public string BoardReference { get; set; }
+    public string JobListReference { get; set; }
     public List<NoteDto> Notes { get; set; }
     public List<ContactDto> Contacts { get; set; }
     public List<ActivityDto> Activities { get; set; }

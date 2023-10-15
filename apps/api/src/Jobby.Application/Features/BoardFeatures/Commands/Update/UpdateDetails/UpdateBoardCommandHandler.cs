@@ -33,7 +33,7 @@ internal sealed class UpdateBoardCommandHandler : IRequestHandler<UpdateBoardCom
     {
         var boardResourceResult = await ResourceProvider<Board>
             .GetByReference(_boardRepository.GetByReferenceAsync)
-            .Check(_userId, request.Reference, cancellationToken);
+            .Check(_userId, request.BoardReference, cancellationToken);
         
         if (!boardResourceResult.IsSuccess)
         {

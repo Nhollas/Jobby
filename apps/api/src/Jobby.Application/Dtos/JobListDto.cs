@@ -6,5 +6,5 @@ public sealed record JobListDto : EntityDto
 {
     public string Name { get; set; }
     public List<JobDto> Jobs { get; set; }
-    public Guid BoardId { get; set; }
+    public string BoardReference { get; set; }
 }
