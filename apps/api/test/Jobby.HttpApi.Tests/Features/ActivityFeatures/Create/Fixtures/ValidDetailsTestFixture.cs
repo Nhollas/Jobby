@@ -11,11 +11,11 @@ using Xunit;
 
 namespace Jobby.HttpApi.Tests.Features.ActivityFeatures.Create.Fixtures;
 
-public class CreateActivityTestFixture : IAsyncLifetime
+public class CreateActivityValidDetailsTestFixture : IAsyncLifetime
 {
     private readonly JobbyHttpApiFactory _factory;
 
-    public CreateActivityTestFixture(JobbyHttpApiFactory factory)
+    public CreateActivityValidDetailsTestFixture(JobbyHttpApiFactory factory)
     {
         _factory = factory;
     }
