@@ -1,6 +1,8 @@
+"use client";
+
 import { ActivityFilter, CreateActivityModal } from "@/features/activity";
 
-export default async function Page({
+export default function Page({
   searchParams,
 }: {
   searchParams: { boardRef: string; filter: ActivityFilter; jobRef?: string };

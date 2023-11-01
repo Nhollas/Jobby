@@ -1,9 +1,11 @@
-import { CreateActivityModal } from "@/features/activity";
+"use client";
 
-export default async function Page({
+import { ActivityFilter, CreateActivityModal } from "@/features/activity";
+
+export default function Page({
   searchParams,
 }: {
-  searchParams: { boardRef: string; filter: string; jobRef?: string };
+  searchParams: { boardRef: string; filter: ActivityFilter; jobRef?: string };
 }) {
   const { filter, jobRef, boardRef } = searchParams;
 

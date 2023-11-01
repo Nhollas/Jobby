@@ -49,7 +49,6 @@ import { ActivityType, activityTypesSchema } from "@/types";
 import {
   CreateActivityDTO,
   CreateActivitySchema,
-  createActivity,
   useCreateActivity,
 } from "@/features/activity";
 import { useJobsQuery } from "@/features/job";
@@ -78,7 +77,7 @@ interface Props {
   boardRef: string;
 }
 
-export const CreateActivityModal = ({ jobRef, boardRef, filter }: Props) => {
+export function CreateActivityModal({ jobRef, boardRef, filter }: Props) {
   const defaultType = activityFilters[filter][0];
   const defaultTypeIndex = Object.values(activityTypesSchema.Values).indexOf(
     defaultType
@@ -415,4 +414,4 @@ export const CreateActivityModal = ({ jobRef, boardRef, filter }: Props) => {
       </Card>
     </Modal>
   );
-};
+}
