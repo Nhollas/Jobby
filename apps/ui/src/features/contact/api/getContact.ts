@@ -11,11 +11,7 @@ export async function getContact(contactReference: string) {
   }
 }
 
-type Props = {
-  contactReference: string;
-};
-
-export const useContactQuery = ({ contactReference }: Props) => {
+export const useContactQuery = (contactReference: string) => {
   return useQuery({
     queryKey: ["contact", contactReference],
     queryFn: () => getContact(contactReference),

@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  UpdateContactDetailsRequest,
-  updateContactSchema,
-} from "@/contracts/UpdateContactDetailsRequest";
-import { useUpdateContact } from "@/hooks/useContactData";
 import { cn } from "@/lib/utils";
-import { Board, Contact, Job } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Building2,
@@ -52,20 +46,32 @@ import {
   TabsContent,
   TabsList,
 } from "@/components/ui";
+import {
+  UpdateContactDTO,
+  UpdateContactSchema,
+  useContactQuery,
+  useUpdateContact,
+} from "@/features/contact";
+import { useBoardsQuery } from "@/features/board";
+import { useJobsQuery } from "@/features/job";
 
 interface Props {
   contactRef: string;
 }
 
 export function Contact({ contactRef }: Props) {
+  const { data: contact } = useContactQuery(contactRef);
+  const { data: boards } = useBoardsQuery();
+  const { data: jobs } = useJobsQuery();
+
   const { mutateAsync } = useUpdateContact();
 
-  const form = useForm<UpdateContactDetailsRequest>({
-    resolver: zodResolver(updateContactSchema),
+  const form = useForm<UpdateContactDTO>({
+    resolver: zodResolver(UpdateContactSchema),
     defaultValues: {
       ...contact,
-      jobIds: contact.jobs.map((job) => job.id),
-      boardId: contact.board?.id,
+      jobReferences: contact?.jobs.map((job) => job.reference),
+      boardReference: contact?.board.reference,
     },
   });
 
@@ -74,8 +80,7 @@ export function Contact({ contactRef }: Props) {
   const [activeTab, setActiveTab] = useState("socials");
   const [activeTab2, setActiveTab2] = useState("companies");
 
-  async function onSubmit(values: UpdateContactDetailsRequest) {
-    console.log("values", values);
+  async function onSubmit(values: UpdateContactDTO) {
     await mutateAsync(values);
   }
 
@@ -205,7 +210,7 @@ export function Contact({ contactRef }: Props) {
                       />
                       <FormField
                         control={form.control}
-                        name="socials.linkedInUrl"
+                        name="socials.linkedinUrl"
                         render={({ field }) => (
                           <FormItem>
                             <FormControl>
@@ -268,7 +273,7 @@ export function Contact({ contactRef }: Props) {
                     <CardContent className="flex flex-col gap-y-4">
                       <FormField
                         control={form.control}
-                        name="boardId"
+                        name="boardReference"
                         render={({ field }) => (
                           <FormItem className="flex flex-col">
                             <FormLabel>Board</FormLabel>
@@ -284,9 +289,9 @@ export function Contact({ contactRef }: Props) {
                                       <Layout className="h-4 w-4 flex-shrink-0" />
                                       <p className="truncate">
                                         {field.value
-                                          ? filteredBoards.find(
+                                          ? filteredBoards?.find(
                                               (board) =>
-                                                board.id === field.value
+                                                board.reference === field.value
                                             )?.name
                                           : "Choose board..."}
                                       </p>
@@ -304,7 +309,7 @@ export function Contact({ contactRef }: Props) {
                                       const inputValue =
                                         // @ts-ignore
                                         event.target.value.toLowerCase();
-                                      const filteredBoards = boards.filter(
+                                      const filteredBoards = boards?.filter(
                                         (board) =>
                                           board.name
                                             .toLowerCase()
@@ -316,20 +321,23 @@ export function Contact({ contactRef }: Props) {
                                   />
                                   <CommandEmpty>No Boards Found.</CommandEmpty>
                                   <CommandGroup>
-                                    {filteredBoards.map((board) => (
+                                    {filteredBoards?.map((board) => (
                                       <CommandItem
-                                        key={board.id}
-                                        value={`${board.name}${board.id}`}
+                                        key={board.reference}
+                                        value={`${board.name}${board.reference}`}
                                         className="flex w-full flex-row items-center gap-2"
                                         onSelect={(value) => {
-                                          const boardId = value.substring(
+                                          const boardRef = value.substring(
                                             value.length - 36
                                           );
 
-                                          if (boardId === field.value) {
-                                            form.setValue("boardId", undefined);
+                                          if (boardRef === field.value) {
+                                            form.setValue("boardReference", "");
                                           } else {
-                                            form.setValue("boardId", boardId);
+                                            form.setValue(
+                                              "boardReference",
+                                              boardRef
+                                            );
                                           }
                                         }}
                                       >
@@ -337,7 +345,7 @@ export function Contact({ contactRef }: Props) {
                                         <Check
                                           className={cn(
                                             "mr-2 h-4 w-4 flex-shrink-0",
-                                            field.value === board.id
+                                            field.value === board.reference
                                               ? "opacity-100"
                                               : "opacity-0"
                                           )}
@@ -355,7 +363,7 @@ export function Contact({ contactRef }: Props) {
                       />
                       <FormField
                         control={form.control}
-                        name="jobIds"
+                        name="jobReferences"
                         render={({ field }) => (
                           <FormItem className="flex flex-col">
                             <FormLabel>Jobs</FormLabel>
@@ -372,9 +380,10 @@ export function Contact({ contactRef }: Props) {
                                       {field.value.length === 0
                                         ? "Select Jobs..."
                                         : field.value
-                                            .map((jobId) => {
-                                              const job = jobs.find(
-                                                (job) => job.id === jobId
+                                            .map((jobRef) => {
+                                              const job = jobs?.find(
+                                                (job) =>
+                                                  job.reference === jobRef
                                               );
 
                                               return job?.title;
@@ -394,7 +403,7 @@ export function Contact({ contactRef }: Props) {
                                         // @ts-ignore
                                         event.target.value.toLowerCase();
 
-                                      const filteredJobs = jobs.filter((job) =>
+                                      const filteredJobs = jobs?.filter((job) =>
                                         job.title
                                           .toLowerCase()
                                           .includes(inputValue)
@@ -406,34 +415,42 @@ export function Contact({ contactRef }: Props) {
                                   <CommandEmpty>No Jobs Found.</CommandEmpty>
                                   <CommandGroup>
                                     <ScrollArea className="h-72">
-                                      {filteredJobs.map((job) => (
+                                      {filteredJobs?.map((job) => (
                                         <CommandItem
-                                          key={job.id}
-                                          value={`${job.title}${job.id}`}
+                                          key={job.reference}
+                                          value={`${job.title}${job.reference}`}
                                           onSelect={(currentValue) => {
-                                            const jobId =
+                                            const jobRef =
                                               currentValue.substring(
                                                 currentValue.length - 36
                                               );
 
-                                            let jobIds = [...field.value];
+                                            let jobRefs = [...field.value];
 
-                                            if (jobIds.includes(jobId)) {
-                                              jobIds = jobIds.filter(
-                                                (id) => id !== jobId
+                                            if (jobRefs.includes(jobRef)) {
+                                              jobRefs = jobRefs.filter(
+                                                (id) => id !== jobRef
                                               );
                                             } else {
-                                              jobIds = [...field.value, jobId];
+                                              jobRefs = [
+                                                ...field.value,
+                                                jobRef,
+                                              ];
                                             }
 
-                                            form.setValue("jobIds", jobIds);
+                                            form.setValue(
+                                              "jobReferences",
+                                              jobRefs
+                                            );
                                           }}
                                         >
                                           <Briefcase className="mr-2 h-4 w-4" />
                                           <Check
                                             className={cn(
                                               "mr-2 h-4 w-4",
-                                              field.value.includes(job.id)
+                                              field.value.includes(
+                                                job.reference
+                                              )
                                                 ? "opacity-100"
                                                 : "opacity-0"
                                             )}

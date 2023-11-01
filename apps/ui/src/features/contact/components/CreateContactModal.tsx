@@ -2,16 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Board, Job } from "@/types";
-import { useRouter, useSearchParams } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import {
   Check,
@@ -26,45 +17,53 @@ import {
   Phone,
   Mail,
 } from "lucide-react";
-
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from "@/components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import {
-  FramerTabsTrigger,
-  Tabs,
-  TabsContent,
-  TabsList,
-} from "@/components/ui/tabs";
 import React from "react";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Modal } from "../../../components/Modal";
-import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
+  Button,
   Form,
   FormField,
   FormItem,
   FormLabel,
   FormControl,
   FormMessage,
-} from "@/components/ui/form";
-import MultiInput from "@/components/ui/multi-input";
-import { useCreateContact } from "@/hooks/useContactData";
-import { formSchema } from "@/contracts/CreateContact";
+  MultiInput,
+  ScrollArea,
+  FramerTabsTrigger,
+  Tabs,
+  TabsContent,
+  TabsList,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Input,
+} from "@/components/ui";
 import { client } from "@/lib/client";
+import {
+  CreateContactDTO,
+  CreateContactSchema,
+  useCreateContact,
+} from "@/features/contact";
+import { Modal } from "@/components/Modal";
 
-export const CreateContactModal = () => {
+export const CreateContactModal = ({
+  boardRef,
+  jobRef,
+}: {
+  boardRef?: string;
+  jobRef?: string;
+}) => {
   const [boards, setBoards] = useState<Board[] | undefined>(undefined);
   const [jobs, setJobs] = useState<Job[] | undefined>(undefined);
 
@@ -82,18 +81,13 @@ export const CreateContactModal = () => {
     fetchBoardsAndJobs();
   }, []);
 
-  const searchParams = useSearchParams();
-
-  const boardId = searchParams.get("boardId");
-  const jobId = searchParams.get("jobId");
-
   const router = useRouter();
 
-  const form = useForm<CreateContactRequest>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<CreateContactDTO>({
+    resolver: zodResolver(CreateContactSchema),
     defaultValues: {
-      boardId: boardId || undefined,
-      jobIds: jobId ? [jobId] : [],
+      boardReference: boardRef || undefined,
+      jobReferences: jobRef ? [jobRef] : [],
       firstName: "",
       lastName: "",
       jobTitle: "",
@@ -101,7 +95,7 @@ export const CreateContactModal = () => {
       socials: {
         twitterUrl: "",
         facebookUrl: "",
-        linkedInUrl: "",
+        linkedinUrl: "",
         githubUrl: "",
       },
       emails: [],
@@ -121,7 +115,7 @@ export const CreateContactModal = () => {
 
   const { mutateAsync } = useCreateContact();
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: CreateContactDTO) {
     await mutateAsync(values);
 
     router.back();
@@ -315,7 +309,7 @@ export const CreateContactModal = () => {
                       />
                       <FormField
                         control={form.control}
-                        name="socials.linkedInUrl"
+                        name="socials.linkedinUrl"
                         render={({ field }) => (
                           <FormItem>
                             <FormControl>
@@ -378,7 +372,7 @@ export const CreateContactModal = () => {
                     <CardContent className="flex flex-col gap-y-4">
                       <FormField
                         control={form.control}
-                        name="boardId"
+                        name="boardReference"
                         render={({ field }) => (
                           <FormItem className="flex flex-col">
                             <FormLabel>Board</FormLabel>
@@ -396,7 +390,7 @@ export const CreateContactModal = () => {
                                         ? field.value
                                           ? boards.find(
                                               (board) =>
-                                                board.id === field.value
+                                                board.reference === field.value
                                             )?.name
                                           : "Choose board..."
                                         : "Loading boards..."}
@@ -431,22 +425,22 @@ export const CreateContactModal = () => {
                                       <ScrollArea className="h-72">
                                         {filteredBoards?.map((board) => (
                                           <CommandItem
-                                            key={board.id}
-                                            value={`${board.name}${board.id}`}
+                                            key={board.reference}
+                                            value={`${board.name}${board.reference}`}
                                             onSelect={(value) => {
-                                              const boardId = value.substring(
+                                              const boardRef = value.substring(
                                                 value.length - 36
                                               );
 
-                                              if (boardId === field.value) {
+                                              if (boardRef === field.value) {
                                                 form.setValue(
-                                                  "boardId",
-                                                  undefined
+                                                  "boardReference",
+                                                  ""
                                                 );
                                               } else {
                                                 form.setValue(
-                                                  "boardId",
-                                                  boardId
+                                                  "boardReference",
+                                                  boardRef
                                                 );
                                               }
                                             }}
@@ -455,7 +449,7 @@ export const CreateContactModal = () => {
                                             <Check
                                               className={cn(
                                                 "mr-2 h-4 w-4",
-                                                field.value === board.id
+                                                field.value === board.reference
                                                   ? "opacity-100"
                                                   : "opacity-0"
                                               )}
@@ -475,7 +469,7 @@ export const CreateContactModal = () => {
                       />
                       <FormField
                         control={form.control}
-                        name="jobIds"
+                        name="jobReferences"
                         render={({ field }) => (
                           <FormItem className="flex flex-col">
                             <FormLabel>Jobs</FormLabel>
@@ -495,7 +489,8 @@ export const CreateContactModal = () => {
                                           : field.value
                                               .map((jobId) => {
                                                 const job = jobs.find(
-                                                  (job) => job.id === jobId
+                                                  (job) =>
+                                                    job.reference === jobId
                                                 );
 
                                                 return job?.title;
@@ -532,8 +527,8 @@ export const CreateContactModal = () => {
                                       <ScrollArea className="h-72">
                                         {filteredJobs?.map((job) => (
                                           <CommandItem
-                                            key={job.id}
-                                            value={`${job.title}${job.id}`}
+                                            key={job.reference}
+                                            value={`${job.title}${job.reference}`}
                                             onSelect={(currentValue) => {
                                               const jobId =
                                                 currentValue.substring(
@@ -553,14 +548,19 @@ export const CreateContactModal = () => {
                                                 ];
                                               }
 
-                                              form.setValue("jobIds", jobIds);
+                                              form.setValue(
+                                                "jobReferences",
+                                                jobIds
+                                              );
                                             }}
                                           >
                                             <Briefcase className="mr-2 h-4 w-4" />
                                             <Check
                                               className={cn(
                                                 "mr-2 h-4 w-4",
-                                                field.value.includes(job.id)
+                                                field.value.includes(
+                                                  job.reference
+                                                )
                                                   ? "opacity-100"
                                                   : "opacity-0"
                                               )}

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Users } from "lucide-react";
 import { SignOut, Separator, Button } from "@/components/ui";
-import { BoardsBar } from "@/features/board/components";
+import { BoardsBar } from "@/features/board";
 
 export function MainNavigation() {
   return (

@@ -12,7 +12,7 @@ export const CreateContactSchema = z.object({
   lastName: z.string(),
   jobTitle: z.string(),
   location: z.string(),
-  social: z.object({
+  socials: z.object({
     twitterUrl: z.string(),
     facebookUrl: z.string(),
     linkedinUrl: z.string(),
@@ -48,10 +48,10 @@ export async function createContact(payload: CreateContactDTO) {
   }
 }
 
-export const useCreateActivity = () => {
+export const useCreateContact = () => {
   return useMutation({
     onMutate: async () => {
-      const previousContacts = queryClient.getQueryData<Activity[]>([
+      const previousContacts = queryClient.getQueryData<Contact[]>([
         "contacts",
       ]);
 

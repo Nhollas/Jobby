@@ -5,9 +5,9 @@ import { Handle, Remove } from "../Item";
 import styles from "./Container.module.css";
 import clsx from "clsx";
 import { JobList } from "@/types";
-import { Button } from "../ui/button";
 import Link from "next/link";
 import { Plus } from "lucide-react";
+import { Button } from "@/components/ui";
 
 export interface Props {
   children: React.ReactNode;
@@ -73,7 +73,7 @@ export const Container = forwardRef<HTMLDivElement, Props>(
             <p>{jobList.jobs.length} Jobs</p>
             <Button variant="default" asChild>
               <Link
-                href={`/track/create-job/${boardId}/${jobList.id}`}
+                href={`/track/create-job/${boardId}/${jobList.reference}`}
                 className="flex flex-row items-center gap-x-2 rounded-full"
               >
                 <Plus className="h-4 w-4" />

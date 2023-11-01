@@ -83,7 +83,7 @@ export const Item = React.memo(
           ref={ref}
         >
           <Link
-            href={`/track/board/${job.boardId}/job/${job.id}/info`}
+            href={`/track/board/${job.boardReference}/job/${job.reference}/info`}
             className={clsx(
               styles.Item,
               "flex w-full flex-col gap-y-2",

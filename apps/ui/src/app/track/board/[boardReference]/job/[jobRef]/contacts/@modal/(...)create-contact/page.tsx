@@ -1,4 +1,4 @@
-import { CreateContactModal } from "@/features/contact";
+import { CreateContactModal } from "@/features/contact/components/CreateContactModal";
 
 export default async function Page({
   searchParams,

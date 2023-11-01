@@ -1,5 +1,4 @@
-import { getBoards } from "@/features/board/api";
-import { BoardNavigation } from "@/features/board/components";
+import { BoardNavigation } from "@/features/board";
 
 export default async function BoardLayout({
   children,
@@ -8,8 +7,6 @@ export default async function BoardLayout({
   children: React.ReactNode;
   modal: React.ReactNode;
 }) {
-  const initialBoards = await getBoards();
-
   return (
     <section
       id="BoardLayout"

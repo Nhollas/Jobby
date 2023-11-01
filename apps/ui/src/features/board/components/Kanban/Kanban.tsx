@@ -29,11 +29,10 @@ import {
   horizontalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Container, ContainerProps } from "./Container";
-import { Item } from "./Item";
-import { Board, Job, JobList } from "@/types";
-import { useClientApi } from "@/lib/clients";
+import { Job, JobList } from "@/types";
 import { useBoardQuery } from "@/features/board/api";
+import { Container, ContainerProps } from "./components/Container";
+import { Item } from "./components/Item";
 
 const animateLayoutChanges: AnimateLayoutChanges = (args) =>
   defaultAnimateLayoutChanges({ ...args, wasDragging: true });
@@ -102,27 +101,23 @@ const dropAnimation: DropAnimation = {
 };
 
 interface Props {
-  initialBoard: GetBoardResponse;
+  boardRef: string;
 }
 
-export function Kanban({ initialBoard }: Props) {
-  const clientApi = useClientApi();
-  const sus = useBoardQuery({ boardReference });
+export function Kanban({ boardRef }: Props) {
+  const { data: board } = useBoardQuery(boardRef);
 
   const [containerDict, setContainerDict] = useState<
     Record<UniqueIdentifier, JobList>
   >(
-    initialBoard.jobLists.reduce(
-      (acc: Record<UniqueIdentifier, JobList>, list) => {
-        acc[list.id] = list;
-        return acc;
-      },
-      {}
-    )
+    board.jobLists.reduce((acc: Record<UniqueIdentifier, JobList>, list) => {
+      acc[list.reference] = list;
+      return acc;
+    }, {})
   );
 
   const [containerKeys, setContainerKeys] = useState<UniqueIdentifier[]>(
-    Object.keys(containerDict).map((key) => containerDict[key].id)
+    Object.keys(containerDict).map((key) => containerDict[key].reference)
   );
 
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
@@ -174,7 +169,7 @@ export function Kanban({ initialBoard }: Props) {
               droppableContainers: args.droppableContainers.filter(
                 (container) =>
                   container.id !== overId &&
-                  containerJobs.some((job) => job.id === container.id)
+                  containerJobs.some((job) => job.reference === container.id)
               ),
             })[0]?.id;
           }
@@ -221,7 +216,7 @@ export function Kanban({ initialBoard }: Props) {
     }
 
     return Object.keys(containerDict).find((key) =>
-      containerDict[key].jobs.some((job) => job.id === id)
+      containerDict[key].jobs.some((job) => job.reference === id)
     );
   };
 
@@ -270,8 +265,10 @@ export function Kanban({ initialBoard }: Props) {
           setContainerDict((prevContainerDict) => {
             const activeJobs = prevContainerDict[activeContainer].jobs;
             const overJobs = prevContainerDict[overContainer].jobs;
-            const overIndex = overJobs.findIndex((j) => j.id === overId);
-            const activeIndex = activeJobs.findIndex((j) => j.id === active.id);
+            const overIndex = overJobs.findIndex((j) => j.reference === overId);
+            const activeIndex = activeJobs.findIndex(
+              (j) => j.reference === active.id
+            );
 
             let newIndex: number;
 
@@ -297,7 +294,7 @@ export function Kanban({ initialBoard }: Props) {
               [activeContainer]: {
                 ...prevContainerDict[activeContainer],
                 jobs: prevContainerDict[activeContainer].jobs.filter(
-                  (job) => job.id !== active.id
+                  (job) => job.reference !== active.id
                 ),
               },
               [overContainer]: {
@@ -360,10 +357,10 @@ export function Kanban({ initialBoard }: Props) {
 
         if (overContainer) {
           const activeIndex = containerDict[activeContainer].jobs.findIndex(
-            (j) => j.id === active.id
+            (j) => j.reference === active.id
           );
           const overIndex = containerDict[overContainer].jobs.findIndex(
-            (j) => j.id === overId
+            (j) => j.reference === overId
           );
 
           if (activeIndex !== overIndex) {
@@ -375,7 +372,7 @@ export function Kanban({ initialBoard }: Props) {
 
             const jobIndexes = updatedJobs.reduce(
               (acc: { [key: string]: number }, job) => {
-                acc[job.id] = updatedJobs.indexOf(job);
+                acc[job.reference] = updatedJobs.indexOf(job);
                 return acc;
               },
               {}
@@ -386,7 +383,8 @@ export function Kanban({ initialBoard }: Props) {
               jobIndexes,
             };
 
-            await clientApi.put("/JobList/ArrangeJobs", arrangeJobsModel);
+            // TODO: fix this
+            // await clientApi.put("/JobList/ArrangeJobs", arrangeJobsModel);
 
             setContainerDict((prevContainerDict) => {
               return {
@@ -413,8 +411,10 @@ export function Kanban({ initialBoard }: Props) {
               key={containerId}
               id={containerId}
               jobList={containerDict[containerId]}
-              boardId={initialBoard.id}
-              items={containerDict[containerId].jobs.map((job) => job.id)}
+              boardId={boardRef}
+              items={containerDict[containerId].jobs.map(
+                (job) => job.reference
+              )}
               onRemove={() => handleRemoveContainer(containerId)}
             >
               <SortableContext
@@ -425,8 +425,8 @@ export function Kanban({ initialBoard }: Props) {
                   return (
                     <SortableItem
                       disabled={isSortingContainer}
-                      key={job.id}
-                      id={job.id}
+                      key={job.reference}
+                      id={job.reference}
                       job={job}
                       index={index}
                     />
@@ -455,7 +455,7 @@ export function Kanban({ initialBoard }: Props) {
     const foundJob = containerKeys
       .map((key) => containerDict[key].jobs)
       .flat()
-      .find((job) => job.id === id);
+      .find((job) => job.reference === id);
 
     if (foundJob) {
       return <Item job={foundJob} dragOverlay />;
@@ -472,14 +472,14 @@ export function Kanban({ initialBoard }: Props) {
         shadow
       >
         {containerDict[containerId].jobs.map((job, index) => (
-          <Item key={job.id} job={job} index={index} />
+          <Item key={job.reference} job={job} index={index} />
         ))}
       </Container>
     );
   }
 
   async function handleRemoveContainer(containerID: UniqueIdentifier) {
-    await clientApi.delete(`/joblist/delete/${containerID}`);
+    // await clientApi.delete(`/joblist/delete/${containerID}`);
 
     setContainerKeys((prevContainerKeys) =>
       prevContainerKeys.filter((id) => id !== containerID)

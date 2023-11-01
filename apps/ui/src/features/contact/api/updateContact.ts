@@ -56,7 +56,7 @@ export async function updateContact(payload: UpdateContactDTO) {
   }
 }
 
-export const useUpdateActivity = () => {
+export const useUpdateContact = () => {
   return useMutation({
     onMutate: async () => {
       const previousContacts = queryClient.getQueryData<Activity[]>([
