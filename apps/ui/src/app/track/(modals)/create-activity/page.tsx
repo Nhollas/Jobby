@@ -1,18 +1,13 @@
-import { CreateActivityModal } from "@/components/modals";
+import { CreateActivityModal } from "@/features/activity";
 
 export default async function Page({
   searchParams,
 }: {
   searchParams: { boardRef: string; filter: string; jobRef?: string };
 }) {
-  const { filter, jobRef } = searchParams;
+  const { filter, jobRef, boardRef } = searchParams;
 
   return (
-    <CreateActivityModal
-      jobs={jobs}
-      board={board}
-      jobId={jobId}
-      filter={filter}
-    />
+    <CreateActivityModal boardRef={boardRef} jobRef={jobRef} filter={filter} />
   );
 }

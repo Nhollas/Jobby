@@ -3,7 +3,6 @@
 import { Activity } from "@/types";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Input,
@@ -21,26 +20,28 @@ import {
 import { Briefcase } from "lucide-react";
 import { AnimatePresence, motion, Variants } from "framer-motion";
 import { useEffect, useState } from "react";
-import { UpdateActivityDetailsRequest } from "@/contracts";
+import { useBoardActivitiesQuery } from "@/features/board";
+import { UpdateActivityDTO, UpdateActivitySchema } from "../api";
 
 type Props = {
-  activities: Activity[];
-  boardId: string;
-  jobId?: string;
+  boardRef: string;
+  jobRef?: string;
   filter: string;
 };
 
-const createUrl = (filter: string, boardId: string, jobId?: string) => {
+const createUrl = (filter: string, boardRef: string, jobRef?: string) => {
   const params = new URLSearchParams();
 
-  if (boardId) params.set("boardId", boardId);
-  if (jobId) params.set("jobId", jobId);
+  if (boardRef) params.set("boardRef", boardRef);
+  if (jobRef) params.set("jobRef", jobRef);
   params.set("filter", filter);
 
   return `/track/create-activity${params ? `?${params}` : ""}`;
 };
 
-export const Activities = ({ activities, boardId, jobId, filter }: Props) => {
+export const Activities = ({ boardRef, jobRef, filter }: Props) => {
+  const { data: activities } = useBoardActivitiesQuery(boardRef);
+
   const filterActivities = (filter: string) => {
     switch (filter) {
       case "all":
@@ -107,6 +108,8 @@ export const Activities = ({ activities, boardId, jobId, filter }: Props) => {
     };
   }, []);
 
+  if (!activities) return null;
+
   return (
     <div className="flex flex-col gap-y-6 border-l p-5">
       <div className="flex flex-col gap-y-2">
@@ -117,7 +120,7 @@ export const Activities = ({ activities, boardId, jobId, filter }: Props) => {
         <Input type="text" placeholder="Search.." className="w-full max-w-xs" />
         <Button asChild>
           <Link
-            href={createUrl(filter, boardId, jobId)}
+            href={createUrl(filter, boardRef, jobRef)}
             className="w-max whitespace-nowrap"
           >
             Create Activity
@@ -151,26 +154,14 @@ function Activity({
   active: boolean;
   setActiveActivity: (activity: Activity) => void;
 }) {
-  const activitySchema = z.object({
-    id: z.string(),
-    title: z.string(),
-    type: z.number(),
-    startDate: z.date(),
-    endDate: z.date(),
-    note: z.string(),
-    completed: z.boolean(),
-  });
-
-  async function onSubmit(values: UpdateActivityDetailsRequest) {
+  async function onSubmit(values: UpdateActivityDTO) {
     console.log(values);
   }
 
-  const form = useForm<UpdateActivityDetailsRequest>({
-    resolver: zodResolver(activitySchema),
+  const form = useForm<UpdateActivityDTO>({
+    resolver: zodResolver(UpdateActivitySchema),
     defaultValues: {
       ...activity,
-      startDate: new Date(activity.startDate),
-      endDate: new Date(activity.endDate),
     },
   });
 

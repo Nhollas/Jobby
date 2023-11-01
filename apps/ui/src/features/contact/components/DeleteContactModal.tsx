@@ -12,7 +12,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui";
 import { useEffect, useState } from "react";
-import { useDeleteContact } from "@/hooks/useContactData";
+import { useDeleteContact } from "@/features/contact";
 
 interface Props {
   contactRef: string;

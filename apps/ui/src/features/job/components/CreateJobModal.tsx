@@ -9,49 +9,42 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import {
+  Input,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import {
+  Button,
   Form,
   FormField,
   FormItem,
   FormLabel,
   FormControl,
   FormMessage,
-} from "@/components/ui/form";
+} from "@/components/ui";
+import { useForm } from "react-hook-form";
 import { Layout, List } from "lucide-react";
-import { useCreateJob } from "@/hooks/useJobData";
-import { CreateJobRequest, GetBoardDictionaryResponse } from "@/contracts";
-import { formSchema } from "@/contracts/CreateJob";
+import { CreateJobDTO, CreateJobSchema, useCreateJob } from "@/features/job";
 
 interface Props {
-  boardId: string;
-  jobListId: string;
-  boardsDictionary: GetBoardDictionaryResponse[];
+  boardRef: string;
+  jobListRef: string;
+  boardsDictionary: any;
 }
 
 export const CreateJobModal = ({
-  boardId,
-  jobListId,
+  boardRef,
+  jobListRef,
   boardsDictionary,
 }: Props) => {
-  const form = useForm<CreateJobRequest>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<CreateJobDTO>({
+    resolver: zodResolver(CreateJobSchema),
     defaultValues: {
       title: "",
       company: "",
-      jobListId,
-      boardId,
+      boardReference: boardRef,
+      jobListReference: jobListRef,
     },
   });
 
@@ -59,9 +52,7 @@ export const CreateJobModal = ({
 
   const { mutateAsync } = useCreateJob();
 
-  async function onSubmit(values: CreateJobRequest) {
-    console.log(values);
-
+  async function onSubmit(values: CreateJobDTO) {
     await mutateAsync(values);
 
     router.back();
@@ -105,7 +96,7 @@ export const CreateJobModal = ({
               />
               <FormField
                 control={form.control}
-                name="boardId"
+                name="boardReference"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Board</FormLabel>
@@ -117,9 +108,9 @@ export const CreateJobModal = ({
                         )?.jobLists[0].id;
 
                         if (firstJoblistId) {
-                          form.setValue("jobListId", firstJoblistId);
+                          form.setValue("jobListReference", firstJoblistId);
                         } else {
-                          form.setValue("jobListId", "");
+                          form.setValue("jobListReference", "");
                         }
                       }}
                       defaultValue={field.value}
@@ -146,7 +137,7 @@ export const CreateJobModal = ({
               />
               <FormField
                 control={form.control}
-                name="jobListId"
+                name="jobListReference"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Joblist</FormLabel>
@@ -163,7 +154,8 @@ export const CreateJobModal = ({
                                 boardsDictionary
                                   .find(
                                     (board) =>
-                                      board.id === form.getValues("boardId")
+                                      board.id ===
+                                      form.getValues("boardReference")
                                   )
                                   ?.jobLists.find(
                                     (joblist) => joblist.id === field.value
@@ -176,7 +168,8 @@ export const CreateJobModal = ({
                       <SelectContent>
                         {boardsDictionary
                           .find(
-                            (board) => board.id === form.getValues("boardId")
+                            (board) =>
+                              board.id === form.getValues("boardReference")
                           )
                           ?.jobLists.map((joblist) => (
                             <SelectItem key={joblist.id} value={joblist.id}>

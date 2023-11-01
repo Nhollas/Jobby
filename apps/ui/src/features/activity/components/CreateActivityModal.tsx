@@ -45,7 +45,15 @@ import {
   ChevronsUpDown,
   Layout,
 } from "lucide-react";
-import { ActivityType, Board, Job, activityTypesSchema } from "@/types";
+import { ActivityType, activityTypesSchema } from "@/types";
+import {
+  CreateActivityDTO,
+  CreateActivitySchema,
+  createActivity,
+  useCreateActivity,
+} from "@/features/activity";
+import { useJobsQuery } from "@/features/job";
+import { useBoardQuery } from "@/features/board";
 
 export type ActivityFilter = keyof typeof activityFilters;
 
@@ -71,23 +79,34 @@ interface Props {
 }
 
 export const CreateActivityModal = ({ jobRef, boardRef, filter }: Props) => {
-  const form = useForm<CreateActivityRequest>({
-    resolver: zodResolver(formSchema),
+  const defaultType = activityFilters[filter][0];
+  const defaultTypeIndex = Object.values(activityTypesSchema.Values).indexOf(
+    defaultType
+  );
+
+  const form = useForm<CreateActivityDTO>({
+    resolver: zodResolver(CreateActivitySchema),
     defaultValues: {
       title: "",
-      // @ts-ignore - doesn't like using string as type. Expects transformed type...
-      type: activityFilters[filter][0],
+      type: defaultTypeIndex,
       completed: false,
-      jobId,
-      boardId: board.id,
+      jobReference: jobRef,
+      boardReference: boardRef,
     },
   });
 
+  const { mutateAsync } = useCreateActivity();
+
+  const { data: jobs } = useJobsQuery();
+  const { data: board } = useBoardQuery(boardRef);
+
   console.log("form", form.getValues());
 
-  async function onSubmit(values: CreateActivityRequest) {
-    const createdActivity = await createActivity(values, clientApi);
+  async function onSubmit(values: CreateActivityDTO) {
+    const createdActivity = await mutateAsync(values);
   }
+
+  if (!board || !jobs) return null;
 
   return (
     <Modal>
@@ -276,7 +295,7 @@ export const CreateActivityModal = ({ jobRef, boardRef, filter }: Props) => {
                 <CardContent className="flex flex-col gap-y-4">
                   <FormField
                     control={form.control}
-                    name="boardId"
+                    name="boardReference"
                     render={({ field }) => (
                       <FormItem className="flex flex-col">
                         <FormLabel>Board</FormLabel>
@@ -302,7 +321,7 @@ export const CreateActivityModal = ({ jobRef, boardRef, filter }: Props) => {
                   />
                   <FormField
                     control={form.control}
-                    name="jobId"
+                    name="jobReference"
                     render={({ field }) => (
                       <FormItem className="flex flex-col">
                         <FormLabel>Job</FormLabel>
@@ -348,7 +367,10 @@ export const CreateActivityModal = ({ jobRef, boardRef, filter }: Props) => {
                                       key={job.reference}
                                       value={job.reference}
                                       onSelect={(currentValue) => {
-                                        form.setValue("jobId", currentValue);
+                                        form.setValue(
+                                          "jobReference",
+                                          currentValue
+                                        );
                                       }}
                                     >
                                       <Briefcase className="mr-2 h-4 w-4" />

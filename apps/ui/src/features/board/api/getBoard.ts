@@ -12,11 +12,7 @@ export async function getBoard(boardReference: string) {
   }
 }
 
-type Props = {
-  boardReference: string;
-};
-
-export const useBoardQuery = ({ boardReference }: Props) => {
+export const useBoardQuery = (boardReference: string) => {
   return useQuery({
     queryKey: ["boards", boardReference],
     queryFn: () => getBoard(boardReference),

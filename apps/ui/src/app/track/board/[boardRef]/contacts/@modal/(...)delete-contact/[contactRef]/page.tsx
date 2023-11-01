@@ -1,9 +1,9 @@
 import { DeleteContactModal } from "@/features/contact/components/DeleteContactModal";
 
 export default function Page({
-  params: { contactId },
+  params: { contactRef },
 }: {
-  params: { contactId: string };
+  params: { contactRef: string };
 }) {
-  return <DeleteContactModal contactId={contactId} />;
+  return <DeleteContactModal contactRef={contactRef} />;
 }

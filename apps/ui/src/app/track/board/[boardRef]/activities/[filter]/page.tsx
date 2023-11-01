@@ -1,17 +1,9 @@
-import { Activity } from "@/types";
-import { serverApi } from "@/lib/clients";
-import { Activities } from "@/components";
+import { Activities } from "@/features/activity";
 
 export default async function Page({
-  params: { boardId, filter },
+  params: { boardRef, filter },
 }: {
-  params: { boardId: string; filter: string };
+  params: { boardRef: string; filter: string };
 }) {
-  const { data: activities } = await serverApi.get<Activity[]>(
-    `/board/${boardId}/activities`
-  );
-
-  return (
-    <Activities activities={activities} filter={filter} boardId={boardId} />
-  );
+  return <Activities filter={filter} boardRef={boardRef} />;
 }

@@ -1,9 +1,9 @@
 import { DeleteBoardModal } from "@/features/board/components/DeleteBoardModal";
 
 export default async function Page({
-  params: { boardId },
+  params: { boardRef },
 }: {
-  params: { boardId: string };
+  params: { boardRef: string };
 }) {
-  return <DeleteBoardModal boardId={boardId} />;
+  return <DeleteBoardModal boardRef={boardRef} />;
 }

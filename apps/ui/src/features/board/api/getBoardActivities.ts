@@ -14,11 +14,7 @@ export async function getBoardActivities(boardReference: string) {
   }
 }
 
-type Props = {
-  boardReference: string;
-};
-
-export const useBoardActivitiesQuery = ({ boardReference }: Props) => {
+export const useBoardActivitiesQuery = (boardReference: string) => {
   return useQuery({
     queryKey: ["activities", boardReference],
     queryFn: () => getBoardActivities(boardReference),

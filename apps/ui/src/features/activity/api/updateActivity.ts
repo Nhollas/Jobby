@@ -6,7 +6,15 @@ import { AxiosResponse } from "axios";
 import { z } from "zod";
 
 export const UpdateActivitySchema = z.object({
+  activityReference: z.string(),
+  title: z.string(),
   name: z.string(),
+  jobReference: z.string(),
+  type: z.number(),
+  startDate: z.date(),
+  endDate: z.date(),
+  note: z.string(),
+  completed: z.boolean(),
 });
 
 export type UpdateActivityDTO = z.infer<typeof UpdateActivitySchema>;

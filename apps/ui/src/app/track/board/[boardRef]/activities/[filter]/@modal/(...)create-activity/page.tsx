@@ -1,27 +1,13 @@
-import {
-  ActivityFilter,
-  CreateActivityModal,
-} from "@/features/activity/components/CreateActivityModal";
-import { serverApi } from "@/lib/clients";
-import { Board, Job } from "@/types";
+import { ActivityFilter, CreateActivityModal } from "@/features/activity";
 
 export default async function Page({
   searchParams,
 }: {
-  searchParams: { boardId: string; filter: ActivityFilter; jobId?: string };
+  searchParams: { boardRef: string; filter: ActivityFilter; jobRef?: string };
 }) {
-  const { data: jobs } = await serverApi.get<Job[]>("/jobs");
-  const { data: board } = await serverApi.get<Board>(
-    `/board/${searchParams.boardId}`
-  );
-  const { filter, jobId } = searchParams;
+  const { filter, jobRef, boardRef } = searchParams;
 
   return (
-    <CreateActivityModal
-      jobs={jobs}
-      board={board}
-      jobId={jobId}
-      filter={filter}
-    />
+    <CreateActivityModal boardRef={boardRef} filter={filter} jobRef={jobRef} />
   );
 }

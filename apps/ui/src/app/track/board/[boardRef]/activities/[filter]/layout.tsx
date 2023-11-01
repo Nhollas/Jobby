@@ -1,16 +1,18 @@
+import { ActivitiesNavigation } from "@/features/activity";
+
 export default async function Layout({
   children,
   modal,
-  params: { boardId, filter },
+  params: { boardRef, filter },
 }: {
   children: React.ReactNode;
   modal: React.ReactNode;
-  params: { boardId: string; filter: string };
+  params: { boardRef: string; filter: string };
 }) {
   return (
     <div className="relative grid grid-cols-[250px,1fr]">
       {modal}
-      <ActivitiesNavigation boardId={boardId} filter={filter} />
+      <ActivitiesNavigation boardRef={boardRef} filter={filter} />
       {children}
     </div>
   );
