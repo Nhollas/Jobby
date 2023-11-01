@@ -1,5 +1,7 @@
+import { z } from "zod";
+
 interface Entity {
-  id: string;
+  reference: string;
   createdDate: Date;
   lastUpdated: Date;
 }
@@ -7,20 +9,14 @@ interface Entity {
 export type APIError = {
   status: number;
   message: string;
-}
+};
 
 export type JobList = {
   name: string;
-  boardId: string;
+  boardReference: string;
   jobs: Job[];
   index?: number;
   count?: number;
-} & Entity;
-
-export type JobListPreview = {
-  name: string;
-  jobs: JobPreview[];
-  boardId: string;
 } & Entity;
 
 export type Activity = {
@@ -34,6 +30,34 @@ export type Activity = {
   startDate: Date;
   endDate: Date;
 } & Entity;
+
+export type ActivityType = keyof typeof activityTypesSchema.Values;
+
+export const activityTypesSchema = z.enum([
+  "Apply",
+  "Phone Screen",
+  "Phone Interview",
+  "On Site Interview",
+  "Offer Received",
+  "Accept Offer",
+  "Prep Cover Letter",
+  "Prep Resume",
+  "Reach Out",
+  "Get Reference",
+  "Follow Up",
+  "Prep For Interview",
+  "Decline Offer",
+  "Rejected",
+  "Send Thank You",
+  "Email",
+  "Meeting",
+  "Phone Call",
+  "Send Availability",
+  "Assignment",
+  "Networking Event",
+  "Application Withdrawn",
+  "Other",
+]);
 
 export type Job = {
   company: string;
@@ -49,16 +73,7 @@ export type Job = {
   notes: Note[];
   contacts: Contact[];
   jobListId: string;
-  boardId: string;
-} & Entity;
-
-export type JobPreview = {
-  company: string;
-  title: string;
-  index: number;
-  colour: string;
-  jobListId: string;
-  boardId: string;
+  boardReference: string;
 } & Entity;
 
 export type Note = {
@@ -112,7 +127,6 @@ type Phone = {
 };
 
 export type Board = {
-  id: string;
   name: string;
   createdDate: string;
   lastUpdated: string;

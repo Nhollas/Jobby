@@ -1,18 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { Button } from "./ui/button";
 import { Users } from "lucide-react";
-import { Separator } from "./ui/separator";
-import { BoardsBar } from "@/components/BoardsBar";
-import { SignOut } from "@/components/SignOut";
-import { GetBoardsResponse } from "@/contracts/queries/GetBoards";
+import { SignOut, Separator, Button } from "@/components/ui";
+import { BoardsBar } from "@/features/board/components";
 
-export function MainNavigation({
-  initialBoards,
-}: {
-  initialBoards: GetBoardsResponse;
-}) {
+export function MainNavigation() {
   return (
     <div className="relative z-50 hidden md:block">
       <div className="fixed top-0 left-0 h-screen w-[250px] border-r border-gray-200 py-6">
@@ -39,7 +32,7 @@ export function MainNavigation({
             >
               <Link href="/track/boards">Boards</Link>
             </Button>
-            <BoardsBar initialBoards={initialBoards} />
+            <BoardsBar />
           </div>
           <Separator />
           <SignOut />

@@ -12,14 +12,14 @@ using Xunit;
 namespace Jobby.HttpApi.Tests.Features.ActivityFeatures.Create;
 
 [Collection("SqlCollection")]
-public class Given_Request_With_Valid_Details : IClassFixture<CreateActivityTestFixture>
+public class Given_Request_With_Valid_Details : IClassFixture<ValidDetailsTestFixture>
 {
     private readonly JobbyHttpApiFactory _factory;
-    private readonly CreateActivityTestFixture _fixture;
+    private readonly ValidDetailsTestFixture _fixture;
 
     public Given_Request_With_Valid_Details(
         JobbyHttpApiFactory factory, 
-        CreateActivityTestFixture fixture)
+        ValidDetailsTestFixture fixture)
     {
         _factory = factory;
         _fixture = fixture;

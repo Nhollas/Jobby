@@ -19,11 +19,12 @@ public class JobList : Entity
         string ownerId,
         string listName, 
         int index,
-        Board board)
+        Board? board = null)
         : base(id, reference, createdDate, ownerId)
     {
         Name = listName;
         Index = index;
+        if (board is null) return;
         BoardId = board.Id;
         Board = board;
         BoardReference = board.Reference;
@@ -73,5 +74,10 @@ public class JobList : Entity
     public void SetIndex(int index)
     {
         Index = index;
+    }
+    
+    public void AddJob(Job job)
+    {
+        _jobs.Add(job);
     }
 }

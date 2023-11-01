@@ -30,7 +30,7 @@ type MultiInputProps = {
   includeType?: boolean;
 };
 
-function MultiInput({
+export function MultiInput({
   control,
   name,
   placeholder,

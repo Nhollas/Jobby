@@ -98,10 +98,9 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseRouting();
 
-app.UseCors(x => 
+app.UseCors(x =>
     x.AllowAnyHeader()
-     .AllowAnyMethod()
-     .WithOrigins("http://localhost:3000"));
+        .AllowAnyMethod());
 
 app.UseAuthentication();
 app.UseAuthorization();

@@ -1,13 +1,10 @@
 using System.Net;
-using System.Net.Http.Json;
-using System.Text.Json;
+using FluentAssertions;
 using Jobby.Application.Dtos;
 using Jobby.Application.Features.ActivityFeatures.Commands.Create;
-using Jobby.Application.Services;
-using Jobby.Domain.Entities;
 using Jobby.Domain.Static;
 using Jobby.HttpApi.Tests.Factories;
-using Jobby.HttpApi.Tests.Helpers;
+using Jobby.HttpApi.Tests.Features.ActivityFeatures.Create.Fixtures;
 using Jobby.Persistence.Data;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
@@ -15,52 +12,72 @@ using Xunit;
 namespace Jobby.HttpApi.Tests.Features.ActivityFeatures.Create;
 
 [Collection("SqlCollection")]
-public class Given_Request_With_Job_To_Link : IAsyncLifetime
+public class Given_Request_With_Job_To_Link : IClassFixture<JobToLinkFixture>
 {
     private readonly JobbyHttpApiFactory _factory;
+    private readonly JobToLinkFixture _fixture;
 
-    public Given_Request_With_Job_To_Link(JobbyHttpApiFactory factory)
+    public Given_Request_With_Job_To_Link(
+        JobbyHttpApiFactory factory, 
+        JobToLinkFixture fixture)
     {
         _factory = factory;
+        _fixture = fixture;
     }
 
-    private HttpClient HttpClient => _factory.SetupClient();
+    private HttpResponseMessage Response => _fixture.Response;
+    private CreateActivityCommand Body => _fixture.Body;
+    private ActivityDto? ReturnedActivity => _fixture.ReturnedActivity;
     
-    public Task InitializeAsync() => Task.CompletedTask;
-
-    public Task DisposeAsync() => Task.CompletedTask;
+    private string ExpectedName => ActivityConstants.TypesDictionary.GetValueOrDefault((int)Body.Type, ActivityConstants.TypesDictionary[0]);
     
     [Fact]
-    public async Task Then_Returns_201_Created_And_Activity_With_Job_Is_Stored()
+    public void Then_Returns_201_Created()
     {
-        await using var context = new JobbyDbContext(new DbContextOptionsBuilder<JobbyDbContext>()
-            .UseSqlServer(_factory.DbConnectionString).Options);
-        var boardId = Guid.NewGuid();
-        
-        var board = Board.Create(boardId, DateTime.UtcNow, "TestUserId", "TestBoard");
-        var preLoadedJobList = JobList.Create(Guid.NewGuid(), DateTime.UtcNow, "TestUserId", "TestJobList", 0, board);
-        var preLoadedBoard = await SeedDataHelper<Board>.AddAsync(board, context);
-        var preLoadedJob = await SeedDataHelper<Job>.AddAsync(Job.Create(Guid.NewGuid(), DateTime.UtcNow, "TestUserId", "TestCompany", "TestTitle", 0, preLoadedJobList, preLoadedBoard), context);
-        
-        var body = new CreateActivityCommand()
-        { 
-            BoardReference = preLoadedBoard.Reference,
-            Title = "Test Activity",
-            JobReference = preLoadedJob.Reference,
-            Type = ActivityConstants.Types.Apply,
-            StartDate = DateTime.UtcNow,
-            EndDate = DateTime.UtcNow.AddDays(1),
-            Note = "Test Note",
-            Completed = false
-        };
+        Assert.Equal(HttpStatusCode.Created, Response.StatusCode);
+    }
 
-        var response = await HttpClient.PostAsJsonAsync("/activity", body);
+    [Fact]
+    public void Then_Returns_Created_Activity_With_Job_Linked()
+    {
+        Assert.NotNull(ReturnedActivity);
+
+        Assert.Multiple(
+            () => ReturnedActivity.Title.Should().Be(Body.Title),
+            () => ReturnedActivity.Name.Should().Be(ExpectedName),
+            () => ReturnedActivity.StartDate.Should().Be(Body.StartDate),
+            () => ReturnedActivity.EndDate.Should().Be(Body.EndDate),
+            () => ReturnedActivity.Note.Should().Be(Body.Note),
+            () => ReturnedActivity.Completed.Should().Be(Body.Completed),
+            () => ReturnedActivity.BoardReference.Should().Be(Body.BoardReference),
+            () => ReturnedActivity.Job.Reference.Should().Be(Body.JobReference),
+            () => ReturnedActivity.Type.Should().Be((int)Body.Type)
+        );
+    }
+    
+    [Fact]
+    public async Task Then_Inserts_Activity_In_Database_And_Has_Job_Linked()
+    {
+        await using var updatedContext = new JobbyDbContext(new DbContextOptionsBuilder<JobbyDbContext>()
+            .UseSqlServer(_factory.DbConnectionString).Options);
         
-        var createdActivity = await response.Content.ReadFromJsonAsync<ActivityDto>();
+        Assert.NotNull(ReturnedActivity);
+
+        var createdActivity = await updatedContext.Activities.Include(activity => activity.Job).FirstOrDefaultAsync(activity =>
+            activity.Reference == ReturnedActivity.Reference);
 
         Assert.NotNull(createdActivity);
         
-        Assert.Equal(preLoadedJob.Reference, createdActivity.Job.Reference);
-        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+        Assert.Multiple(
+            () => createdActivity.Title.Should().Be(Body.Title),
+            () => createdActivity.Name.Should().Be(ExpectedName),
+            () => createdActivity.StartDate.Should().Be(Body.StartDate),
+            () => createdActivity.EndDate.Should().Be(Body.EndDate),
+            () => createdActivity.Note.Should().Be(Body.Note),
+            () => createdActivity.Completed.Should().Be(Body.Completed),
+            () => createdActivity.BoardReference.Should().Be(Body.BoardReference),
+            () => createdActivity.Job.Reference.Should().Be(Body.JobReference),
+            () => createdActivity.Type.Should().Be((int)Body.Type)
+        );
     }
 }

@@ -1,9 +1,7 @@
-import { Boards } from "@/components";
-import { getBoards } from "@/contracts/queries/GetBoards";
-import { serverApi } from "@/lib/clients";
+"use client";
+
+import { Boards } from "@/features/board/components";
 
 export default async function Page() {
-  const boards = await getBoards(serverApi);
-
-  return <Boards initialBoards={boards} />;
+  return <Boards />;
 }

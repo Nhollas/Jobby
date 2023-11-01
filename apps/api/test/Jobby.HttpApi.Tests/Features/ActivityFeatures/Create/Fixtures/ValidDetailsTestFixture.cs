@@ -11,25 +11,25 @@ using Xunit;
 
 namespace Jobby.HttpApi.Tests.Features.ActivityFeatures.Create.Fixtures;
 
-public class CreateActivityValidDetailsTestFixture : IAsyncLifetime
+public class ValidDetailsTestFixture : IAsyncLifetime
 {
     private readonly JobbyHttpApiFactory _factory;
 
-    public CreateActivityValidDetailsTestFixture(JobbyHttpApiFactory factory)
+    public ValidDetailsTestFixture(JobbyHttpApiFactory factory)
     {
         _factory = factory;
     }
     
-    public HttpResponseMessage Response { get; private set; }
-    public ActivityDto? ReturnedActivity { get; private set; }
+    public HttpResponseMessage Response { get; private set; } = new();
+    public ActivityDto? ReturnedActivity { get; private set; } = new();
 
     private HttpClient HttpClient => _factory.SetupClient();
     
-    public CreateActivityCommand Body { get; private set; }
-    
-    private static string UserId = "TestUserId";
-    
-    
+    public CreateActivityCommand Body { get; private set; } = new();
+
+    private const string UserId = "TestUserId";
+
+
     public static readonly Board PreloadedBoard = Board.Create(Guid.NewGuid(), DateTime.UtcNow, UserId, "TestBoard");
     
     public async Task InitializeAsync()
@@ -39,7 +39,7 @@ public class CreateActivityValidDetailsTestFixture : IAsyncLifetime
         
         await SeedDataHelper<Board>.AddAsync(PreloadedBoard, initContext);
         
-        Body = new CreateActivityCommand()
+        Body = new CreateActivityCommand
         {
             BoardReference = PreloadedBoard.Reference,
             Title = "Test Activity",

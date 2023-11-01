@@ -6,7 +6,7 @@ namespace Jobby.Application.Features.ContactFeatures.Commands.Create;
 
 public sealed record CreateContactCommand : IRequest<BaseResult<ContactDto, CreateContactOutcomes>>
 {
-    public string? BoardReference { get; set; } = null;
+    public string BoardReference { get; set; } = null;
     public List<string> JobReferences { get; set; } = new();
     public string FirstName { get; set; }
     public string LastName { get; set; }
