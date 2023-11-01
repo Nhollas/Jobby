@@ -19,7 +19,7 @@ import {
   DropdownMenuTrigger,
   Input,
 } from "@/components/ui";
-import { useContactsQuery } from "../api/getContacts";
+import { useContactsQuery } from "@/features/contact";
 
 type Props = {
   url: string;
@@ -40,7 +40,7 @@ const createUrl = (boardRef?: string, jobRef?: string) => {
 };
 
 export function Contacts({ boardRef, jobRef, url, querykeyVariable }: Props) {
-  const { data: contacts } = useContactsQuery(url, querykeyVariable);
+  const { data: contacts } = useContactsQuery();
 
   return (
     <div className="flex flex-col gap-y-6 overscroll-contain border-gray-300 p-6">

@@ -1,10 +1,9 @@
 "use client";
 
-import { useJobQuery } from "@/hooks/useJobData";
-import { Job } from "@/types";
+import { useJobQuery } from "@/features/job";
 
-function JobTitle({ jobId, initialJob }: { jobId: string; initialJob: Job }) {
-  const { data: job } = useJobQuery(jobId, initialJob);
+export function JobTitle({ jobRef }: { jobRef: string }) {
+  const { data: job } = useJobQuery(jobRef);
 
   return (
     <div className="flex w-full flex-col items-start justify-start p-4 pb-0">
@@ -16,5 +15,3 @@ function JobTitle({ jobId, initialJob }: { jobId: string; initialJob: Job }) {
     </div>
   );
 }
-
-export default JobTitle;

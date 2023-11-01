@@ -12,11 +12,7 @@ export async function getJob(jobReference: string) {
   }
 }
 
-type Props = {
-  jobReference: string;
-};
-
-export const useJobQuery = ({ jobReference }: Props) => {
+export const useJobQuery = (jobReference: string) => {
   return useQuery({
     queryKey: ["job", jobReference],
     queryFn: () => getJob(jobReference),

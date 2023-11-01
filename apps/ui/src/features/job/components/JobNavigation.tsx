@@ -3,7 +3,7 @@
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Book, FileText, Info, List, Users } from "lucide-react";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { ScrollArea, ScrollBar } from "@/components/ui";
 import { MenuItem } from "@/components";
 
 type NavItem = {
@@ -41,11 +41,11 @@ const navItems: NavItem[] = [
 ];
 
 export const JobNavigation = ({
-  jobId,
-  boardId,
+  jobRef,
+  boardRef,
 }: {
-  jobId: string;
-  boardId: string;
+  jobRef: string;
+  boardRef: string;
 }) => {
   const pathname = usePathname() || "/";
   const pathnameSections = pathname.split("/");
@@ -66,10 +66,10 @@ export const JobNavigation = ({
               icon={icon}
               name={name}
               key={leaf}
-              href={`/track/board/${boardId}/job/${jobId}/${
+              href={`/track/board/${boardRef}/job/${jobRef}/${
                 leaf === "activities" ? `${leaf}/all` : leaf
               }`}
-              layoutId={jobId}
+              layoutId={jobRef}
             />
           ))}
         </div>

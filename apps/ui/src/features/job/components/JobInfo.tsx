@@ -1,52 +1,44 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  Calendar,
+  Textarea,
+  Button,
+  ButtonLoading,
   Form,
   FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { Textarea } from "@/components/ui/textarea";
-import { Button, ButtonLoading } from "@/components/ui/button";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+  Input,
+} from "@/components/ui";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
-import { Calendar } from "@/components/ui/calendar";
-import { useJobQuery, useUpdateJob } from "@/hooks/useJobData";
+import {
+  UpdateJobDTO,
+  UpdateJobSchema,
+  useJobQuery,
+  useUpdateJob,
+} from "@/features/job";
 
 type Props = {
-  jobId: string;
+  jobRef: string;
 };
 
-const formSchema = z.object({
-  id: z.string(),
-  company: z.string(),
-  title: z.string().nonempty({ message: "The Title field is required." }),
-  postUrl: z.string().url().optional(),
-  salary: z.number().optional(),
-  description: z.string().optional(),
-  deadline: z.date().optional(),
-});
-
-function JobInfo({ jobId }: Props) {
-  const { data: jobData } = useJobQuery(jobId);
-  console.log("jobData", jobData);
+export function JobInfo({ jobRef }: Props) {
+  const { data: jobData } = useJobQuery(jobRef);
 
   const { mutateAsync } = useUpdateJob();
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<UpdateJobDTO>({
+    resolver: zodResolver(UpdateJobSchema),
     defaultValues: {
       ...jobData,
       deadline: jobData?.deadline ? new Date(jobData.deadline) : undefined,
@@ -59,7 +51,7 @@ function JobInfo({ jobId }: Props) {
   const { formState } = form;
   const { isSubmitting, isDirty } = formState;
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: UpdateJobDTO) {
     console.log(values);
     // delay by 5 secs
     await new Promise((resolve) => setTimeout(resolve, 500));
@@ -204,5 +196,3 @@ function JobInfo({ jobId }: Props) {
     </div>
   );
 }
-
-export default JobInfo;
