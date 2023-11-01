@@ -132,5 +132,5 @@ export type Board = {
   lastUpdated: string;
   activitiesCount: number;
   contactsCount: number;
-  jobLists: JobList[];
+  lists: JobList[];
 } & Entity;

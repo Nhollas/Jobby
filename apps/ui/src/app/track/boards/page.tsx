@@ -1,7 +1,7 @@
 "use client";
 
-import { Boards } from "@/features/board/components";
+import { Boards } from "@/features/board";
 
-export default async function Page() {
+export default function Page() {
   return <Boards />;
 }

@@ -5,7 +5,7 @@ import { Layout } from "lucide-react";
 import Link from "next/link";
 import { useBoardsQuery } from "@/features/board";
 
-export const BoardsBar = () => {
+export function BoardsBar() {
   const { data: boards } = useBoardsQuery();
   return (
     <div
@@ -30,4 +30,4 @@ export const BoardsBar = () => {
       ))}
     </div>
   );
-};
+}

@@ -21,12 +21,12 @@ import {
 } from "@dnd-kit/core";
 import {
   AnimateLayoutChanges,
-  SortableContext,
   useSortable,
   arrayMove,
   defaultAnimateLayoutChanges,
   verticalListSortingStrategy,
   horizontalListSortingStrategy,
+  SortableContext,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Job, JobList } from "@/types";
@@ -109,24 +109,34 @@ export function Kanban({ boardRef }: Props) {
 
   const [containerDict, setContainerDict] = useState<
     Record<UniqueIdentifier, JobList>
-  >(
-    board.jobLists.reduce((acc: Record<UniqueIdentifier, JobList>, list) => {
-      acc[list.reference] = list;
-      return acc;
-    }, {})
-  );
+  >({});
 
-  const [containerKeys, setContainerKeys] = useState<UniqueIdentifier[]>(
-    Object.keys(containerDict).map((key) => containerDict[key].reference)
-  );
+  const [containerKeys, setContainerKeys] = useState<UniqueIdentifier[]>([]);
+
+  useEffect(() => {
+    if (board) {
+      const containerDict = board.lists.reduce(
+        (acc: Record<UniqueIdentifier, JobList>, list) => {
+          acc[list.reference] = list;
+          return acc;
+        },
+        {}
+      );
+
+      setContainerDict(containerDict);
+      setContainerKeys(Object.keys(containerDict));
+    }
+  }, [board]);
 
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
   const [moveJob, setMoveJob] = useState<{
     jobId: UniqueIdentifier;
     targetJobListId: UniqueIdentifier;
   } | null>(null);
+
   const lastOverId = useRef<UniqueIdentifier | null>(null);
   const recentlyMovedToNewContainer = useRef(false);
+
   const isSortingContainer = activeId ? activeId in containerDict : false;
 
   /**
@@ -224,9 +234,9 @@ export function Kanban({ boardRef }: Props) {
     const element = document.createElement("div");
     document.body.appendChild(element);
     setPortalElement(element);
-    return () => {
-      document.body.removeChild(element);
-    };
+    // return () => {
+    //   document.body.removeChild(element);
+    // };
   }, []);
 
   useEffect(() => {
@@ -325,7 +335,7 @@ export function Kanban({ boardRef }: Props) {
       }}
       onDragEnd={async ({ active, over }) => {
         if (moveJob) {
-          await clientApi.put("job/move", moveJob);
+          // await clientApi.put("job/move", moveJob);
 
           setMoveJob(null);
         }
@@ -418,7 +428,7 @@ export function Kanban({ boardRef }: Props) {
               onRemove={() => handleRemoveContainer(containerId)}
             >
               <SortableContext
-                items={containerDict[containerId].jobs}
+                items={containerDict[containerId].jobs.map((j) => j.reference)}
                 strategy={verticalListSortingStrategy}
               >
                 {containerDict[containerId].jobs.map((job, index) => {
