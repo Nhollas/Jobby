@@ -3,11 +3,14 @@ import { queryClient } from "@/lib/react-query";
 import { Job } from "@/types";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosResponse } from "axios";
+import { z } from "zod";
 
-export type MoveJobDTO = {
-  jobReference: string;
-  jobListReference: string;
-};
+export const MoveJobSchema = z.object({
+  jobReference: z.string(),
+  jobListReference: z.string(),
+});
+
+export type MoveJobDTO = z.infer<typeof MoveJobSchema>;
 
 export async function moveJob(payload: MoveJobDTO) {
   try {

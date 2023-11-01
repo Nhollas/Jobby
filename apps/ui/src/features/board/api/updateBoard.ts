@@ -3,10 +3,13 @@ import { queryClient } from "@/lib/react-query";
 import { Board } from "@/types";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosResponse } from "axios";
+import { z } from "zod";
 
-export type UpdateBoardDTO = {
-  name: string;
-};
+export const UpdateBoardSchema = z.object({
+  name: z.string(),
+});
+
+export type UpdateBoardDTO = z.infer<typeof UpdateBoardSchema>;
 
 export async function updateBoard(payload: UpdateBoardDTO) {
   try {

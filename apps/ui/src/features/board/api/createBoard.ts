@@ -3,10 +3,13 @@ import { queryClient } from "@/lib/react-query";
 import { Board } from "@/types";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosResponse } from "axios";
+import { z } from "zod";
 
-export type CreateBoardDTO = {
-  name: string;
-};
+export const CreateBoardSchema = z.object({
+  name: z.string(),
+});
+
+export type CreateBoardDTO = z.infer<typeof CreateBoardSchema>;
 
 export async function createBoard(payload: CreateBoardDTO) {
   try {

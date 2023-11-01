@@ -3,36 +3,45 @@ import { queryClient } from "@/lib/react-query";
 import { Activity, Contact } from "@/types";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosResponse } from "axios";
+import { z } from "zod";
 
-export type UpdateContactDTO = {
-  contactReference: string;
-  firstName: string;
-  lastName: string;
-  jobTitle: string;
-  location: string;
-  socials: {
-    twitterUrl: string;
-    facebookUrl: string;
-    linkedinUrl: string;
-    githubUrl: string;
-  };
-  jobReferences: string[];
-  boardReference: string;
-  emails: {
-    reference: string;
-    name: string;
-    type: number;
-  }[];
-  phones: {
-    reference: string;
-    number: string;
-    type: number;
-  }[];
-  companies: {
-    reference: string;
-    name: string;
-  }[];
-};
+export const UpdateContactSchema = z.object({
+  contactReference: z.string(),
+  firstName: z.string(),
+  lastName: z.string(),
+  jobTitle: z.string(),
+  location: z.string(),
+  socials: z.object({
+    twitterUrl: z.string(),
+    facebookUrl: z.string(),
+    linkedinUrl: z.string(),
+    githubUrl: z.string(),
+  }),
+  jobReferences: z.array(z.string()),
+  boardReference: z.string(),
+  emails: z.array(
+    z.object({
+      reference: z.string(),
+      name: z.string(),
+      type: z.number(),
+    })
+  ),
+  phones: z.array(
+    z.object({
+      reference: z.string(),
+      number: z.string(),
+      type: z.number(),
+    })
+  ),
+  companies: z.array(
+    z.object({
+      reference: z.string(),
+      name: z.string(),
+    })
+  ),
+});
+
+export type UpdateContactDTO = z.infer<typeof UpdateContactSchema>;
 
 export async function updateContact(payload: UpdateContactDTO) {
   try {

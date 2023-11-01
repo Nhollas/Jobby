@@ -3,10 +3,13 @@ import { queryClient } from "@/lib/react-query";
 import { Activity } from "@/types";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosResponse } from "axios";
+import { z } from "zod";
 
-export type UpdateActivityDTO = {
-  name: string;
-};
+export const UpdateActivitySchema = z.object({
+  name: z.string(),
+});
+
+export type UpdateActivityDTO = z.infer<typeof UpdateActivitySchema>;
 
 export async function updateActivity(payload: UpdateActivityDTO) {
   try {
