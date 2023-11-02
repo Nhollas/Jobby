@@ -8,6 +8,7 @@ public class GetBoardsFromUserSpecification : Specification<Board>
     {
         Query
             .AsNoTracking()
+            .Include(board => board.Lists)
             .Where(board => board.OwnerId == userId)
             .OrderBy(x => x.CreatedDate);
     }

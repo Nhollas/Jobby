@@ -35,14 +35,6 @@ interface Props {
 }
 
 export function CreateJobModal({ boardRef, jobListRef, boards }: Props) {
-  const boardsDictionary = boards.map((board) => ({
-    ...board,
-    jobLists: board.lists.map((joblist) => ({
-      ...joblist,
-      name: `${joblist.name} (${joblist.jobs.length})`,
-    })),
-  }));
-
   const form = useForm<CreateJobDTO>({
     resolver: zodResolver(CreateJobSchema),
     defaultValues: {
@@ -108,9 +100,9 @@ export function CreateJobModal({ boardRef, jobListRef, boards }: Props) {
                     <Select
                       onValueChange={(value) => {
                         field.onChange(value);
-                        const firstJoblistId = boardsDictionary.find(
+                        const firstJoblistId = boards.find(
                           (board) => board.reference === value
-                        )?.jobLists[0].reference;
+                        )?.lists[0].reference;
 
                         if (firstJoblistId) {
                           form.setValue("jobListReference", firstJoblistId);
@@ -129,7 +121,7 @@ export function CreateJobModal({ boardRef, jobListRef, boards }: Props) {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {boardsDictionary.map((board) => (
+                        {boards.map((board) => (
                           <SelectItem
                             key={board.reference}
                             value={board.reference}
@@ -159,13 +151,13 @@ export function CreateJobModal({ boardRef, jobListRef, boards }: Props) {
                             <List className="mr-2 h-4 w-4" />
                             <span>
                               {
-                                boardsDictionary
+                                boards
                                   .find(
                                     (board) =>
                                       board.reference ===
                                       form.getValues("boardReference")
                                   )
-                                  ?.jobLists.find(
+                                  ?.lists.find(
                                     (joblist) =>
                                       joblist.reference === field.value
                                   )?.name
@@ -175,13 +167,13 @@ export function CreateJobModal({ boardRef, jobListRef, boards }: Props) {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {boardsDictionary
+                        {boards
                           .find(
                             (board) =>
                               board.reference ===
                               form.getValues("boardReference")
                           )
-                          ?.jobLists.map((joblist) => (
+                          ?.lists.map((joblist) => (
                             <SelectItem
                               key={joblist.reference}
                               value={joblist.reference}
