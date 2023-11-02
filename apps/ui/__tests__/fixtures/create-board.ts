@@ -3,13 +3,13 @@ import { Page, test as base } from "@playwright/test";
 
 // Declare the types of your fixtures.
 type CreateBoardFixture = {
-  boardRef: string;
+  board: Board;
   createJob: () => Promise<void>;
   cleanUp: () => Promise<void>;
 };
 
 export const createBoardFixture = base.extend<CreateBoardFixture>({
-  boardRef: async ({ page }, use) => {
+  board: async ({ page }, use) => {
     // Go to the Boards page
     await page.goto("http://localhost:3000/track/boards");
 
@@ -35,39 +35,33 @@ export const createBoardFixture = base.extend<CreateBoardFixture>({
 
     const createdBoard = (await response.json()) as Board;
 
-    await use(createdBoard.reference);
+    await use(createdBoard);
   },
-  cleanUp: async ({ page, boardRef }, use) => {
-    await use(() => cleanUpBoard({ page, boardRef }));
+  cleanUp: async ({ page, board }, use) => {
+    await use(() => cleanUpBoard({ page, board }));
   },
-  createJob: async ({ page, boardRef }, use) => {
-    await use(() => createJobMethod({ page, boardRef }));
+  createJob: async ({ page, board }, use) => {
+    await use(() => createJobMethod({ page, board }));
   },
 });
 
 const createJobMethod = async ({
   page,
-  boardRef,
+  board,
 }: {
   page: Page;
-  boardRef: string;
+  board: Board;
 }) => {
   // Go to the board page.
-  await page.goto(`http://localhost:3000/track/board/${boardRef}`);
+  await page.goto(`http://localhost:3000/track/board/${board.reference}`);
 };
 
-const cleanUpBoard = async ({
-  page,
-  boardRef,
-}: {
-  page: Page;
-  boardRef: string;
-}) => {
+const cleanUpBoard = async ({ page, board }: { page: Page; board: Board }) => {
   // Go to the Boards page
   await page.goto("http://localhost:3000/track/boards");
 
   // Click the "Delete" button for the first board in the list
-  await page.click(`a[href="/track/delete-board/${boardRef}"]`);
+  await page.click(`a[href="/track/delete-board/${board.reference}"]`);
 
   // click button to confirm delete with text "Delete"
   await page.click('button:has-text("Delete")');

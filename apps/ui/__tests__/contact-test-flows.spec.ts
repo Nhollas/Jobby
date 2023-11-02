@@ -23,12 +23,16 @@ test.describe("Create Contact Link Directs To Correct Route.", () => {
 
   createBoardFixture(
     "From /track/board/:ref/contacts Page should direct user to /track/create-contact?boardRef:ref",
-    async ({ page, boardRef, cleanUp }) => {
-      await page.goto(`http://localhost:3000/track/board/${boardRef}/contacts`);
+    async ({ page, board, cleanUp }) => {
+      const { reference } = board;
+
+      await page.goto(
+        `http://localhost:3000/track/board/${reference}/contacts`
+      );
 
       // Find the Link with text "Create Contact" and query param boardId
       const createContactLink = await page.$(
-        `a[href="/track/create-contact?boardRef=${boardRef}"]`
+        `a[href="/track/create-contact?boardRef=${reference}"]`
       );
 
       // Check if the link was found before clicking it
@@ -37,7 +41,7 @@ test.describe("Create Contact Link Directs To Correct Route.", () => {
 
         // Wait for the page to navigate before getting the URL
         await page.waitForURL(
-          `http://localhost:3000/track/create-contact?boardRef=${boardRef}`
+          `http://localhost:3000/track/create-contact?boardRef=${reference}`
         );
       } else {
         throw new Error(
