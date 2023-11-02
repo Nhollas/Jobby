@@ -26,18 +26,23 @@ import {
 import { useForm } from "react-hook-form";
 import { Layout, List } from "lucide-react";
 import { CreateJobDTO, CreateJobSchema, useCreateJob } from "@/features/job";
+import { Board } from "@/types";
 
 interface Props {
   boardRef: string;
   jobListRef: string;
-  boardsDictionary: any;
+  boards: Board[];
 }
 
-export function CreateJobModal({
-  boardRef,
-  jobListRef,
-  boardsDictionary,
-}: Props) {
+export function CreateJobModal({ boardRef, jobListRef, boards }: Props) {
+  const boardsDictionary = boards.map((board) => ({
+    ...board,
+    jobLists: board.lists.map((joblist) => ({
+      ...joblist,
+      name: `${joblist.name} (${joblist.jobs.length})`,
+    })),
+  }));
+
   const form = useForm<CreateJobDTO>({
     resolver: zodResolver(CreateJobSchema),
     defaultValues: {
@@ -104,8 +109,8 @@ export function CreateJobModal({
                       onValueChange={(value) => {
                         field.onChange(value);
                         const firstJoblistId = boardsDictionary.find(
-                          (board) => board.id === value
-                        )?.jobLists[0].id;
+                          (board) => board.reference === value
+                        )?.jobLists[0].reference;
 
                         if (firstJoblistId) {
                           form.setValue("jobListReference", firstJoblistId);
@@ -125,7 +130,10 @@ export function CreateJobModal({
                       </FormControl>
                       <SelectContent>
                         {boardsDictionary.map((board) => (
-                          <SelectItem key={board.id} value={board.id}>
+                          <SelectItem
+                            key={board.reference}
+                            value={board.reference}
+                          >
                             {board.name}
                           </SelectItem>
                         ))}
@@ -154,11 +162,12 @@ export function CreateJobModal({
                                 boardsDictionary
                                   .find(
                                     (board) =>
-                                      board.id ===
+                                      board.reference ===
                                       form.getValues("boardReference")
                                   )
                                   ?.jobLists.find(
-                                    (joblist) => joblist.id === field.value
+                                    (joblist) =>
+                                      joblist.reference === field.value
                                   )?.name
                               }
                             </span>
@@ -169,10 +178,14 @@ export function CreateJobModal({
                         {boardsDictionary
                           .find(
                             (board) =>
-                              board.id === form.getValues("boardReference")
+                              board.reference ===
+                              form.getValues("boardReference")
                           )
                           ?.jobLists.map((joblist) => (
-                            <SelectItem key={joblist.id} value={joblist.id}>
+                            <SelectItem
+                              key={joblist.reference}
+                              value={joblist.reference}
+                            >
                               {joblist.name}
                             </SelectItem>
                           ))}
