@@ -44,7 +44,7 @@ export const Boards = () => {
             data-board-ref={board.reference}
           >
             <CardHeader>
-              <CardTitle className="card-title truncate">
+              <CardTitle className="card-title truncate leading-tight">
                 {board.name}
               </CardTitle>
               <CardDescription className="card-description">
