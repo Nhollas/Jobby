@@ -72,6 +72,10 @@ export function Contact({ contactRef }: Props) {
       ...contact,
       jobReferences: contact?.jobs.map((job) => job.reference),
       boardReference: contact?.board.reference,
+      phones: contact?.phones.map((phone) => ({
+        number: phone.number,
+        type: phone.type,
+      })),
     },
   });
 
@@ -210,7 +214,7 @@ export function Contact({ contactRef }: Props) {
                       />
                       <FormField
                         control={form.control}
-                        name="socials.linkedinUrl"
+                        name="socials.linkedInUrl"
                         render={({ field }) => (
                           <FormItem>
                             <FormControl>

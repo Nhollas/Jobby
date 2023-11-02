@@ -47,6 +47,8 @@ export async function DELETE(req: Request) {
     validateStatus: () => true,
   });
 
+  console.log("RESPONSE", response);
+
   return new Response(JSON.stringify(response.data), {
     status: response.status,
   });

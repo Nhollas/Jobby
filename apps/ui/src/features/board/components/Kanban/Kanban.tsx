@@ -29,8 +29,7 @@ import {
   SortableContext,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Job, JobList } from "@/types";
-import { useBoardQuery } from "@/features/board/api";
+import { Board, Job, JobList } from "@/types";
 import { Container, ContainerProps } from "./components/Container";
 import { Item } from "./components/Item";
 
@@ -101,32 +100,22 @@ const dropAnimation: DropAnimation = {
 };
 
 interface Props {
-  boardRef: string;
+  board: Board;
 }
 
-export function Kanban({ boardRef }: Props) {
-  const { data: board } = useBoardQuery(boardRef);
-
+export function Kanban({ board }: Props) {
   const [containerDict, setContainerDict] = useState<
     Record<UniqueIdentifier, JobList>
-  >({});
+  >(
+    board.lists.reduce((acc: Record<UniqueIdentifier, JobList>, list) => {
+      acc[list.reference] = list;
+      return acc;
+    }, {})
+  );
 
-  const [containerKeys, setContainerKeys] = useState<UniqueIdentifier[]>([]);
-
-  useEffect(() => {
-    if (board) {
-      const containerDict = board.lists.reduce(
-        (acc: Record<UniqueIdentifier, JobList>, list) => {
-          acc[list.reference] = list;
-          return acc;
-        },
-        {}
-      );
-
-      setContainerDict(containerDict);
-      setContainerKeys(Object.keys(containerDict));
-    }
-  }, [board]);
+  const [containerKeys, setContainerKeys] = useState<UniqueIdentifier[]>(
+    Object.keys(containerDict)
+  );
 
   const [activeId, setActiveId] = useState<UniqueIdentifier | null>(null);
   const [moveJob, setMoveJob] = useState<{
@@ -420,8 +409,8 @@ export function Kanban({ boardRef }: Props) {
             <DroppableContainer
               key={containerId}
               id={containerId}
+              boardReference={board.reference}
               jobList={containerDict[containerId]}
-              boardId={boardRef}
               items={containerDict[containerId].jobs.map(
                 (job) => job.reference
               )}
@@ -475,6 +464,7 @@ export function Kanban({ boardRef }: Props) {
   function renderContainerDragOverlay(containerId: UniqueIdentifier) {
     return (
       <Container
+        boardReference={board.reference}
         jobList={containerDict[containerId]}
         style={{
           height: "100%",

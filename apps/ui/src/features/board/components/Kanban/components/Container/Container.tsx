@@ -21,7 +21,7 @@ export interface Props {
   onClick?(): void;
   onRemove?(): void;
   jobList?: JobList;
-  boardId?: string;
+  boardReference: string;
 }
 
 export const Container = forwardRef<HTMLDivElement, Props>(
@@ -38,7 +38,7 @@ export const Container = forwardRef<HTMLDivElement, Props>(
       scrollable,
       shadow,
       jobList,
-      boardId,
+      boardReference,
       ...props
     }: Props,
     ref
@@ -73,7 +73,7 @@ export const Container = forwardRef<HTMLDivElement, Props>(
             <p>{jobList.jobs.length} Jobs</p>
             <Button variant="default" asChild>
               <Link
-                href={`/track/create-job/${boardId}/${jobList.reference}`}
+                href={`/track/create-job/${boardReference}/${jobList.reference}`}
                 className="flex flex-row items-center gap-x-2 rounded-full"
               >
                 <Plus className="h-4 w-4" />

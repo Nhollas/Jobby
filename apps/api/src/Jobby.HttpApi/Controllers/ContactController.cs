@@ -33,7 +33,7 @@ public class ContactController : ApiController
     public async Task<ActionResult<DeleteContactResponse>> DeleteContact(string contactReference)
     {
         await Sender.Send(new DeleteContactCommand(contactReference));
-        return NoContent();
+        return Ok();
     }
 
     [HttpPut]

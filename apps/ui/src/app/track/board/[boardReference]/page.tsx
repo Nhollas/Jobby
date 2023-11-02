@@ -1,9 +1,9 @@
-import { Kanban } from "@/features/board";
+import { KanbanWrapper } from "@/features/board";
 
 export default async function Page({
   params: { boardReference },
 }: {
   params: { boardReference: string };
 }) {
-  return <Kanban boardRef={boardReference} />;
+  return <KanbanWrapper boardRef={boardReference} />;
 }

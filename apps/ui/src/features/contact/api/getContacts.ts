@@ -13,7 +13,7 @@ export async function getContacts() {
 
 export const useContactsQuery = () => {
   return useQuery({
-    queryKey: ["/contacts"],
+    queryKey: ["contacts"],
     queryFn: () => getContacts(),
   });
 };

@@ -33,11 +33,11 @@ interface Props {
   boardsDictionary: any;
 }
 
-export const CreateJobModal = ({
+export function CreateJobModal({
   boardRef,
   jobListRef,
   boardsDictionary,
-}: Props) => {
+}: Props) {
   const form = useForm<CreateJobDTO>({
     resolver: zodResolver(CreateJobSchema),
     defaultValues: {
@@ -194,4 +194,4 @@ export const CreateJobModal = ({
       </Card>
     </Modal>
   );
-};
+}

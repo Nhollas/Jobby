@@ -13,7 +13,7 @@ export async function getContact(contactReference: string) {
 
 export const useContactQuery = (contactReference: string) => {
   return useQuery({
-    queryKey: ["contact", contactReference],
+    queryKey: ["contacts", contactReference],
     queryFn: () => getContact(contactReference),
   });
 };

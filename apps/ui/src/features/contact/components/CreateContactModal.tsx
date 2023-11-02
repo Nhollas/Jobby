@@ -57,6 +57,22 @@ import {
 } from "@/features/contact";
 import { Modal } from "@/components/Modal";
 
+function handleBoardDisplayName(currentBoardRef: string, boards?: Board[]) {
+  if (!boards) {
+    return "Loading...";
+  }
+
+  console.log("baords", boards);
+
+  const board = boards.find(
+    (board) => board.reference.toLowerCase() === currentBoardRef
+  );
+
+  console.log("board", board);
+
+  return board?.name || "Choose board...";
+}
+
 export const CreateContactModal = ({
   boardRef,
   jobRef,
@@ -95,7 +111,7 @@ export const CreateContactModal = ({
       socials: {
         twitterUrl: "",
         facebookUrl: "",
-        linkedinUrl: "",
+        linkedInUrl: "",
         githubUrl: "",
       },
       emails: [],
@@ -309,7 +325,7 @@ export const CreateContactModal = ({
                       />
                       <FormField
                         control={form.control}
-                        name="socials.linkedinUrl"
+                        name="socials.linkedInUrl"
                         render={({ field }) => (
                           <FormItem>
                             <FormControl>
@@ -386,14 +402,10 @@ export const CreateContactModal = ({
                                   >
                                     <div className="flex flex-row items-center gap-3">
                                       <Layout className="h-4 w-4" />
-                                      {boards
-                                        ? field.value
-                                          ? boards.find(
-                                              (board) =>
-                                                board.reference === field.value
-                                            )?.name
-                                          : "Choose board..."
-                                        : "Loading boards..."}
+                                      {handleBoardDisplayName(
+                                        field.value,
+                                        boards
+                                      )}
                                     </div>
                                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                   </Button>
@@ -428,8 +440,16 @@ export const CreateContactModal = ({
                                             key={board.reference}
                                             value={`${board.name}${board.reference}`}
                                             onSelect={(value) => {
+                                              console.log(value);
+
                                               const boardRef = value.substring(
-                                                value.length - 36
+                                                value.length - 13
+                                              );
+
+                                              console.log(boardRef);
+                                              console.log(
+                                                "field.value",
+                                                field.value
                                               );
 
                                               if (boardRef === field.value) {

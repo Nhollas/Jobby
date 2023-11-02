@@ -14,7 +14,7 @@ export const UpdateContactSchema = z.object({
   socials: z.object({
     twitterUrl: z.string(),
     facebookUrl: z.string(),
-    linkedinUrl: z.string(),
+    linkedInUrl: z.string(),
     githubUrl: z.string(),
   }),
   jobReferences: z.array(z.string()),
