@@ -1,11 +1,9 @@
-import { Contacts } from "@/features/contact/components";
+import { Contacts } from "@/features/contact";
 
-export default async function Page({
-  params: { boardRef },
+export default function Page({
+  params: { boardReference },
 }: {
-  params: { boardRef: string };
+  params: { boardReference: string };
 }) {
-  const url = `/board/${boardRef}/contacts`;
-
-  return <Contacts boardRef={boardRef} url={url} querykeyVariable={url} />;
+  return <Contacts boardRef={boardReference} />;
 }

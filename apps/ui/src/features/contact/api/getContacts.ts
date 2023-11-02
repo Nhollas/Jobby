@@ -11,9 +11,24 @@ export async function getContacts() {
   }
 }
 
-export const useContactsQuery = () => {
+interface Props {
+  boardRef?: string;
+  jobRef?: string;
+}
+
+function generateQueryKey({ jobRef, boardRef }: Props) {
+  if (jobRef) {
+    return ["contacts", { jobRef }];
+  } else if (boardRef) {
+    return ["contacts", { boardRef }];
+  } else {
+    return ["contacts"];
+  }
+}
+
+export const useContactsQuery = ({ jobRef, boardRef }: Props) => {
   return useQuery({
-    queryKey: ["contacts"],
+    queryKey: generateQueryKey({ jobRef, boardRef }),
     queryFn: () => getContacts(),
   });
 };

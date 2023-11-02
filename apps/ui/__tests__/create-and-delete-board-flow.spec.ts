@@ -26,7 +26,7 @@ test.describe("Board tests", () => {
     const boardName = await page.textContent(
       `h3:has-text("${uniqueBoardName}")`
     );
-    
+
     expect(boardName).toBe(uniqueBoardName);
 
     // Get the initial list of boards
@@ -35,15 +35,19 @@ test.describe("Board tests", () => {
         const name = card.querySelector(".card-title")?.textContent;
         const createdDate =
           card.querySelector(".card-description")?.textContent;
-        const id = card.getAttribute("data-board-id");
-        return { id, name, createdDate };
+        const reference = card.getAttribute("data-board-ref");
+        return { reference, name, createdDate };
       });
     });
 
     // Click the "Delete" button for the first board in the list
-    const boardToDelete = initialBoards.find(board => board.name === uniqueBoardName);
+    const boardToDelete = initialBoards.find(
+      (board) => board.name === uniqueBoardName
+    );
 
-    await page.click(`a[href="/track/delete-board/${boardToDelete?.id}"]`);
+    await page.click(
+      `a[href="/track/delete-board/${boardToDelete?.reference}"]`
+    );
 
     // Wait for the confirmation dialog to appear
     await page.waitForSelector('div[role="alertdialog"]');
@@ -62,8 +66,8 @@ test.describe("Board tests", () => {
         const name = card.querySelector(".card-title")?.textContent;
         const createdDate =
           card.querySelector(".card-description")?.textContent;
-        const id = card.getAttribute("data-board-id");
-        return { id, name, createdDate };
+        const reference = card.getAttribute("data-board-ref");
+        return { reference, name, createdDate };
       });
     });
 

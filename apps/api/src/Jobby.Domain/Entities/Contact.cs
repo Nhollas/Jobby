@@ -32,6 +32,7 @@ public class Contact : Entity
         Location = location;
         Socials = socials;
         Board = board;
+        BoardReference = board.Reference;
         Companies = companies;
         Emails = emails;
         Phones = phones;

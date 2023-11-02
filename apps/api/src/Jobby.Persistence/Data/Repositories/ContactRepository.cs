@@ -17,7 +17,7 @@ public class ContactRepository : IContactRepository
     {
         await _context.Contacts
             .Where(contact => contact.BoardReference == boardReference)
-            .ExecuteUpdateAsync(p => p.SetProperty(x => x.BoardId,  x => null), cancellationToken);
+            .ExecuteUpdateAsync(p => p.SetProperty(x => x.BoardId,  x => null).SetProperty(x => x.BoardReference, x => null), cancellationToken);
     }
 
     public async Task ClearJobsAsync(Contact contact, CancellationToken cancellationToken)

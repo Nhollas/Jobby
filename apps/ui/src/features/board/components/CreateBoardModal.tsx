@@ -17,15 +17,14 @@ import {
   FormControl,
   FormMessage,
 } from "@/components/ui";
-import { z } from "zod";
 import { useForm } from "react-hook-form";
-import { useCreateBoard } from "@/features/board";
+import {
+  CreateBoardDTO,
+  CreateBoardSchema,
+  useCreateBoard,
+} from "@/features/board";
 
-const formSchema = z.object({
-  name: z.string().nonempty({ message: "The Name field is required" }),
-});
-
-export const CreateBoardModal = () => {
+export function CreateBoardModal() {
   const { mutateAsync } = useCreateBoard();
 
   const router = useRouter();
@@ -36,17 +35,20 @@ export const CreateBoardModal = () => {
     setOpen(true);
   }, []);
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<CreateBoardDTO>({
+    resolver: zodResolver(CreateBoardSchema),
     defaultValues: {
       name: "",
     },
   });
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  const { isDirty, isValid, isSubmitted } = form.formState;
+
+  async function onSubmit(values: CreateBoardDTO) {
     await mutateAsync(values);
 
-    router.back();
+    setOpen(false);
+    router.push("/track/boards");
   }
 
   return (
@@ -70,10 +72,19 @@ export const CreateBoardModal = () => {
                 )}
               />
               <div className="flex flex-row gap-x-2">
-                <Button type="button" variant="outline" onClick={router.back}>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => router.push("/track/boards")}
+                >
                   Cancel
                 </Button>
-                <Button type="submit">Submit</Button>
+                <Button
+                  type="submit"
+                  disabled={!isDirty || !isValid || isSubmitted}
+                >
+                  Submit
+                </Button>
               </div>
             </form>
           </Form>
@@ -81,4 +92,4 @@ export const CreateBoardModal = () => {
       </DialogContent>
     </Dialog>
   );
-};
+}

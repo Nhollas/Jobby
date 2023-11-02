@@ -1,5 +1,5 @@
 import { Contacts } from "@/features/contact";
 
-export default async function Page() {
-  return <Contacts url="" />;
+export default function Page() {
+  return <Contacts />;
 }

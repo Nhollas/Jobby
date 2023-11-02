@@ -21,27 +21,31 @@ test.describe("Create Contact Link Directs To Correct Route.", () => {
     }
   });
 
-  createBoardFixture("From /track/board/:id/contacts Page should direct user to /track/create-contact?boardId:id", async ({
-    page,
-    boardId,
-    cleanUp
-  }) => {
+  createBoardFixture(
+    "From /track/board/:ref/contacts Page should direct user to /track/create-contact?boardRef:ref",
+    async ({ page, boardRef, cleanUp }) => {
+      await page.goto(`http://localhost:3000/track/board/${boardRef}/contacts`);
 
-    await page.goto(`http://localhost:3000/track/board/${boardId}/contacts`);
+      // Find the Link with text "Create Contact" and query param boardId
+      const createContactLink = await page.$(
+        `a[href="/track/create-contact?boardRef=${boardRef}"]`
+      );
 
-    // Find the Link with text "Create Contact" and query param boardId
-    const createContactLink = await page.$(`a[href="/track/create-contact?boardId=${boardId}"]`);
+      // Check if the link was found before clicking it
+      if (createContactLink) {
+        await createContactLink.click();
 
-    // Check if the link was found before clicking it
-    if (createContactLink) {
-      await createContactLink.click();
+        // Wait for the page to navigate before getting the URL
+        await page.waitForURL(
+          `http://localhost:3000/track/create-contact?boardRef=${boardRef}`
+        );
+      } else {
+        throw new Error(
+          "Create contact link with query param boardId could not be found on page."
+        );
+      }
 
-      // Wait for the page to navigate before getting the URL
-      await page.waitForURL(`http://localhost:3000/track/create-contact?boardId=${boardId}`);
-    } else {
-      throw new Error("Create contact link with query param boardId could not be found on page.");
+      await cleanUp();
     }
-
-    await cleanUp();
-  });
+  );
 });

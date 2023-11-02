@@ -1,6 +1,7 @@
+"use client";
 import { CreateJobModal } from "@/features/job/components/CreateJobModal";
 
-export default async function Page({
+export default function Page({
   params: { boardRef, jobListRef },
 }: {
   params: { boardRef: string; jobListRef: string };

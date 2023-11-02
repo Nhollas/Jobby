@@ -121,7 +121,7 @@ type Email = {
 type Phone = {
   id: string;
   number: string;
-  type: string;
+  type: number;
   contact: Contact;
   contactId: string;
 };

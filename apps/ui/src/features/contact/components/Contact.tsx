@@ -49,18 +49,17 @@ import {
 import {
   UpdateContactDTO,
   UpdateContactSchema,
-  useContactQuery,
   useUpdateContact,
 } from "@/features/contact";
 import { useBoardsQuery } from "@/features/board";
 import { useJobsQuery } from "@/features/job";
+import { Contact } from "@/types";
 
 interface Props {
-  contactRef: string;
+  contact: Contact;
 }
 
-export function Contact({ contactRef }: Props) {
-  const { data: contact } = useContactQuery(contactRef);
+export function Contact({ contact }: Props) {
   const { data: boards } = useBoardsQuery();
   const { data: jobs } = useJobsQuery();
 
@@ -70,12 +69,9 @@ export function Contact({ contactRef }: Props) {
     resolver: zodResolver(UpdateContactSchema),
     defaultValues: {
       ...contact,
-      jobReferences: contact?.jobs.map((job) => job.reference),
-      boardReference: contact?.board.reference,
-      phones: contact?.phones.map((phone) => ({
-        number: phone.number,
-        type: phone.type,
-      })),
+      contactReference: contact.reference,
+      jobReferences: contact.jobs.map((job) => job.reference),
+      boardReference: contact.board.reference,
     },
   });
 

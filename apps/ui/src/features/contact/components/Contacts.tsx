@@ -22,13 +22,11 @@ import {
 import { useContactsQuery } from "@/features/contact";
 
 type Props = {
-  url: string;
   boardRef?: string;
   jobRef?: string;
-  querykeyVariable?: any;
 };
 
-const createUrl = (boardRef?: string, jobRef?: string) => {
+function createUrl(boardRef?: string, jobRef?: string) {
   const params = new URLSearchParams();
 
   if (boardRef) params.set("boardRef", boardRef);
@@ -37,10 +35,10 @@ const createUrl = (boardRef?: string, jobRef?: string) => {
   return `/track/create-contact${
     params.toString() ? `?${params.toString()}` : ""
   }`;
-};
+}
 
-export function Contacts({ boardRef, jobRef, url, querykeyVariable }: Props) {
-  const { data: contacts } = useContactsQuery();
+export function Contacts({ boardRef, jobRef }: Props) {
+  const { data: contacts } = useContactsQuery({ boardRef, jobRef });
 
   return (
     <div className="flex flex-col gap-y-6 overscroll-contain border-gray-300 p-6">

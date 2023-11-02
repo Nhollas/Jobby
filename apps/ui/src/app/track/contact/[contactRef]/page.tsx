@@ -1,9 +1,11 @@
-import { Contact } from "@/features/contact/components";
+"use client";
 
-export default async function Page({
+import { ContactWrapper } from "@/features/contact";
+
+export default function Page({
   params: { contactRef },
 }: {
   params: { contactRef: string };
 }) {
-  return <Contact contactRef={contactRef} />;
+  return <ContactWrapper contactRef={contactRef} />;
 }

@@ -1,9 +1,9 @@
 import { Contacts } from "@/features/contact";
 
-export default async function Page({
-  params: { jobRef, boardRef },
+export default function Page({
+  params: { jobRef, boardReference },
 }: {
-  params: { jobRef: string; boardRef: string };
+  params: { jobRef: string; boardReference: string };
 }) {
-  return <Contacts boardRef={boardRef} jobRef={jobRef} url={""} />;
+  return <Contacts boardRef={boardReference} jobRef={jobRef} />;
 }
