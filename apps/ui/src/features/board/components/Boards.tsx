@@ -15,8 +15,6 @@ import { useBoardsQuery } from "@/features/board";
 export const Boards = () => {
   const query = useBoardsQuery();
 
-  console.log("query", query);
-
   if (query.isLoading) {
     return <div>Loading...</div>;
   }

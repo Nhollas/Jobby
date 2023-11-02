@@ -9,7 +9,8 @@
     "lint": "next lint",
     "playwright": "playwright test",
     "playwright-ui": "playwright test --ui",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "test": "jest --passWithNoTests"
   },
   "browser": {
     "fs": false,
