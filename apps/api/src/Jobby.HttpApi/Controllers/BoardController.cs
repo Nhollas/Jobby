@@ -43,7 +43,8 @@ public class BoardController : ApiController
         }
         catch (Exception e)
         {
-            return BadRequest(e.Message);
+            // Unknown error, log it.
+            return BadRequest("Unknown error");
         }
     }
     
@@ -74,7 +75,8 @@ public class BoardController : ApiController
         catch (Exception e)
         {
       
-            return BadRequest(e.Message);
+                       // Unknown error, log it.
+            return BadRequest("Unknown error");
         }
     }
 
@@ -105,7 +107,8 @@ public class BoardController : ApiController
         } 
         catch (Exception e)
         {
-            return BadRequest(e.Message);
+            // Unknown error, log it.
+            return BadRequest("Unknown error");
         }
     }
 
@@ -135,7 +138,8 @@ public class BoardController : ApiController
         }
         catch (Exception e)
         {
-            return BadRequest(e.Message);
+            // Unknown error, log it.
+            return BadRequest("Unknown error");
         }
     }
 

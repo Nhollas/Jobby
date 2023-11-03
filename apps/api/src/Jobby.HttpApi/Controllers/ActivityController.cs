@@ -42,7 +42,8 @@ public class ActivityController : ApiController
         }
         catch (Exception e)
         {
-            return BadRequest(e.Message);
+            // Unknown error, log it.
+            return BadRequest("Unknown error");
         }
     }
     
@@ -73,7 +74,8 @@ public class ActivityController : ApiController
         } 
         catch(Exception e)
         {
-            return BadRequest(e.Message);
+            // Unknown error, log it.
+            return BadRequest("Unknown error");
         }
     }
 
@@ -111,7 +113,8 @@ public class ActivityController : ApiController
         }
         catch (Exception e)
         {
-            return BadRequest(e.Message);
+            // Unknown error, log it.
+            return BadRequest("Unknown error");
         }
     }
 }

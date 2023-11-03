@@ -72,7 +72,7 @@ export type Job = {
   activities: Activity[];
   notes: Note[];
   contacts: Contact[];
-  jobListId: string;
+  jobListReference: string;
   boardReference: string;
 } & Entity;
 
@@ -128,9 +128,5 @@ type Phone = {
 
 export type Board = {
   name: string;
-  createdDate: string;
-  lastUpdated: string;
-  activitiesCount: number;
-  contactsCount: number;
   lists: JobList[];
 } & Entity;

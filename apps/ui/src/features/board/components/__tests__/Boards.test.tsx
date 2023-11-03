@@ -4,7 +4,7 @@ import "@testing-library/jest-dom";
 
 jest.mock("@/features/board/api");
 
-describe("Boards", () => {
+describe("Boards states", () => {
   it("displays loading state", () => {
     (useBoardsQuery as jest.Mock).mockReturnValue({ isLoading: true });
 

@@ -1,37 +1,7 @@
 # Jobby
 
-##### TODO: Create Logo..
+Jobby is a Nextjs / C# .Net Web Application, the repo has been a playground for me to learn and experiment with different technologies and frameworks. It's main purpose has been to be a reference on how to tackle different web problems.
 
-Jobby keeps track of every detail about your job applications - notes, dates, tasks, job descriptions, salaries, locations, company data and more.
+## Table Of Contents:
 
-<br>
-
-### Idea / Use Case
-
-The idea for this project came from my recent experience with managing different job applications. I found that managing different contacts, progress and opportunities would often get confusing. The main goal of this project is to streamline the job application process and create a unique web application that is easy to use and scalable.
-
-<br>
-
-### Client Features
-
-_16-08-2022_
-
-##### TODO: Complete this.
-
-<br>
-
-### Technologies
-
-##### API
-
-- .NET Core
-- MediatR
-- JWT
-- Swagger
-- Fluent Validation
-- .NET Core Identity
-
-##### Database
-
-- SQL Server
-- Entity Framework Core
+- [💻 Application Overview](docs/application-overview.md)

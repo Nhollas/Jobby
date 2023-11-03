@@ -29,6 +29,8 @@ public class Job : Entity
         Index = index;
         JobList = jobList;
         Board = board;
+        BoardReference = board.Reference;
+        JobListReference = jobList.Reference;
     }
 
     public string Company { get; private set; }
@@ -48,7 +50,9 @@ public class Job : Entity
     public JobList JobList { get; set; }
     public List<JobContact> JobContacts { get; } = new();
     public Guid JobListId { get; set; }
+    public string JobListReference { get; private set; }
     public Board Board { get; private set; }
+    public string BoardReference { get; private set; }
     public Guid BoardId { get; private set; }
 
 
