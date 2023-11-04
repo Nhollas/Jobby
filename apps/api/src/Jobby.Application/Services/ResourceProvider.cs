@@ -9,10 +9,12 @@ namespace Jobby.Application.Services;
 public class ResourceProvider<TEntity> : 
     IGetBySpec<TEntity>, 
     IGetByReference<TEntity>, 
-    IApplySpecification<TEntity>
+    IApplySpecification<TEntity>,
+    IWithResource<TEntity>
     where TEntity : Entity
 {
     private ISpecification<TEntity> _spec;
+    private string _resourceReference;
     private Func<ISpecification<TEntity>, CancellationToken, Task<TEntity>> _getBySpec;
     private Func<string, CancellationToken, Task<TEntity>> _getByReference;
 
@@ -72,9 +74,16 @@ public class ResourceProvider<TEntity> :
 
         if (resource is null)
         {
-            return new ResourceResult<TEntity>(false, Outcome.NotFound, $"The {typeof(TEntity).Name} with the provided spec could be found.");
+            return new ResourceResult<TEntity>(false, Outcome.NotFound, $"The {typeof(TEntity).Name} with Reference {_resourceReference} could not be found.");
         }
 
         return resource.OwnerId != userId ? new ResourceResult<TEntity>(false, Outcome.Unauthorised, "You are not authorised to access this resource.") : new ResourceResult<TEntity>(true, Outcome.Success, response: resource);
+    }
+
+    public IWithResource<TEntity> WithResource(string resourceReference)
+    {
+        _resourceReference = resourceReference;
+
+        return this;
     }
 }

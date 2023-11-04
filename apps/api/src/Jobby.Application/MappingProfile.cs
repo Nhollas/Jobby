@@ -20,8 +20,7 @@ public class MappingProfile : Profile
         CreateMap<Note, NoteDto>();
 
         // Activity Maps
-        CreateMap<Activity, ActivityDto>();
-
+        CreateMap<Activity, ActivityDto>().MaxDepth(1);
         // Contact Maps
         CreateMap<Contact, ContactDto>();
         CreateMap<Company, CompanyDto>();

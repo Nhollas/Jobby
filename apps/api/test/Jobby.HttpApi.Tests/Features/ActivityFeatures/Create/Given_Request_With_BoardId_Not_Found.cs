@@ -5,6 +5,7 @@ using Jobby.Domain.Entities;
 using Jobby.Domain.Static;
 using Jobby.HttpApi.Tests.Factories;
 using Xunit;
+using FluentAssertions;
 
 namespace Jobby.HttpApi.Tests.Features.ActivityFeatures.Create;
 
@@ -42,7 +43,9 @@ public class Given_Request_With_BoardId_Not_Found : IAsyncLifetime
         };
 
         var response = await HttpClient.PostAsJsonAsync("/activity", body);
-
-        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        var responseContent = await response.Content.ReadAsStringAsync();
+        
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        responseContent.Should().Be($"The Board with Reference {body.BoardReference} could not be found.");
     }
 }

@@ -40,6 +40,7 @@ internal sealed class CreateJobCommandHandler : IRequestHandler<CreateJobCommand
     {
         var boardResourceResult = await ResourceProvider<Board>
             .GetBySpec(_boardRepository.FirstOrDefaultAsync)
+            .WithResource(request.BoardReference)
             .ApplySpecification(new GetBoardWithJobsSpecification(request.BoardReference))
             .Check(_userId, cancellationToken);
         

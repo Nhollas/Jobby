@@ -42,6 +42,7 @@ internal sealed class UpdateContactCommandHandler : IRequestHandler<UpdateContac
     {
         var contactResourceResult = await ResourceProvider<Contact>
             .GetBySpec(_contactRepository.FirstOrDefaultAsync)
+            .WithResource(request.ContactReference)
             .ApplySpecification(new GetContactWithSocialsSpecification(request.ContactReference))
             .Check(_userId, cancellationToken);
 

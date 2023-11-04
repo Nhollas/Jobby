@@ -60,6 +60,7 @@ internal sealed class CreateContactCommandHandler : IRequestHandler<CreateContac
         {
             boardResourceResult = await ResourceProvider<Board>
                 .GetBySpec(_boardRepository.FirstOrDefaultAsync)
+                .WithResource(request.BoardReference)
                 .ApplySpecification(new GetBoardWithJobsSpecification(request.BoardReference))
                 .Check(_userId, cancellationToken);
 
