@@ -1,4 +1,5 @@
-﻿using Jobby.Application.Dtos;
+﻿using System.Text.Json;
+using Jobby.Application.Dtos;
 using Jobby.Application.Features.BoardFeatures.Commands.Create;
 using Jobby.Application.Features.BoardFeatures.Commands.Delete;
 using Jobby.Application.Features.BoardFeatures.Commands.Update.UpdateDetails;
@@ -9,6 +10,7 @@ using Jobby.Application.Features.BoardFeatures.Queries.ListContacts;
 using Jobby.HttpApi.Controllers.Base;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using OpenTelemetry.Trace;
 
 namespace Jobby.HttpApi.Controllers;
 
@@ -17,65 +19,75 @@ namespace Jobby.HttpApi.Controllers;
 [Authorize]
 public class BoardController : ApiController
 {
+    private readonly Tracer _tracer;
+
+    public BoardController(Tracer tracer)
+    {
+        _tracer = tracer;
+    }
+    
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status201Created)]
     public async Task<ActionResult<BoardDto>> CreateBoard([FromBody] CreateBoardCommand command)
     {
+        using var currentSpan = _tracer.StartActiveSpan("CreateBoardCommandRequest");
+        
+        currentSpan?.SetAttribute("data", JsonSerializer.Serialize(command));
+        
         try
         {
             var createBoardResult = await Sender.Send(command);
-
-            if (!createBoardResult.IsSuccess)
+            
+            ActionResult test = createBoardResult.Outcome switch
             {
-                return createBoardResult.Outcome switch
-                {
-                    CreateBoardOutcomes.ValidationFailure => UnprocessableEntity(
-                        createBoardResult.ValidationResult.Errors.Select(error =>
-                            new ValidationError(error.PropertyName, error.ErrorMessage)
-                        ).ToList()
-                    ),
-                    _ => BadRequest(createBoardResult.ErrorMessage)
-                };
-            }
-
-            return CreatedAtAction(nameof(CreateBoard), createBoardResult.Response);
+                CreateBoardOutcomes.ValidationFailure => UnprocessableEntity(
+                    createBoardResult.ValidationResult.Errors.Select(error =>
+                        new ValidationError(error.PropertyName, error.ErrorMessage)
+                    ).ToList()
+                ),
+                CreateBoardOutcomes.BoardCreated => CreatedAtAction(nameof(CreateBoard), createBoardResult.Response),
+                _ => BadRequest(createBoardResult.ErrorMessage)
+            };
+            
+            currentSpan?.SetAttribute("Controller-Response", JsonSerializer.Serialize(test));
+            
+            return test;
         }
         catch (Exception e)
         {
-            // Unknown error, log it.
+            await Console.Error.WriteLineAsync(e.Message);
             return BadRequest("Unknown error");
         }
     }
     
-    [HttpDelete("{boardReference}")]
+    [HttpDelete("{reference}")]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<ActionResult<DeleteBoardResponse>> DeleteBoard(string boardReference)
+    public async Task<ActionResult<DeleteBoardResponse>> DeleteBoard(string reference)
     {
+        using var currentSpan = _tracer.StartActiveSpan("DeleteBoardCommandRequest");
+        
+        currentSpan?.SetAttribute("boardReference", reference);
+        
         try
         {
-            var deleteBoardResult = await Sender.Send(new DeleteBoardCommand(boardReference));
+            var deleteBoardResult = await Sender.Send(new DeleteBoardCommand(reference));
 
-            if(!deleteBoardResult.IsSuccess && deleteBoardResult.Outcome != DeleteBoardOutcomes.BoardDeleted)
+            return deleteBoardResult.Outcome switch
             {
-                return deleteBoardResult.Outcome switch
-                {
-                    DeleteBoardOutcomes.UnauthorizedBoardAccess => Unauthorized(deleteBoardResult.ErrorMessage),
-                    DeleteBoardOutcomes.UnknownBoard => NotFound(deleteBoardResult.ErrorMessage),
-                    DeleteBoardOutcomes.UnknownError => BadRequest(deleteBoardResult.ErrorMessage),
-                    _ => BadRequest(deleteBoardResult.ErrorMessage)
-                };
-            }
-            
-            return Ok(deleteBoardResult.Response);
+                DeleteBoardOutcomes.BoardDeleted => Ok(deleteBoardResult.Response),
+                DeleteBoardOutcomes.UnknownError => BadRequest(deleteBoardResult.ErrorMessage),
+                DeleteBoardOutcomes.UnauthorizedBoardAccess => Unauthorized(deleteBoardResult.ErrorMessage),
+                DeleteBoardOutcomes.UnknownBoard => NotFound(deleteBoardResult.ErrorMessage),
+                _ => BadRequest(deleteBoardResult.ErrorMessage)
+            };
         }
         catch (Exception e)
         {
-      
-                       // Unknown error, log it.
+            await Console.Error.WriteLineAsync(e.Message);
             return BadRequest("Unknown error");
         }
     }
@@ -92,59 +104,50 @@ public class BoardController : ApiController
         {
             var updateBoardResult =  await Sender.Send(command);
             
-            if (!updateBoardResult.IsSuccess && updateBoardResult.Outcome != UpdateBoardOutcomes.BoardUpdated)
+            return updateBoardResult.Outcome switch
             {
-                return updateBoardResult.Outcome switch
-                {
-                    UpdateBoardOutcomes.UnauthorizedBoardAccess => Unauthorized(updateBoardResult.ErrorMessage),
-                    UpdateBoardOutcomes.UnknownBoard => NotFound(updateBoardResult.ErrorMessage),
-                    UpdateBoardOutcomes.UnknownError => BadRequest(updateBoardResult.ErrorMessage),
-                    _ => BadRequest(updateBoardResult.ErrorMessage)
-                };
-            }
-
-            return Ok(updateBoardResult.Response);
+                UpdateBoardOutcomes.UnauthorizedBoardAccess => Unauthorized(updateBoardResult.ErrorMessage),
+                UpdateBoardOutcomes.UnknownBoard => NotFound(updateBoardResult.ErrorMessage),
+                UpdateBoardOutcomes.UnknownError => BadRequest(updateBoardResult.ErrorMessage),
+                UpdateBoardOutcomes.BoardUpdated => Ok(updateBoardResult.Response),
+                _ => BadRequest(updateBoardResult.ErrorMessage)
+            };
         } 
         catch (Exception e)
         {
-            // Unknown error, log it.
+            await Console.Error.WriteLineAsync(e.Message);
             return BadRequest("Unknown error");
         }
     }
 
-    [HttpGet("{boardReference}")]
+    [HttpGet("{reference}")]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<ActionResult<BoardDto>> GetBoard(string boardReference)
+    public async Task<ActionResult<BoardDto>> GetBoard(string reference)
     {
         try
         {
-            var getBoardResult = await Sender.Send(new GetBoardDetailQuery(boardReference));
+            var getBoardResult = await Sender.Send(new GetBoardDetailQuery(reference));
             
-            if (!getBoardResult.IsSuccess && getBoardResult.Outcome != GetBoardDetailOutcomes.BoardFound)
+            return getBoardResult.Outcome switch
             {
-                return getBoardResult.Outcome switch
-                {
-                    GetBoardDetailOutcomes.UnauthorizedBoardAccess => Unauthorized(getBoardResult.ErrorMessage),
-                    GetBoardDetailOutcomes.UnknownBoard => NotFound(getBoardResult.ErrorMessage),
-                    GetBoardDetailOutcomes.UnknownError => BadRequest(getBoardResult.ErrorMessage),
-                    _ => BadRequest(getBoardResult.ErrorMessage)
-                };
-            }
-            
-            return Ok(getBoardResult.Response);
+                GetBoardDetailOutcomes.UnauthorizedBoardAccess => Unauthorized(getBoardResult.ErrorMessage),
+                GetBoardDetailOutcomes.UnknownBoard => NotFound(getBoardResult.ErrorMessage),
+                GetBoardDetailOutcomes.UnknownError => BadRequest(getBoardResult.ErrorMessage),
+                GetBoardDetailOutcomes.BoardFound => Ok(getBoardResult.Response),
+                _ => BadRequest(getBoardResult.ErrorMessage)
+            };
         }
         catch (Exception e)
         {
-            // Unknown error, log it.
+            await Console.Error.WriteLineAsync(e.Message);
             return BadRequest("Unknown error");
         }
     }
-
-    [Route("~/boards", Name = "ListBoards")]
-    [HttpGet]
+    
+    [HttpGet("~/boards")]
     public async Task<ActionResult<List<BoardDto>>> ListBoards()
     {
         var boards = await Sender.Send(new GetBoardListQuery());

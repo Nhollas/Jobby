@@ -1,5 +1,4 @@
 using System.Net;
-using Jobby.Application.Services;
 using Jobby.Domain.Entities;
 using Jobby.HttpApi.Tests.Factories;
 using Jobby.HttpApi.Tests.Helpers;

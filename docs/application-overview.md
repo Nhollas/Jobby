@@ -1,6 +1,6 @@
 # 💻 Application Overview
 
-The application is pretty simple. Users can create their own boards that help them keep track of job application data. This ranges from: contacts, activities, notes, dates, tasks, job descriptions, salaries, locations, company data and more.
+Users can create their own boards that help them keep track of job application data. This ranges from: contacts, activities, notes, dates, tasks, job descriptions, salaries, locations, company data and more.
 
 ## Frontend Data model
 
@@ -59,8 +59,3 @@ type Job = {
   boardReference: string;
 };
 ```
-
-- Contact:
-- Activity:
-
-## Get Started

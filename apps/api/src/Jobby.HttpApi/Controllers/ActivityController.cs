@@ -42,7 +42,7 @@ public class ActivityController : ApiController
         }
         catch (Exception e)
         {
-            // Unknown error, log it.
+            await Console.Error.WriteLineAsync(e.Message);
             return BadRequest("Unknown error");
         }
     }
@@ -72,9 +72,9 @@ public class ActivityController : ApiController
             return Ok(deleteActivityResult.Response);
             
         } 
-        catch(Exception e)
+        catch (Exception e)
         {
-            // Unknown error, log it.
+            await Console.Error.WriteLineAsync(e.Message);
             return BadRequest("Unknown error");
         }
     }
@@ -113,7 +113,7 @@ public class ActivityController : ApiController
         }
         catch (Exception e)
         {
-            // Unknown error, log it.
+            await Console.Error.WriteLineAsync(e.Message);
             return BadRequest("Unknown error");
         }
     }

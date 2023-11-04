@@ -5,3 +5,9 @@ Jobby is a Nextjs / C# .Net Web Application, the repo has been a playground for 
 ## Table Of Contents:
 
 - [💻 Application Overview](docs/application-overview.md)
+- **Frontend**
+  - [🧪 Testing](docs/ui/testing.md)
+  - [🔐 Security](docs/api/security.md)
+- **Backend**
+  - [🧪 Testing](docs/api/testing.md)
+  - [🔐 Security](docs/api/security.md)

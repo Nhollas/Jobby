@@ -19,7 +19,7 @@ public class JobList : Entity
         string ownerId,
         string listName, 
         int index,
-        Board? board = null)
+        Board board = null)
         : base(id, reference, createdDate, ownerId)
     {
         Name = listName;
@@ -38,7 +38,6 @@ public class JobList : Entity
     // Database Relationship Properties
     public Board Board { get; set; }
     public Guid BoardId { get; set; }
-    
     public string BoardReference { get; set; }
 
 

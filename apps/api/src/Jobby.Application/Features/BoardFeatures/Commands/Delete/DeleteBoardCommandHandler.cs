@@ -6,6 +6,7 @@ using Jobby.Application.Responses.Common;
 using Jobby.Application.Services;
 using Jobby.Domain.Entities;
 using MediatR;
+using OpenTelemetry.Trace;
 
 namespace Jobby.Application.Features.BoardFeatures.Commands.Delete;
 
@@ -27,6 +28,8 @@ internal sealed class DeleteBoardCommandHandler : IRequestHandler<DeleteBoardCom
 
     public async Task<BaseResult<DeleteBoardResponse, DeleteBoardOutcomes>> Handle(DeleteBoardCommand request, CancellationToken cancellationToken)
     {
+        using var span = TracerProvider.Default.GetTracer("Jobby.HttpApi").StartActiveSpan("DeleteBoardCommandHandler");
+        
         var boardResourceResult = await ResourceProvider<Board>
             .GetByReference(_boardRepository.GetByReferenceAsync)
             .Check(_userId, request.BoardReference, cancellationToken);

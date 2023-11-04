@@ -3,9 +3,9 @@ using Jobby.Application.Abstractions.Specification;
 using Jobby.Application.Dtos;
 using Jobby.Application.Interfaces.Services;
 using Jobby.Application.Responses.Common;
-using Jobby.Application.Services;
 using Jobby.Domain.Entities;
 using MediatR;
+using OpenTelemetry.Trace;
 
 namespace Jobby.Application.Features.BoardFeatures.Commands.Create;
 
@@ -33,6 +33,8 @@ internal sealed class CreateBoardCommandHandler : IRequestHandler<CreateBoardCom
 
     public async Task<BaseResult<BoardDto, CreateBoardOutcomes>> Handle(CreateBoardCommand request, CancellationToken cancellationToken)
     {
+        using var span = TracerProvider.Default.GetTracer("Jobby.HttpApi").StartActiveSpan("CreateBoardCommandHandler");
+        
         var validator = new CreateBoardCommandValidator();
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
         

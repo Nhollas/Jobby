@@ -57,11 +57,11 @@ public class Board : Entity
         Name = name;
     }
 
-    public void ArrangeJobLists(Dictionary<Guid, int> jobListIndexes)
+    public void ArrangeJobLists(Dictionary<string, int> jobListIndexes)
     {
-        foreach (var list in _lists.Where(list => jobListIndexes.ContainsKey(list.Id)))
+        foreach (var list in _lists.Where(list => jobListIndexes.ContainsKey(list.Reference)))
         {
-            list.SetIndex(jobListIndexes[list.Id]);
+            list.SetIndex(jobListIndexes[list.Reference]);
         }
     }
 
@@ -77,14 +77,6 @@ public class Board : Entity
     {
         return Lists
             .Select(list => list.Reference == jobListReference)
-            .Any();
-    }
-
-    public bool BoardOwnsJobs(List<Guid> jobIds)
-    {
-        return Lists
-            .SelectMany(list => list.Jobs
-            .Where(job => jobIds.Contains(job.Id)))
             .Any();
     }
 

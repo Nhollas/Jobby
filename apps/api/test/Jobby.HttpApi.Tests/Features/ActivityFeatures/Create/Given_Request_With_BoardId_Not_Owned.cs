@@ -1,7 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
 using Jobby.Application.Features.ActivityFeatures.Commands.Create;
-using Jobby.Application.Services;
 using Jobby.Domain.Entities;
 using Jobby.Domain.Static;
 using Jobby.HttpApi.Tests.Factories;

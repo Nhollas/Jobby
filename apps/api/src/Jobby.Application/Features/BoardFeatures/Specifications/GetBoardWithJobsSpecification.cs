@@ -3,7 +3,7 @@ using Jobby.Domain.Entities;
 
 namespace Jobby.Application.Features.BoardFeatures.Specifications;
 
-public class GetBoardWithJobsSpecification : Specification<Board>
+public sealed class GetBoardWithJobsSpecification : Specification<Board>
 {
     public GetBoardWithJobsSpecification(string boardReference)
     {

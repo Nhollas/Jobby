@@ -1,8 +1,9 @@
-﻿namespace Jobby.Application.Dtos;
-public sealed record NoteDto
+﻿using Jobby.Application.Dtos.Base;
+
+namespace Jobby.Application.Dtos;
+public sealed record NoteDto : EntityDto
 {
-    public Guid Id { get; set; } 
     public string Title { get; set; } 
     public string Description { get; set; } 
-    public Guid JobId { get; set; }
+    public string JobReference { get; set; }
 }

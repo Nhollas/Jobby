@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
+using OpenTelemetry.Trace;
 
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
@@ -21,6 +22,27 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
         options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
     });
+
+var honeycombOptions = builder.Configuration.GetHoneycombOptions();
+
+// Setup OpenTelemetry Tracing
+builder.Services.AddOpenTelemetry().WithTracing(tracerProviderBuilder =>
+{
+    tracerProviderBuilder
+        .AddHoneycomb(honeycombOptions)
+        .AddEntityFrameworkCoreInstrumentation(options =>
+        {
+            options.SetDbStatementForText = true;
+        })
+        .AddAspNetCoreInstrumentation(options =>
+        {
+            options.RecordException = true;
+        });
+});
+
+// Register Tracer so it can be injected into other components (eg Controllers)
+builder.Services.AddSingleton(TracerProvider.Default.GetTracer(honeycombOptions.ServiceName));
+
 
 
 builder.Services.AddCors();

@@ -10,12 +10,12 @@ public static class EntityReferenceProvider<T> where T : Entity
         string entityTypeName = typeof(T).Name;
         
         
-        string abbreviation = Abbreviations[entityTypeName];
+        string abbreviation = _abbreviations[entityTypeName];
         string randomChars = GenerateRandomChars(10);
         return $"{abbreviation}_{randomChars}";
     }
 
-    private static readonly Dictionary<string, string> Abbreviations = new()
+    private static readonly Dictionary<string, string> _abbreviations = new()
     {
         { nameof(Board), "bo" },
         { nameof(Job), "jo" },

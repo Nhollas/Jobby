@@ -1,7 +1,5 @@
 ﻿using AutoMapper;
 using Jobby.Application.Dtos;
-using Jobby.Application.Features.BoardFeatures.Queries.GetById;
-using Jobby.Application.Features.BoardFeatures.Queries.GetList;
 using Jobby.Domain.Entities;
 
 namespace Jobby.Application;

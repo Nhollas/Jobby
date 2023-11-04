@@ -1,6 +1,5 @@
 using System.Net.Http.Json;
 using Jobby.Application.Features.ActivityFeatures.Commands.Update;
-using Jobby.Application.Services;
 using Jobby.Domain.Entities;
 using Jobby.Domain.Static;
 using Jobby.HttpApi.Tests.Factories;
@@ -20,20 +19,20 @@ public class UpdateActivityTestFixture : IAsyncLifetime
         _factory = factory;
     }
 
-    public HttpResponseMessage Response { get; private set; }
+    public HttpResponseMessage Response { get; private set; } = new();
 
     private HttpClient HttpClient => _factory.SetupClient();
     
-    private static string UserId = "TestUserId";
+    private static string _userId = "TestUserId";
 
-    public static readonly Board PreloadedBoard = Board.Create(Guid.NewGuid(), DateTime.UtcNow, UserId, "TestBoard");
+    public static readonly Board PreloadedBoard = Board.Create(Guid.NewGuid(), DateTime.UtcNow, _userId, "TestBoard");
     
-    public UpdateActivityCommand Body { get; private set; }
+    public UpdateActivityCommand Body { get; private set; } = new();
     
     public Activity PreloadedActivity = Activity.Create(
         Guid.NewGuid(),
         DateTime.UtcNow,
-        UserId,
+        _userId,
         "TestActivity",
         (int)ActivityConstants.Types.Apply,
         DateTime.UtcNow,

@@ -5,6 +5,7 @@ namespace Jobby.Domain.Entities;
 
 public class Activity : Entity
 {
+    // Required by EF Core
     private Activity()
     {
 
@@ -56,13 +57,13 @@ public class Activity : Entity
 
 
     // Database Relationship Properties
-    public Board Board { get; set; }
+    public Board Board { get; set; }    
+    public string BoardReference { get; set; }
+    public Guid BoardId { get; set; }
+    
     public Job Job { get; set; }
     public string JobReference { get; set; }
     public Guid? JobId { get; set; }
-    
-    public string BoardReference { get; set; }
-    public Guid BoardId { get; set; }
 
 
     public static Activity Create(

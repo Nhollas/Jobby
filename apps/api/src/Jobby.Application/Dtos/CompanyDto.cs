@@ -1,7 +1,8 @@
-﻿namespace Jobby.Application.Dtos;
-public sealed record CompanyDto
-{
-    public Guid Id { get; set; } 
+﻿using Jobby.Application.Dtos.Base;
+
+namespace Jobby.Application.Dtos;
+public sealed record CompanyDto: EntityDto
+{ 
     public string Name { get; set; } 
-    public Guid ContactId { get; set; }
+    public string ContactReference { get; set; }
 }

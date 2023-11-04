@@ -1,4 +1,3 @@
-using Jobby.Domain.Entities;
 using Jobby.Persistence.Data;
 
 namespace Jobby.HttpApi.Tests.Helpers;

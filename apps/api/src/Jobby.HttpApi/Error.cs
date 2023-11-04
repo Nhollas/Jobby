@@ -1,3 +1,3 @@
 namespace Jobby.HttpApi;
 
-public record Error();
+public record Error;

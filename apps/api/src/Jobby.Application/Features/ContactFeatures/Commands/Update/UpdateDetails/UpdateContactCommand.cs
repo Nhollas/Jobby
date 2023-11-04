@@ -1,5 +1,4 @@
 ﻿using Jobby.Application.Dtos;
-using Jobby.Application.Features.ContactFeatures.Commands.Create;
 using Jobby.Application.Responses.Common;
 using MediatR;
 
