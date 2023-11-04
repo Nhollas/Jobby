@@ -127,6 +127,10 @@ public class BoardController : ApiController
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<BoardDto>> GetBoard(string reference)
     {
+        using var currentSpan = _tracer.StartActiveSpan("GetBoardDetailQuery");
+        
+        currentSpan?.SetAttribute("reference", reference);
+        
         try
         {
             var getBoardResult = await Sender.Send(new GetBoardDetailQuery(reference));

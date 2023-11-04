@@ -7,11 +7,11 @@ public class JobListConfiguration : IEntityTypeConfiguration<JobList>
 {
     public void Configure(EntityTypeBuilder<JobList> builder)
     {
-        builder.HasKey(jobList => jobList.Id);
+        builder.HasKey(jobList => new { jobList.Id, jobList.Reference });
 
-        builder.HasMany(p => p.Jobs)
-            .WithOne(x => x.JobList)
-            .HasForeignKey(x => x.JobListId)
+        builder.HasMany(jobList => jobList.Jobs)
+            .WithOne(job => job.JobList)
+            .HasForeignKey(job => new { job.JobListId, job.JobListReference })
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

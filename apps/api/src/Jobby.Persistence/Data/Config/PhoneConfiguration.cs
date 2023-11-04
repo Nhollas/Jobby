@@ -7,13 +7,11 @@ public class PhoneConfiguration : IEntityTypeConfiguration<Phone>
 {
     public void Configure(EntityTypeBuilder<Phone> builder)
     {
-        builder.HasKey(phone => phone.Id);
+        builder.HasKey(phone => new { phone.Id, phone.Reference });
 
-        builder.Property(x => x.Id).ValueGeneratedNever();
-
-        builder.HasOne(x => x.Contact)
-            .WithMany(x => x.Phones)
-            .HasForeignKey(x => x.ContactId)
+        builder.HasOne(phone => phone.Contact)
+            .WithMany(contact => contact.Phones)
+            .HasForeignKey(phone => new { phone.ContactId, phone.ContactReference })
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

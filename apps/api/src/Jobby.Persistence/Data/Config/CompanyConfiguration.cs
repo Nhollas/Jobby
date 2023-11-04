@@ -7,13 +7,11 @@ public class CompanyConfiguration : IEntityTypeConfiguration<Company>
 {
     public void Configure(EntityTypeBuilder<Company> builder)
     {
-        builder.HasKey(company => company.Id);
-
-        builder.Property(x => x.Id).ValueGeneratedNever();
+        builder.HasKey(company => new { company.Id, company.Reference });
 
         builder.HasOne(x => x.Contact)
             .WithMany(x => x.Companies)
-            .HasForeignKey(x => x.ContactId)
+            .HasForeignKey(x => new { x.ContactId, x.ContactReference })
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

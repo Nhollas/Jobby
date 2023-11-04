@@ -7,11 +7,12 @@ public class JobConfiguration : IEntityTypeConfiguration<Job>
 {
     public void Configure(EntityTypeBuilder<Job> builder)
     {
-        builder.HasKey(job => job.Id);
+        builder.HasKey(job => new { job.Id, job.Reference });   
 
         builder.HasMany(x => x.Activities)
             .WithOne(x => x.Job)
             .HasForeignKey(x => x.JobId)
+            .HasForeignKey(x => new { x.JobId, x.JobReference })
             .IsRequired(false)
             .OnDelete(DeleteBehavior.NoAction);
 
@@ -21,12 +22,12 @@ public class JobConfiguration : IEntityTypeConfiguration<Job>
                 j => j
                     .HasOne(pt => pt.Contact)
                     .WithMany(t => t.JobContacts)
-                    .HasForeignKey(pt => pt.ContactId)
+                    .HasForeignKey(x => new { x.ContactId, x.ContactReference })
                     .OnDelete(DeleteBehavior.NoAction),
                 j => j
                     .HasOne(pt => pt.Job)
                     .WithMany(p => p.JobContacts)
-                    .HasForeignKey(pt => pt.JobId)
+                    .HasForeignKey(x => new { x.JobId, x.JobReference })
                     .OnDelete(DeleteBehavior.Cascade),
                 j =>
                 {

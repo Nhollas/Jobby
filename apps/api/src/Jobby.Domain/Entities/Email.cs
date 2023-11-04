@@ -1,19 +1,49 @@
-﻿using static Jobby.Domain.Static.ContactConstants;
+﻿using Jobby.Domain.Primitives;
+using Jobby.Domain.Static;
+using static Jobby.Domain.Static.ContactConstants;
 
 namespace Jobby.Domain.Entities;
-public class Email
+public class Email: Entity
 {
-    public Email(
-    Guid id,
-    string name,
-    EmailType type)
+    private Email(){}
+    
+    private Email(
+        Guid id,
+        string reference,
+        DateTime createdDate,
+        string ownerId,
+        string name,
+        EmailType type,
+        Contact contact)
+        : base(id, reference, createdDate, ownerId)
     {
-        Id = id;
+        Contact = contact;
+        ContactId = contact.Id;
+        ContactReference = contact.Reference;
         Name = name;
         Type = type;
     }
+    
+    public static Email Create(
+        Guid id,
+        DateTime createdDate,
+        string ownerId,
+        string name,
+        EmailType type,
+        Contact contact)
+    {
+        var phone = new Email(
+            id,
+            reference: EntityReferenceProvider<Email>.CreateReference(),
+            createdDate,
+            ownerId,
+            name,
+            type,
+            contact);
 
-    public Guid Id { get; set; }
+        return phone;
+    }
+    
     public string Name { get; set; }
     public EmailType Type { get; set; }
 
@@ -21,4 +51,5 @@ public class Email
     // Database Relationship Properties
     public Contact Contact { get; set; }
     public Guid ContactId { get; set; }
+    public string ContactReference { get; set; }
 }

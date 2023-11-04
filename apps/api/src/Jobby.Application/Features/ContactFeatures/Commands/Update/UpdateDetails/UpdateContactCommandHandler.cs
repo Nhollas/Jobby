@@ -109,7 +109,7 @@ internal sealed class UpdateContactCommandHandler : IRequestHandler<UpdateContac
         if (request.Companies.Count > 0)
         {
             var updatedCompanies = request.Companies
-                .Select(x => new Company(Guid.NewGuid(), x.Name))
+                .Select(x => Company.Create(Guid.NewGuid(), _timeProvider.UtcNow, _userId, x.Name, contactToUpdate))
                 .ToList();
 
             contactToUpdate.UpdateCompanies(updatedCompanies);
@@ -118,7 +118,7 @@ internal sealed class UpdateContactCommandHandler : IRequestHandler<UpdateContac
         if (request.Emails.Count > 0)
         {
             var updatedEmails = request.Emails
-                .Select(x => new Email(Guid.NewGuid(), x.Name, (EmailType)x.Type))
+                .Select(x => Email.Create(Guid.NewGuid(), _timeProvider.UtcNow, _userId, x.Name, (EmailType)x.Type, contactToUpdate))
                 .ToList();
 
             contactToUpdate.UpdateEmails(updatedEmails);
@@ -127,7 +127,7 @@ internal sealed class UpdateContactCommandHandler : IRequestHandler<UpdateContac
         if (request.Phones.Count > 0)
         {
             var updatedPhones = request.Phones
-                .Select(x => new Phone(Guid.NewGuid(), x.Number, (PhoneType)x.Type))
+                .Select(x => Phone.Create(Guid.NewGuid(), _timeProvider.UtcNow, _userId, x.Number, (PhoneType)x.Type, contactToUpdate))
                 .ToList();
 
             contactToUpdate.UpdatePhones(updatedPhones);

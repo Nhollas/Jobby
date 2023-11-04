@@ -16,6 +16,7 @@ namespace Jobby.Persistence.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Reference = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LastUpdated = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -23,7 +24,7 @@ namespace Jobby.Persistence.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Boards", x => x.Id);
+                    table.PrimaryKey("PK_Boards", x => new { x.Id, x.Reference });
                 });
 
             migrationBuilder.CreateTable(
@@ -31,6 +32,7 @@ namespace Jobby.Persistence.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Reference = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     JobTitle = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -39,6 +41,7 @@ namespace Jobby.Persistence.Data.Migrations
                     Socials_FacebookUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Socials_LinkedInUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Socials_GithubUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    BoardReference = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     BoardId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LastUpdated = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -46,12 +49,12 @@ namespace Jobby.Persistence.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Contacts", x => x.Id);
+                    table.PrimaryKey("PK_Contacts", x => new { x.Id, x.Reference });
                     table.ForeignKey(
-                        name: "FK_Contacts_Boards_BoardId",
-                        column: x => x.BoardId,
+                        name: "FK_Contacts_Boards_BoardId_BoardReference",
+                        columns: x => new { x.BoardId, x.BoardReference },
                         principalTable: "Boards",
-                        principalColumn: "Id");
+                        principalColumns: new[] { "Id", "Reference" });
                 });
 
             migrationBuilder.CreateTable(
@@ -59,21 +62,23 @@ namespace Jobby.Persistence.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Reference = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Index = table.Column<int>(type: "int", nullable: false),
                     BoardId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    BoardReference = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LastUpdated = table.Column<DateTime>(type: "datetime2", nullable: false),
                     OwnerId = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_JobLists", x => x.Id);
+                    table.PrimaryKey("PK_JobLists", x => new { x.Id, x.Reference });
                     table.ForeignKey(
-                        name: "FK_JobLists_Boards_BoardId",
-                        column: x => x.BoardId,
+                        name: "FK_JobLists_Boards_BoardId_BoardReference",
+                        columns: x => new { x.BoardId, x.BoardReference },
                         principalTable: "Boards",
-                        principalColumn: "Id",
+                        principalColumns: new[] { "Id", "Reference" },
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -82,17 +87,22 @@ namespace Jobby.Persistence.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Reference = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ContactId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    ContactId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ContactReference = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LastUpdated = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    OwnerId = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Company", x => x.Id);
+                    table.PrimaryKey("PK_Company", x => new { x.Id, x.Reference });
                     table.ForeignKey(
-                        name: "FK_Company_Contacts_ContactId",
-                        column: x => x.ContactId,
+                        name: "FK_Company_Contacts_ContactId_ContactReference",
+                        columns: x => new { x.ContactId, x.ContactReference },
                         principalTable: "Contacts",
-                        principalColumn: "Id",
+                        principalColumns: new[] { "Id", "Reference" },
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -100,19 +110,24 @@ namespace Jobby.Persistence.Data.Migrations
                 name: "Email",
                 columns: table => new
                 {
+                    Reference = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Type = table.Column<int>(type: "int", nullable: false),
-                    ContactId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    ContactId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ContactReference = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LastUpdated = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    OwnerId = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Email", x => x.Id);
+                    table.PrimaryKey("PK_Email", x => new { x.Id, x.Reference });
                     table.ForeignKey(
-                        name: "FK_Email_Contacts_ContactId",
-                        column: x => x.ContactId,
+                        name: "FK_Email_Contacts_ContactId_ContactReference",
+                        columns: x => new { x.ContactId, x.ContactReference },
                         principalTable: "Contacts",
-                        principalColumn: "Id",
+                        principalColumns: new[] { "Id", "Reference" },
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -120,19 +135,24 @@ namespace Jobby.Persistence.Data.Migrations
                 name: "Phone",
                 columns: table => new
                 {
+                    Reference = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Number = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Type = table.Column<int>(type: "int", nullable: false),
-                    ContactId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    ContactId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    ContactReference = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LastUpdated = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    OwnerId = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Phone", x => x.Id);
+                    table.PrimaryKey("PK_Phone", x => new { x.Id, x.Reference });
                     table.ForeignKey(
-                        name: "FK_Phone_Contacts_ContactId",
-                        column: x => x.ContactId,
+                        name: "FK_Phone_Contacts_ContactId_ContactReference",
+                        columns: x => new { x.ContactId, x.ContactReference },
                         principalTable: "Contacts",
-                        principalColumn: "Id",
+                        principalColumns: new[] { "Id", "Reference" },
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -141,6 +161,7 @@ namespace Jobby.Persistence.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Reference = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Company = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     PostUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -150,6 +171,8 @@ namespace Jobby.Persistence.Data.Migrations
                     Deadline = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Index = table.Column<int>(type: "int", nullable: false),
                     JobListId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    JobListReference = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    BoardReference = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     BoardId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LastUpdated = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -157,17 +180,17 @@ namespace Jobby.Persistence.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Jobs", x => x.Id);
+                    table.PrimaryKey("PK_Jobs", x => new { x.Id, x.Reference });
                     table.ForeignKey(
-                        name: "FK_Jobs_Boards_BoardId",
-                        column: x => x.BoardId,
+                        name: "FK_Jobs_Boards_BoardId_BoardReference",
+                        columns: x => new { x.BoardId, x.BoardReference },
                         principalTable: "Boards",
-                        principalColumn: "Id");
+                        principalColumns: new[] { "Id", "Reference" });
                     table.ForeignKey(
-                        name: "FK_Jobs_JobLists_JobListId",
-                        column: x => x.JobListId,
+                        name: "FK_Jobs_JobLists_JobListId_JobListReference",
+                        columns: x => new { x.JobListId, x.JobListReference },
                         principalTable: "JobLists",
-                        principalColumn: "Id",
+                        principalColumns: new[] { "Id", "Reference" },
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -176,32 +199,35 @@ namespace Jobby.Persistence.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Reference = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Type = table.Column<int>(type: "int", nullable: false),
                     StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Note = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Completed = table.Column<bool>(type: "bit", nullable: false),
-                    JobId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    BoardReference = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     BoardId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    JobReference = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    JobId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LastUpdated = table.Column<DateTime>(type: "datetime2", nullable: false),
                     OwnerId = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Activities", x => x.Id);
+                    table.PrimaryKey("PK_Activities", x => new { x.Id, x.Reference });
                     table.ForeignKey(
-                        name: "FK_Activities_Boards_BoardId",
-                        column: x => x.BoardId,
+                        name: "FK_Activities_Boards_BoardId_BoardReference",
+                        columns: x => new { x.BoardId, x.BoardReference },
                         principalTable: "Boards",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Activities_Jobs_JobId",
-                        column: x => x.JobId,
-                        principalTable: "Jobs",
-                        principalColumn: "Id",
+                        principalColumns: new[] { "Id", "Reference" },
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Activities_Jobs_JobId_JobReference",
+                        columns: x => new { x.JobId, x.JobReference },
+                        principalTable: "Jobs",
+                        principalColumns: new[] { "Id", "Reference" });
                 });
 
             migrationBuilder.CreateTable(
@@ -209,22 +235,24 @@ namespace Jobby.Persistence.Data.Migrations
                 columns: table => new
                 {
                     JobId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ContactId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    ContactId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    JobReference = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ContactReference = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_JobContacts", x => new { x.ContactId, x.JobId });
                     table.ForeignKey(
-                        name: "FK_JobContacts_Contacts_ContactId",
-                        column: x => x.ContactId,
+                        name: "FK_JobContacts_Contacts_ContactId_ContactReference",
+                        columns: x => new { x.ContactId, x.ContactReference },
                         principalTable: "Contacts",
-                        principalColumn: "Id",
+                        principalColumns: new[] { "Id", "Reference" },
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_JobContacts_Jobs_JobId",
-                        column: x => x.JobId,
+                        name: "FK_JobContacts_Jobs_JobId_JobReference",
+                        columns: x => new { x.JobId, x.JobReference },
                         principalTable: "Jobs",
-                        principalColumn: "Id",
+                        principalColumns: new[] { "Id", "Reference" },
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -235,73 +263,79 @@ namespace Jobby.Persistence.Data.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    JobReference = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     JobId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Note", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Note_Jobs_JobId",
-                        column: x => x.JobId,
+                        name: "FK_Note_Jobs_JobId_JobReference",
+                        columns: x => new { x.JobId, x.JobReference },
                         principalTable: "Jobs",
-                        principalColumn: "Id",
+                        principalColumns: new[] { "Id", "Reference" },
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Activities_BoardId",
+                name: "IX_Activities_BoardId_BoardReference",
                 table: "Activities",
-                column: "BoardId");
+                columns: new[] { "BoardId", "BoardReference" });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Activities_JobId",
+                name: "IX_Activities_JobId_JobReference",
                 table: "Activities",
-                column: "JobId");
+                columns: new[] { "JobId", "JobReference" });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Company_ContactId",
+                name: "IX_Company_ContactId_ContactReference",
                 table: "Company",
-                column: "ContactId");
+                columns: new[] { "ContactId", "ContactReference" });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Contacts_BoardId",
+                name: "IX_Contacts_BoardId_BoardReference",
                 table: "Contacts",
-                column: "BoardId");
+                columns: new[] { "BoardId", "BoardReference" });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Email_ContactId",
+                name: "IX_Email_ContactId_ContactReference",
                 table: "Email",
-                column: "ContactId");
+                columns: new[] { "ContactId", "ContactReference" });
 
             migrationBuilder.CreateIndex(
-                name: "IX_JobContacts_JobId",
+                name: "IX_JobContacts_ContactId_ContactReference",
                 table: "JobContacts",
-                column: "JobId");
+                columns: new[] { "ContactId", "ContactReference" });
 
             migrationBuilder.CreateIndex(
-                name: "IX_JobLists_BoardId",
+                name: "IX_JobContacts_JobId_JobReference",
+                table: "JobContacts",
+                columns: new[] { "JobId", "JobReference" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_JobLists_BoardId_BoardReference",
                 table: "JobLists",
-                column: "BoardId");
+                columns: new[] { "BoardId", "BoardReference" });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Jobs_BoardId",
+                name: "IX_Jobs_BoardId_BoardReference",
                 table: "Jobs",
-                column: "BoardId");
+                columns: new[] { "BoardId", "BoardReference" });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Jobs_JobListId",
+                name: "IX_Jobs_JobListId_JobListReference",
                 table: "Jobs",
-                column: "JobListId");
+                columns: new[] { "JobListId", "JobListReference" });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Note_JobId",
+                name: "IX_Note_JobId_JobReference",
                 table: "Note",
-                column: "JobId");
+                columns: new[] { "JobId", "JobReference" });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Phone_ContactId",
+                name: "IX_Phone_ContactId_ContactReference",
                 table: "Phone",
-                column: "ContactId");
+                columns: new[] { "ContactId", "ContactReference" });
         }
 
         /// <inheritdoc />

@@ -7,26 +7,26 @@ public class BoardConfiguration : IEntityTypeConfiguration<Board>
 {
     public void Configure(EntityTypeBuilder<Board> builder)
     {
-        builder.HasKey(board => board.Id);
+        builder.HasKey(board => new { board.Id, board.Reference });
 
-        builder.HasMany(x => x.Lists)
-            .WithOne(x => x.Board)
-            .HasForeignKey(x => x.BoardId)
+        builder.HasMany(board => board.Lists)
+            .WithOne(jobList => jobList.Board)
+            .HasForeignKey(jobList => new { jobList.BoardId, jobList.BoardReference })
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasMany(x => x.Jobs)
-            .WithOne(x => x.Board)
-            .HasForeignKey(x => x.BoardId)
+        builder.HasMany(board => board.Jobs)
+            .WithOne(job => job.Board)
+            .HasForeignKey(job => new { job.BoardId, job.BoardReference })
             .OnDelete(DeleteBehavior.NoAction);
 
-        builder.HasMany(x => x.Contacts)
-            .WithOne(x => x.Board)
-            .HasForeignKey(x => x.BoardId)
+        builder.HasMany(board => board.Contacts)
+            .WithOne(contact => contact.Board)
+            .HasForeignKey(contact => new { contact.BoardId, contact.BoardReference })
             .OnDelete(DeleteBehavior.NoAction);
 
-        builder.HasMany(x => x.Activities)
-            .WithOne(x => x.Board)
-            .HasForeignKey(x => x.BoardId)
+        builder.HasMany(board => board.Activities)
+            .WithOne(activity => activity.Board)
+            .HasForeignKey(activity => new { activity.BoardId, activity.BoardReference })
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

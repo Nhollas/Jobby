@@ -1,14 +1,12 @@
-﻿using Jobby.Domain.Primitives;
+﻿using Jobby.Domain.Dtos.Contact;
+using Jobby.Domain.Primitives;
 using Jobby.Domain.Static;
 
 namespace Jobby.Domain.Entities;
 
 public class Contact : Entity
 {
-    private Contact()
-    {
-
-    }
+    private Contact(){}
 
     private Contact(
         Guid id,
@@ -21,9 +19,9 @@ public class Contact : Entity
         string location,
         Social socials,
         Board board,
-        List<Company> companies,
-        List<Email> emails,
-        List<Phone> phones)
+        List<string> companies,
+        List<CreateEmailDto> emails,
+        List<CreatePhoneDto> phones)
         : base(id, reference, createdDate, ownerId)
     {
         FirstName = firstName;
@@ -33,9 +31,9 @@ public class Contact : Entity
         Socials = socials;
         Board = board;
         BoardReference = board.Reference;
-        Companies = companies;
-        Emails = emails;
-        Phones = phones;
+        Companies = CreateCompanies(companies, createdDate);
+        Emails = CreateEmails(emails, createdDate);
+        Phones = CreatePhones(phones, createdDate);
     }
 
     public string FirstName { get; private set; }
@@ -67,9 +65,9 @@ public class Contact : Entity
         string location,
         Social socials,
         Board board,
-        List<Company> companies,
-        List<Email> emails,
-        List<Phone> phones)
+        List<string> companies,
+        List<CreateEmailDto> emails,
+        List<CreatePhoneDto> phones)
     {
         var contact = new Contact(
             id,
@@ -124,6 +122,21 @@ public class Contact : Entity
         {
             Companies.Add(company);
         }
+    }
+    
+    private List<Company> CreateCompanies(IEnumerable<string> companies, DateTime createdDate)
+    {
+        return companies.Select(company => Company.Create(Guid.NewGuid(), createdDate, OwnerId, company, this)).ToList();
+    }
+    
+    private List<Email> CreateEmails(IEnumerable<CreateEmailDto> emails, DateTime createdDate)
+    {
+        return emails.Select(email => Email.Create(Guid.NewGuid(), createdDate, OwnerId, email.Name, (ContactConstants.EmailType)email.Type, this)).ToList();
+    }
+    
+    private List<Phone> CreatePhones(IEnumerable<CreatePhoneDto> phones, DateTime createdDate)
+    {
+        return phones.Select(phone => Phone.Create(Guid.NewGuid(), createdDate, OwnerId, phone.Number, (ContactConstants.PhoneType)phone.Type, this)).ToList();
     }
 
     public void UpdateEmails(List<Email> emails)

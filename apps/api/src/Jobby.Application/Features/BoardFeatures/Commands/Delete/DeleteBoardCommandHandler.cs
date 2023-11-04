@@ -15,20 +15,23 @@ internal sealed class DeleteBoardCommandHandler : IRequestHandler<DeleteBoardCom
     private readonly IRepository<Board> _boardRepository;
     private readonly IContactRepository _contactRepository;
     private readonly string _userId;
+    private readonly Tracer _tracer;
 
     public DeleteBoardCommandHandler(
         IRepository<Board> boardRepository,
         IContactRepository contactRepository,
-        IUserService userService)
+        IUserService userService,
+        Tracer tracer)
     {
         _boardRepository = boardRepository;
         _contactRepository = contactRepository;
+        _tracer = tracer;
         _userId = userService.UserId();
     }
 
     public async Task<BaseResult<DeleteBoardResponse, DeleteBoardOutcomes>> Handle(DeleteBoardCommand request, CancellationToken cancellationToken)
     {
-        using var span = TracerProvider.Default.GetTracer("Jobby.HttpApi").StartActiveSpan("DeleteBoardCommandHandler");
+        using var span = _tracer.StartActiveSpan("DeleteBoardCommandHandler");
         
         var boardResourceResult = await ResourceProvider<Board>
             .GetByReference(_boardRepository.GetByReferenceAsync)

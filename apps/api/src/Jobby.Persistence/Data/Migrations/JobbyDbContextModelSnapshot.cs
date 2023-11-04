@@ -25,14 +25,17 @@ namespace Jobby.Persistence.Data.Migrations
             modelBuilder.Entity("Jobby.Domain.Entities.Activity", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Reference")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<Guid>("BoardId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("BoardReference")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<bool>("Completed")
                         .HasColumnType("bit");
@@ -47,7 +50,7 @@ namespace Jobby.Persistence.Data.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("JobReference")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("LastUpdated")
                         .HasColumnType("datetime2");
@@ -56,9 +59,6 @@ namespace Jobby.Persistence.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("OwnerId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Reference")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("StartDate")
@@ -70,11 +70,11 @@ namespace Jobby.Persistence.Data.Migrations
                     b.Property<int>("Type")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id", "Reference");
 
-                    b.HasIndex("BoardId");
+                    b.HasIndex("BoardId", "BoardReference");
 
-                    b.HasIndex("JobId");
+                    b.HasIndex("JobId", "JobReference");
 
                     b.ToTable("Activities");
                 });
@@ -82,8 +82,10 @@ namespace Jobby.Persistence.Data.Migrations
             modelBuilder.Entity("Jobby.Domain.Entities.Board", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Reference")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
@@ -97,10 +99,7 @@ namespace Jobby.Persistence.Data.Migrations
                     b.Property<string>("OwnerId")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Reference")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
+                    b.HasKey("Id", "Reference");
 
                     b.ToTable("Boards");
                 });
@@ -110,15 +109,30 @@ namespace Jobby.Persistence.Data.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("Reference")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<Guid>("ContactId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ContactReference")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("LastUpdated")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                    b.Property<string>("OwnerId")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.HasIndex("ContactId");
+                    b.HasKey("Id", "Reference");
+
+                    b.HasIndex("ContactId", "ContactReference");
 
                     b.ToTable("Company");
                 });
@@ -126,14 +140,16 @@ namespace Jobby.Persistence.Data.Migrations
             modelBuilder.Entity("Jobby.Domain.Entities.Contact", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Reference")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<Guid?>("BoardId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("BoardReference")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
@@ -156,12 +172,9 @@ namespace Jobby.Persistence.Data.Migrations
                     b.Property<string>("OwnerId")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Reference")
-                        .HasColumnType("nvarchar(max)");
+                    b.HasKey("Id", "Reference");
 
-                    b.HasKey("Id");
-
-                    b.HasIndex("BoardId");
+                    b.HasIndex("BoardId", "BoardReference");
 
                     b.ToTable("Contacts");
                 });
@@ -171,18 +184,33 @@ namespace Jobby.Persistence.Data.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("Reference")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<Guid>("ContactId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("ContactReference")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("LastUpdated")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OwnerId")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Type")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id", "Reference");
 
-                    b.HasIndex("ContactId");
+                    b.HasIndex("ContactId", "ContactReference");
 
                     b.ToTable("Email");
                 });
@@ -190,11 +218,16 @@ namespace Jobby.Persistence.Data.Migrations
             modelBuilder.Entity("Jobby.Domain.Entities.Job", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Reference")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<Guid>("BoardId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("BoardReference")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Company")
                         .HasColumnType("nvarchar(max)");
@@ -214,6 +247,9 @@ namespace Jobby.Persistence.Data.Migrations
                     b.Property<Guid>("JobListId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("JobListReference")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<DateTime>("LastUpdated")
                         .HasColumnType("datetime2");
 
@@ -226,20 +262,17 @@ namespace Jobby.Persistence.Data.Migrations
                     b.Property<string>("PostUrl")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Reference")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<double>("Salary")
                         .HasColumnType("float");
 
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id", "Reference");
 
-                    b.HasIndex("BoardId");
+                    b.HasIndex("BoardId", "BoardReference");
 
-                    b.HasIndex("JobListId");
+                    b.HasIndex("JobListId", "JobListReference");
 
                     b.ToTable("Jobs");
                 });
@@ -252,9 +285,19 @@ namespace Jobby.Persistence.Data.Migrations
                     b.Property<Guid>("JobId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("ContactReference")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("JobReference")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("ContactId", "JobId");
 
-                    b.HasIndex("JobId");
+                    b.HasIndex("ContactId", "ContactReference");
+
+                    b.HasIndex("JobId", "JobReference");
 
                     b.ToTable("JobContacts");
                 });
@@ -262,14 +305,16 @@ namespace Jobby.Persistence.Data.Migrations
             modelBuilder.Entity("Jobby.Domain.Entities.JobList", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Reference")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<Guid>("BoardId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("BoardReference")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
@@ -286,12 +331,9 @@ namespace Jobby.Persistence.Data.Migrations
                     b.Property<string>("OwnerId")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Reference")
-                        .HasColumnType("nvarchar(max)");
+                    b.HasKey("Id", "Reference");
 
-                    b.HasKey("Id");
-
-                    b.HasIndex("BoardId");
+                    b.HasIndex("BoardId", "BoardReference");
 
                     b.ToTable("JobLists");
                 });
@@ -308,12 +350,16 @@ namespace Jobby.Persistence.Data.Migrations
                     b.Property<Guid>("JobId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("JobReference")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("JobId");
+                    b.HasIndex("JobId", "JobReference");
 
                     b.ToTable("Note");
                 });
@@ -323,18 +369,33 @@ namespace Jobby.Persistence.Data.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("Reference")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<Guid>("ContactId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("ContactReference")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("LastUpdated")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Number")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OwnerId")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Type")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id", "Reference");
 
-                    b.HasIndex("ContactId");
+                    b.HasIndex("ContactId", "ContactReference");
 
                     b.ToTable("Phone");
                 });
@@ -343,13 +404,13 @@ namespace Jobby.Persistence.Data.Migrations
                 {
                     b.HasOne("Jobby.Domain.Entities.Board", "Board")
                         .WithMany("Activities")
-                        .HasForeignKey("BoardId")
+                        .HasForeignKey("BoardId", "BoardReference")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Jobby.Domain.Entities.Job", "Job")
                         .WithMany("Activities")
-                        .HasForeignKey("JobId")
+                        .HasForeignKey("JobId", "JobReference")
                         .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("Board");
@@ -361,9 +422,8 @@ namespace Jobby.Persistence.Data.Migrations
                 {
                     b.HasOne("Jobby.Domain.Entities.Contact", "Contact")
                         .WithMany("Companies")
-                        .HasForeignKey("ContactId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ContactId", "ContactReference")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Contact");
                 });
@@ -372,13 +432,16 @@ namespace Jobby.Persistence.Data.Migrations
                 {
                     b.HasOne("Jobby.Domain.Entities.Board", "Board")
                         .WithMany("Contacts")
-                        .HasForeignKey("BoardId")
+                        .HasForeignKey("BoardId", "BoardReference")
                         .OnDelete(DeleteBehavior.NoAction);
 
                     b.OwnsOne("Jobby.Domain.Entities.Social", "Socials", b1 =>
                         {
                             b1.Property<Guid>("ContactId")
                                 .HasColumnType("uniqueidentifier");
+
+                            b1.Property<string>("ContactReference")
+                                .HasColumnType("nvarchar(450)");
 
                             b1.Property<string>("FacebookUrl")
                                 .HasColumnType("nvarchar(max)");
@@ -392,12 +455,12 @@ namespace Jobby.Persistence.Data.Migrations
                             b1.Property<string>("TwitterUrl")
                                 .HasColumnType("nvarchar(max)");
 
-                            b1.HasKey("ContactId");
+                            b1.HasKey("ContactId", "ContactReference");
 
                             b1.ToTable("Contacts");
 
                             b1.WithOwner()
-                                .HasForeignKey("ContactId");
+                                .HasForeignKey("ContactId", "ContactReference");
                         });
 
                     b.Navigation("Board");
@@ -409,9 +472,8 @@ namespace Jobby.Persistence.Data.Migrations
                 {
                     b.HasOne("Jobby.Domain.Entities.Contact", "Contact")
                         .WithMany("Emails")
-                        .HasForeignKey("ContactId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ContactId", "ContactReference")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Contact");
                 });
@@ -420,15 +482,13 @@ namespace Jobby.Persistence.Data.Migrations
                 {
                     b.HasOne("Jobby.Domain.Entities.Board", "Board")
                         .WithMany("Jobs")
-                        .HasForeignKey("BoardId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
+                        .HasForeignKey("BoardId", "BoardReference")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("Jobby.Domain.Entities.JobList", "JobList")
                         .WithMany("Jobs")
-                        .HasForeignKey("JobListId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("JobListId", "JobListReference")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Board");
 
@@ -439,13 +499,13 @@ namespace Jobby.Persistence.Data.Migrations
                 {
                     b.HasOne("Jobby.Domain.Entities.Contact", "Contact")
                         .WithMany("JobContacts")
-                        .HasForeignKey("ContactId")
+                        .HasForeignKey("ContactId", "ContactReference")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Jobby.Domain.Entities.Job", "Job")
                         .WithMany("JobContacts")
-                        .HasForeignKey("JobId")
+                        .HasForeignKey("JobId", "JobReference")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -458,9 +518,8 @@ namespace Jobby.Persistence.Data.Migrations
                 {
                     b.HasOne("Jobby.Domain.Entities.Board", "Board")
                         .WithMany("Lists")
-                        .HasForeignKey("BoardId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("BoardId", "BoardReference")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Board");
                 });
@@ -469,7 +528,7 @@ namespace Jobby.Persistence.Data.Migrations
                 {
                     b.HasOne("Jobby.Domain.Entities.Job", "Job")
                         .WithMany("Notes")
-                        .HasForeignKey("JobId")
+                        .HasForeignKey("JobId", "JobReference")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -480,9 +539,8 @@ namespace Jobby.Persistence.Data.Migrations
                 {
                     b.HasOne("Jobby.Domain.Entities.Contact", "Contact")
                         .WithMany("Phones")
-                        .HasForeignKey("ContactId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ContactId", "ContactReference")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Contact");
                 });

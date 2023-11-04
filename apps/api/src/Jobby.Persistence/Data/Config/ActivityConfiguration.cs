@@ -8,17 +8,17 @@ public class ActivityConfiguration : IEntityTypeConfiguration<Activity>
 {
     public void Configure(EntityTypeBuilder<Activity> builder)
     {
-        builder.HasKey(activity => activity.Id);
+        builder.HasKey(activity => new { activity.Id, activity.Reference });
 
-        builder.HasOne(x => x.Board)
-            .WithMany(x => x.Activities)
-            .HasForeignKey(x => x.BoardId)
+        builder.HasOne(activity => activity.Board)
+            .WithMany(board => board.Activities)
+            .HasForeignKey(activity => new { activity.BoardId, activity.BoardReference })
             .IsRequired()
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasOne(x => x.Job)
-            .WithMany(x => x.Activities)
-            .HasForeignKey(x => x.JobId)
+        builder.HasOne(activity => activity.Job)
+            .WithMany(job => job.Activities)
+            .HasForeignKey(activity => new { activity.JobId, activity.JobReference })
             .IsRequired(false)
             .OnDelete(DeleteBehavior.NoAction);
     }

@@ -7,7 +7,7 @@ using OpenTelemetry.Trace;
 
 namespace Jobby.Persistence.Data;
 
-public class RepositoryBase<T> : IRepository<T>, IReadRepository<T> where T : Entity
+public abstract class RepositoryBase<T> : IRepository<T>, IReadRepository<T> where T : Entity
 {
     private readonly DbContext _dbContext;
     private readonly Tracer _tracer;
