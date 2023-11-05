@@ -1,12 +1,11 @@
 using System.Net;
 using System.Text;
 using Jobby.HttpApi.Tests.Factories;
-using Xunit;
 
 namespace Jobby.HttpApi.Tests.Features.ActivityFeatures.Create;
 
 [Collection("SqlCollection")]
-public class Given_Request_With_Validation_Errors : IAsyncLifetime
+public class Given_Request_With_Validation_Errors
 {
     private readonly JobbyHttpApiFactory _factory;
 
@@ -16,11 +15,6 @@ public class Given_Request_With_Validation_Errors : IAsyncLifetime
     }
 
     private HttpClient HttpClient => _factory.SetupClient();
-    
-
-    public Task InitializeAsync() => Task.CompletedTask;
-
-    public Task DisposeAsync() => Task.CompletedTask;
 
     [Fact]
     public async Task When_Type_Property_Is_Invalid_Then_Returns_422_Unprocessable_Entity_And_Type_Property_Validation_Message()
@@ -33,7 +27,7 @@ public class Given_Request_With_Validation_Errors : IAsyncLifetime
           "type": 41,
           "startDate": "2023-08-15T23:00:00.000Z",
           "endDate": "2023-08-15T23:00:00.000Z",
-          "note": "jhakhsdjksad"
+          "note": "cool note"
         }
         """;
 

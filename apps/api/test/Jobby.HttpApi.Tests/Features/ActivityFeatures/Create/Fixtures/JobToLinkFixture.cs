@@ -6,7 +6,6 @@ using Jobby.HttpApi.Tests.Factories;
 using Jobby.HttpApi.Tests.Helpers;
 using Jobby.Persistence.Data;
 using Microsoft.EntityFrameworkCore;
-using Xunit;
 
 namespace Jobby.HttpApi.Tests.Features.ActivityFeatures.Create.Fixtures;
 

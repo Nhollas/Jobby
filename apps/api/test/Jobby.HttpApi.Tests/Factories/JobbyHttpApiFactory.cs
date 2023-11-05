@@ -11,7 +11,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Testcontainers.MsSql;
-using Xunit;
 
 namespace Jobby.HttpApi.Tests.Factories;
 

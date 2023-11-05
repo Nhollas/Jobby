@@ -1,62 +1,42 @@
 using System.Net;
-using Jobby.Domain.Entities;
 using Jobby.HttpApi.Tests.Factories;
-using Jobby.HttpApi.Tests.Helpers;
+using Jobby.HttpApi.Tests.Features.ActivityFeatures.Delete.Fixtures;
 using Jobby.Persistence.Data;
 using Microsoft.EntityFrameworkCore;
-using Xunit;
 
 namespace Jobby.HttpApi.Tests.Features.ActivityFeatures.Delete;
 
 [Collection("SqlCollection")]
-public class Given_Request_With_Valid_Details : IAsyncLifetime
+public class Given_Request_With_Valid_Details: IClassFixture<DeleteActivityWithValidDetailsFixture>
 {
     private readonly JobbyHttpApiFactory _factory;
+    private readonly DeleteActivityWithValidDetailsFixture _fixture;
 
-    public Given_Request_With_Valid_Details(JobbyHttpApiFactory factory)
+    public Given_Request_With_Valid_Details(
+        JobbyHttpApiFactory factory, 
+        DeleteActivityWithValidDetailsFixture fixture)
     {
         _factory = factory;
+        _fixture = fixture;
     }
     
-    private HttpClient HttpClient => _factory.SetupClient();
-
-    public Task InitializeAsync() => Task.CompletedTask;
-
-    public Task DisposeAsync() => Task.CompletedTask;
+    private HttpResponseMessage Response => _fixture.Response;
+    private string ActivityReference => _fixture.ActivityReference;
     
-    [Fact]
-    public async Task Then_Returns_200_OK_And_Activity_Is_Deleted()
+        [Fact]
+    public void Then_Returns_200_OK()
     {
-        await using var initContext = new JobbyDbContext(new DbContextOptionsBuilder<JobbyDbContext>()
-            .UseSqlServer(_factory.DbConnectionString).Options);
-        
-        var preLoadedBoard = await SeedDataHelper<Board>.AddAsync(Board.Create(Guid.NewGuid(), DateTime.UtcNow, "TestUserId", "TestBoard"), initContext);
-        
-        var activityToDelete = Activity.Create(
-            id: Guid.NewGuid(),
- 
-            createdDate: DateTime.UtcNow,
-            ownerId: "TestUserId",
-            title: "Test Activity",
-            activityType: 1,
-            startDate: DateTime.UtcNow,
-            endDate: DateTime.UtcNow,
-            note: "Test Note",
-            completed: false,
-            board: preLoadedBoard
-        );
-        
-        var preLoadedActivity = await SeedDataHelper<Activity>.AddAsync(activityToDelete, initContext);
-        
-        var response = await HttpClient.DeleteAsync($"/activity/{preLoadedActivity.Reference}");
+        Response.StatusCode.Should().Be(HttpStatusCode.OK);
+    }
 
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        
+    [Fact]
+    public async Task Then_Removes_Activity_In_Database()
+    {
         await using var updatedContext = new JobbyDbContext(new DbContextOptionsBuilder<JobbyDbContext>()
             .UseSqlServer(_factory.DbConnectionString).Options);
-        
-        var activity = await updatedContext.Activities.FirstOrDefaultAsync(x => x.Id == preLoadedActivity.Id);
-        
-        Assert.Null(activity);
+
+        var deletedActivity = await updatedContext.Activities.FirstOrDefaultAsync(act => act.Reference == ActivityReference);
+
+        deletedActivity.Should().BeNull();
     }
 }

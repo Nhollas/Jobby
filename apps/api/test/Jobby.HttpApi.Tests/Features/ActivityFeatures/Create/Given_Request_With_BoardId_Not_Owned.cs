@@ -7,12 +7,11 @@ using Jobby.HttpApi.Tests.Factories;
 using Jobby.HttpApi.Tests.Helpers;
 using Jobby.Persistence.Data;
 using Microsoft.EntityFrameworkCore;
-using Xunit;
 
 namespace Jobby.HttpApi.Tests.Features.ActivityFeatures.Create;
 
 [Collection("SqlCollection")]
-public class Given_Request_With_BoardId_Not_Owned : IAsyncLifetime
+public class Given_Request_With_BoardId_Not_Owned
 {
     private readonly JobbyHttpApiFactory _factory;
 
@@ -22,11 +21,6 @@ public class Given_Request_With_BoardId_Not_Owned : IAsyncLifetime
     }
 
     private HttpClient HttpClient => _factory.SetupClient();
-    
-
-    public Task InitializeAsync() => Task.CompletedTask;
-
-    public Task DisposeAsync() => Task.CompletedTask;
     
     [Fact]
     public async Task Then_Returns_401_Unauthorized()
@@ -48,7 +42,9 @@ public class Given_Request_With_BoardId_Not_Owned : IAsyncLifetime
         };
 
         var response = await HttpClient.PostAsJsonAsync("/activity", body);
+        var responseContent = await response.Content.ReadAsStringAsync();
 
-        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        responseContent.Should().Be("You are not authorised to access this resource.");
     }
 }

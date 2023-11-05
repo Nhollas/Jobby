@@ -4,26 +4,20 @@ using Jobby.HttpApi.Tests.Factories;
 using Jobby.HttpApi.Tests.Helpers;
 using Jobby.Persistence.Data;
 using Microsoft.EntityFrameworkCore;
-using Xunit;
 
 namespace Jobby.HttpApi.Tests.Features.ActivityFeatures.Delete;
 
 [Collection("SqlCollection")]
-public class Given_Request_With_ActivityId_Not_Owned : IAsyncLifetime
+public class Given_Request_With_ActivityRef_Not_Owned
 {
     private readonly JobbyHttpApiFactory _factory;
 
-    public Given_Request_With_ActivityId_Not_Owned(JobbyHttpApiFactory factory)
+    public Given_Request_With_ActivityRef_Not_Owned(JobbyHttpApiFactory factory)
     {
         _factory = factory;
     }
 
     private HttpClient HttpClient => _factory.SetupClient();
-    
-
-    public Task InitializeAsync() => Task.CompletedTask;
-
-    public Task DisposeAsync() => Task.CompletedTask;
     
     [Fact]
     public async Task Then_Returns_404_Unauthorized()
@@ -49,7 +43,9 @@ public class Given_Request_With_ActivityId_Not_Owned : IAsyncLifetime
         var preLoadedActivity = await SeedDataHelper<Activity>.AddAsync(activityToDelete, context);
         
         var response = await HttpClient.DeleteAsync($"/activity/{preLoadedActivity.Reference}");
+        var responseContent = await response.Content.ReadAsStringAsync();
 
-        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        responseContent.Should().Be("You are not authorised to access this resource.");
     }
 }

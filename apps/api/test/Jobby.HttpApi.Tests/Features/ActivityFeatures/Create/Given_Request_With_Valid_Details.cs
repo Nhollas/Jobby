@@ -1,5 +1,4 @@
 using System.Net;
-using FluentAssertions;
 using Jobby.Application.Dtos;
 using Jobby.Application.Features.ActivityFeatures.Commands.Create;
 using Jobby.Domain.Static;
@@ -7,7 +6,6 @@ using Jobby.HttpApi.Tests.Factories;
 using Jobby.HttpApi.Tests.Features.ActivityFeatures.Create.Fixtures;
 using Jobby.Persistence.Data;
 using Microsoft.EntityFrameworkCore;
-using Xunit;
 
 namespace Jobby.HttpApi.Tests.Features.ActivityFeatures.Create;
 

@@ -1,6 +1,5 @@
 using System.Net;
 using System.Net.Http.Json;
-using FluentAssertions;
 using Jobby.Application.Dtos;
 using Jobby.Application.Features.ActivityFeatures.Commands.Update;
 using Jobby.Domain.Entities;
@@ -8,7 +7,6 @@ using Jobby.HttpApi.Tests.Factories;
 using Jobby.HttpApi.Tests.Features.ActivityFeatures.Update.Fixtures;
 using Jobby.Persistence.Data;
 using Microsoft.EntityFrameworkCore;
-using Xunit;
 
 namespace Jobby.HttpApi.Tests.Features.ActivityFeatures.Update;
 
