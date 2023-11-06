@@ -1,7 +1,7 @@
 "use client";
 
-import { Boards } from "@/features/board";
+import { BoardsWrapper } from "@/features/board";
 
 export default function Page() {
-  return <Boards />;
+  return <BoardsWrapper />;
 }

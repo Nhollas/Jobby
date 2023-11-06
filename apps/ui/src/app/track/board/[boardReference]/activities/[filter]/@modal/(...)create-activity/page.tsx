@@ -5,11 +5,21 @@ import { ActivityFilter, CreateActivityModal } from "@/features/activity";
 export default function Page({
   searchParams,
 }: {
-  searchParams: { boardRef: string; filter: ActivityFilter; jobRef?: string };
+  searchParams: {
+    boardReference: string;
+    filter: ActivityFilter;
+    jobRef?: string;
+  };
 }) {
-  const { filter, jobRef, boardRef } = searchParams;
+  const { filter, jobRef, boardReference } = searchParams;
+
+  console.log("searchParams", searchParams);
 
   return (
-    <CreateActivityModal boardRef={boardRef} filter={filter} jobRef={jobRef} />
+    <CreateActivityModal
+      boardRef={boardReference}
+      filter={filter}
+      jobRef={jobRef}
+    />
   );
 }

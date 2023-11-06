@@ -1,9 +1,13 @@
 import { serverClient } from "@/lib/client";
 
-export async function GET(req: Request) {
-  const url = new URL(req.url || "").pathname.replace("/api", "");
+function formatUrl(url: string) {
+  const formattedUrl = new URL(url || "").pathname.replace("/api", "");
 
-  const response = await serverClient.get(url, {
+  return formattedUrl;
+}
+
+export async function GET(req: Request) {
+  const response = await serverClient.get(formatUrl(req.url), {
     validateStatus: () => true,
   });
 
@@ -13,15 +17,11 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
-  const url = new URL(req.url || "").pathname.replace("/api", "");
-
   const request = await req.json();
 
-  const response = await serverClient.post(url, request, {
+  const response = await serverClient.post(formatUrl(req.url), request, {
     validateStatus: () => true,
   });
-
-  console.log("response", response);
 
   return new Response(JSON.stringify(response.data), {
     status: response.status,
@@ -29,9 +29,7 @@ export async function POST(req: Request) {
 }
 
 export async function PUT(req: Request) {
-  const url = new URL(req.url || "").pathname.replace("/api", "");
-
-  const response = await serverClient.put(url, req.body, {
+  const response = await serverClient.put(formatUrl(req.url), req.body, {
     validateStatus: () => true,
   });
 
@@ -41,13 +39,9 @@ export async function PUT(req: Request) {
 }
 
 export async function DELETE(req: Request) {
-  const url = new URL(req.url || "").pathname.replace("/api", "");
-
-  const response = await serverClient.delete(url, {
+  const response = await serverClient.delete(formatUrl(req.url), {
     validateStatus: () => true,
   });
-
-  console.log("RESPONSE", response);
 
   return new Response(JSON.stringify(response.data), {
     status: response.status,

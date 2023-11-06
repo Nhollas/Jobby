@@ -20,13 +20,13 @@ import {
 import { Briefcase } from "lucide-react";
 import { AnimatePresence, motion, Variants } from "framer-motion";
 import { useEffect, useState } from "react";
-import { useBoardActivitiesQuery } from "@/features/board";
 import { UpdateActivityDTO, UpdateActivitySchema } from "../api";
 
 type Props = {
   boardRef: string;
   jobRef?: string;
   filter: string;
+  activities: Activity[];
 };
 
 const createUrl = (filter: string, boardRef: string, jobRef?: string) => {
@@ -39,9 +39,7 @@ const createUrl = (filter: string, boardRef: string, jobRef?: string) => {
   return `/track/create-activity${params ? `?${params}` : ""}`;
 };
 
-export const Activities = ({ boardRef, jobRef, filter }: Props) => {
-  const { data: activities } = useBoardActivitiesQuery(boardRef);
-
+export const Activities = ({ boardRef, jobRef, filter, activities }: Props) => {
   const filterActivities = (filter: string) => {
     switch (filter) {
       case "all":

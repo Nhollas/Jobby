@@ -6,7 +6,7 @@ import {
 } from "@/components/ui/card";
 import { APIError } from "@/types";
 
-export default function ApiErrorMessage({ error }: { error: APIError }) {
+export function ApiErrorMessage({ error }: { error: APIError }) {
   return (
     <Card className="w-full max-w-xl bg-red-300">
       <CardHeader>

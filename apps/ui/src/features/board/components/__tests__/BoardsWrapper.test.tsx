@@ -1,14 +1,14 @@
 import { render, screen } from "@testing-library/react";
-import { Boards, useBoardsQuery } from "@/features/board";
+import { BoardsWrapper, useBoardsQuery } from "@/features/board";
 import "@testing-library/jest-dom";
 
 jest.mock("@/features/board/api");
 
-describe("Boards states", () => {
+describe("BoardsWrapper fetch states", () => {
   it("displays loading state", () => {
     (useBoardsQuery as jest.Mock).mockReturnValue({ isLoading: true });
 
-    render(<Boards />);
+    render(<BoardsWrapper />);
 
     expect(screen.getByText("Loading...")).toBeInTheDocument();
   });
@@ -16,9 +16,9 @@ describe("Boards states", () => {
   it("displays error state", () => {
     (useBoardsQuery as jest.Mock).mockReturnValue({ isError: true });
 
-    render(<Boards />);
+    render(<BoardsWrapper />);
 
-    expect(screen.getByText("Error")).toBeInTheDocument();
+    expect(screen.getByText("Error...")).toBeInTheDocument();
   });
 
   it("displays board on success", () => {
@@ -26,7 +26,7 @@ describe("Boards states", () => {
       isSuccess: true,
     });
 
-    render(<Boards />);
+    render(<BoardsWrapper />);
 
     expect(screen.getByText("View and manage boards")).toBeInTheDocument();
   });

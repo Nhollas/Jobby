@@ -3,7 +3,7 @@
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui";
 
 interface MenuItemProps {
   selected: boolean;
@@ -13,7 +13,7 @@ interface MenuItemProps {
   layoutId: string;
 }
 
-export const MenuItem = ({
+export const NavigationItem = ({
   selected,
   icon,
   name,

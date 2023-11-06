@@ -1,4 +1,4 @@
-import { BoardNavigation } from "@/features/board";
+import { BoardTopNavigation } from "@/features/board";
 
 export default async function BoardLayout({
   children,
@@ -13,7 +13,7 @@ export default async function BoardLayout({
       className="relative h-screen w-screen md:w-[calc(100vw-250px)]"
     >
       {modal}
-      <BoardNavigation />
+      <BoardTopNavigation />
       {children}
     </section>
   );

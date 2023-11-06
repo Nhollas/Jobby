@@ -4,7 +4,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Book, FileText, Info, List, Users } from "lucide-react";
 import { ScrollArea, ScrollBar } from "@/components/ui";
-import { MenuItem } from "@/components";
+import { NavigationItem } from "@/components";
 
 type NavItem = {
   leaf: string;
@@ -61,7 +61,7 @@ export const JobNavigation = ({
       <ScrollArea className="w-screen rounded-md sm:w-max">
         <div className="flex items-center justify-center gap-x-2">
           {navItems.map(({ icon, leaf, name }) => (
-            <MenuItem
+            <NavigationItem
               selected={selected === leaf}
               icon={icon}
               name={name}

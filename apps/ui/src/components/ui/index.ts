@@ -25,3 +25,4 @@ export * from "./toaster";
 export * from "./tooltip";
 export * from "./use-toast";
 export * from "./sign-out";
+export * from "./modal";

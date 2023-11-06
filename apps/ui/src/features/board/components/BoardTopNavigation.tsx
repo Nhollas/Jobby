@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { MenuItem } from "@/components/MenuItem";
+import { NavigationItem } from "@/components";
 import { Layout, List, PanelLeft, Users } from "lucide-react";
 import { SheetTrigger, Sheet, Button } from "@/components/ui";
 import { MobileBoardNavigation } from "./MobileBoardNavigation";
@@ -31,7 +31,7 @@ const navItems: NavItem[] = [
   },
 ];
 
-export function BoardNavigation() {
+export function BoardTopNavigation() {
   const pathname = usePathname() || "/";
   const pathnameSections = pathname.split("/");
   const [open, setOpen] = useState(false);
@@ -63,7 +63,7 @@ export function BoardNavigation() {
         <MobileBoardNavigation />
       </Sheet>
       {navItems.map(({ icon, leaf, name }) => (
-        <MenuItem
+        <NavigationItem
           selected={selected === leaf}
           icon={icon}
           name={name}

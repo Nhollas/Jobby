@@ -1,9 +1,15 @@
-import { Activities } from "@/features/activity";
+import { ActivitiesWrapper } from "@/features/activity";
 
 export default async function Page({
-  params: { jobRef, boardRef, filter },
+  params: { jobRef, boardReference, filter },
 }: {
-  params: { jobRef: string; boardRef: string; filter: string };
+  params: { jobRef: string; boardReference: string; filter: string };
 }) {
-  return <Activities boardRef={boardRef} jobRef={jobRef} filter={filter} />;
+  return (
+    <ActivitiesWrapper
+      boardRef={boardReference}
+      jobRef={jobRef}
+      filter={filter}
+    />
+  );
 }

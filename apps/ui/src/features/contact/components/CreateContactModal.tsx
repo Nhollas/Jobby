@@ -48,6 +48,7 @@ import {
   CardHeader,
   CardTitle,
   Input,
+  Modal,
 } from "@/components/ui";
 import { client } from "@/lib/client";
 import {
@@ -55,7 +56,6 @@ import {
   CreateContactSchema,
   useCreateContact,
 } from "@/features/contact";
-import { Modal } from "@/components/Modal";
 
 function handleBoardDisplayName(currentBoardRef: string, boards?: Board[]) {
   if (!boards) {

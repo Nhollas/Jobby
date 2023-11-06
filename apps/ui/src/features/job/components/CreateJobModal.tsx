@@ -2,7 +2,6 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
-import { Modal } from "@/components/Modal";
 import {
   Card,
   CardContent,
@@ -22,6 +21,7 @@ import {
   FormLabel,
   FormControl,
   FormMessage,
+  Modal,
 } from "@/components/ui";
 import { useForm } from "react-hook-form";
 import { Layout, List } from "lucide-react";

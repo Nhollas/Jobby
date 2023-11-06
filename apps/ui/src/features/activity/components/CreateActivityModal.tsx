@@ -2,7 +2,6 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { Modal } from "@/components/Modal";
 import {
   Card,
   CardContent,
@@ -35,6 +34,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  Modal,
 } from "@/components/ui";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";

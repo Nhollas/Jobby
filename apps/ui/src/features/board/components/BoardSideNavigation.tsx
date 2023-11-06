@@ -5,7 +5,7 @@ import { Users } from "lucide-react";
 import { SignOut, Separator, Button } from "@/components/ui";
 import { BoardsBar } from "@/features/board";
 
-export function MainNavigation() {
+export function BoardSideNavigation() {
   return (
     <div className="relative z-[999] hidden md:block">
       <div className="fixed top-0 left-0 h-screen w-[250px] border-r border-gray-200 py-6">

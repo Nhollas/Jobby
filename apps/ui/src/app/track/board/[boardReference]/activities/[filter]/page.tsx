@@ -1,9 +1,9 @@
-import { Activities } from "@/features/activity";
+import { ActivitiesWrapper } from "@/features/activity";
 
 export default async function Page({
-  params: { boardRef, filter },
+  params: { boardReference, filter },
 }: {
-  params: { boardRef: string; filter: string };
+  params: { boardReference: string; filter: string };
 }) {
-  return <Activities filter={filter} boardRef={boardRef} />;
+  return <ActivitiesWrapper filter={filter} boardRef={boardReference} />;
 }

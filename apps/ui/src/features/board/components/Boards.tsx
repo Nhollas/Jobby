@@ -10,19 +10,9 @@ import {
   CardTitle,
   Button,
 } from "@/components/ui";
-import { useBoardsQuery } from "@/features/board";
+import { Board } from "@/types";
 
-export const Boards = () => {
-  const query = useBoardsQuery();
-
-  if (query.isLoading) {
-    return <div>Loading...</div>;
-  }
-
-  if (query.isError) {
-    return <div>Error</div>;
-  }
-
+export const Boards = ({ boards }: { boards: Board[] }) => {
   return (
     <div className="flex flex-col gap-y-6 p-6">
       <div className="flex flex-col gap-y-2">
@@ -35,7 +25,7 @@ export const Boards = () => {
         </Link>
       </Button>
       <div className="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-8">
-        {query.data?.map((board) => (
+        {boards.map((board) => (
           <Card
             key={board.reference}
             className="card"
