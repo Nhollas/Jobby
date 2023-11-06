@@ -43,7 +43,7 @@ export function MobileBoardNavigation() {
   );
 }
 
-export function MobileNavigationContent() {
+function MobileNavigationContent() {
   return (
     <SheetContent side="left" className="p-0 py-6">
       <div className="flex w-full flex-col gap-y-4">

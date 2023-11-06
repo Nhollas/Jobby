@@ -6,13 +6,18 @@ import Link from "next/link";
 import { useBoardsQuery } from "@/features/board";
 
 export function BoardsBar() {
-  const { data: boards } = useBoardsQuery();
+  const query = useBoardsQuery();
+
+  if (query.isLoading) return <p>Loading...</p>;
+
+  if (query.isError) return <p>Error</p>;
+
   return (
     <div
       dir="ltr"
       className="relative h-[300px] overflow-y-scroll overscroll-contain px-4"
     >
-      {boards?.map((board) => (
+      {query.data?.map((board) => (
         <Button
           asChild
           variant="ghost"

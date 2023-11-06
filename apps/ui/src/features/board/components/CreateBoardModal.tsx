@@ -75,14 +75,14 @@ export function CreateBoardModal() {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => router.push("/track/boards")}
+                  onClick={() => {
+                    setOpen(false);
+                    router.push("/track/boards");
+                  }}
                 >
                   Cancel
                 </Button>
-                <Button
-                  type="submit"
-                  disabled={!isDirty || !isValid || isSubmitted}
-                >
+                <Button type="submit" disabled={!isDirty || isSubmitted}>
                   Submit
                 </Button>
               </div>

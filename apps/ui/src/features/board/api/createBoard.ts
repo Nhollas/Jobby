@@ -6,7 +6,10 @@ import { AxiosResponse } from "axios";
 import { z } from "zod";
 
 export const CreateBoardSchema = z.object({
-  name: z.string(),
+  name: z
+    .string()
+    .min(5, "Board name must be at least 5 characters long")
+    .max(50, "Board name must be at most 50 characters long"),
 });
 
 export type CreateBoardDTO = z.infer<typeof CreateBoardSchema>;

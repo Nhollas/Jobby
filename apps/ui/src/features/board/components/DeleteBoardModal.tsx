@@ -49,10 +49,17 @@ export const DeleteBoardModal = ({ boardRef }: Props) => {
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel onClick={() => router.push("/track/boards")}>
+          <AlertDialogCancel
+            onClick={() => {
+              setOpen(false);
+              router.push("/track/boards");
+            }}
+          >
             Cancel
           </AlertDialogCancel>
-          <AlertDialogAction onClick={handleSubmit}>Delete</AlertDialogAction>
+          <AlertDialogAction onClick={(e) => handleSubmit(e)}>
+            Confirm
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
