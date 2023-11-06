@@ -1,9 +1,10 @@
 import { Board, JobList } from "@/types";
 import { faker } from "@faker-js/faker";
 
+// This will generate something like "bo_fake_1a2b3c4"
 function referenceGenerator(typeName: string): string {
-  const prefix = typeName.slice(0, 2).toLowerCase(); // Get the first two characters of the type name
-  const randomString = faker.string.alphanumeric(7); // Adjust the length as needed
+  const prefix = typeName.slice(0, 2).toLowerCase();
+  const randomString = faker.string.alphanumeric(7);
   const reference = `${prefix}_fake_${randomString}`;
   return reference;
 }

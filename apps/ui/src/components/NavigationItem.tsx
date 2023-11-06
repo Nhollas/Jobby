@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { Button } from "@/components/ui";
 
-interface MenuItemProps {
+interface NavigationItemProps {
   selected: boolean;
   icon: React.ReactNode;
   name: string;
@@ -19,7 +19,7 @@ export const NavigationItem = ({
   name,
   href,
   layoutId,
-}: MenuItemProps) => (
+}: NavigationItemProps) => (
   <motion.div className="relative p-1">
     <Button
       asChild

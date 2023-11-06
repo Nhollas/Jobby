@@ -1,6 +1,6 @@
 import { client } from "@/lib/client";
 import { queryClient } from "@/lib/react-query";
-import { Activity, Contact } from "@/types";
+import { Contact } from "@/types";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosResponse } from "axios";
 import { z } from "zod";
