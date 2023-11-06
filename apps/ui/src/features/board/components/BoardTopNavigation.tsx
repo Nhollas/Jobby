@@ -48,6 +48,8 @@ export function BoardTopNavigation() {
     setSelected(leaf);
   }, [leaf]);
 
+  console.log("pathname", pathname);
+
   return (
     <div className="z-10 flex h-16 w-full flex-row items-center gap-4 overflow-x-auto border-b border-gray-200 px-4">
       <Sheet open={open} onOpenChange={setOpen}>

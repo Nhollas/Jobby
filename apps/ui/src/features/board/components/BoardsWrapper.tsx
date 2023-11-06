@@ -13,6 +13,7 @@ export function BoardsWrapper() {
         }}
       />
     );
+
   if (query.isLoading) return <h1>Loading...</h1>;
 
   const boards = query.data || [];

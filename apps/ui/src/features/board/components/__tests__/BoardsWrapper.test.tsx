@@ -4,9 +4,11 @@ import "@testing-library/jest-dom";
 
 jest.mock("@/features/board/api");
 
+const useBoardsQueryMock = useBoardsQuery as jest.Mock;
+
 describe("BoardsWrapper fetch states", () => {
   it("displays loading state", () => {
-    (useBoardsQuery as jest.Mock).mockReturnValue({ isLoading: true });
+    useBoardsQueryMock.mockReturnValue({ isLoading: true });
 
     render(<BoardsWrapper />);
 
@@ -14,7 +16,7 @@ describe("BoardsWrapper fetch states", () => {
   });
 
   it("displays error state", () => {
-    (useBoardsQuery as jest.Mock).mockReturnValue({ isError: true });
+    useBoardsQueryMock.mockReturnValue({ isError: true });
 
     render(<BoardsWrapper />);
 
@@ -22,7 +24,7 @@ describe("BoardsWrapper fetch states", () => {
   });
 
   it("displays board on success", () => {
-    (useBoardsQuery as jest.Mock).mockReturnValue({
+    useBoardsQueryMock.mockReturnValue({
       isSuccess: true,
     });
 
