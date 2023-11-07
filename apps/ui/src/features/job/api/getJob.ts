@@ -1,4 +1,4 @@
-import { client } from "@/lib/client";
+import { client } from "@/lib/clients";
 import { Job } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 

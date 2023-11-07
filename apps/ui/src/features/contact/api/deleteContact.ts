@@ -1,4 +1,4 @@
-import { client } from "@/lib/client";
+import { client } from "@/lib/clients";
 import { queryClient } from "@/lib/react-query";
 import { Contact } from "@/types";
 import { useMutation } from "@tanstack/react-query";

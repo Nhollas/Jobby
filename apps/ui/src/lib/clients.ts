@@ -9,7 +9,7 @@ export const client = axios.create({
   },
 });
 
-async function interceptor(config: InternalAxiosRequestConfig) {
+async function authInterceptor(config: InternalAxiosRequestConfig) {
   const token = await auth().getToken();
 
   if (token) {
@@ -29,4 +29,4 @@ export const serverClient = axios.create({
   }),
 });
 
-serverClient.interceptors.request.use(interceptor);
+serverClient.interceptors.request.use(authInterceptor);

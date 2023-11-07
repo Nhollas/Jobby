@@ -1,4 +1,4 @@
-import { serverClient } from "@/lib/client";
+import { serverClient } from "@/lib/clients";
 
 function formatUrl(url: string) {
   const formattedUrl = new URL(url || "").pathname.replace("/api", "");

@@ -1,6 +1,6 @@
 import { getBoardContacts } from "@/features/board";
 import { getJobContacts } from "@/features/job";
-import { client } from "@/lib/client";
+import { client } from "@/lib/clients";
 import { Contact } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 

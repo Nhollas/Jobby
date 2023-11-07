@@ -50,7 +50,7 @@ import {
   Input,
   Modal,
 } from "@/components/ui";
-import { client } from "@/lib/client";
+import { client } from "@/lib/clients";
 import {
   CreateContactDTO,
   CreateContactSchema,
