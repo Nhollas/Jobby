@@ -1,7 +1,7 @@
 import { CreateBoardSchema } from "@/features/board";
-import { ValidateSchemaScenario, validateSchema } from "@/test/test-utils";
+import { SchemaScenario, validateSchemaScenario } from "@/test/test-utils";
 
-const validationScenarios: ValidateSchemaScenario[] = [
+const schemaScenarios: SchemaScenario[] = [
   {
     name: "should reject board name with less than 5 characters",
     data: { name: "bob" },
@@ -23,5 +23,5 @@ const validationScenarios: ValidateSchemaScenario[] = [
 ];
 
 describe("CreateBoardSchema validation cases:", () => {
-  validationScenarios.forEach(validateSchema);
+  schemaScenarios.forEach(validateSchemaScenario);
 });

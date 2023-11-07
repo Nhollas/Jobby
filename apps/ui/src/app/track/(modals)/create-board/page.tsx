@@ -1,5 +1,5 @@
-import { CreateBoardModal } from "@/features/board/components/CreateBoardModal";
+import { CreateBoardModal } from "@/features/board";
 
-export default function Page() {
+export default function CreateBoardModalPage() {
   return <CreateBoardModal />;
 }

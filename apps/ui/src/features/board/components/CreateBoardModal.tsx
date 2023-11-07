@@ -42,7 +42,7 @@ export function CreateBoardModal() {
     },
   });
 
-  const { isDirty, isValid, isSubmitted } = form.formState;
+  const { isDirty, isSubmitted } = form.formState;
 
   async function onSubmit(values: CreateBoardDTO) {
     await mutateAsync(values);
@@ -52,7 +52,7 @@ export function CreateBoardModal() {
   }
 
   return (
-    <Dialog open={open} onOpenChange={router.back}>
+    <Dialog open={open}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Create Board</DialogTitle>
