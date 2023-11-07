@@ -19,29 +19,8 @@ jest.mock("next/navigation", () => ({
 const mockedUseCreateBoard = useCreateBoard as jest.Mock;
 const mockedUseRouter = useRouter as jest.Mock;
 
-const inputValidationScenarios: InputValidationScenario[] = [
-  {
-    name: "should reject board name with less than 5 characters",
-    input: "bob",
-    fieldLabel: "Name",
-    expectedMessage: "Board name must be at least 5 characters long",
-  },
-  {
-    name: "should reject board name with more than 50 characters",
-    input: "b".repeat(50),
-    fieldLabel: "Name",
-    expectedMessage: "Board name must be at most 50 characters long",
-  },
-  {
-    name: "should reject empty board name",
-    input: "",
-    fieldLabel: "Name",
-    expectedMessage: "Board name must not be empty",
-  },
-];
-
 describe("Create Board Modal Page Validation", () => {
-  inputValidationScenarios.forEach((scenario) => {
+  inputValidationScenarios().forEach((scenario) => {
     it(scenario.name, async () => {
       mockedUseCreateBoard.mockReturnValue({
         mutateAsync: jest.fn(),
@@ -57,3 +36,26 @@ describe("Create Board Modal Page Validation", () => {
     });
   });
 });
+
+function inputValidationScenarios(): InputValidationScenario[] {
+  return [
+    {
+      name: "should reject board name with less than 5 characters",
+      input: "bob",
+      fieldLabel: "Name",
+      expectedMessage: "Board name must be at least 5 characters long",
+    },
+    {
+      name: "should reject board name with more than 50 characters",
+      input: "b".repeat(50),
+      fieldLabel: "Name",
+      expectedMessage: "Board name must be at most 50 characters long",
+    },
+    {
+      name: "should reject empty board name",
+      input: "",
+      fieldLabel: "Name",
+      expectedMessage: "Board name must not be empty",
+    },
+  ];
+}

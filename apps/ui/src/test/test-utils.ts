@@ -1,5 +1,6 @@
 import { act, fireEvent, screen, waitFor } from "@testing-library/react";
 import { z } from "zod";
+import "@testing-library/jest-dom";
 
 export * from "@testing-library/react";
 
