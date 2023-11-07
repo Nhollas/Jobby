@@ -8,6 +8,7 @@ import { z } from "zod";
 export const CreateBoardSchema = z.object({
   name: z
     .string()
+    .nonempty("Board name must not be empty")
     .min(5, "Board name must be at least 5 characters long")
     .max(50, "Board name must be at most 50 characters long"),
 });

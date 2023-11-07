@@ -1,6 +1,5 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen } from "@/test/test-utils";
 import { KanbanWrapper, useBoardQuery } from "@/features/board";
-import "@testing-library/jest-dom";
 import { boardGenerator } from "@/test/data-generators";
 
 jest.mock("@/features/board/api");

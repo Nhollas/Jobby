@@ -1,15 +1,8 @@
-import {
-  render,
-  screen,
-  fireEvent,
-  waitFor,
-  act,
-} from "@testing-library/react";
+import { render, screen, fireEvent, waitFor, act } from "@/test/test-utils";
 import { useDeleteBoard, DeleteBoardModal } from "@/features/board";
 import { useRouter } from "next/navigation";
 
 jest.mock("@/features/board/api/deleteBoard", () => ({
-  ...jest.requireActual("@/features/board/api/deleteBoard"),
   useDeleteBoard: jest.fn(),
 }));
 

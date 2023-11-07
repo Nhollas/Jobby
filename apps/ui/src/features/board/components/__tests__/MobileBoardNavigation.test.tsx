@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@/test/test-utils";
 import { usePathname } from "next/navigation";
 import { MobileBoardNavigation, useBoardsQuery } from "@/features/board";
 import "@testing-library/jest-dom";

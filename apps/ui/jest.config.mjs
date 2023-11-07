@@ -17,7 +17,7 @@ const config = {
     "^@/(.*)$": "<rootDir>/src/$1",
   },
   // My tests will be in
-  testMatch: ["<rootDir>/src/features/*/components/__tests__/*.test.tsx"],
+  testMatch: ["**/*.test.ts", "**/*.test.tsx"],
 };
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async

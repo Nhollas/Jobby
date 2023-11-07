@@ -1,7 +1,6 @@
-import { render, screen } from "@testing-library/react";
 import { BoardsBar, useBoardsQuery } from "@/features/board";
-import "@testing-library/jest-dom";
 import { boardGenerator } from "@/test/data-generators";
+import { render, screen } from "@/test/test-utils";
 
 jest.mock("@/features/board/api");
 

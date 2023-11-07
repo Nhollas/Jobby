@@ -1,10 +1,4 @@
-import {
-  render,
-  screen,
-  fireEvent,
-  waitFor,
-  act,
-} from "@testing-library/react";
+import { render, screen, fireEvent, waitFor, act } from "@/test/test-utils";
 import { useCreateBoard, CreateBoardModal } from "@/features/board";
 import { useRouter } from "next/navigation";
 
@@ -72,34 +66,6 @@ describe("CreateBoardModal", () => {
       await waitFor(() => {
         expect(mutateAsyncMock).toHaveBeenCalled();
         expect(pushMock).toHaveBeenCalledWith("/track/boards");
-      });
-    });
-
-    test("should show an error when input is less than 5 characters", async () => {
-      fireEvent.input(screen.getByPlaceholderText("Name"), {
-        target: { value: "Test" },
-      });
-
-      fireEvent.submit(screen.getByText("Submit"));
-
-      await waitFor(() => {
-        expect(
-          screen.getByText("Board name must be at least 5 characters long")
-        ).toBeInTheDocument();
-      });
-    });
-
-    test("should show an error when input is more than 50 characters", async () => {
-      fireEvent.input(screen.getByPlaceholderText("Name"), {
-        target: { value: "T".repeat(51) },
-      });
-
-      fireEvent.submit(screen.getByText("Submit"));
-
-      await waitFor(() => {
-        expect(
-          screen.getByText("Board name must be at most 50 characters long")
-        ).toBeInTheDocument();
       });
     });
   });
