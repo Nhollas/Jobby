@@ -6,8 +6,7 @@ import util from "util";
 function referenceGenerator(typeName: string): string {
   const prefix = typeName.slice(0, 2).toLowerCase();
   const randomString = faker.string.alphanumeric(7);
-  const reference = `${prefix}_fake_${randomString}`;
-  return reference;
+  return `${prefix}_fake_${randomString}`;
 }
 
 function colourGenerator(): string {
@@ -23,11 +22,11 @@ function colourGenerator(): string {
 }
 
 type BoardOverrides = {
-  lists?: JobListOverrides;
+  lists?: JobListOverrides[];
 } & Partial<Omit<Board, "lists">>;
 
 type JobListOverrides = {
-  jobs?: JobOverrides;
+  jobs?: JobOverrides[];
 } & Partial<Omit<JobList, "jobs">>;
 
 type JobOverrides = {} & Partial<Job>;
@@ -71,9 +70,12 @@ export const boardGenerator = (overrides?: BoardOverrides): Board => {
       index: faker.number.int(100),
       name: faker.lorem.words(2),
       ...jobListOverrides,
-      jobs: Array.from({ length: faker.number.int({ min: 2, max: 5 }) }, () =>
-        jobGenerator({ ...jobListOverrides?.jobs })
-      ),
+      jobs: (
+        jobListOverrides?.jobs ||
+        Array.from({ length: faker.number.int({ min: 2, max: 5 }) })
+      ).map((jobOverrides) => {
+        return jobGenerator(jobOverrides);
+      }),
     };
   };
 
@@ -83,21 +85,41 @@ export const boardGenerator = (overrides?: BoardOverrides): Board => {
     createdDate: faker.date.recent(),
     lastUpdated: faker.date.recent(),
     ...overrides,
-    lists: Array.from({ length: faker.number.int({ min: 2, max: 5 }) }, () =>
-      jobListGenerator({ ...overrides?.lists })
-    ),
+    lists: (
+      overrides?.lists ||
+      Array.from({ length: faker.number.int({ min: 1, max: 5 }) })
+    ).map((jobListOverrides) => {
+      return jobListGenerator(jobListOverrides);
+    }),
   };
 };
 
-const board = boardGenerator({
-  lists: {
-    name: "Applied",
-    jobs: {
-      company: "Google",
-    },
-  },
-});
+it("generates a board with job lists and jobs", () => {
+  const board = boardGenerator({
+    lists: [
+      {
+        name: "Applied",
+        jobs: [
+          {
+            company: "Google",
+          },
+          // Default overrides for job 2 and job 3
+          {
+            company: "Facebook",
+          },
+          {
+            company: "Amazon",
+          },
+        ],
+      },
+      // Default overrides for jobList 2
+      {},
+      // Default overrides for jobList 3
+      {},
+    ],
+  });
 
-console.log(
-  util.inspect(board, { showHidden: false, depth: null, colors: true })
-);
+  console.log(
+    util.inspect(board, { showHidden: false, depth: null, colors: true })
+  );
+});
