@@ -1,3 +1,4 @@
+import { useToast } from "@/components/ui";
 import { client } from "@/lib/clients";
 import { queryClient } from "@/lib/react-query";
 import { Board } from "@/types";
@@ -22,6 +23,7 @@ export async function createBoard(payload: CreateBoardDTO) {
       AxiosResponse<Board>,
       CreateBoardDTO
     >("/board", payload);
+
     return response.data;
   } catch (error) {
     return Promise.reject(error);
@@ -29,6 +31,8 @@ export async function createBoard(payload: CreateBoardDTO) {
 }
 
 export const useCreateBoard = () => {
+  const { toast } = useToast();
+
   return useMutation({
     onMutate: async () => {
       const previousBoards = queryClient.getQueryData<Board[]>(["boards"]);
@@ -39,6 +43,12 @@ export const useCreateBoard = () => {
       if (context?.previousBoards) {
         queryClient.setQueryData(["boards"], context.previousBoards);
       }
+
+      toast({
+        title: "Error",
+        description: "There was an error creating your board",
+        variant: "destructive",
+      });
     },
     onSuccess: () => queryClient.invalidateQueries(["boards"]),
     mutationFn: createBoard,

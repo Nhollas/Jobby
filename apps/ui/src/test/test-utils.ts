@@ -12,7 +12,7 @@ export type SchemaScenario = {
 };
 
 export function validateSchemaScenario(scenario: SchemaScenario) {
-  it(`validates ${scenario.name}`, () => {
+  it(`${scenario.name}`, () => {
     try {
       scenario.schema.parse(scenario.data);
     } catch (error) {

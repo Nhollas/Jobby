@@ -32,8 +32,6 @@ export const useUpdateBoard = () => {
       return { previousBoards };
     },
     onError: (error, __, context: any) => {
-      console.error(error);
-
       if (context?.previousBoards) {
         queryClient.setQueryData(["boards"], context.previousBoards);
       }

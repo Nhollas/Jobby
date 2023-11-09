@@ -45,7 +45,9 @@ export function CreateBoardModal() {
   const { isDirty, isSubmitted } = form.formState;
 
   async function onSubmit(values: CreateBoardDTO) {
-    await mutateAsync(values);
+    try {
+      await mutateAsync(values);
+    } catch (error) {}
 
     setOpen(false);
     router.push("/track/boards");

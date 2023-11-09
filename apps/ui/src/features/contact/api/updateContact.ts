@@ -66,8 +66,6 @@ export const useUpdateContact = () => {
       return { previousContacts };
     },
     onError: (error, __, context: any) => {
-      console.error(error);
-
       if (context?.previousContacts) {
         queryClient.setQueryData(["contacts"], context.previousContacts);
       }

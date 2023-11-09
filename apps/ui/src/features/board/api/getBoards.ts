@@ -8,7 +8,7 @@ export async function getBoards() {
 
     return response.data;
   } catch (error) {
-    return Promise.reject(error);
+    return [];
   }
 }
 

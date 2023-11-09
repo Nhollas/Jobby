@@ -39,8 +39,6 @@ export const useUpdateJob = () => {
       return { previousJobs };
     },
     onError: (error, __, context: any) => {
-      console.error(error);
-
       if (context?.previousJobs) {
         queryClient.setQueryData(["jobs"], context.previousJobs);
       }

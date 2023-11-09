@@ -8,4 +8,12 @@ const queryConfig: DefaultOptions = {
   },
 };
 
-export const queryClient = new QueryClient({ defaultOptions: queryConfig });
+export const queryClient = new QueryClient({
+  defaultOptions: queryConfig,
+  logger: {
+    log: console.log,
+    warn: console.warn,
+    // ✅ no more errors on the console for tests
+    error: process.env.NODE_ENV === "test" ? () => {} : console.error,
+  },
+});

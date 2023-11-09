@@ -42,8 +42,6 @@ export const useUpdateActivity = () => {
       return { previousActivities };
     },
     onError: (error, __, context: any) => {
-      console.error(error);
-
       if (context?.previousActivities) {
         queryClient.setQueryData(["activities"], context.previousActivities);
       }
