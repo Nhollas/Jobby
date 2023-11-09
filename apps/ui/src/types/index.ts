@@ -15,8 +15,7 @@ export type JobList = {
   name: string;
   boardReference: string;
   jobs: Job[];
-  index?: number;
-  count?: number;
+  index: number;
 } & Entity;
 
 export type Activity = {

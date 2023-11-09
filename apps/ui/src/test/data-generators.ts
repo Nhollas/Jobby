@@ -1,6 +1,5 @@
 import { Board, Job, JobList } from "@/types";
 import { faker } from "@faker-js/faker";
-import util from "util";
 
 // This will generate something like "bo_fake_1a2b3c4"
 function referenceGenerator(typeName: string): string {
@@ -22,24 +21,72 @@ function colourGenerator(): string {
   ]);
 }
 
-type BoardOverrides = {
-  lists?: JobListOverrides;
+type FlatBoardOverrides = {
+  lists?: FlatJobListOverrides;
 } & Partial<Omit<Board, "lists">>;
 
-type JobListOverrides = {
-  jobs?: JobOverrides;
+type FlatJobListOverrides = {
+  jobs?: FlatJobOverrides;
 } & Partial<Omit<JobList, "jobs">>;
 
-type JobOverrides = {} & Partial<Job>;
+type FlatJobOverrides = Partial<Job>;
 
-// Recursively generate a board with job lists and jobs...
-export const boardGenerator = (overrides?: BoardOverrides): Board => {
+type NestedBoardOverrides = {
+  lists?: NestedJobListOverrides[];
+} & Partial<Omit<Board, "lists">>;
+
+type NestedJobListOverrides = {
+  jobs?: NestedJobOverrides[];
+} & Partial<Omit<JobList, "jobs">>;
+
+type NestedJobOverrides = Partial<Job>;
+
+// Implementation
+export function boardGenerator(
+  boardOverrides?: FlatBoardOverrides | NestedBoardOverrides
+): Board {
   const boardRef = referenceGenerator("Board");
 
-  const jobListGenerator = (jobListOverrides?: JobListOverrides): JobList => {
+  const handleFlatOrNestedListOverrides = (
+    jobListOverrides?: FlatJobListOverrides | NestedJobListOverrides[]
+  ): JobList[] => {
+    // Check for old flat syntax and convert to array
+    const jobListOverridesArray = Array.isArray(jobListOverrides)
+      ? jobListOverrides
+      : Array.from(
+          { length: faker.number.int({ min: 8, max: 16 }) },
+          () => jobListOverrides
+        );
+
+    return jobListOverridesArray.map((jobListOverrides) =>
+      jobListGenerator(jobListOverrides)
+    );
+  };
+
+  const jobListGenerator = (
+    jobListOverrides?: FlatJobListOverrides | NestedJobListOverrides
+  ): JobList => {
     const jobListRef = referenceGenerator("JobList");
 
-    const jobGenerator = (jobOverrides?: JobOverrides): Job => {
+    const handleFlatOrNestedJobOverrides = (
+      jobOverrides?: FlatJobOverrides | NestedJobOverrides[]
+    ): Job[] => {
+      // Check for old flat syntax and convert to array
+      const jobOverridesArray = Array.isArray(jobOverrides)
+        ? jobOverrides
+        : Array.from(
+            { length: faker.number.int({ min: 2, max: 5 }) },
+            () => jobOverrides
+          );
+
+      return jobOverridesArray.map((jobOverrides, index) =>
+        jobGenerator({ ...jobOverrides, index })
+      );
+    };
+
+    const jobGenerator = (
+      jobOverrides?: FlatJobOverrides | NestedJobOverrides
+    ): Job => {
       return {
         reference: referenceGenerator("Job"),
         activities: [],
@@ -52,7 +99,7 @@ export const boardGenerator = (overrides?: BoardOverrides): Board => {
         description: faker.lorem.paragraph(),
         salary: faker.number.int({ min: 10000, max: 90000 }),
         postUrl: faker.internet.url(),
-        index: 1,
+        index: 0,
         lastUpdated: faker.date.recent(),
         createdDate: faker.date.recent(),
         deadline: faker.date.future(),
@@ -67,13 +114,10 @@ export const boardGenerator = (overrides?: BoardOverrides): Board => {
       createdDate: faker.date.recent(),
       lastUpdated: faker.date.recent(),
       boardReference: boardRef,
-      count: faker.number.int(100),
       index: faker.number.int(100),
       name: faker.lorem.words(2),
       ...jobListOverrides,
-      jobs: Array.from({ length: faker.number.int({ min: 2, max: 5 }) }, () =>
-        jobGenerator({ ...jobListOverrides?.jobs })
-      ),
+      jobs: handleFlatOrNestedJobOverrides(jobListOverrides?.jobs),
     };
   };
 
@@ -82,22 +126,7 @@ export const boardGenerator = (overrides?: BoardOverrides): Board => {
     name: faker.lorem.words(2),
     createdDate: faker.date.recent(),
     lastUpdated: faker.date.recent(),
-    ...overrides,
-    lists: Array.from({ length: faker.number.int({ min: 2, max: 5 }) }, () =>
-      jobListGenerator({ ...overrides?.lists })
-    ),
+    ...boardOverrides,
+    lists: handleFlatOrNestedListOverrides(boardOverrides?.lists),
   };
-};
-
-const board = boardGenerator({
-  lists: {
-    name: "Applied",
-    jobs: {
-      company: "Google",
-    },
-  },
-});
-
-console.log(
-  util.inspect(board, { showHidden: false, depth: null, colors: true })
-);
+}

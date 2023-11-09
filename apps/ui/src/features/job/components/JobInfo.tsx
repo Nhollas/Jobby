@@ -45,14 +45,10 @@ export function JobInfo({ jobRef }: Props) {
     },
   });
 
-  console.log("default values", form.formState.defaultValues);
-  console.log("formstate", form.watch());
-
   const { formState } = form;
   const { isSubmitting, isDirty } = formState;
 
   async function onSubmit(values: UpdateJobDTO) {
-    console.log(values);
     // delay by 5 secs
     await new Promise((resolve) => setTimeout(resolve, 500));
 

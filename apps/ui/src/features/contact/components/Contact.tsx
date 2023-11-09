@@ -305,7 +305,6 @@ export function Contact({ contact }: Props) {
                                   <CommandInput
                                     placeholder="Search boards..."
                                     onChangeCapture={(event) => {
-                                      console.log("we are here");
                                       const inputValue =
                                         // @ts-ignore
                                         event.target.value.toLowerCase();

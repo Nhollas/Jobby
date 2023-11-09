@@ -152,9 +152,7 @@ function Activity({
   active: boolean;
   setActiveActivity: (activity: Activity) => void;
 }) {
-  async function onSubmit(values: UpdateActivityDTO) {
-    console.log(values);
-  }
+  async function onSubmit(values: UpdateActivityDTO) {}
 
   const form = useForm<UpdateActivityDTO>({
     resolver: zodResolver(UpdateActivitySchema),
@@ -162,8 +160,6 @@ function Activity({
       ...activity,
     },
   });
-
-  console.log(form.formState.errors);
 
   const isFormEdited = form.formState.isDirty;
 

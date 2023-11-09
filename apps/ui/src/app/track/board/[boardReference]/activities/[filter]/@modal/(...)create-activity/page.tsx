@@ -13,8 +13,6 @@ export default function Page({
 }) {
   const { filter, jobRef, boardReference } = searchParams;
 
-  console.log("searchParams", searchParams);
-
   return (
     <CreateActivityModal
       boardRef={boardReference}

@@ -99,8 +99,6 @@ export function CreateActivityModal({ jobRef, boardRef, filter }: Props) {
   const { data: jobs } = useJobsQuery();
   const { data: board } = useBoardQuery(boardRef);
 
-  console.log("form", form.getValues());
-
   async function onSubmit(values: CreateActivityDTO) {
     const createdActivity = await mutateAsync(values);
   }

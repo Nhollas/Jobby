@@ -16,12 +16,8 @@ export const useBoardsQuery = () => {
   return useQuery({
     queryKey: ["boards"],
     queryFn: getBoards,
-    onSuccess(data) {
-      console.log("data", data);
-    },
-    onError(error) {
-      console.log("react query error cb", error);
-    },
+    onSuccess(data) {},
+    onError(error) {},
     useErrorBoundary: true,
   });
 };

@@ -30,7 +30,6 @@ export const useDeleteContact = () => {
       return { previousContacts };
     },
     onSuccess: () => {
-      console.log("Going to invalidate contacts queries");
       queryClient.invalidateQueries(["contacts"]);
     },
     onError: (_, __, context: any) => {

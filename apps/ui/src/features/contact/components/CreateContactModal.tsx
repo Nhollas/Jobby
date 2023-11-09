@@ -62,13 +62,9 @@ function handleBoardDisplayName(currentBoardRef: string, boards?: Board[]) {
     return "Loading...";
   }
 
-  console.log("baords", boards);
-
   const board = boards.find(
     (board) => board.reference.toLowerCase() === currentBoardRef
   );
-
-  console.log("board", board);
 
   return board?.name || "Choose board...";
 }
@@ -440,16 +436,8 @@ export const CreateContactModal = ({
                                             key={board.reference}
                                             value={`${board.name}${board.reference}`}
                                             onSelect={(value) => {
-                                              console.log(value);
-
                                               const boardRef = value.substring(
                                                 value.length - 13
-                                              );
-
-                                              console.log(boardRef);
-                                              console.log(
-                                                "field.value",
-                                                field.value
                                               );
 
                                               if (boardRef === field.value) {
