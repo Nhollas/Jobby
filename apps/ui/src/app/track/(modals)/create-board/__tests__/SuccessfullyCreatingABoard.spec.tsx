@@ -1,5 +1,5 @@
 import { useCreateBoard } from "@/features/board";
-import { act, fireEvent, render, screen, waitFor } from "@/test/test-utils";
+import { fireEvent, render, screen, waitFor } from "@/test/test-utils";
 import { useRouter } from "next/navigation";
 import CreateBoardModalPage from "../page";
 
@@ -29,13 +29,11 @@ describe("Successfully Creating A Board Modal Page", () => {
 
     render(<CreateBoardModalPage />);
 
-    act(() => {
-      fireEvent.input(screen.getByLabelText("Name"), {
-        target: { value: "My Board" },
-      });
-
-      fireEvent.submit(screen.getByText("Submit"));
+    fireEvent.input(screen.getByLabelText("Name"), {
+      target: { value: "My Board" },
     });
+
+    fireEvent.submit(screen.getByText("Submit"));
 
     waitFor(() => {
       expect(mockedMutateAsync).toHaveBeenCalledWith({

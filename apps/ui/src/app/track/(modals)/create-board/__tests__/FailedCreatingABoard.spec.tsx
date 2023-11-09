@@ -1,4 +1,4 @@
-import { act, fireEvent, screen, waitFor } from "@/test/test-utils";
+import { fireEvent, screen, waitFor } from "@/test/test-utils";
 import { useRouter } from "next/navigation";
 import CreateBoardModalPage from "../page";
 import { renderWithProviders } from "@/test/custom-render";
@@ -12,7 +12,7 @@ jest.mock("next/navigation", () => ({
 const mockedUseRouter = useRouter as jest.Mock;
 
 describe("Failed Creating A Board Modal Page", () => {
-  it("should successfully create a board", async () => {
+  it("should display error message", async () => {
     const mockedMutateAsync = jest.fn();
 
     mockedUseRouter.mockReturnValue({
@@ -27,13 +27,11 @@ describe("Failed Creating A Board Modal Page", () => {
 
     renderWithProviders(<CreateBoardModalPage />);
 
-    act(() => {
-      fireEvent.input(screen.getByLabelText("Name"), {
-        target: { value: "My Board" },
-      });
-
-      fireEvent.submit(screen.getByText("Submit"));
+    fireEvent.input(screen.getByLabelText("Name"), {
+      target: { value: "My Board" },
     });
+
+    fireEvent.submit(screen.getByText("Submit"));
 
     waitFor(() => {
       expect(mockedMutateAsync).toHaveBeenCalledWith({
