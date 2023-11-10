@@ -1,6 +1,6 @@
 import { fireEvent, screen, waitFor } from "@/test/test-utils";
 import { useRouter } from "next/navigation";
-import CreateBoardModalPage from "../page";
+import CreateBoardModalPage from "../../../../app/track/(modals)/create-board/page";
 import { renderWithProviders } from "@/test/custom-render";
 import { server } from "@/test/server/browser";
 import { HttpResponse, http } from "msw";

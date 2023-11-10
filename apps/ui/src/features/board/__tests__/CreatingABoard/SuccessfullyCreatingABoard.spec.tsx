@@ -1,7 +1,8 @@
 import { useCreateBoard } from "@/features/board";
-import { fireEvent, render, screen, waitFor } from "@/test/test-utils";
+import { fireEvent, screen, waitFor } from "@/test/test-utils";
 import { useRouter } from "next/navigation";
-import CreateBoardModalPage from "../page";
+import BoardsPage from "@/app/track/boards/page";
+import { renderWithProviders } from "@/test/custom-render";
 
 jest.mock("@/features/board/api/createBoard", () => ({
   ...jest.requireActual("@/features/board/api/createBoard"),
@@ -27,13 +28,19 @@ describe("Successfully Creating A Board Modal Page", () => {
       push: jest.fn(),
     });
 
-    render(<CreateBoardModalPage />);
+    renderWithProviders(<BoardsPage />);
 
-    fireEvent.input(screen.getByLabelText("Name"), {
-      target: { value: "My Board" },
+    waitFor(async () => {
+      expect(
+        await screen.findByText("View and manage boards")
+      ).toBeInTheDocument();
     });
 
-    fireEvent.submit(screen.getByText("Submit"));
+    fireEvent.click(await screen.findByText("Create Board"));
+
+    fireEvent.change(screen.getByLabelText("Name"), {
+      target: { value: "My Board" },
+    });
 
     waitFor(() => {
       expect(mockedMutateAsync).toHaveBeenCalledWith({

@@ -3,7 +3,7 @@ import {
   runInputValidationScenario,
   InputValidationScenario,
 } from "@/test/test-utils";
-import CreateBoardModalPage from "../page";
+import CreateBoardModalPage from "@/app/track/(modals)/create-board/page";
 import { useCreateBoard } from "@/features/board";
 import { useRouter } from "next/navigation";
 

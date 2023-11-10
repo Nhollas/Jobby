@@ -2,6 +2,6 @@
 
 import { BoardsWrapper } from "@/features/board";
 
-export default function Page() {
+export default function BoardsPage() {
   return <BoardsWrapper />;
 }
