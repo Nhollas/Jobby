@@ -7,6 +7,7 @@ using Jobby.Application.Features.BoardFeatures.Queries.GetById;
 using Jobby.Application.Features.BoardFeatures.Queries.GetList;
 using Jobby.Application.Features.BoardFeatures.Queries.ListActivities;
 using Jobby.Application.Features.BoardFeatures.Queries.ListContacts;
+using Jobby.Application.Results;
 using Jobby.HttpApi.Controllers.Base;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -29,7 +30,7 @@ public class BoardController : ApiController
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status201Created)]
-    public async Task<ActionResult<BoardDto>> CreateBoard([FromBody] CreateBoardCommand command)
+    public async Task<IActionResult> CreateBoard([FromBody] CreateBoardCommand command)
     {
         using var currentSpan = _tracer.StartActiveSpan("CreateBoardCommandRequest");
         
@@ -39,20 +40,19 @@ public class BoardController : ApiController
         {
             var createBoardResult = await Sender.Send(command);
             
-            ActionResult test = createBoardResult.Outcome switch
+            
+            currentSpan?.SetAttribute("Controller-Response", JsonSerializer.Serialize(createBoardResult));
+            
+            return createBoardResult switch
             {
-                CreateBoardOutcomes.ValidationFailure => UnprocessableEntity(
-                    createBoardResult.ValidationResult.Errors.Select(error =>
-                        new ValidationError(error.PropertyName, error.ErrorMessage)
-                    ).ToList()
-                ),
-                CreateBoardOutcomes.BoardCreated => CreatedAtAction(nameof(CreateBoard), createBoardResult.Response),
-                _ => BadRequest(createBoardResult.ErrorMessage)
+                DispatchCreatedResult<BoardDto> dispatchCreatedResult => throw new NotImplementedException(),
+                DispatchNotFoundResult<BoardDto> dispatchNotFoundResult => throw new NotImplementedException(),
+                DispatchOkResult<BoardDto> dispatchOkResult => throw new NotImplementedException(),
+                DispatchResult<BoardDto> dispatchResult => throw new NotImplementedException(),
+                DispatchUnauthorizedResult<BoardDto> dispatchUnauthorizedResult => throw new NotImplementedException(),
+                DispatchUnprocessableEntityResult<BoardDto> dispatchUnprocessableEntityResult => throw new NotImplementedException(),
+                _ => throw new ArgumentOutOfRangeException(nameof(createBoardResult))
             };
-            
-            currentSpan?.SetAttribute("Controller-Response", JsonSerializer.Serialize(test));
-            
-            return test;
         }
         catch (Exception e)
         {

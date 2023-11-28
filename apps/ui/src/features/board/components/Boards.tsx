@@ -11,18 +11,27 @@ import {
   Button,
 } from "@/components/ui";
 import { Board } from "@/types";
+import Modal from "react-modal";
+import { CreateBoardModal } from "./CreateBoardModal";
+import { useModal } from "@/hooks/useModal";
+
+Modal.setAppElement("#sugma");
 
 export const Boards = ({ boards }: { boards: Board[] }) => {
+  const { openModal, isOpen } = useModal();
+
   return (
     <div className="flex flex-col gap-y-6 p-6">
       <div className="flex flex-col gap-y-2">
         <h1 className="text-2xl font-medium">Boards</h1>
         <p className="text-sm text-gray-500">View and manage boards</p>
       </div>
-      <Button asChild>
-        <Link href="/track/create-board" className="w-max">
-          Create Board
-        </Link>
+      <Modal isOpen={isOpen}>
+        <CreateBoardModal />
+      </Modal>
+
+      <Button className="w-max" onClick={() => openModal()}>
+        Create Board
       </Button>
       <div className="grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-8">
         {boards.map((board) => (

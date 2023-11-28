@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Dialog,
@@ -23,11 +22,11 @@ import {
   CreateBoardSchema,
   useCreateBoard,
 } from "@/features/board";
+import { useModal } from "@/hooks/useModal";
 
 export function CreateBoardModal() {
   const { mutateAsync } = useCreateBoard();
-
-  const router = useRouter();
+  const { closeModal } = useModal();
 
   const [open, setOpen] = useState(false);
 
@@ -50,7 +49,7 @@ export function CreateBoardModal() {
     } catch (error) {}
 
     setOpen(false);
-    router.push("/track/boards");
+    closeModal();
   }
 
   return (
@@ -77,10 +76,7 @@ export function CreateBoardModal() {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => {
-                    setOpen(false);
-                    router.push("/track/boards");
-                  }}
+                  onClick={() => closeModal()}
                 >
                   Cancel
                 </Button>

@@ -17,6 +17,7 @@ export default function RootLayout({
     <html lang="en" className={poppins.className}>
       <head />
       <body>
+        <div id="sugma"></div>
         <Providers>{children}</Providers>
       </body>
     </html>

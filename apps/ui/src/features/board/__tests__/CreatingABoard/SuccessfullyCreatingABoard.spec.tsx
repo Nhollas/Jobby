@@ -36,6 +36,7 @@ describe("Successfully Creating A Board Modal Page", () => {
       ).toBeInTheDocument();
     });
 
+    // This will trigger the intercepting route.
     fireEvent.click(await screen.findByText("Create Board"));
 
     fireEvent.change(screen.getByLabelText("Name"), {
