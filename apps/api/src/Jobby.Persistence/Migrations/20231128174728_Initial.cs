@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Jobby.Persistence.Data.Migrations
+namespace Jobby.Persistence.Migrations
 {
     /// <inheritdoc />
     public partial class Initial : Migration
@@ -110,8 +110,8 @@ namespace Jobby.Persistence.Data.Migrations
                 name: "Email",
                 columns: table => new
                 {
-                    Reference = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Reference = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Type = table.Column<int>(type: "int", nullable: false),
                     ContactId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -135,8 +135,8 @@ namespace Jobby.Persistence.Data.Migrations
                 name: "Phone",
                 columns: table => new
                 {
-                    Reference = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Reference = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Number = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Type = table.Column<int>(type: "int", nullable: false),
                     ContactId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),

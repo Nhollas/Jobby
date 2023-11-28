@@ -39,7 +39,7 @@ public class ValidatingMiddleware<TRequest, TResponse> : IPipelineBehavior<TRequ
 
             if (validationErrors.Length != 0)
             {
-                return DispatchResults.BadRequest<TResponse>(validationErrors);
+                return null;
             }
         }
 

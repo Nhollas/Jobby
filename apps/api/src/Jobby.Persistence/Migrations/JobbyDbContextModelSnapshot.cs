@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Jobby.Persistence.Data.Migrations
+namespace Jobby.Persistence.Migrations
 {
     [DbContext(typeof(JobbyDbContext))]
     partial class JobbyDbContextModelSnapshot : ModelSnapshot
@@ -17,7 +17,7 @@ namespace Jobby.Persistence.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.5")
+                .HasAnnotation("ProductVersion", "8.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
