@@ -5,8 +5,6 @@ import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
 
 interface ActivityItemProps {
   title: string;
@@ -16,22 +14,15 @@ interface ActivityItemProps {
 }
 
 const ActivityItem = ({ title, href, active, layoutId }: ActivityItemProps) => {
-  const [isAnimating, setIsAnimating] = useState(true);
-  const params = useParams();
-
-  useEffect(() => {
-    setIsAnimating(false);
-  }, []);
-
   return (
     <div className="relative p-1">
       <Button
         asChild
         size="sm"
-        variant={active && !isAnimating ? "default" : "ghost"}
+        variant={"ghost"}
         className={cn(
           "w-full text-sm hover:bg-transparent",
-          active && "text-white"
+          active && "text-white hover:text-gray-300"
         )}
       >
         <Link href={href} className="!justify-start">
@@ -40,8 +31,6 @@ const ActivityItem = ({ title, href, active, layoutId }: ActivityItemProps) => {
       </Button>
       {active && (
         <motion.div
-          onLayoutAnimationStart={() => setIsAnimating(true)}
-          onLayoutAnimationComplete={() => setIsAnimating(false)}
           className="absolute inset-0 -z-10 h-full w-full rounded-lg bg-primary"
           layoutId={layoutId}
         />

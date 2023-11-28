@@ -1,3 +1,5 @@
+"use client";
+
 import { ApiErrorMessage } from "@/components";
 import { Boards, useBoardsQuery } from "@/features/board";
 

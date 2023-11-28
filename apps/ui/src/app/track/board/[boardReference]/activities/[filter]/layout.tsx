@@ -10,7 +10,7 @@ export default async function Layout({
   params: { boardReference: string; filter: string };
 }) {
   return (
-    <div className="relative grid grid-cols-[250px,1fr]">
+    <div className="relative grid min-h-[calc(100vh-4rem)] grid-cols-[250px,1fr]">
       {modal}
       <ActivitiesNavigation boardRef={boardReference} filter={filter} />
       {children}

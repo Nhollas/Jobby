@@ -14,12 +14,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={poppins.className}>
-      <head />
-      <body>
-        <div id="sugma"></div>
-        <Providers>{children}</Providers>
-      </body>
-    </html>
+    <Providers>
+      <html lang="en" className={poppins.className}>
+        <head />
+        <body>{children}</body>
+      </html>
+    </Providers>
   );
 }

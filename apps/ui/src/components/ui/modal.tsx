@@ -1,3 +1,5 @@
+"use client";
+
 import { ReactNode, useEffect } from "react";
 
 export const Modal = ({ children }: { children: ReactNode }) => {

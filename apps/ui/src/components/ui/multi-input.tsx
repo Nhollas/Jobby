@@ -1,3 +1,5 @@
+"use client";
+
 import clsx from "clsx";
 import { X } from "lucide-react";
 import { Control, useFieldArray } from "react-hook-form";

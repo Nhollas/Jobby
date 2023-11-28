@@ -22,13 +22,12 @@ import {
   CreateBoardSchema,
   useCreateBoard,
 } from "@/features/board";
-import { useModal } from "@/hooks/useModal";
+import { useRouter } from "next/navigation";
 
 export function CreateBoardModal() {
   const { mutateAsync } = useCreateBoard();
-  const { closeModal } = useModal();
-
   const [open, setOpen] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     setOpen(true);
@@ -49,7 +48,7 @@ export function CreateBoardModal() {
     } catch (error) {}
 
     setOpen(false);
-    closeModal();
+    router.push("/track/boards");
   }
 
   return (
@@ -76,7 +75,7 @@ export function CreateBoardModal() {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => closeModal()}
+                  onClick={() => router.push("/track/boards")}
                 >
                   Cancel
                 </Button>

@@ -4,16 +4,19 @@ using Jobby.Persistence.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace Jobby.Persistence.Migrations
+namespace Jobby.Persistence.Data.Migrations
 {
     [DbContext(typeof(JobbyDbContext))]
-    partial class JobbyDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231128202150_Init")]
+    partial class Init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

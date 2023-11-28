@@ -1,3 +1,5 @@
+"use client";
+
 import { useBoardActivitiesQuery } from "@/features/board";
 import { Activities } from "@/features/activity";
 
