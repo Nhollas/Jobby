@@ -26,3 +26,4 @@ export * from "./tooltip";
 export * from "./use-toast";
 export * from "./sign-out";
 export * from "./modal";
+export * from "./skeleton";

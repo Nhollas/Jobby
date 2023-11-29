@@ -10,9 +10,4 @@ const queryConfig: DefaultOptions = {
 
 export const queryClient = new QueryClient({
   defaultOptions: queryConfig,
-  logger: {
-    log: console.log,
-    warn: console.warn,
-    error: process.env.NODE_ENV === "test" ? () => {} : console.error,
-  },
 });

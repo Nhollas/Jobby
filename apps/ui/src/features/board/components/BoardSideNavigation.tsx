@@ -7,7 +7,7 @@ import { BoardsBar } from "@/features/board";
 
 export function BoardSideNavigation() {
   return (
-    <div className="relative z-[5] hidden md:block">
+    <div className="relative z-10 hidden md:block">
       <div className="fixed top-0 left-0 h-screen w-[250px] border-r border-gray-200 py-6">
         <div className="flex w-full flex-col gap-y-4">
           <div className="space-y-2">

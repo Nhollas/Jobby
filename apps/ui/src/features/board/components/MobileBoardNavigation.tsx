@@ -47,23 +47,21 @@ function MobileNavigationContent() {
   return (
     <SheetContent side="left" className="p-0 py-6">
       <div className="flex w-full flex-col gap-y-4">
-        <div>
+        <div className="space-y-2">
           <h2 className="px-8 text-lg font-semibold tracking-tight">Track</h2>
-          <div className="space-y-1 px-4">
-            <Button
-              asChild
-              variant="ghost"
-              className="w-full justify-start font-normal"
-            >
-              <Link href="/track/contacts">
-                <Users className="mr-2 h-4 w-4" />
-                Contacts
-              </Link>
-            </Button>
-          </div>
+          <Button
+            asChild
+            variant="ghost"
+            className="mx-4 w-[calc(100%-2rem)] justify-start font-normal"
+          >
+            <Link href="/track/contacts">
+              <Users className="mr-2 h-4 w-4" />
+              Contacts
+            </Link>
+          </Button>
         </div>
         <Separator />
-        <div className="">
+        <div className="space-y-2">
           <Button
             variant="link"
             asChild
