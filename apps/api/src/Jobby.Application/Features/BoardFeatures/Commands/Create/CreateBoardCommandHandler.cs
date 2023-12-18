@@ -2,6 +2,7 @@
 using Jobby.Application.Abstractions.Specification;
 using Jobby.Application.Dtos;
 using Jobby.Application.Interfaces.Services;
+using Jobby.Application.Responses.Common;
 using Jobby.Application.Results;
 using Jobby.Domain.Entities;
 using MediatR;
@@ -9,7 +10,7 @@ using OpenTelemetry.Trace;
 
 namespace Jobby.Application.Features.BoardFeatures.Commands.Create;
 
-internal sealed class CreateBoardCommandHandler : IRequestHandler<CreateBoardCommand, IDispatchResult<BoardDto>>
+internal sealed class CreateBoardCommandHandler : IRequestHandler<CreateBoardCommand, BaseResult<BoardDto, CreateBoardOutcomes>>
 {
     private readonly IRepository<Board> _boardRepository;
     private readonly IGuidProvider _guidProvider;
@@ -31,7 +32,7 @@ internal sealed class CreateBoardCommandHandler : IRequestHandler<CreateBoardCom
         _mapper = mapper;
     }
 
-    public async Task<IDispatchResult<BoardDto>> Handle(CreateBoardCommand request, CancellationToken cancellationToken)
+    public async Task<BaseResult<BoardDto, CreateBoardOutcomes>> Handle(CreateBoardCommand request, CancellationToken cancellationToken)
     {
         using var span = TracerProvider.Default.GetTracer("Jobby.HttpApi").StartActiveSpan("CreateBoardCommandHandler");
         
@@ -40,7 +41,11 @@ internal sealed class CreateBoardCommandHandler : IRequestHandler<CreateBoardCom
         
         if (!validationResult.IsValid)
         {
-            return DispatchResults.UnprocessableEntity<BoardDto>(validationResult);
+            return new BaseResult<BoardDto, CreateBoardOutcomes>(
+                IsSuccess: false,
+                Outcome: CreateBoardOutcomes.ValidationFailure,
+                ValidationResult: validationResult
+            );
         }
         
         var board = Board.Create(
@@ -63,6 +68,9 @@ internal sealed class CreateBoardCommandHandler : IRequestHandler<CreateBoardCom
 
         await _boardRepository.AddAsync(board, cancellationToken);
         
-        return DispatchResults.Ok(_mapper.Map<BoardDto>(board));
+        return new BaseResult<BoardDto, CreateBoardOutcomes>(
+            IsSuccess: true,
+            Outcome: CreateBoardOutcomes.BoardCreated,
+            Response: _mapper.Map<BoardDto>(board));
     }
 }

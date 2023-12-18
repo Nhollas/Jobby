@@ -40,19 +40,20 @@ public class BoardController : ApiController
         {
             var createBoardResult = await Sender.Send(command);
             
-            
-            currentSpan?.SetAttribute("Controller-Response", JsonSerializer.Serialize(createBoardResult));
-            
-            return createBoardResult switch
+            ActionResult test = createBoardResult.Outcome switch
             {
-                DispatchCreatedResult<BoardDto> dispatchCreatedResult => throw new NotImplementedException(),
-                DispatchNotFoundResult<BoardDto> dispatchNotFoundResult => throw new NotImplementedException(),
-                DispatchOkResult<BoardDto> dispatchOkResult => throw new NotImplementedException(),
-                DispatchResult<BoardDto> dispatchResult => throw new NotImplementedException(),
-                DispatchUnauthorizedResult<BoardDto> dispatchUnauthorizedResult => throw new NotImplementedException(),
-                DispatchUnprocessableEntityResult<BoardDto> dispatchUnprocessableEntityResult => throw new NotImplementedException(),
-                _ => throw new ArgumentOutOfRangeException(nameof(createBoardResult))
+                CreateBoardOutcomes.ValidationFailure => UnprocessableEntity(
+                    createBoardResult.ValidationResult.Errors.Select(error =>
+                        new ValidationError(error.PropertyName, error.ErrorMessage)
+                    ).ToList()
+                ),
+                CreateBoardOutcomes.BoardCreated => CreatedAtAction(nameof(CreateBoard), createBoardResult.Response),
+                _ => BadRequest(createBoardResult.ErrorMessage)
             };
+            
+            currentSpan?.SetAttribute("Controller-Response", JsonSerializer.Serialize(test));
+            
+            return test;
         }
         catch (Exception e)
         {

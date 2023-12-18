@@ -56,6 +56,7 @@ import {
   CreateContactSchema,
   useCreateContact,
 } from "@/features/contact";
+import { CommandList } from "cmdk";
 
 function handleBoardDisplayName(currentBoardRef: string, boards?: Board[]) {
   if (!boards) {
@@ -530,61 +531,59 @@ export const CreateContactModal = ({
                                         setFilteredJobs(filteredJobs);
                                       }}
                                     />
-                                    <CommandEmpty>No Jobs Found.</CommandEmpty>
-                                    <CommandGroup>
-                                      <ScrollArea className="h-72">
-                                        {filteredJobs?.map((job) => (
-                                          <CommandItem
-                                            key={job.reference}
-                                            value={`${job.title}${job.reference}`}
-                                            onSelect={(currentValue) => {
-                                              const jobId =
-                                                currentValue.substring(
-                                                  currentValue.length - 36
-                                                );
 
-                                              let jobIds = [...field.value];
-
-                                              if (jobIds.includes(jobId)) {
-                                                jobIds = jobIds.filter(
-                                                  (id) => id !== jobId
-                                                );
-                                              } else {
-                                                jobIds = [
-                                                  ...field.value,
-                                                  jobId,
-                                                ];
-                                              }
-
-                                              form.setValue(
-                                                "jobReferences",
-                                                jobIds
+                                    <CommandList className="max-h-72 overscroll-contain">
+                                      <CommandEmpty>
+                                        No Jobs Found.
+                                      </CommandEmpty>
+                                      {filteredJobs?.map((job) => (
+                                        <CommandItem
+                                          key={job.reference}
+                                          value={`${job.title}${job.reference}`}
+                                          onSelect={(currentValue) => {
+                                            const jobId =
+                                              currentValue.substring(
+                                                currentValue.length - 36
                                               );
-                                            }}
-                                          >
-                                            <Briefcase className="mr-2 h-4 w-4" />
-                                            <Check
-                                              className={cn(
-                                                "mr-2 h-4 w-4",
-                                                field.value.includes(
-                                                  job.reference
-                                                )
-                                                  ? "opacity-100"
-                                                  : "opacity-0"
-                                              )}
-                                            />
-                                            <div>
-                                              <h2 className="text-sm font-semibold leading-none tracking-tight">
-                                                {job.title}
-                                              </h2>
-                                              <p className="text-xs text-muted-foreground">
-                                                {job.company}
-                                              </p>
-                                            </div>
-                                          </CommandItem>
-                                        ))}
-                                      </ScrollArea>
-                                    </CommandGroup>
+
+                                            let jobIds = [...field.value];
+
+                                            if (jobIds.includes(jobId)) {
+                                              jobIds = jobIds.filter(
+                                                (id) => id !== jobId
+                                              );
+                                            } else {
+                                              jobIds = [...field.value, jobId];
+                                            }
+
+                                            form.setValue(
+                                              "jobReferences",
+                                              jobIds
+                                            );
+                                          }}
+                                        >
+                                          <Briefcase className="mr-2 h-4 w-4" />
+                                          <Check
+                                            className={cn(
+                                              "mr-2 h-4 w-4",
+                                              field.value.includes(
+                                                job.reference
+                                              )
+                                                ? "opacity-100"
+                                                : "opacity-0"
+                                            )}
+                                          />
+                                          <div>
+                                            <h2 className="text-sm font-semibold leading-none tracking-tight">
+                                              {job.title}
+                                            </h2>
+                                            <p className="text-xs text-muted-foreground">
+                                              {job.company}
+                                            </p>
+                                          </div>
+                                        </CommandItem>
+                                      ))}
+                                    </CommandList>
                                   </Command>
                                 </PopoverContent>
                               )}

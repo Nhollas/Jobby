@@ -6,6 +6,8 @@ import { Boards, useBoardsQuery } from "@/features/board";
 export function BoardsWrapper() {
   const query = useBoardsQuery();
 
+  console.log(query.isError);
+
   if (query.isError)
     return (
       <ApiErrorMessage
