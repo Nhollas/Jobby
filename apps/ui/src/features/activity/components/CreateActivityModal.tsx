@@ -100,7 +100,7 @@ export function CreateActivityModal({ jobRef, boardRef, filter }: Props) {
   const { data: board } = useBoardQuery(boardRef);
 
   async function onSubmit(values: CreateActivityDTO) {
-    const createdActivity = await mutateAsync(values);
+    await mutateAsync(values);
   }
 
   if (!board || !jobs) return null;
@@ -293,7 +293,7 @@ export function CreateActivityModal({ jobRef, boardRef, filter }: Props) {
                   <FormField
                     control={form.control}
                     name="boardReference"
-                    render={({ field }) => (
+                    render={() => (
                       <FormItem className="flex flex-col">
                         <FormLabel>Board</FormLabel>
                         <Popover>
@@ -344,18 +344,7 @@ export function CreateActivityModal({ jobRef, boardRef, filter }: Props) {
                           </PopoverTrigger>
                           <PopoverContent className="p-0">
                             <Command>
-                              <CommandInput
-                                placeholder="Search job..."
-                                onChangeCapture={(event) => {
-                                  const inputValue =
-                                    // @ts-ignore
-                                    event.target.value.toLowerCase();
-
-                                  const filteredJobs = jobs.filter((job) =>
-                                    job.title.toLowerCase().includes(inputValue)
-                                  );
-                                }}
-                              />
+                              <CommandInput placeholder="Search job..." />
                               <CommandEmpty>No Jobs Found.</CommandEmpty>
                               <CommandGroup>
                                 <ScrollArea className="h-72">
@@ -363,10 +352,10 @@ export function CreateActivityModal({ jobRef, boardRef, filter }: Props) {
                                     <CommandItem
                                       key={job.reference}
                                       value={job.reference}
-                                      onSelect={(currentValue) => {
+                                      onSelect={() => {
                                         form.setValue(
                                           "jobReference",
-                                          currentValue
+                                          job.reference
                                         );
                                       }}
                                     >

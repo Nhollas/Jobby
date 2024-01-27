@@ -58,7 +58,7 @@ function LoadingSkeleton() {
       className="w-full justify-start px-4 font-normal"
     >
       <Layout className="mr-2 h-4 w-4 shrink-0" />
-      <Skeleton className="h-4 w-10/12" />
+      <Skeleton className="h-4 w-10/12 rounded-sm" />
     </Button>
   ));
 }

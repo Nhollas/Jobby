@@ -1,11 +1,11 @@
-import { test } from "@playwright/test";
 import { createBoardFixture } from "./fixtures/create-board";
+import { test } from "./fixtures/next-fixture";
 
 test.describe("Create Contact Link Directs To Correct Route.", () => {
   test("From /track/contacts Page should direct user to /track/create-contact", async ({
     page,
   }) => {
-    await page.goto("http://localhost:3000/track/contacts");
+    await page.goto("/track/contacts");
 
     // Find the Link with text "Create Contact"
     const createContactLink = await page.$("a:has-text('Create Contact')");
@@ -15,7 +15,7 @@ test.describe("Create Contact Link Directs To Correct Route.", () => {
       await createContactLink.click();
 
       // Wait for the page to navigate before getting the URL
-      await page.waitForURL("http://localhost:3000/track/create-contact");
+      await page.waitForURL("/track/create-contact");
     } else {
       throw new Error("Create contact link could not be found on page.");
     }
@@ -27,7 +27,7 @@ test.describe("Create Contact Link Directs To Correct Route.", () => {
       const { reference } = board;
 
       await page.goto(
-        `http://localhost:3000/track/board/${reference}/contacts`
+        `/track/board/${reference}/contacts`
       );
 
       // Find the Link with text "Create Contact" and query param boardId
@@ -41,7 +41,7 @@ test.describe("Create Contact Link Directs To Correct Route.", () => {
 
         // Wait for the page to navigate before getting the URL
         await page.waitForURL(
-          `http://localhost:3000/track/create-contact?boardRef=${reference}`
+          `/track/create-contact?boardRef=${reference}`
         );
       } else {
         throw new Error(

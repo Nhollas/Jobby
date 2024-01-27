@@ -1,12 +1,13 @@
 ﻿using Jobby.Application.Interfaces.Services;
-using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
 
 namespace Jobby.Application.Services;
 
 public class UserService : IUserService
 {
     private readonly IHttpContextAccessor _httpContextAccessor;
+
     public UserService(IHttpContextAccessor httpContextAccessor)
     {
         _httpContextAccessor = httpContextAccessor;

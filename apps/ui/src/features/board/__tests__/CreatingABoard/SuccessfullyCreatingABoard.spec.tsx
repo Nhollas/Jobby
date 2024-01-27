@@ -1,8 +1,8 @@
 import { useCreateBoard } from "@/features/board";
 import { fireEvent, screen, waitFor } from "@/test/test-utils";
 import { useRouter } from "next/navigation";
-import BoardsPage from "@/app/track/boards/page";
 import { renderWithProviders } from "@/test/custom-render";
+import CreateBoardModalPage from "@/app/track/(modals)/create-board/page";
 
 jest.mock("@/features/board/api/createBoard", () => ({
   ...jest.requireActual("@/features/board/api/createBoard"),
@@ -19,16 +19,17 @@ const mockedUseRouter = useRouter as jest.Mock;
 describe("Successfully Creating A Board Modal Page", () => {
   it("should successfully create a board", async () => {
     const mockedMutateAsync = jest.fn();
+    const mockedBack = jest.fn();
 
     mockedUseCreateBoard.mockReturnValue({
       mutateAsync: mockedMutateAsync,
     });
 
     mockedUseRouter.mockReturnValue({
-      push: jest.fn(),
+      back: mockedBack,
     });
 
-    renderWithProviders(<BoardsPage />);
+    renderWithProviders(<CreateBoardModalPage />);
 
     waitFor(async () => {
       expect(
@@ -48,7 +49,7 @@ describe("Successfully Creating A Board Modal Page", () => {
         name: "My Board",
       });
 
-      expect(mockedUseRouter().push).toHaveBeenCalledWith("/track/boards");
+      expect(mockedBack).toHaveBeenCalled();
     });
   });
 });

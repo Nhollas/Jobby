@@ -36,11 +36,11 @@ export const DeleteBoardModal = ({ boardRef }: Props) => {
 
     setOpen(false);
 
-    router.push("/track/boards");
+    router.back();
   };
 
   return (
-    <AlertDialog open={open} onOpenChange={router.back}>
+    <AlertDialog open={open}>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Delete Board</AlertDialogTitle>
@@ -52,7 +52,7 @@ export const DeleteBoardModal = ({ boardRef }: Props) => {
           <AlertDialogCancel
             onClick={() => {
               setOpen(false);
-              router.push("/track/boards");
+              router.back();
             }}
           >
             Cancel

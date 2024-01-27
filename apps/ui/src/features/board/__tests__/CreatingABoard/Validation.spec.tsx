@@ -27,7 +27,7 @@ describe("Create Board Modal Page Validation", () => {
       });
 
       mockedUseRouter.mockReturnValue({
-        push: jest.fn(),
+        back: jest.fn(),
       });
 
       render(<CreateBoardModalPage />);

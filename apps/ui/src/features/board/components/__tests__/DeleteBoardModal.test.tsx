@@ -17,14 +17,14 @@ const mockedBoardRef = "mockedBoardRef";
 
 describe("DeleteBoardModal", () => {
   const mutateAsyncMock = jest.fn();
-  const pushMock = jest.fn();
+  const backMock = jest.fn();
 
   beforeEach(() => {
     mockedUseDeleteBoard.mockReturnValue({
       mutateAsync: mutateAsyncMock,
     });
     mockedUseRouter.mockReturnValue({
-      push: pushMock,
+      back: backMock,
     });
   });
 
@@ -52,7 +52,7 @@ describe("DeleteBoardModal", () => {
 
       await waitFor(() => {
         expect(mutateAsyncMock).toHaveBeenCalled();
-        expect(pushMock).toHaveBeenCalledWith("/track/boards");
+        expect(backMock).toHaveBeenCalled();
       });
     });
   });
@@ -68,7 +68,7 @@ describe("DeleteBoardModal", () => {
       });
 
       await waitFor(() => {
-        expect(pushMock).toHaveBeenCalledWith("/track/boards");
+        expect(backMock).toHaveBeenCalled();
       });
     });
   });

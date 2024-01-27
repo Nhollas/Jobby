@@ -1,5 +1,4 @@
-﻿using System.Text.Json;
-using Jobby.Application.Dtos;
+﻿using Jobby.Application.Dtos;
 using Jobby.Application.Features.BoardFeatures.Commands.Create;
 using Jobby.Application.Features.BoardFeatures.Commands.Delete;
 using Jobby.Application.Features.BoardFeatures.Commands.Update.UpdateDetails;
@@ -7,11 +6,9 @@ using Jobby.Application.Features.BoardFeatures.Queries.GetById;
 using Jobby.Application.Features.BoardFeatures.Queries.GetList;
 using Jobby.Application.Features.BoardFeatures.Queries.ListActivities;
 using Jobby.Application.Features.BoardFeatures.Queries.ListContacts;
-using Jobby.Application.Results;
 using Jobby.HttpApi.Controllers.Base;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using OpenTelemetry.Trace;
 
 namespace Jobby.HttpApi.Controllers;
 
@@ -20,22 +17,11 @@ namespace Jobby.HttpApi.Controllers;
 [Authorize]
 public class BoardController : ApiController
 {
-    private readonly Tracer _tracer;
-
-    public BoardController(Tracer tracer)
-    {
-        _tracer = tracer;
-    }
-    
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status201Created)]
     public async Task<IActionResult> CreateBoard([FromBody] CreateBoardCommand command)
     {
-        using var currentSpan = _tracer.StartActiveSpan("CreateBoardCommandRequest");
-        
-        currentSpan?.SetAttribute("data", JsonSerializer.Serialize(command));
-        
         try
         {
             var createBoardResult = await Sender.Send(command);
@@ -50,8 +36,6 @@ public class BoardController : ApiController
                 CreateBoardOutcomes.BoardCreated => CreatedAtAction(nameof(CreateBoard), createBoardResult.Response),
                 _ => BadRequest(createBoardResult.ErrorMessage)
             };
-            
-            currentSpan?.SetAttribute("Controller-Response", JsonSerializer.Serialize(test));
             
             return test;
         }
@@ -69,10 +53,6 @@ public class BoardController : ApiController
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<DeleteBoardResponse>> DeleteBoard(string reference)
     {
-        using var currentSpan = _tracer.StartActiveSpan("DeleteBoardCommandRequest");
-        
-        currentSpan?.SetAttribute("boardReference", reference);
-        
         try
         {
             var deleteBoardResult = await Sender.Send(new DeleteBoardCommand(reference));
@@ -128,10 +108,6 @@ public class BoardController : ApiController
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<ActionResult<BoardDto>> GetBoard(string reference)
     {
-        using var currentSpan = _tracer.StartActiveSpan("GetBoardDetailQuery");
-        
-        currentSpan?.SetAttribute("reference", reference);
-        
         try
         {
             var getBoardResult = await Sender.Send(new GetBoardDetailQuery(reference));

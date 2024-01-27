@@ -11,6 +11,8 @@ export async function GET(req: Request) {
     validateStatus: () => true,
   });
 
+  console.log("response", response)
+
   return new Response(JSON.stringify(response.data), {
     status: response.status,
   });
@@ -45,5 +47,6 @@ export async function DELETE(req: Request) {
 
   return new Response(JSON.stringify(response.data), {
     status: response.status,
+    
   });
 }

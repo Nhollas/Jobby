@@ -6,7 +6,6 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
-using OpenTelemetry.Trace;
 
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
@@ -22,28 +21,6 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
         options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
     });
-
-var honeycombOptions = builder.Configuration.GetHoneycombOptions();
-
-// Setup OpenTelemetry Tracing
-builder.Services.AddOpenTelemetry().WithTracing(tracerProviderBuilder =>
-{
-    tracerProviderBuilder
-        .AddHoneycomb(honeycombOptions)
-        .AddEntityFrameworkCoreInstrumentation(options =>
-        {
-            options.SetDbStatementForText = true;
-        })
-        .AddAspNetCoreInstrumentation(options =>
-        {
-            options.RecordException = true;
-        });
-});
-
-// Register Tracer so it can be injected into other components (eg Controllers)
-builder.Services.AddSingleton(TracerProvider.Default.GetTracer(honeycombOptions.ServiceName));
-
-
 
 builder.Services.AddCors();
 
@@ -88,7 +65,9 @@ builder.Services.AddAuthentication(options =>
     })
     .AddJwtBearer(options =>
         {
-            string pem = config.GetSection("Jwt:Key").Value!;
+            var jwtConfig = config.GetSection("Jwt");
+
+            string pem = jwtConfig["SignatureKey"] ?? throw new Exception("SignatureKey is missing from Jwt configuration.");
             string[] splitPem = Regex.Matches(pem, ".{1,64}").Select(m => m.Value).ToArray();
             string publicKey = "-----BEGIN PUBLIC KEY-----\n" + string.Join("\n", splitPem) + "\n-----END PUBLIC KEY-----";
             RSA rsa = RSA.Create();
@@ -97,7 +76,7 @@ builder.Services.AddAuthentication(options =>
 
             options.TokenValidationParameters = new TokenValidationParameters
             {
-                ValidIssuer = "https://darling-bug-65.clerk.accounts.dev",
+                ValidIssuer = jwtConfig["Issuer"],
                 ValidateIssuer = true,
                 ValidateLifetime = true,
                 ValidateAudience = false,
@@ -129,4 +108,4 @@ app.UseAuthorization();
 app.MapControllers();
 app.Run();
 
-public partial class Program { }
+public partial class Program;

@@ -14,9 +14,10 @@ const mockedUseRouter = useRouter as jest.Mock;
 describe("Failed Creating A Board Modal Page", () => {
   it("should display error message", async () => {
     const mockedMutateAsync = jest.fn();
+    const mockedBack = jest.fn();
 
     mockedUseRouter.mockReturnValue({
-      push: jest.fn(),
+      back: mockedBack,
     });
 
     server.use(
@@ -38,7 +39,7 @@ describe("Failed Creating A Board Modal Page", () => {
         name: "My Board",
       });
 
-      expect(mockedUseRouter().push).toHaveBeenCalledWith("/track/boards");
+      expect(mockedBack).toHaveBeenCalled();
 
       expect(
         screen.getByText("There was an error creating your board")

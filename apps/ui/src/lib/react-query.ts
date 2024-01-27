@@ -8,6 +8,13 @@ const queryConfig: DefaultOptions = {
   },
 };
 
+const env = process.env.NODE_ENV;
+
 export const queryClient = new QueryClient({
   defaultOptions: queryConfig,
+  logger: {
+    error: env === "test" || env === "production" ? () => {} : console.error,
+    log: env === "test" || env === "production" ? () => {} : console.log,
+    warn: env === "test" || env === "production" ? () => {} : console.warn,
+  }
 });

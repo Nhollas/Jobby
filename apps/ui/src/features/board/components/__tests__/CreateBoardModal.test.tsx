@@ -16,14 +16,14 @@ const mockedUseRouter = useRouter as jest.Mock;
 
 describe("CreateBoardModal", () => {
   const mutateAsyncMock = jest.fn();
-  const pushMock = jest.fn();
+  const backMock = jest.fn();
 
   beforeEach(() => {
     mockedUseCreateBoard.mockReturnValue({
       mutateAsync: mutateAsyncMock,
     });
     mockedUseRouter.mockReturnValue({
-      push: pushMock,
+      back: backMock,
     });
   });
 
@@ -65,7 +65,7 @@ describe("CreateBoardModal", () => {
 
       await waitFor(() => {
         expect(mutateAsyncMock).toHaveBeenCalled();
-        expect(pushMock).toHaveBeenCalledWith("/track/boards");
+        expect(backMock).toHaveBeenCalled();
       });
     });
   });
@@ -81,7 +81,7 @@ describe("CreateBoardModal", () => {
       });
 
       await waitFor(() => {
-        expect(pushMock).toHaveBeenCalledWith("/track/boards");
+        expect(backMock).toHaveBeenCalled();
       });
     });
   });

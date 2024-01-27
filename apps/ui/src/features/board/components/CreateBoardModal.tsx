@@ -48,7 +48,7 @@ export function CreateBoardModal() {
     } catch (error) {}
 
     setOpen(false);
-    router.push("/track/boards");
+    router.back();
   }
 
   return (
@@ -75,7 +75,10 @@ export function CreateBoardModal() {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => router.push("/track/boards")}
+                  onClick={() => {
+                    setOpen(false);
+                    router.back();
+                  }}
                 >
                   Cancel
                 </Button>

@@ -1,4 +1,4 @@
-import { render, screen } from "@/test/test-utils";
+import { render, screen, waitFor } from "@/test/test-utils";
 import { BoardsWrapper, useBoardsQuery } from "@/features/board";
 
 jest.mock("@/features/board/api");
@@ -25,10 +25,14 @@ describe("BoardsWrapper fetch states", () => {
   it("displays board on success", () => {
     useBoardsQueryMock.mockReturnValue({
       isSuccess: true,
+      isLoading: false,
+      isError: false,
     });
 
     render(<BoardsWrapper />);
 
-    expect(screen.getByText("View and manage boards")).toBeInTheDocument();
+    waitFor(() => {
+      expect(screen.getByText("View and manage boards")).toBeInTheDocument();
+    });
   });
 });

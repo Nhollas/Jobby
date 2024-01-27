@@ -1,11 +1,12 @@
-import { test, expect } from "@playwright/test";
+import { test } from "./fixtures/next-fixture";
+import { expect } from "@playwright/test";
 
 test.describe("Board tests", () => {
   test("Should create a new board and render it on the boards page. Then be able to delete that same board removing it from the list.", async ({
     page,
   }) => {
     // Go to the Boards page
-    await page.goto("http://localhost:3000/track/boards");
+    await page.goto("/track/boards");
 
     // Click the link to open the Create Board Modal
     await page.click('a[href="/track/create-board"]');
@@ -53,7 +54,7 @@ test.describe("Board tests", () => {
     await page.waitForSelector('div[role="alertdialog"]');
 
     // click button to confirm delete with text "Delete"
-    await page.click('button:has-text("Delete")');
+    await page.click('button:has-text("Confirm")');
 
     // Wait for the confirmation dialog to disappear
     await page.waitForSelector('div[role="alertdialog"]', {

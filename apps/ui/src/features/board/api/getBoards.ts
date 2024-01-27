@@ -8,7 +8,7 @@ export async function getBoards() {
 
     return response.data;
   } catch (error) {
-    return [];
+    return Promise.reject({});
   }
 }
 
@@ -16,8 +16,8 @@ export const useBoardsQuery = () => {
   return useQuery({
     queryKey: ["boards"],
     queryFn: getBoards,
-    onSuccess(data) {},
-    onError(error) {},
+    onSuccess() {},
+    onError() {},
     useErrorBoundary: true,
   });
 };

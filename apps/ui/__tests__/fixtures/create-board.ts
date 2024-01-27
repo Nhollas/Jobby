@@ -1,5 +1,6 @@
 import { Board } from "@/types";
-import { Page, test as base } from "@playwright/test";
+import { Page } from "@playwright/test";
+import { test } from "./next-fixture";
 
 // Declare the types of your fixtures.
 type CreateBoardFixture = {
@@ -8,10 +9,10 @@ type CreateBoardFixture = {
   cleanUp: () => Promise<void>;
 };
 
-export const createBoardFixture = base.extend<CreateBoardFixture>({
+export const createBoardFixture = test.extend<CreateBoardFixture>({
   board: async ({ page }, use) => {
     // Go to the Boards page
-    await page.goto("http://localhost:3000/track/boards");
+    await page.goto("/track/boards");
 
     // Click the link to open the Create Board Modal
     await page.click('a[href="/track/create-board"]');
@@ -25,7 +26,7 @@ export const createBoardFixture = base.extend<CreateBoardFixture>({
     await page.fill('input[name="name"]', uniqueBoardName);
     // Add a response event listener to the page object
     const responsePromise = page.waitForResponse(
-      "http://localhost:3000/api/board"
+      "/api/board"
     );
 
     await page.click('button[type="submit"]');
@@ -53,18 +54,18 @@ const createJobMethod = async ({
   board: Board;
 }) => {
   // Go to the board page.
-  await page.goto(`http://localhost:3000/track/board/${board.reference}`);
+  await page.goto(`/track/board/${board.reference}`);
 };
 
 const cleanUpBoard = async ({ page, board }: { page: Page; board: Board }) => {
   // Go to the Boards page
-  await page.goto("http://localhost:3000/track/boards");
+  await page.goto("/track/boards");
 
   // Click the "Delete" button for the first board in the list
   await page.click(`a[href="/track/delete-board/${board.reference}"]`);
 
   // click button to confirm delete with text "Delete"
-  await page.click('button:has-text("Delete")');
+  await page.click('button:has-text("Confirm")');
 
   // Wait for the confirmation dialog to disappear
   await page.waitForSelector('div[role="alertdialog"]', {

@@ -2,7 +2,6 @@ using Ardalis.Specification;
 using Jobby.Application.Abstractions.Authorization;
 using Jobby.Application.Responses;
 using Jobby.Domain.Primitives;
-using OpenTelemetry.Trace;
 
 namespace Jobby.Application.Services;
 
@@ -51,10 +50,6 @@ public class ResourceProvider<TEntity> :
 
     public async Task<ResourceResult<TEntity>> Check(string userId, string resourceReference, CancellationToken cancellationToken = default)
     {
-        var span = TracerProvider.Default.GetTracer("Jobby.HttpApi").StartActiveSpan("CheckResourceRequest");
-        span?.SetAttribute("userId", userId);
-        span?.SetAttribute("resourceReference", resourceReference);
-        
         var resource = await _getByReference(resourceReference, cancellationToken);
 
         if (resource is null)
@@ -67,9 +62,6 @@ public class ResourceProvider<TEntity> :
 
     public async Task<ResourceResult<TEntity>> Check(string userId, CancellationToken cancellationToken = default)
     {
-        var span = TracerProvider.Default.GetTracer("Jobby.HttpApi").StartActiveSpan("CheckResourceRequest");
-        span?.SetAttribute("userId", userId);
-        
         var resource = await _getBySpec(_spec, cancellationToken);
 
         if (resource is null)
