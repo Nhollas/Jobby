@@ -1,11 +1,11 @@
-import { client } from "@/lib/clients";
+import { nextApiClient } from "@/lib/clients";
 import { queryClient } from "@/lib/react-query";
 import { Contact } from "@/types";
 import { useMutation } from "@tanstack/react-query";
 
 export async function deleteContact(contactReference: string) {
   try {
-    await client.delete(`/contact/${contactReference}`);
+    await nextApiClient.delete(`/contact/${contactReference}`);
   } catch (error) {
     return Promise.reject(error);
   }

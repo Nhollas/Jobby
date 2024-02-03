@@ -23,6 +23,7 @@ import {
   useCreateBoard,
 } from "@/features/board";
 import { useRouter } from "next/navigation";
+import { RotateCw, Save } from "lucide-react";
 
 export function CreateBoardModal() {
   const { mutateAsync } = useCreateBoard();
@@ -40,7 +41,7 @@ export function CreateBoardModal() {
     },
   });
 
-  const { isDirty, isSubmitted } = form.formState;
+  const { isDirty, isSubmitted, isSubmitting } = form.formState;
 
   async function onSubmit(values: CreateBoardDTO) {
     try {
@@ -52,7 +53,7 @@ export function CreateBoardModal() {
   }
 
   return (
-    <Dialog open={open}>
+    <Dialog open={open} onOpenChange={() => router.back()}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>Create Board</DialogTitle>
@@ -83,6 +84,11 @@ export function CreateBoardModal() {
                   Cancel
                 </Button>
                 <Button type="submit" disabled={!isDirty || isSubmitted}>
+                  {isSubmitting ? (
+                    <RotateCw className="h-6 w-6 flex-shrink-0 animate-spin" />
+                  ) : (
+                    <Save className="h-6 w-6 flex-shrink-0" />
+                  )}
                   Submit
                 </Button>
               </div>

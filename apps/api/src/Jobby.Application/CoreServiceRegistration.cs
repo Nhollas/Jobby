@@ -1,9 +1,6 @@
 ﻿using FluentValidation;
-using Jobby.Application.Behaviours;
 using Jobby.Application.Interfaces.Services;
-using Jobby.Application.Results;
 using Jobby.Application.Services;
-using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Jobby.Application;
@@ -22,8 +19,6 @@ public static class CoreServiceRegistration
 
         services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(applicationAssembly));
         services.AddValidatorsFromAssembly(applicationAssembly);
-        services.AddScoped<IDispatcher, Dispatcher>();
-        services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidatingMiddleware<,>));
 
         return services;
     }

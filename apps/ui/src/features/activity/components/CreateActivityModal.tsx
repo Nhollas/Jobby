@@ -107,7 +107,7 @@ export function CreateActivityModal({ jobRef, boardRef, filter }: Props) {
 
   return (
     <Modal>
-      <Card className="z-50 h-full w-full max-w-lg overflow-scroll transition-all animate-in fade-in-90 zoom-in-90 slide-in-from-bottom-10 duration-100 sm:slide-in-from-bottom-0">
+      <Card className="z-50 h-full w-full max-w-lg overflow-scroll rounded-none transition-all animate-in fade-in-90 zoom-in-90 slide-in-from-bottom-10 duration-100 sm:slide-in-from-bottom-0">
         <CardHeader>
           <CardTitle>Create Activity</CardTitle>
           <CardDescription>

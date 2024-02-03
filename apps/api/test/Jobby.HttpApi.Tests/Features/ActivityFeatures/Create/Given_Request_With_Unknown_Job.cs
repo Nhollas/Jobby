@@ -11,11 +11,11 @@ using Microsoft.EntityFrameworkCore;
 namespace Jobby.HttpApi.Tests.Features.ActivityFeatures.Create;
 
 [Collection("SqlCollection")]
-public class Give_Request_With_Unknown_Job
+public class Given_Request_With_Unknown_Job
 {
     private readonly JobbyHttpApiFactory _factory;
 
-    public Give_Request_With_Unknown_Job(JobbyHttpApiFactory factory)
+    public Given_Request_With_Unknown_Job(JobbyHttpApiFactory factory)
     {
         _factory = factory;
     }

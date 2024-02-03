@@ -1,13 +1,7 @@
 import { auth } from "@clerk/nextjs";
 import axios, { InternalAxiosRequestConfig } from "axios";
+import { env } from "../env";
 import https from "https";
-
-export const client = axios.create({
-  baseURL: "/api/",
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
 
 async function authInterceptor(config: InternalAxiosRequestConfig) {
   const token = await auth().getToken();
@@ -19,8 +13,8 @@ async function authInterceptor(config: InternalAxiosRequestConfig) {
   return config;
 }
 
-export const serverClient = axios.create({
-  baseURL: "https://localhost:6001/",
+export const jobbyApiClient = axios.create({
+  baseURL: env().JOBBY_API_BASE_URL,
   headers: {
     "Content-Type": "application/json",
   },
@@ -29,4 +23,4 @@ export const serverClient = axios.create({
   }),
 });
 
-serverClient.interceptors.request.use(authInterceptor);
+jobbyApiClient.interceptors.request.use(authInterceptor);

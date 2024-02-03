@@ -1,11 +1,11 @@
-import { client } from "@/lib/clients";
+import { nextApiClient } from "@/lib/clients";
 import { queryClient } from "@/lib/react-query";
 import { Job } from "@/types";
 import { useMutation } from "@tanstack/react-query";
 
 export async function deleteJob(jobReference: string) {
   try {
-    await client.delete(`/job/${jobReference}`);
+    await nextApiClient.delete(`/job/${jobReference}`);
   } catch (error) {
     return Promise.reject(error);
   }

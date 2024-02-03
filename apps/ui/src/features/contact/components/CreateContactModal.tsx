@@ -50,7 +50,7 @@ import {
   Input,
   Modal,
 } from "@/components/ui";
-import { client } from "@/lib/clients";
+import { nextApiClient } from "@/lib/clients";
 import {
   CreateContactDTO,
   CreateContactSchema,
@@ -82,8 +82,8 @@ export const CreateContactModal = ({
 
   useEffect(() => {
     async function fetchBoardsAndJobs() {
-      const { data: boards } = await client.get<Board[]>("/boards");
-      const { data: jobs } = await client.get<Job[]>("/jobs");
+      const { data: boards } = await nextApiClient.get<Board[]>("/boards");
+      const { data: jobs } = await nextApiClient.get<Job[]>("/jobs");
 
       setFilteredBoards(boards);
       setBoards(boards);

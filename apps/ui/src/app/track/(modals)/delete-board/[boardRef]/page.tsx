@@ -1,6 +1,6 @@
-import { DeleteBoardModal } from "@/features/board/components/DeleteBoardModal";
+import { DeleteBoardModal } from "@/features/board";
 
-export default async function Page({
+export default function Page({
   params: { boardRef },
 }: {
   params: { boardRef: string };

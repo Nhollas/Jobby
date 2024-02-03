@@ -1,4 +1,4 @@
-import { client } from "@/lib/clients";
+import { nextApiClient } from "@/lib/clients";
 import { queryClient } from "@/lib/react-query";
 import { Contact } from "@/types";
 import { useMutation } from "@tanstack/react-query";
@@ -37,7 +37,7 @@ export type CreateContactDTO = z.infer<typeof CreateContactSchema>;
 
 export async function createContact(payload: CreateContactDTO) {
   try {
-    const response = await client.post<
+    const response = await nextApiClient.post<
       any,
       AxiosResponse<Contact>,
       CreateContactDTO

@@ -1,11 +1,11 @@
-import { client } from "@/lib/clients";
+import { nextApiClient } from "@/lib/clients";
 import { queryClient } from "@/lib/react-query";
 import { Board } from "@/types";
 import { useMutation } from "@tanstack/react-query";
 
 export async function deleteBoard(boardReference: string) {
   try {
-    await client.delete(`/board/${boardReference}`);
+    await nextApiClient.delete(`/board/${boardReference}`);
   } catch (error) {
     return Promise.reject(error);
   }

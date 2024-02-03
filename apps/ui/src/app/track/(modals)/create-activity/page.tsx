@@ -1,5 +1,3 @@
-"use client";
-
 import { ActivityFilter, CreateActivityModal } from "@/features/activity";
 
 export default function Page({

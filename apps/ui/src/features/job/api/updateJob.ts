@@ -1,4 +1,4 @@
-import { client } from "@/lib/clients";
+import { nextApiClient } from "@/lib/clients";
 import { queryClient } from "@/lib/react-query";
 import { Job } from "@/types";
 import { useMutation } from "@tanstack/react-query";
@@ -21,7 +21,7 @@ export type UpdateJobDTO = z.infer<typeof UpdateJobSchema>;
 
 export async function updateJob(payload: UpdateJobDTO) {
   try {
-    const response = await client.put<any, AxiosResponse<Job>, UpdateJobDTO>(
+    const response = await nextApiClient.put<any, AxiosResponse<Job>, UpdateJobDTO>(
       "/job",
       payload
     );

@@ -1,10 +1,10 @@
-import { client } from "@/lib/clients";
+import { nextApiClient } from "@/lib/clients";
 import { Contact } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 
 export async function getContact(contactReference: string) {
   try {
-    const response = await client.get<Contact>(`/contact/${contactReference}`);
+    const response = await nextApiClient.get<Contact>(`/contact/${contactReference}`);
     return response.data;
   } catch (error) {
     return Promise.reject(error);

@@ -40,7 +40,7 @@ export const DeleteBoardModal = ({ boardRef }: Props) => {
   };
 
   return (
-    <AlertDialog open={open}>
+    <AlertDialog open={open} onOpenChange={() => router.back()}>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Delete Board</AlertDialogTitle>

@@ -1,12 +1,12 @@
 import { getBoardContacts } from "@/features/board";
 import { getJobContacts } from "@/features/job";
-import { client } from "@/lib/clients";
+import { nextApiClient } from "@/lib/clients";
 import { Contact } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 
 export async function getContacts() {
   try {
-    const response = await client.get<Contact[]>("/contacts");
+    const response = await nextApiClient.get<Contact[]>("/contacts");
     return response.data;
   } catch (error) {
     return Promise.reject(error);

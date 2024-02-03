@@ -1,10 +1,10 @@
-import { client } from "@/lib/clients";
+import { nextApiClient } from "@/lib/clients";
 import { Board } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 
 export async function getBoards() {
   try {
-    const response = await client.get<Board[]>("/boards");
+    const response = await nextApiClient.get<Board[]>("/boards");
 
     return response.data;
   } catch (error) {

@@ -1,4 +1,4 @@
-import { client } from "@/lib/clients";
+import { nextApiClient } from "@/lib/clients";
 import { queryClient } from "@/lib/react-query";
 import { Activity } from "@/types";
 import { useMutation } from "@tanstack/react-query";
@@ -21,7 +21,7 @@ export type UpdateActivityDTO = z.infer<typeof UpdateActivitySchema>;
 
 export async function updateActivity(payload: UpdateActivityDTO) {
   try {
-    const response = await client.put<
+    const response = await nextApiClient.put<
       any,
       AxiosResponse<Activity>,
       UpdateActivityDTO

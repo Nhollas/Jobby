@@ -1,4 +1,4 @@
-import { client } from "@/lib/clients";
+import { nextApiClient } from "@/lib/clients";
 import { queryClient } from "@/lib/react-query";
 import { Board } from "@/types";
 import { useMutation } from "@tanstack/react-query";
@@ -13,7 +13,7 @@ export type UpdateBoardDTO = z.infer<typeof UpdateBoardSchema>;
 
 export async function updateBoard(payload: UpdateBoardDTO) {
   try {
-    const response = await client.put<
+    const response = await nextApiClient.put<
       any,
       AxiosResponse<Board>,
       UpdateBoardDTO

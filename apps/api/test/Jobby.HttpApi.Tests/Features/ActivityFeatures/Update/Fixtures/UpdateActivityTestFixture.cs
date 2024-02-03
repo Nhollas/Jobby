@@ -50,7 +50,7 @@ public class UpdateActivityTestFixture : IAsyncLifetime
         await SeedDataHelper<Board>.AddAsync(PreloadedBoard, initContext);
         await SeedDataHelper<Activity>.AddAsync(PreloadedActivity, initContext);
         
-        Body = new UpdateActivityCommand()
+        Body = new UpdateActivityCommand
         {
             ActivityReference = PreloadedActivity.Reference,
             Title = "Test Activity",

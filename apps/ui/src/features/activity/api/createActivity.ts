@@ -1,4 +1,4 @@
-import { client } from "@/lib/clients";
+import { nextApiClient } from "@/lib/clients";
 import { queryClient } from "@/lib/react-query";
 import { Activity } from "@/types";
 import { useMutation } from "@tanstack/react-query";
@@ -20,7 +20,7 @@ export type CreateActivityDTO = z.infer<typeof CreateActivitySchema>;
 
 export async function createActivity(payload: CreateActivityDTO) {
   try {
-    const response = await client.post<
+    const response = await nextApiClient.post<
       any,
       AxiosResponse<Activity>,
       CreateActivityDTO

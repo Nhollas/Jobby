@@ -1,10 +1,10 @@
-import { client } from "@/lib/clients";
+import { nextApiClient } from "@/lib/clients";
 import { Job } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 
 export async function getJob(jobReference: string) {
   try {
-    const response = await client.get<Job>(`/job/${jobReference}`);
+    const response = await nextApiClient.get<Job>(`/job/${jobReference}`);
 
     return response.data;
   } catch (error) {

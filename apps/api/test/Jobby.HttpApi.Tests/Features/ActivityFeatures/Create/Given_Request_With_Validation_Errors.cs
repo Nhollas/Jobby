@@ -44,15 +44,16 @@ public class Given_Request_With_Validation_Errors
     [Fact]
     public async Task When_BoardId_Property_Is_Missing_Then_Returns_422_Unprocessable_Entity_And_BoardId_Property_Validation_Message()
     {
-        const string withoutBoardId = """
-                            {
-                              "title": "k",
-                              "type": 12,
-                              "startDate": "2023-08-15T23:00:00.000Z",
-                              "endDate": "2023-08-15T23:00:00.000Z",
-                              "note": "jhakhsdjksad"
-                            }
-                            """;
+        const string withoutBoardId = 
+        """
+        {
+          "title": "k",
+          "type": 12,
+          "startDate": "2023-08-15T23:00:00.000Z",
+          "endDate": "2023-08-15T23:00:00.000Z",
+          "note": "jhakhsdjksad"
+        }
+        """;
 
         var body = new StringContent(withoutBoardId, Encoding.UTF8, "application/json");
         
