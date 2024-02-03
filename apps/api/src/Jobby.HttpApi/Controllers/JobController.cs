@@ -29,7 +29,7 @@ public class JobController : ApiController
         var jobQuery = new GetJobDetailQuery(jobReference);
         var job = await Sender.Send(jobQuery);
         
-        return Ok(job);
+        return Ok(job.Response);
     }
     
     [HttpGet("{jobReference}/activities")]
@@ -51,7 +51,7 @@ public class JobController : ApiController
     {
         var job = await Sender.Send(command);
 
-        return CreatedAtAction(nameof(CreateJob), job);
+        return CreatedAtAction(nameof(CreateJob), job.Response);
     }
 
     [HttpDelete("{jobReference}")]

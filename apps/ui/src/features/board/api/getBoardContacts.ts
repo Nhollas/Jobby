@@ -1,4 +1,4 @@
-import { nextApiClient } from "@/lib/clients";
+import { nextApiClient } from "@/lib/clients/nextApiClient";
 import { Contact } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 

@@ -5,7 +5,7 @@ import https from "https";
 
 async function authInterceptor(config: InternalAxiosRequestConfig) {
   const token = await auth().getToken();
-  
+
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }

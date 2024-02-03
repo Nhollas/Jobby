@@ -8,12 +8,16 @@ function formatUrl(url: string) {
 }
 
 async function proxyRequest(req: Request) {
-  const requestBody = await req.json();
+  let data = {};
+
+  if (req.method === "POST" || req.method === "PUT") {
+    data = await req.json();
+  }
 
   const response = await jobbyApiClient({
     method: req.method,
     url: formatUrl(req.url),
-    data: requestBody,
+    data: data,
     validateStatus: () => true,
   });
 

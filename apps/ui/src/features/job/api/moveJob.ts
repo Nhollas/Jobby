@@ -1,4 +1,4 @@
-import { nextApiClient } from "@/lib/clients";
+import { nextApiClient } from "@/lib/clients/nextApiClient";
 import { queryClient } from "@/lib/react-query";
 import { Job } from "@/types";
 import { useMutation } from "@tanstack/react-query";
@@ -14,10 +14,11 @@ export type MoveJobDTO = z.infer<typeof MoveJobSchema>;
 
 export async function moveJob(payload: MoveJobDTO) {
   try {
-    const response = await nextApiClient.put<any, AxiosResponse<Job>, MoveJobDTO>(
-      "/job/list",
-      payload
-    );
+    const response = await nextApiClient.put<
+      any,
+      AxiosResponse<Job>,
+      MoveJobDTO
+    >("/job/list", payload);
     return response.data;
   } catch (error) {
     return Promise.reject(error);

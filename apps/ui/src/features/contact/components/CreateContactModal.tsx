@@ -50,7 +50,7 @@ import {
   Input,
   Modal,
 } from "@/components/ui";
-import { nextApiClient } from "@/lib/clients";
+import { nextApiClient } from "@/lib/clients/nextApiClient";
 import {
   CreateContactDTO,
   CreateContactSchema,

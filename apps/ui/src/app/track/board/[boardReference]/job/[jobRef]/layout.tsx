@@ -2,15 +2,15 @@ import { JobNavigation, JobTitle } from "@/features/job";
 
 export default async function JobLayout({
   children,
-  params: { boardRef, jobRef },
+  params: { boardReference, jobRef },
 }: {
   children: React.ReactNode;
-  params: { boardRef: string; jobRef: string };
+  params: { boardReference: string; jobRef: string };
 }) {
   return (
     <div className="w-full">
       <JobTitle jobRef={jobRef} />
-      <JobNavigation boardRef={boardRef} jobRef={jobRef} />
+      <JobNavigation boardRef={boardReference} jobRef={jobRef} />
       {children}
     </div>
   );
