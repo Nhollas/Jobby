@@ -8,6 +8,7 @@ export async function getBoards() {
 
     return response.data;
   } catch (error) {
+    console.log("Error fetching boards", error);
     return Promise.reject({});
   }
 }
@@ -18,6 +19,5 @@ export const useBoardsQuery = () => {
     queryFn: getBoards,
     onSuccess() {},
     onError() {},
-    useErrorBoundary: true,
   });
 };

@@ -78,7 +78,7 @@ public class Activity : Entity
         bool completed, 
         Board board)
     {
-        var activity = new Activity(
+        Activity activity = new Activity(
             id,
             reference: EntityReferenceProvider<Activity>.CreateReference(),
             createdDate,

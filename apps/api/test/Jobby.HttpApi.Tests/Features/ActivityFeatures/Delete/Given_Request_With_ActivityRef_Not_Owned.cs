@@ -8,11 +8,11 @@ using Microsoft.EntityFrameworkCore;
 namespace Jobby.HttpApi.Tests.Features.ActivityFeatures.Delete;
 
 [Collection("SqlCollection")]
-public class Given_Request_With_ActivityRef_Not_Owned
+public class GivenRequestWithActivityRefNotOwned
 {
     private readonly JobbyHttpApiFactory _factory;
 
-    public Given_Request_With_ActivityRef_Not_Owned(JobbyHttpApiFactory factory)
+    public GivenRequestWithActivityRefNotOwned(JobbyHttpApiFactory factory)
     {
         _factory = factory;
     }
@@ -22,12 +22,12 @@ public class Given_Request_With_ActivityRef_Not_Owned
     [Fact]
     public async Task Then_Returns_404_Unauthorized()
     {
-        await using var context = new JobbyDbContext(new DbContextOptionsBuilder<JobbyDbContext>()
+        await using JobbyDbContext context = new JobbyDbContext(new DbContextOptionsBuilder<JobbyDbContext>()
             .UseSqlServer(_factory.DbConnectionString).Options);
         
-        var preLoadedBoard = await SeedDataHelper<Board>.AddAsync(Board.Create(Guid.NewGuid(), DateTime.UtcNow, "TestUserTwoId", "TestBoard"), context);
+        Board preLoadedBoard = await SeedDataHelper<Board>.AddAsync(Board.Create(Guid.NewGuid(), DateTime.UtcNow, "TestUserTwoId", "TestBoard"), context);
         
-        var activityToDelete = Activity.Create(
+        Activity? activityToDelete = Activity.Create(
             id: Guid.NewGuid(),
             createdDate: DateTime.UtcNow,
             ownerId: "TestUserTwoId",
@@ -40,10 +40,10 @@ public class Given_Request_With_ActivityRef_Not_Owned
             board: preLoadedBoard
         );
         
-        var preLoadedActivity = await SeedDataHelper<Activity>.AddAsync(activityToDelete, context);
+        Activity preLoadedActivity = await SeedDataHelper<Activity>.AddAsync(activityToDelete, context);
         
-        var response = await HttpClient.DeleteAsync($"/activity/{preLoadedActivity.Reference}");
-        var responseContent = await response.Content.ReadAsStringAsync();
+        HttpResponseMessage response = await HttpClient.DeleteAsync($"/activity/{preLoadedActivity.Reference}");
+        string responseContent = await response.Content.ReadAsStringAsync();
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
         responseContent.Should().Be("You are not authorised to access this resource.");

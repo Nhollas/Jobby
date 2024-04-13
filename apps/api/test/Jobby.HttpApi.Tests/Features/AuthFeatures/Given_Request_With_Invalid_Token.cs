@@ -8,11 +8,11 @@ using Xunit;
 namespace Jobby.HttpApi.Tests.Features.AuthFeatures;
 
 [Collection("SqlCollection")]
-public class Given_Request_With_Invalid_Token : IAsyncLifetime
+public class GivenRequestWithInvalidToken : IAsyncLifetime
 {
     private readonly JobbyHttpApiFactory _factory;
 
-    public Given_Request_With_Invalid_Token(JobbyHttpApiFactory factory)
+    public GivenRequestWithInvalidToken(JobbyHttpApiFactory factory)
     {
         _factory = factory;
     }
@@ -23,7 +23,7 @@ public class Given_Request_With_Invalid_Token : IAsyncLifetime
 
     private HttpClient SetupClient(string token)
     {
-        var httpClient = _factory.CreateClient();
+        HttpClient httpClient = _factory.CreateClient();
         
         httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
         
@@ -44,13 +44,13 @@ public class Given_Request_With_Invalid_Token : IAsyncLifetime
                             }
                             """;
 
-        var expiredToken = JwtHelper.Generate("TestUserId", expires: DateTime.UtcNow.AddDays(-1));
+        string expiredToken = JwtHelper.Generate("TestUserId", expires: DateTime.UtcNow.AddDays(-1));
 
-        var httpClient = SetupClient(expiredToken);
+        HttpClient httpClient = SetupClient(expiredToken);
 
-        var body = new StringContent(json, Encoding.UTF8, "application/json");
+        StringContent body = new StringContent(json, Encoding.UTF8, "application/json");
         
-        var response = await httpClient.PostAsync("/activity", body);
+        HttpResponseMessage response = await httpClient.PostAsync("/activity", body);
         
         string expectedErrorMessage = $"Bearer error=\"invalid_token\", error_description=\"The token expired at '{DateTime.UtcNow.AddDays(-1).ToString("MM/dd/yyyy HH:mm:ss")}'\"";
         
@@ -73,14 +73,14 @@ public class Given_Request_With_Invalid_Token : IAsyncLifetime
                             }
                             """;
 
-        var invalidSecret = "Q5BkcNr4WncjhC1RiqwXmMF4zdFttEab";
-        var tokenWithInvalidSecret = JwtHelper.Generate("TestUserId", secret: invalidSecret);
+        string invalidSecret = "Q5BkcNr4WncjhC1RiqwXmMF4zdFttEab";
+        string tokenWithInvalidSecret = JwtHelper.Generate("TestUserId", secret: invalidSecret);
 
-        var httpClient = SetupClient(tokenWithInvalidSecret);
+        HttpClient httpClient = SetupClient(tokenWithInvalidSecret);
         
-        var body = new StringContent(json, Encoding.UTF8, "application/json");
+        StringContent body = new StringContent(json, Encoding.UTF8, "application/json");
         
-        var response = await httpClient.PostAsync("/activity", body);
+        HttpResponseMessage response = await httpClient.PostAsync("/activity", body);
         
         string expectedErrorMessage = $"Bearer error=\"invalid_token\", error_description=\"The signature key was not found\"";
         
@@ -103,14 +103,14 @@ public class Given_Request_With_Invalid_Token : IAsyncLifetime
                             }
                             """;
 
-        var invalidIssuer = "InvalidIssuer";
-        var tokenWithInvalidIssuer = JwtHelper.Generate("TestUserId", issuer: invalidIssuer);
+        string invalidIssuer = "InvalidIssuer";
+        string tokenWithInvalidIssuer = JwtHelper.Generate("TestUserId", issuer: invalidIssuer);
         
-        var httpClient = SetupClient(tokenWithInvalidIssuer);
+        HttpClient httpClient = SetupClient(tokenWithInvalidIssuer);
         
-        var body = new StringContent(json, Encoding.UTF8, "application/json");
+        StringContent body = new StringContent(json, Encoding.UTF8, "application/json");
         
-        var response = await httpClient.PostAsync("/activity", body);
+        HttpResponseMessage response = await httpClient.PostAsync("/activity", body);
         
         string expectedErrorMessage = $"Bearer error=\"invalid_token\", error_description=\"The issuer 'InvalidIssuer' is invalid\"";
         
@@ -133,14 +133,14 @@ public class Given_Request_With_Invalid_Token : IAsyncLifetime
                             }
                             """;
 
-        var invalidAudience = "InvalidAudience";
-        var tokenWithInvalidAudience = JwtHelper.Generate("TestUserId", audience: invalidAudience);
+        string invalidAudience = "InvalidAudience";
+        string tokenWithInvalidAudience = JwtHelper.Generate("TestUserId", audience: invalidAudience);
         
-        var httpClient = SetupClient(tokenWithInvalidAudience);
+        HttpClient httpClient = SetupClient(tokenWithInvalidAudience);
         
-        var body = new StringContent(json, Encoding.UTF8, "application/json");
+        StringContent body = new StringContent(json, Encoding.UTF8, "application/json");
         
-        var response = await httpClient.PostAsync("/activity", body);
+        HttpResponseMessage response = await httpClient.PostAsync("/activity", body);
         
         string expectedErrorMessage = $"Bearer error=\"invalid_token\", error_description=\"The audience 'InvalidAudience' is invalid\"";
         

@@ -11,12 +11,12 @@ using Microsoft.EntityFrameworkCore;
 namespace Jobby.HttpApi.Tests.Features.ActivityFeatures.Update;
 
 [Collection("SqlCollection")]
-public class Given_Request_With_Valid_Details : IClassFixture<UpdateActivityTestFixture>
+public class GivenRequestWithValidDetails : IClassFixture<UpdateActivityTestFixture>
 {
     private readonly UpdateActivityTestFixture _fixture;
     private readonly JobbyHttpApiFactory _factory;
     
-    public Given_Request_With_Valid_Details(
+    public GivenRequestWithValidDetails(
         UpdateActivityTestFixture fixture, 
         JobbyHttpApiFactory factory)
     {
@@ -40,7 +40,7 @@ public class Given_Request_With_Valid_Details : IClassFixture<UpdateActivityTest
     {
         Assert.Equal(HttpStatusCode.OK, Response.StatusCode);
 
-        var returnedActivity = await Response.Content.ReadFromJsonAsync<ActivityDto>();
+        ActivityDto? returnedActivity = await Response.Content.ReadFromJsonAsync<ActivityDto>();
         
         Assert.NotNull(returnedActivity);
 
@@ -57,10 +57,10 @@ public class Given_Request_With_Valid_Details : IClassFixture<UpdateActivityTest
     [Fact]
     public async Task Then_Updates_Activity_In_Database()
     {
-        await using var updatedContext = new JobbyDbContext(new DbContextOptionsBuilder<JobbyDbContext>()
+        await using JobbyDbContext updatedContext = new JobbyDbContext(new DbContextOptionsBuilder<JobbyDbContext>()
             .UseSqlServer(_factory.DbConnectionString).Options);
         
-        var updatedActivity = await updatedContext.Activities.FirstOrDefaultAsync(x => x.Id == PreLoadedActivity.Id);
+        Activity? updatedActivity = await updatedContext.Activities.FirstOrDefaultAsync(x => x.Id == PreLoadedActivity.Id);
 
         Assert.NotNull(updatedActivity);
         

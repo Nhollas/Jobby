@@ -23,7 +23,7 @@ internal sealed class DeleteContactCommandHandler : IRequestHandler<DeleteContac
 
     public async Task<BaseResult<DeleteContactResponse, DeleteContactOutcomes>> Handle(DeleteContactCommand request, CancellationToken cancellationToken)
     {
-        var contactResourceResult = await ResourceProvider<Contact>
+        ResourceResult<Contact> contactResourceResult = await ResourceProvider<Contact>
             .GetByReference(_contactRepository.GetByReferenceAsync)
             .Check(_userId, request.ContactReference, cancellationToken);
 
@@ -41,7 +41,7 @@ internal sealed class DeleteContactCommandHandler : IRequestHandler<DeleteContac
             );
         }
         
-        var contactToDelete = contactResourceResult.Response;
+        Contact contactToDelete = contactResourceResult.Response;
 
         await _contactRepository.DeleteAsync(contactToDelete, cancellationToken);
 

@@ -29,7 +29,7 @@ internal sealed class GetBoardDetailQueryHandler : IRequestHandler<GetBoardDetai
 
     public async Task<BaseResult<BoardDto, GetBoardDetailOutcomes>> Handle(GetBoardDetailQuery request, CancellationToken cancellationToken)
     {
-        var boardResourceResult = await ResourceProvider<Board>
+        ResourceResult<Board> boardResourceResult = await ResourceProvider<Board>
             .GetBySpec(_repository.FirstOrDefaultAsync)
             .WithResource(request.BoardReference)
             .ApplySpecification(new GetBoardWithRelationshipsSpecification(request.BoardReference))

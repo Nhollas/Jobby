@@ -21,6 +21,9 @@ async function proxyRequest(req: Request) {
     validateStatus: () => true,
   });
 
+  // Artificial delay of 3 seconds
+  await new Promise((resolve) => setTimeout(resolve, 3000));
+
   return NextResponse.json(response.data, { status: response.status });
 }
 

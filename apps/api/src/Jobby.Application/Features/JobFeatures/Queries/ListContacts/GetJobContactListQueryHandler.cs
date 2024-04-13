@@ -26,9 +26,9 @@ internal sealed class GetJobContactListQueryHandler : IRequestHandler<GetJobCont
 
     public async Task<List<ContactDto>> Handle(GetJobContactListQuery request, CancellationToken cancellationToken)
     {
-        var contactSpec = new GetJobContactsSpecification(request.JobReference, _userId);
+        GetJobContactsSpecification contactSpec = new GetJobContactsSpecification(request.JobReference, _userId);
 
-        var contacts = await _contactRepository.ListAsync(contactSpec, cancellationToken);
+        List<Contact> contacts = await _contactRepository.ListAsync(contactSpec, cancellationToken);
 
         return _mapper.Map<List<ContactDto>>(contacts);
     }

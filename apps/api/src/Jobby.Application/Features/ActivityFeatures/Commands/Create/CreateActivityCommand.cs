@@ -5,14 +5,13 @@ using MediatR;
 
 namespace Jobby.Application.Features.ActivityFeatures.Commands.Create;
 
-public sealed record CreateActivityCommand : IRequest<BaseResult<ActivityDto, CreateActivityOutcomes>>
-{
-    public string BoardReference { get; set; }
-    public string JobReference { get; set; } = string.Empty;
-    public string Title { get; set; }
-    public ActivityConstants.Types Type { get; set; }
-    public DateTime StartDate { get; set; }
-    public DateTime EndDate { get; set; }
-    public string Note { get; set; }
-    public bool Completed { get; set; }
-}
+public sealed record CreateActivityCommand(
+    string BoardReference,
+    string JobReference,
+    string Title,
+    ActivityConstants.Types Type,
+    DateTime StartDate,
+    DateTime EndDate,
+    string Note,
+    bool Completed)
+    : IRequest<BaseResult<ActivityDto, CreateActivityOutcomes>>;

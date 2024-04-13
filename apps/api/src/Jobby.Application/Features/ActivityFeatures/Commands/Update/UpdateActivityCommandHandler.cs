@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FluentValidation.Results;
 using Jobby.Application.Abstractions.Specification;
 using Jobby.Application.Dtos;
 using Jobby.Application.Interfaces.Services;
@@ -35,8 +36,8 @@ internal sealed class UpdateActivityCommandHandler : IRequestHandler<UpdateActiv
 
     public async Task<BaseResult<ActivityDto, UpdateActivityOutcomes>> Handle(UpdateActivityCommand request, CancellationToken cancellationToken)
     {
-        var validator = new UpdateActivityCommandValidator();
-        var validationResult = await validator.ValidateAsync(request, cancellationToken);
+        UpdateActivityCommandValidator validator = new UpdateActivityCommandValidator();
+        ValidationResult validationResult = await validator.ValidateAsync(request, cancellationToken);
         
         if (!validationResult.IsValid)
         {
@@ -47,7 +48,7 @@ internal sealed class UpdateActivityCommandHandler : IRequestHandler<UpdateActiv
             );
         }
         
-        var activityResourceResult = await ResourceProvider<Activity>
+        ResourceResult<Activity> activityResourceResult = await ResourceProvider<Activity>
             .GetByReference(_activityRepository.GetByReferenceAsync)
             .Check(_userId, request.ActivityReference, cancellationToken);
 
@@ -65,7 +66,7 @@ internal sealed class UpdateActivityCommandHandler : IRequestHandler<UpdateActiv
             );
         }
         
-        var activityToUpdate = activityResourceResult.Response;
+        Activity activityToUpdate = activityResourceResult.Response;
         
         activityToUpdate.Update(
             request.Title,
@@ -77,7 +78,7 @@ internal sealed class UpdateActivityCommandHandler : IRequestHandler<UpdateActiv
         
         if (request.JobReference != string.Empty && request.JobReference != activityToUpdate.JobReference)
         {
-            var jobResourceResult = await ResourceProvider<Job>
+            ResourceResult<Job> jobResourceResult = await ResourceProvider<Job>
                 .GetByReference(_jobRepository.GetByReferenceAsync)
                 .Check(_userId, request.JobReference, cancellationToken);
             
@@ -95,7 +96,7 @@ internal sealed class UpdateActivityCommandHandler : IRequestHandler<UpdateActiv
                 );
             }
             
-            var jobToLink = jobResourceResult.Response;
+            Job jobToLink = jobResourceResult.Response;
 
             if (jobToLink.BoardId != activityToUpdate.BoardId)
             {

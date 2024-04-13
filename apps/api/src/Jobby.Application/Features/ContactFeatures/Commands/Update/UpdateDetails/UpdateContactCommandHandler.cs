@@ -40,7 +40,7 @@ internal sealed class UpdateContactCommandHandler : IRequestHandler<UpdateContac
 
     public async Task<BaseResult<ContactDto, UpdateContactOutcomes>> Handle(UpdateContactCommand request, CancellationToken cancellationToken)
     {
-        var contactResourceResult = await ResourceProvider<Contact>
+        ResourceResult<Contact> contactResourceResult = await ResourceProvider<Contact>
             .GetBySpec(_contactRepository.FirstOrDefaultAsync)
             .WithResource(request.ContactReference)
             .ApplySpecification(new GetContactWithSocialsSpecification(request.ContactReference))
@@ -60,7 +60,7 @@ internal sealed class UpdateContactCommandHandler : IRequestHandler<UpdateContac
             );
         }
         
-        var contactToUpdate = contactResourceResult.Response;
+        Contact contactToUpdate = contactResourceResult.Response;
 
         contactToUpdate.Update(
             request.FirstName,
@@ -75,7 +75,7 @@ internal sealed class UpdateContactCommandHandler : IRequestHandler<UpdateContac
         
         if (request.BoardReference != string.Empty && request.BoardReference != contactToUpdate.BoardReference)
         {
-            var boardResourceResult = await ResourceProvider<Board>
+            ResourceResult<Board> boardResourceResult = await ResourceProvider<Board>
                 .GetByReference(_boardRepository.GetByReferenceAsync)
                 .Check(_userId, request.BoardReference, cancellationToken);
             
@@ -93,23 +93,23 @@ internal sealed class UpdateContactCommandHandler : IRequestHandler<UpdateContac
                 );
             }
             
-            var newBoard = boardResourceResult.Response;
+            Board newBoard = boardResourceResult.Response;
             
             contactToUpdate.SetBoard(newBoard);
         }
 
-        var contactJobIds = contactToUpdate.JobContacts.Select(x => x.Job.Reference).ToList();
+        List<string> contactJobIds = contactToUpdate.JobContacts.Select(x => x.Job.Reference).ToList();
         
         if (request.JobReferences.Count > 0 && !contactJobIds.SequenceEqual(request.JobReferences))
         {
-            var jobsToLink = await _jobRepository.ListAsync(new GetJobsFromIdsSpecification(request.JobReferences, _userId), cancellationToken);
+            List<Job> jobsToLink = await _jobRepository.ListAsync(new GetJobsFromIdsSpecification(request.JobReferences, _userId), cancellationToken);
 
             contactToUpdate.SetJobs(jobsToLink);
         }
 
         if (request.Companies.Count > 0)
         {
-            var updatedCompanies = request.Companies
+            List<Company> updatedCompanies = request.Companies
                 .Select(x => Company.Create(Guid.NewGuid(), _timeProvider.UtcNow, _userId, x.Name, contactToUpdate))
                 .ToList();
 
@@ -118,7 +118,7 @@ internal sealed class UpdateContactCommandHandler : IRequestHandler<UpdateContac
 
         if (request.Emails.Count > 0)
         {
-            var updatedEmails = request.Emails
+            List<Email> updatedEmails = request.Emails
                 .Select(x => Email.Create(Guid.NewGuid(), _timeProvider.UtcNow, _userId, x.Name, (EmailType)x.Type, contactToUpdate))
                 .ToList();
 
@@ -127,7 +127,7 @@ internal sealed class UpdateContactCommandHandler : IRequestHandler<UpdateContac
 
         if (request.Phones.Count > 0)
         {
-            var updatedPhones = request.Phones
+            List<Phone> updatedPhones = request.Phones
                 .Select(x => Phone.Create(Guid.NewGuid(), _timeProvider.UtcNow, _userId, x.Number, (PhoneType)x.Type, contactToUpdate))
                 .ToList();
 

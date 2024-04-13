@@ -1,6 +1,7 @@
 using System.Net;
 using Jobby.Application.Dtos;
 using Jobby.Application.Features.ActivityFeatures.Commands.Create;
+using Jobby.Domain.Entities;
 using Jobby.Domain.Static;
 using Jobby.HttpApi.Tests.Factories;
 using Jobby.HttpApi.Tests.Features.ActivityFeatures.Create.Fixtures;
@@ -10,36 +11,23 @@ using Microsoft.EntityFrameworkCore;
 namespace Jobby.HttpApi.Tests.Features.ActivityFeatures.Create;
 
 [Collection("SqlCollection")]
-public class Given_Request_With_Valid_Details : IClassFixture<ValidDetailsTestFixture>
+public class GivenRequestWithValidDetails(
+    JobbyHttpApiFactory factory,
+    ValidDetailsTestFixture fixture)
+    : IClassFixture<ValidDetailsTestFixture>
 {
-    private readonly JobbyHttpApiFactory _factory;
-    private readonly ValidDetailsTestFixture _fixture;
-
-    public Given_Request_With_Valid_Details(
-        JobbyHttpApiFactory factory, 
-        ValidDetailsTestFixture fixture)
-    {
-        _factory = factory;
-        _fixture = fixture;
-    }
-    
-    private HttpResponseMessage Response => _fixture.Response;
-    private CreateActivityCommand Body => _fixture.Body;
-    private ActivityDto? ReturnedActivity => _fixture.ReturnedActivity;
-    
+    private HttpResponseMessage Response => fixture.Response;
+    private CreateActivityCommand Body => fixture.Body;
+    private ActivityDto ReturnedActivity => fixture.ReturnedActivity!;
     private string ExpectedName => ActivityConstants.TypesDictionary.GetValueOrDefault((int)Body.Type, ActivityConstants.TypesDictionary[0]);
     
     [Fact]
-    public void Then_Returns_201_Created()
-    {
-        Assert.Equal(HttpStatusCode.Created, Response.StatusCode);
-    }
+    public void ThenReturns201Created() => 
+        Response.StatusCode.Should().Be(HttpStatusCode.Created);
 
     [Fact]
-    public void Then_Returns_Created_Activity()
+    public void ThenReturnsCreatedActivity()
     {
-        Assert.NotNull(ReturnedActivity);
-
         Assert.Multiple(
             () => ReturnedActivity.Title.Should().Be(Body.Title),
             () => ReturnedActivity.Name.Should().Be(ExpectedName),
@@ -54,17 +42,13 @@ public class Given_Request_With_Valid_Details : IClassFixture<ValidDetailsTestFi
     }
 
     [Fact]
-    public async Task Then_Inserts_Activity_In_Database()
+    public async Task ThenInsertsActivityInDatabase()
     {
-        await using var updatedContext = new JobbyDbContext(new DbContextOptionsBuilder<JobbyDbContext>()
-            .UseSqlServer(_factory.DbConnectionString).Options);
-        
-        Assert.NotNull(ReturnedActivity);
+        await using JobbyDbContext dbContext = factory.GetDbContext();
 
-        var createdActivity = await updatedContext.Activities.Include(activity => activity.Job).FirstOrDefaultAsync(activity =>
-            activity.Reference == ReturnedActivity.Reference);
-
-        Assert.NotNull(createdActivity);
+        Activity createdActivity = await dbContext.Activities
+            .Include(activity => activity.Job)
+            .SingleAsync(activity => activity.Reference == ReturnedActivity.Reference);
         
         Assert.Multiple(
             () => createdActivity.Title.Should().Be(Body.Title),

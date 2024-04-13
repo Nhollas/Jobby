@@ -13,7 +13,12 @@ interface ActivityItemProps {
   layoutId: string;
 }
 
-const ActivityItem = ({ title, href, active, layoutId }: ActivityItemProps) => {
+export const ActivityItem = ({
+  title,
+  href,
+  active,
+  layoutId,
+}: ActivityItemProps) => {
   return (
     <div className="relative p-1">
       <Button
@@ -51,7 +56,7 @@ export function ActivitiesNavigation({
   const jobPath = jobRef ? `/job/${jobRef}` : "";
 
   return (
-    <div className="w-[250px] pt-4">
+    <div className="hidden w-[250px] pt-4 md:block">
       <div className="fixed flex w-[250px] flex-col gap-y-2">
         <div className="flex flex-col gap-y-1 p-2">
           <ActivityItem

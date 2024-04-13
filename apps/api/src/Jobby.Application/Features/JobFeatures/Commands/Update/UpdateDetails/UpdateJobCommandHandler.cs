@@ -30,7 +30,7 @@ internal sealed class UpdateJobCommandHandler : IRequestHandler<UpdateJobCommand
 
     public async Task<BaseResult<JobDto, UpdateJobOutcomes>> Handle(UpdateJobCommand request, CancellationToken cancellationToken)
     {
-        var jobResourceResult = await ResourceProvider<Job>
+        ResourceResult<Job> jobResourceResult = await ResourceProvider<Job>
             .GetByReference(_jobRepository.GetByReferenceAsync)
             .Check(_userId, request.JobReference, cancellationToken);
 
@@ -48,7 +48,7 @@ internal sealed class UpdateJobCommandHandler : IRequestHandler<UpdateJobCommand
             );
         }
         
-        var jobToUpdate = jobResourceResult.Response;
+        Job jobToUpdate = jobResourceResult.Response;
 
         _mapper.Map(request, jobToUpdate, typeof(UpdateJobCommand), typeof(Job));
 

@@ -11,11 +11,11 @@ using Microsoft.EntityFrameworkCore;
 namespace Jobby.HttpApi.Tests.Features.ActivityFeatures.Update;
 
 [Collection("SqlCollection")]
-public class Given_Request_With_Activity_Not_Owned
+public class GivenRequestWithActivityNotOwned
 {
     private readonly JobbyHttpApiFactory _factory;
 
-    public Given_Request_With_Activity_Not_Owned(JobbyHttpApiFactory factory)
+    public GivenRequestWithActivityNotOwned(JobbyHttpApiFactory factory)
     {
         _factory = factory;
     }
@@ -25,14 +25,14 @@ public class Given_Request_With_Activity_Not_Owned
     [Fact]
     public async Task Then_Returns_401_Unauthorized()
     {
-        await using var context = new JobbyDbContext(new DbContextOptionsBuilder<JobbyDbContext>()
+        await using JobbyDbContext context = new JobbyDbContext(new DbContextOptionsBuilder<JobbyDbContext>()
             .UseSqlServer(_factory.DbConnectionString).Options);
         
-        var preLoadedBoard = Board.Create(Guid.NewGuid(), DateTime.UtcNow, "TestUserId", "TestBoard");
+        Board? preLoadedBoard = Board.Create(Guid.NewGuid(), DateTime.UtcNow, "TestUserId", "TestBoard");
         
         await SeedDataHelper<Board>.AddAsync(preLoadedBoard, context);
 
-        var preLoadedActivity = Activity.Create(
+        Activity? preLoadedActivity = Activity.Create(
             Guid.NewGuid(),
             DateTime.UtcNow,
             "TestUser2Id",
@@ -47,7 +47,7 @@ public class Given_Request_With_Activity_Not_Owned
         
         await SeedDataHelper<Activity>.AddAsync(preLoadedActivity, context);
         
-        var body = new UpdateActivityCommand()
+        UpdateActivityCommand body = new UpdateActivityCommand()
         {
             ActivityReference = preLoadedActivity.Reference,
             Title = "Test Activity",
@@ -58,8 +58,8 @@ public class Given_Request_With_Activity_Not_Owned
             Completed = false
         };
 
-        var response = await HttpClient.PutAsJsonAsync("/activity", body);
-        var responseContent = await response.Content.ReadAsStringAsync();
+        HttpResponseMessage response = await HttpClient.PutAsJsonAsync("/activity", body);
+        string responseContent = await response.Content.ReadAsStringAsync();
         
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
         responseContent.Should().Be("You are not authorised to access this resource.");

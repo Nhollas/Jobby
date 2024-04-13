@@ -3,8 +3,7 @@
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { NavigationItem } from "@/components";
-import { Layout, List, PanelLeft, Users } from "lucide-react";
-import { SheetTrigger, Sheet, Button } from "@/components/ui";
+import { Layout, List, Users } from "lucide-react";
 import { MobileBoardNavigation } from "./MobileBoardNavigation";
 
 type NavItem = {
@@ -34,7 +33,6 @@ const navItems: NavItem[] = [
 export function BoardTopNavigation() {
   const pathname = usePathname() || "/";
   const pathnameSections = pathname.split("/");
-  const [open, setOpen] = useState(false);
 
   let leaf = pathnameSections[4] || "/";
 
@@ -50,18 +48,7 @@ export function BoardTopNavigation() {
 
   return (
     <div className="z-10 flex h-16 w-full flex-row items-center gap-4 overflow-x-auto border-b border-gray-200 px-4">
-      <Sheet open={open} onOpenChange={setOpen}>
-        <SheetTrigger asChild>
-          <Button
-            variant="outline"
-            className="flex h-10 w-10 items-center gap-x-2 rounded-md px-2 py-1 text-sm md:hidden"
-          >
-            <PanelLeft className="h-5 w-5" />
-            <span className="sr-only">Toggle Menu</span>
-          </Button>
-        </SheetTrigger>
-        <MobileBoardNavigation />
-      </Sheet>
+      <MobileBoardNavigation />
       {navItems.map(({ icon, leaf, name }) => (
         <NavigationItem
           selected={selected === leaf}

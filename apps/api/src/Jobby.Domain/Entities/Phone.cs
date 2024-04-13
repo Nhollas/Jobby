@@ -32,7 +32,7 @@ public class Phone: Entity
         PhoneType type,
         Contact contact)
     {
-        var phone = new Phone(
+        Phone phone = new Phone(
             id,
             reference: EntityReferenceProvider<Phone>.CreateReference(),
             createdDate,

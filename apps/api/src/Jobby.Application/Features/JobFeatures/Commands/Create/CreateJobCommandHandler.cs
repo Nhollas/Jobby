@@ -38,7 +38,7 @@ internal sealed class CreateJobCommandHandler : IRequestHandler<CreateJobCommand
 
     public async Task<BaseResult<JobDto, CreateJobOutcomes>> Handle(CreateJobCommand request, CancellationToken cancellationToken)
     {
-        var boardResourceResult = await ResourceProvider<Board>
+        ResourceResult<Board> boardResourceResult = await ResourceProvider<Board>
             .GetBySpec(_boardRepository.FirstOrDefaultAsync)
             .WithResource(request.BoardReference)
             .ApplySpecification(new GetBoardWithJobsSpecification(request.BoardReference))
@@ -58,7 +58,7 @@ internal sealed class CreateJobCommandHandler : IRequestHandler<CreateJobCommand
             );
         }
         
-        var board = boardResourceResult.Response;
+        Board board = boardResourceResult.Response;
 
         if (!board.BoardOwnsList(request.JobListReference))
         {
@@ -75,7 +75,7 @@ internal sealed class CreateJobCommandHandler : IRequestHandler<CreateJobCommand
 
         newIndex = selectedJobList.Jobs.Count == 0 ? 0 : selectedJobList.Jobs.Count;
 
-        var createdJob = Job.Create(
+        Job createdJob = Job.Create(
             _guidProvider.Create(),
             _dateTimeProvider.UtcNow,
             _userId,

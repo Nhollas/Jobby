@@ -66,7 +66,7 @@ public class Job : Entity
         JobList jobList,
         Board board)
     {
-        var job = new Job(
+        Job job = new Job(
             id,
             reference: EntityReferenceProvider<Job>.CreateReference(),
             createdDate,

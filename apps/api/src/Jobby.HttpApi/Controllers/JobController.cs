@@ -7,6 +7,7 @@ using Jobby.Application.Features.JobFeatures.Queries.GetById;
 using Jobby.Application.Features.JobFeatures.Queries.GetList;
 using Jobby.Application.Features.JobFeatures.Queries.ListActivities;
 using Jobby.Application.Features.JobFeatures.Queries.ListContacts;
+using Jobby.Application.Responses.Common;
 using Jobby.HttpApi.Controllers.Base;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,15 +20,15 @@ public class JobController : ApiController
     [HttpGet("/jobs")]
     public async Task<ActionResult<List<JobDto>>> ListBoards()
     {
-        var dtos = await Sender.Send(new GetJobListQuery());
+        List<JobDto>? dtos = await Sender.Send(new GetJobListQuery());
         return Ok(dtos);
     }
     
     [HttpGet("{jobReference}")]
     public async Task<ActionResult<JobDto>> GetJob(string jobReference)
     {
-        var jobQuery = new GetJobDetailQuery(jobReference);
-        var job = await Sender.Send(jobQuery);
+        GetJobDetailQuery jobQuery = new GetJobDetailQuery(jobReference);
+        BaseResult<JobDto, GetJobDetailOutcomes>? job = await Sender.Send(jobQuery);
         
         return Ok(job.Response);
     }
@@ -35,21 +36,21 @@ public class JobController : ApiController
     [HttpGet("{jobReference}/activities")]
     public async Task<ActionResult<List<ActivityDto>>> GetJobActivities(string jobReference)
     {
-        var jobQuery = new GetJobActivityListQuery(jobReference);
+        GetJobActivityListQuery jobQuery = new GetJobActivityListQuery(jobReference);
         return Ok(await Sender.Send(jobQuery));
     }
 
     [HttpGet("{jobReference}/contacts")]
     public async Task<ActionResult<List<ContactDto>>> GetJobContacts(string jobReference)
     {
-        var jobQuery = new GetJobContactListQuery(jobReference);
+        GetJobContactListQuery jobQuery = new GetJobContactListQuery(jobReference);
         return Ok(await Sender.Send(jobQuery));
     }
 
     [HttpPost]
     public async Task<ActionResult<JobDto>> CreateJob([FromBody] CreateJobCommand command)
     {
-        var job = await Sender.Send(command);
+        BaseResult<JobDto, CreateJobOutcomes>? job = await Sender.Send(command);
 
         return CreatedAtAction(nameof(CreateJob), job.Response);
     }
@@ -64,7 +65,7 @@ public class JobController : ApiController
     [HttpPut]
     public async Task<ActionResult<JobDto>> UpdateJob([FromBody] UpdateJobCommand command)
     {
-        var updatedjob =  await Sender.Send(command);
+        BaseResult<JobDto, UpdateJobOutcomes>? updatedjob =  await Sender.Send(command);
         return Ok(updatedjob);
     }
 

@@ -11,11 +11,11 @@ using Microsoft.EntityFrameworkCore;
 namespace Jobby.HttpApi.Tests.Features.ActivityFeatures.Create;
 
 [Collection("SqlCollection")]
-public class Given_Request_With_BoardId_Not_Owned
+public class GivenRequestWithBoardIdNotOwned
 {
     private readonly JobbyHttpApiFactory _factory;
 
-    public Given_Request_With_BoardId_Not_Owned(JobbyHttpApiFactory factory)
+    public GivenRequestWithBoardIdNotOwned(JobbyHttpApiFactory factory)
     {
         _factory = factory;
     }
@@ -25,12 +25,12 @@ public class Given_Request_With_BoardId_Not_Owned
     [Fact]
     public async Task Then_Returns_401_Unauthorized()
     {
-        await using var context = new JobbyDbContext(new DbContextOptionsBuilder<JobbyDbContext>()
+        await using JobbyDbContext context = new JobbyDbContext(new DbContextOptionsBuilder<JobbyDbContext>()
             .UseSqlServer(_factory.DbConnectionString).Options);
         
-        var preLoadedBoard = await SeedDataHelper<Board>.AddAsync(Board.Create(Guid.NewGuid(), DateTime.UtcNow, "TestUser2Id", "TestBoard"), context);
+        Board preLoadedBoard = await SeedDataHelper<Board>.AddAsync(Board.Create(Guid.NewGuid(), DateTime.UtcNow, "TestUser2Id", "TestBoard"), context);
         
-        var body = new CreateActivityCommand()
+        CreateActivityCommand body = new CreateActivityCommand()
         {
             BoardReference = preLoadedBoard.Reference,
             Title = "Test Activity",
@@ -41,8 +41,8 @@ public class Given_Request_With_BoardId_Not_Owned
             Completed = false
         };
 
-        var response = await HttpClient.PostAsJsonAsync("/activity", body);
-        var responseContent = await response.Content.ReadAsStringAsync();
+        HttpResponseMessage response = await HttpClient.PostAsJsonAsync("/activity", body);
+        string responseContent = await response.Content.ReadAsStringAsync();
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
         responseContent.Should().Be("You are not authorised to access this resource.");

@@ -10,7 +10,7 @@ public class Board : Entity
     private readonly List<Job> _jobs = new();
     private readonly List<Contact> _contacts = new();
 
-    public Board()
+    private Board()
     {
 
     }
@@ -42,7 +42,7 @@ public class Board : Entity
         string ownerId,
         string name)
     {
-        var board = new Board(
+        Board board = new Board(
             id,
             reference: EntityReferenceProvider<Board>.CreateReference(),
             createdDate,
@@ -59,7 +59,7 @@ public class Board : Entity
 
     public void ArrangeJobLists(Dictionary<string, int> jobListIndexes)
     {
-        foreach (var list in _lists.Where(list => jobListIndexes.ContainsKey(list.Reference)))
+        foreach (JobList list in _lists.Where(list => jobListIndexes.ContainsKey(list.Reference)))
         {
             list.SetIndex(jobListIndexes[list.Reference]);
         }

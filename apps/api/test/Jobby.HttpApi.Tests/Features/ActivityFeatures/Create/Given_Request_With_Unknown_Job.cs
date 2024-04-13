@@ -11,11 +11,11 @@ using Microsoft.EntityFrameworkCore;
 namespace Jobby.HttpApi.Tests.Features.ActivityFeatures.Create;
 
 [Collection("SqlCollection")]
-public class Given_Request_With_Unknown_Job
+public class GivenRequestWithUnknownJob
 {
     private readonly JobbyHttpApiFactory _factory;
 
-    public Given_Request_With_Unknown_Job(JobbyHttpApiFactory factory)
+    public GivenRequestWithUnknownJob(JobbyHttpApiFactory factory)
     {
         _factory = factory;
     }
@@ -25,12 +25,12 @@ public class Given_Request_With_Unknown_Job
     [Fact]
     public async Task Then_Returns_404_NotFound()
     {
-        await using var context = new JobbyDbContext(new DbContextOptionsBuilder<JobbyDbContext>()
+        await using JobbyDbContext context = new JobbyDbContext(new DbContextOptionsBuilder<JobbyDbContext>()
             .UseSqlServer(_factory.DbConnectionString).Options);
         
-        var preLoadedBoard = await SeedDataHelper<Board>.AddAsync(Board.Create(Guid.NewGuid(), DateTime.UtcNow, "TestUserId", "TestBoard"), context);
+        Board preLoadedBoard = await SeedDataHelper<Board>.AddAsync(Board.Create(Guid.NewGuid(), DateTime.UtcNow, "TestUserId", "TestBoard"), context);
         
-        var body = new CreateActivityCommand
+        CreateActivityCommand body = new CreateActivityCommand
         {
             BoardReference = preLoadedBoard.Reference,
             Title = "Test Activity",
@@ -42,8 +42,8 @@ public class Given_Request_With_Unknown_Job
             Completed = false
         };
 
-        var response = await HttpClient.PostAsJsonAsync("/activity", body);
-        var responseContent = await response.Content.ReadAsStringAsync();
+        HttpResponseMessage response = await HttpClient.PostAsJsonAsync("/activity", body);
+        string responseContent = await response.Content.ReadAsStringAsync();
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
         responseContent.Should().Be($"The Job {body.JobReference} you wanted to link doesn't exist in the Board {body.BoardReference}.");

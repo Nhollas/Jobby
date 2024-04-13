@@ -34,10 +34,16 @@ public class JobbyHttpApiFactory : WebApplicationFactory<Program>, IAsyncLifetim
         
         DbConnectionString = _mssqlContainer.GetConnectionString();
         
-        await using var context = new JobbyDbContext(new DbContextOptionsBuilder<JobbyDbContext>()
+        await using JobbyDbContext context = new JobbyDbContext(new DbContextOptionsBuilder<JobbyDbContext>()
             .UseSqlServer(DbConnectionString).Options);
         
         await context.Database.EnsureCreatedAsync();
+    }
+    
+    public JobbyDbContext GetDbContext()
+    {
+        return new JobbyDbContext(new DbContextOptionsBuilder<JobbyDbContext>()
+            .UseSqlServer(DbConnectionString).Options);
     }
 
     public new async Task DisposeAsync()
@@ -47,7 +53,7 @@ public class JobbyHttpApiFactory : WebApplicationFactory<Program>, IAsyncLifetim
 
     public HttpClient SetupClient()
     {
-        var client = CreateClient();
+        HttpClient client = CreateClient();
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", JwtHelper.Generate("TestUserId"));
         
         return client;

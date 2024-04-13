@@ -7,8 +7,8 @@ using Microsoft.OpenApi.Models;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 
-var builder = WebApplication.CreateBuilder(args);
-var config = builder.Configuration;
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+ConfigurationManager config = builder.Configuration;
 
 builder.Services.AddLogging();
 builder.Services.AddSingleton(typeof(ILogger<>), typeof(Logger<>));
@@ -65,7 +65,7 @@ builder.Services.AddAuthentication(options =>
     })
     .AddJwtBearer(options =>
         {
-            var jwtConfig = config.GetSection("Jwt");
+            IConfigurationSection jwtConfig = config.GetSection("Jwt");
 
             string pem = jwtConfig["SignatureKey"] ?? throw new Exception("SignatureKey is missing from Jwt configuration.");
             string[] splitPem = Regex.Matches(pem, ".{1,64}").Select(m => m.Value).ToArray();
@@ -87,7 +87,7 @@ builder.Services.AddAuthentication(options =>
         }
     );
 
-var app = builder.Build();
+WebApplication app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {

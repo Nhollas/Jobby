@@ -28,7 +28,7 @@ public class Company: Entity
         string name,
         Contact contact)
     {
-        var company = new Company(
+        Company company = new Company(
             id,
             reference: EntityReferenceProvider<Company>.CreateReference(),
             createdDate,

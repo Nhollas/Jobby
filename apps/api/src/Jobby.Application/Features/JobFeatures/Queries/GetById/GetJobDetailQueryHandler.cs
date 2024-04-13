@@ -27,7 +27,7 @@ internal sealed class GetJobDetailQueryHandler : IRequestHandler<GetJobDetailQue
 
     public async Task<BaseResult<JobDto, GetJobDetailOutcomes>> Handle(GetJobDetailQuery request, CancellationToken cancellationToken)
     {
-        var jobResourceResult = await ResourceProvider<Job>
+        ResourceResult<Job> jobResourceResult = await ResourceProvider<Job>
             .GetByReference(_jobRepository.GetByReferenceAsync)
             .Check(_userId, request.JobReference, cancellationToken);
 

@@ -7,11 +7,11 @@ using Xunit;
 namespace Jobby.HttpApi.Tests.Features.BoardFeatures.Create;
 
 [Collection("SqlCollection")]
-public class Given_Request_With_Validation_Errors : IAsyncLifetime
+public class GivenRequestWithValidationErrors : IAsyncLifetime
 {
     private readonly JobbyHttpApiFactory _factory;
 
-    public Given_Request_With_Validation_Errors(JobbyHttpApiFactory factory)
+    public GivenRequestWithValidationErrors(JobbyHttpApiFactory factory)
     {
         _factory = factory;
     }
@@ -28,11 +28,11 @@ public class Given_Request_With_Validation_Errors : IAsyncLifetime
     {
         const string withoutNameProperty = "{}";
 
-        var body = new StringContent(withoutNameProperty, Encoding.UTF8, "application/json");
+        StringContent body = new StringContent(withoutNameProperty, Encoding.UTF8, "application/json");
         
-        var response = await HttpClient.PostAsync("/board", body);
+        HttpResponseMessage response = await HttpClient.PostAsync("/board", body);
         
-        var errors = await response.Content.ReadFromJsonAsync<List<ValidationError>>();
+        List<ValidationError>? errors = await response.Content.ReadFromJsonAsync<List<ValidationError>>();
         
         Assert.NotNull(errors);
         Assert.Equal("Name", errors[0].PropertyName);

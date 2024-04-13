@@ -69,7 +69,7 @@ public class Contact : Entity
         List<CreateEmailDto> emails,
         List<CreatePhoneDto> phones)
     {
-        var contact = new Contact(
+        Contact contact = new Contact(
             id,
             reference: EntityReferenceProvider<Contact>.CreateReference(),
             createdDate,
@@ -118,7 +118,7 @@ public class Contact : Entity
     {
         Companies.Clear();
 
-        foreach (var company in companies)
+        foreach (Company company in companies)
         {
             Companies.Add(company);
         }
@@ -143,7 +143,7 @@ public class Contact : Entity
     {
         Emails.Clear();
 
-        foreach (var email in emails)
+        foreach (Email email in emails)
         {
             Emails.Add(email);
         }
@@ -153,7 +153,7 @@ public class Contact : Entity
     {
         Phones.Clear();
 
-        foreach (var phone in phones)
+        foreach (Phone phone in phones)
         {
             Phones.Add(phone);
         }
@@ -164,7 +164,7 @@ public class Contact : Entity
         Jobs.Clear();
         JobContacts.Clear();
 
-        foreach (var job in jobs)
+        foreach (Job job in jobs)
         {
             JobContacts.Add(new JobContact(this, job));
             Jobs.Add(job);

@@ -32,7 +32,7 @@ public class Email: Entity
         EmailType type,
         Contact contact)
     {
-        var phone = new Email(
+        Email phone = new Email(
             id,
             reference: EntityReferenceProvider<Email>.CreateReference(),
             createdDate,

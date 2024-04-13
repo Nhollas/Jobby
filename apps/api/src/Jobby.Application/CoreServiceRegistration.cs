@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using System.Reflection;
+using FluentValidation;
 using Jobby.Application.Interfaces.Services;
 using Jobby.Application.Services;
 using Microsoft.Extensions.DependencyInjection;
@@ -9,7 +10,7 @@ public static class CoreServiceRegistration
 {
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
-        var applicationAssembly = typeof(AssemblyReference).Assembly;
+        Assembly applicationAssembly = typeof(AssemblyReference).Assembly;
 
         services.AddAutoMapper(applicationAssembly);
         services.AddScoped<IUserService, UserService>();

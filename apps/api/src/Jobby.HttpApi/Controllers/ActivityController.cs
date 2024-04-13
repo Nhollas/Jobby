@@ -2,6 +2,7 @@
 using Jobby.Application.Features.ActivityFeatures.Commands.Create;
 using Jobby.Application.Features.ActivityFeatures.Commands.Delete;
 using Jobby.Application.Features.ActivityFeatures.Commands.Update;
+using Jobby.Application.Responses.Common;
 using Jobby.HttpApi.Controllers.Base;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -23,7 +24,7 @@ public class ActivityController : ApiController
     {
         try
         {
-            var createActivityResult = await Sender.Send(command);
+            BaseResult<ActivityDto, CreateActivityOutcomes>? createActivityResult = await Sender.Send(command);
 
             if (!createActivityResult.IsSuccess)
             {
@@ -56,7 +57,7 @@ public class ActivityController : ApiController
     {
         try
         {
-            var deleteActivityResult = await Sender.Send(new DeleteActivityCommand(activityReference));
+            BaseResult<DeleteActivityResponse, DeleteActivityOutcomes>? deleteActivityResult = await Sender.Send(new DeleteActivityCommand(activityReference));
             
             if(!deleteActivityResult.IsSuccess && deleteActivityResult.Outcome != DeleteActivityOutcomes.ActivityDeleted)
             {
@@ -89,7 +90,7 @@ public class ActivityController : ApiController
     {
         try
         {
-            var updateActivityResult = await Sender.Send(command);
+            BaseResult<ActivityDto, UpdateActivityOutcomes>? updateActivityResult = await Sender.Send(command);
 
             if (!updateActivityResult.IsSuccess &&
                 updateActivityResult.Outcome != UpdateActivityOutcomes.ActivityUpdated)

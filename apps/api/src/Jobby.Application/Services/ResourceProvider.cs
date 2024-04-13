@@ -24,7 +24,7 @@ public class ResourceProvider<TEntity> :
 
     public static IGetBySpec<TEntity> GetBySpec(Func<ISpecification<TEntity>, CancellationToken, Task<TEntity>> getBySpec) 
     {
-        var provider = new ResourceProvider<TEntity>
+        ResourceProvider<TEntity> provider = new ResourceProvider<TEntity>
         {
             _getBySpec = getBySpec
         };
@@ -34,7 +34,7 @@ public class ResourceProvider<TEntity> :
 
     public static IGetByReference<TEntity> GetByReference(Func<string, CancellationToken, Task<TEntity>> getByReference) 
     {
-        var provider = new ResourceProvider<TEntity>
+        ResourceProvider<TEntity> provider = new ResourceProvider<TEntity>
         {
             _getByReference = getByReference
         };
@@ -50,7 +50,7 @@ public class ResourceProvider<TEntity> :
 
     public async Task<ResourceResult<TEntity>> Check(string userId, string resourceReference, CancellationToken cancellationToken = default)
     {
-        var resource = await _getByReference(resourceReference, cancellationToken);
+        TEntity resource = await _getByReference(resourceReference, cancellationToken);
 
         if (resource is null)
         {
@@ -62,7 +62,7 @@ public class ResourceProvider<TEntity> :
 
     public async Task<ResourceResult<TEntity>> Check(string userId, CancellationToken cancellationToken = default)
     {
-        var resource = await _getBySpec(_spec, cancellationToken);
+        TEntity resource = await _getBySpec(_spec, cancellationToken);
 
         if (resource is null)
         {

@@ -25,9 +25,9 @@ internal sealed class GetBoardActivityListQueryHandler : IRequestHandler<GetBoar
 
     public async Task<List<ActivityDto>> Handle(GetBoardActivityListQuery request, CancellationToken cancellationToken)
     {
-        var activitySpec = new GetActivitiesFromBoardSpecification(request.BoardReference, _userId);
+        GetActivitiesFromBoardSpecification activitySpec = new GetActivitiesFromBoardSpecification(request.BoardReference, _userId);
 
-        var activityList = await _repository.ListAsync(activitySpec, cancellationToken);
+        List<Activity> activityList = await _repository.ListAsync(activitySpec, cancellationToken);
 
         return _mapper.Map<List<ActivityDto>>(activityList);
     }

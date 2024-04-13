@@ -61,7 +61,7 @@ public class JobList : Entity
 
     public void ArrangeJobs(Dictionary<Guid, int> jobIndexes)
     {
-        foreach (var job in _jobs)
+        foreach (Job job in _jobs)
         {
             if (jobIndexes.ContainsKey(job.Id))
             {

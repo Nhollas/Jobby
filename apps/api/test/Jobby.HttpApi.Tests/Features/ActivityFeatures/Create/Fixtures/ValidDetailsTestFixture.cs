@@ -10,44 +10,39 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Jobby.HttpApi.Tests.Features.ActivityFeatures.Create.Fixtures;
 
-public class ValidDetailsTestFixture : IAsyncLifetime
+public abstract class ValidDetailsTestFixture(JobbyHttpApiFactory factory) : IAsyncLifetime
 {
-    private readonly JobbyHttpApiFactory _factory;
-
-    public ValidDetailsTestFixture(JobbyHttpApiFactory factory)
-    {
-        _factory = factory;
-    }
-    
     public HttpResponseMessage Response { get; private set; } = new();
     public ActivityDto? ReturnedActivity { get; private set; } = new();
 
-    private HttpClient HttpClient => _factory.SetupClient();
+    private HttpClient HttpClient => factory.SetupClient();
     
-    public CreateActivityCommand Body { get; private set; } = new();
+    public CreateActivityCommand Body { get; private set; }
 
     private const string UserId = "TestUserId";
-
-
-    public static readonly Board PreloadedBoard = Board.Create(Guid.NewGuid(), DateTime.UtcNow, UserId, "TestBoard");
+    
+    private static readonly Board SeededBoard = Board.Create(
+        id: Guid.NewGuid(), 
+        createdDate: DateTime.UtcNow, 
+        ownerId: "TestUserId",
+        name: "TestBoard");
     
     public async Task InitializeAsync()
     {
-        await using var initContext = new JobbyDbContext(new DbContextOptionsBuilder<JobbyDbContext>()
-            .UseSqlServer(_factory.DbConnectionString).Options);
+        await using JobbyDbContext dbContext = factory.GetDbContext();
         
-        await SeedDataHelper<Board>.AddAsync(PreloadedBoard, initContext);
+        await SeedDataHelper<Board>.AddAsync(SeededBoard, dbContext);
         
         Body = new CreateActivityCommand
-        {
-            BoardReference = PreloadedBoard.Reference,
+        (
+            BoardReference = SeededBoard.Reference,
             Title = "Test Activity",
             Type = ActivityConstants.Types.Apply,
             StartDate = DateTime.UtcNow,
             EndDate = DateTime.UtcNow.AddDays(1),
             Note = "Test Note",
             Completed = false
-        };
+        );
         
         Response = await HttpClient.PostAsJsonAsync("/activity", Body);
         ReturnedActivity = await Response.Content.ReadFromJsonAsync<ActivityDto>();
@@ -55,9 +50,8 @@ public class ValidDetailsTestFixture : IAsyncLifetime
 
     public async Task DisposeAsync()
     {
-        await using var disposeContext = new JobbyDbContext(new DbContextOptionsBuilder<JobbyDbContext>()
-            .UseSqlServer(_factory.DbConnectionString).Options);
+        await using JobbyDbContext dbContext = factory.GetDbContext();
         
-        await SeedDataHelper<Board>.RemoveAsync(PreloadedBoard, disposeContext);
+        await SeedDataHelper<Board>.RemoveAsync(SeededBoard, dbContext);
     }
 }

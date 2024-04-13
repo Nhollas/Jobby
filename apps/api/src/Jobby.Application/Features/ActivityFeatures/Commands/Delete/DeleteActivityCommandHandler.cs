@@ -23,7 +23,7 @@ internal sealed class DeleteActivityCommandHandler : IRequestHandler<DeleteActiv
 
     public async Task<BaseResult<DeleteActivityResponse, DeleteActivityOutcomes>> Handle(DeleteActivityCommand request, CancellationToken cancellationToken)
     {
-        var activityResourceResult = await ResourceProvider<Activity>
+        ResourceResult<Activity> activityResourceResult = await ResourceProvider<Activity>
             .GetByReference(_activityRepository.GetByReferenceAsync)
             .Check(_userId, request.ActivityReference, cancellationToken);
 
@@ -41,7 +41,7 @@ internal sealed class DeleteActivityCommandHandler : IRequestHandler<DeleteActiv
             );
         }
         
-        var activityToDelete = activityResourceResult.Response;
+        Activity activityToDelete = activityResourceResult.Response;
 
         await _activityRepository.DeleteAsync(activityToDelete, cancellationToken);
 

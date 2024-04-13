@@ -115,7 +115,6 @@ export const Activities = ({ boardRef, jobRef, filter, activities }: Props) => {
         <p className="text-sm text-gray-500">View and manage activities</p>
       </div>
       <div className="flex flex-row gap-x-4">
-        <Input type="text" placeholder="Search.." className="w-full max-w-xs" />
         <Button asChild>
           <Link
             href={createUrl(filter, boardRef, jobRef)}

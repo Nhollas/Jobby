@@ -35,7 +35,7 @@ internal sealed class CreateListCommandHandler : IRequestHandler<CreateListComma
 
     public async Task<BaseResult<JobListDto, CreateListOutcomes>> Handle(CreateListCommand request, CancellationToken cancellationToken)
     {
-        var boardResourceResult = await ResourceProvider<Board>
+        ResourceResult<Board> boardResourceResult = await ResourceProvider<Board>
             .GetByReference(_boardRepository.GetByReferenceAsync)
             .Check(_userId, request.BoardReference, cancellationToken);
 
@@ -53,9 +53,9 @@ internal sealed class CreateListCommandHandler : IRequestHandler<CreateListComma
             );
         }
         
-        var board = boardResourceResult.Response;
+        Board board = boardResourceResult.Response;
         
-        var createdJobList = JobList.Create(
+        JobList createdJobList = JobList.Create(
             _guidProvider.Create(),
             _dateTimeProvider.UtcNow,
             _userId,
@@ -67,7 +67,7 @@ internal sealed class CreateListCommandHandler : IRequestHandler<CreateListComma
 
         if (request.JobReference != string.Empty)
         {
-            var jobResourceResult = await ResourceProvider<Job>
+            ResourceResult<Job> jobResourceResult = await ResourceProvider<Job>
                 .GetByReference(_jobRepository.GetByReferenceAsync)
                 .Check(_userId, request.JobReference, cancellationToken);
             
@@ -85,7 +85,7 @@ internal sealed class CreateListCommandHandler : IRequestHandler<CreateListComma
                 );
             }
             
-            var jobToUpdate = jobResourceResult.Response;
+            Job jobToUpdate = jobResourceResult.Response;
 
             jobToUpdate.SetJobList(createdJobList.Id);
             jobToUpdate.SetIndex(0);

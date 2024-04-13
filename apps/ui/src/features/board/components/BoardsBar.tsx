@@ -14,10 +14,11 @@ export function BoardsBar() {
         <LoadingSkeleton />
       </BoardsBarWrapper>
     );
+
   if (query.isError)
     return (
       <BoardsBarWrapper>
-        <p className="text-red-500">Error loading boards</p>
+        <p className="px-4 text-red-500">Error loading boards.</p>
       </BoardsBarWrapper>
     );
 

@@ -7,7 +7,7 @@ public static class ServiceCollectionExtensions
 {
     public static void RemoveDbContext<T>(this IServiceCollection services) where T : DbContext
     {
-        var dbContextOptionsService = services.SingleOrDefault(
+        ServiceDescriptor? dbContextOptionsService = services.SingleOrDefault(
             d => d.ServiceType ==
                  typeof(DbContextOptions<T>));
         
@@ -17,7 +17,7 @@ public static class ServiceCollectionExtensions
         }
 
         
-        var dbContextService = services.SingleOrDefault(d => d.ServiceType == typeof(T));
+        ServiceDescriptor? dbContextService = services.SingleOrDefault(d => d.ServiceType == typeof(T));
         if (dbContextService != null)
         {
             services.Remove(dbContextService);

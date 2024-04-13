@@ -25,12 +25,12 @@ public class DeleteActivityWithValidDetailsFixture : IAsyncLifetime
     
     public async Task InitializeAsync()
     {
-        await using var initContext = new JobbyDbContext(new DbContextOptionsBuilder<JobbyDbContext>()
+        await using JobbyDbContext initContext = new JobbyDbContext(new DbContextOptionsBuilder<JobbyDbContext>()
             .UseSqlServer(_factory.DbConnectionString).Options);
         
         await SeedDataHelper<Board>.AddAsync(_preLoadedBoard, initContext);
         
-        var activityToDelete = Activity.Create(
+        Activity? activityToDelete = Activity.Create(
             id: Guid.NewGuid(),
             createdDate: DateTime.UtcNow,
             ownerId: "TestUserId",
@@ -45,17 +45,17 @@ public class DeleteActivityWithValidDetailsFixture : IAsyncLifetime
         
         ActivityReference = activityToDelete.Reference;
         
-        var preLoadedActivity = await SeedDataHelper<Activity>.AddAsync(activityToDelete, initContext);
+        Activity preLoadedActivity = await SeedDataHelper<Activity>.AddAsync(activityToDelete, initContext);
         
         Response = await HttpClient.DeleteAsync($"/activity/{preLoadedActivity.Reference}");
     }
 
     public async Task DisposeAsync()
     {
-        await using var disposeContext = new JobbyDbContext(new DbContextOptionsBuilder<JobbyDbContext>()
+        await using JobbyDbContext disposeContext = new JobbyDbContext(new DbContextOptionsBuilder<JobbyDbContext>()
             .UseSqlServer(_factory.DbConnectionString).Options);
         
-        var preLoadedBoard = await disposeContext.Boards.FirstOrDefaultAsync(b => b.Reference == _preLoadedBoard.Reference);
+        Board? preLoadedBoard = await disposeContext.Boards.FirstOrDefaultAsync(b => b.Reference == _preLoadedBoard.Reference);
 
         if (preLoadedBoard is null) return;
         

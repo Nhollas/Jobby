@@ -6,6 +6,7 @@ using Jobby.Application.Features.BoardFeatures.Queries.GetById;
 using Jobby.Application.Features.BoardFeatures.Queries.GetList;
 using Jobby.Application.Features.BoardFeatures.Queries.ListActivities;
 using Jobby.Application.Features.BoardFeatures.Queries.ListContacts;
+using Jobby.Application.Responses.Common;
 using Jobby.HttpApi.Controllers.Base;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -24,7 +25,7 @@ public class BoardController : ApiController
     {
         try
         {
-            var createBoardResult = await Sender.Send(command);
+            BaseResult<BoardDto, CreateBoardOutcomes>? createBoardResult = await Sender.Send(command);
             
             ActionResult test = createBoardResult.Outcome switch
             {
@@ -55,7 +56,7 @@ public class BoardController : ApiController
     {
         try
         {
-            var deleteBoardResult = await Sender.Send(new DeleteBoardCommand(reference));
+            BaseResult<DeleteBoardResponse, DeleteBoardOutcomes>? deleteBoardResult = await Sender.Send(new DeleteBoardCommand(reference));
 
             return deleteBoardResult.Outcome switch
             {
@@ -83,7 +84,7 @@ public class BoardController : ApiController
     {
         try
         {
-            var updateBoardResult =  await Sender.Send(command);
+            BaseResult<BoardDto, UpdateBoardOutcomes>? updateBoardResult =  await Sender.Send(command);
             
             return updateBoardResult.Outcome switch
             {
@@ -110,7 +111,7 @@ public class BoardController : ApiController
     {
         try
         {
-            var getBoardResult = await Sender.Send(new GetBoardDetailQuery(reference));
+            BaseResult<BoardDto, GetBoardDetailOutcomes>? getBoardResult = await Sender.Send(new GetBoardDetailQuery(reference));
             
             return getBoardResult.Outcome switch
             {
@@ -131,21 +132,21 @@ public class BoardController : ApiController
     [HttpGet("~/boards")]
     public async Task<ActionResult<List<BoardDto>>> ListBoards()
     {
-        var boards = await Sender.Send(new GetBoardListQuery());
+        List<BoardDto>? boards = await Sender.Send(new GetBoardListQuery());
         return Ok(boards);
     }
 
     [HttpGet("{boardReference}/activities", Name = "ListActivities")]
     public async Task<ActionResult<List<ActivityDto>>> ListActivities(string boardReference)
     {
-        var activities = await Sender.Send(new GetBoardActivityListQuery(boardReference));
+        List<ActivityDto>? activities = await Sender.Send(new GetBoardActivityListQuery(boardReference));
         return Ok(activities);
     }
 
     [HttpGet("{boardReference}/contacts", Name = "ListBoardContacts")]
     public async Task<ActionResult<List<ContactDto>>> ListContacts(string boardReference)
     {
-        var contacts = await Sender.Send(new GetBoardContactListQuery(boardReference));
+        List<ContactDto>? contacts = await Sender.Send(new GetBoardContactListQuery(boardReference));
         return Ok(contacts);
     }
 }

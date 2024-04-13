@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FluentValidation.Results;
 using Jobby.Application.Abstractions.Specification;
 using Jobby.Application.Dtos;
 using Jobby.Application.Interfaces.Services;
@@ -32,8 +33,8 @@ internal sealed class CreateBoardCommandHandler : IRequestHandler<CreateBoardCom
 
     public async Task<BaseResult<BoardDto, CreateBoardOutcomes>> Handle(CreateBoardCommand request, CancellationToken cancellationToken)
     {
-        var validator = new CreateBoardCommandValidator();
-        var validationResult = await validator.ValidateAsync(request, cancellationToken);
+        CreateBoardCommandValidator validator = new CreateBoardCommandValidator();
+        ValidationResult validationResult = await validator.ValidateAsync(request, cancellationToken);
         
         if (!validationResult.IsValid)
         {
@@ -44,20 +45,20 @@ internal sealed class CreateBoardCommandHandler : IRequestHandler<CreateBoardCom
             );
         }
         
-        var board = Board.Create(
+        Board board = Board.Create(
             _guidProvider.Create(),
             _dateTimeProvider.UtcNow,
             _userId,
             request.Name);
         
-        List<JobList> defaultJobLists = new()
-        {
+        List<JobList> defaultJobLists =
+        [
             JobList.Create(_guidProvider.Create(), _dateTimeProvider.UtcNow, _userId, "Applied", 0, board),
             JobList.Create(_guidProvider.Create(), _dateTimeProvider.UtcNow, _userId, "Wishlist", 1, board),
             JobList.Create(_guidProvider.Create(), _dateTimeProvider.UtcNow, _userId, "Interview", 2, board),
             JobList.Create(_guidProvider.Create(), _dateTimeProvider.UtcNow, _userId, "Offer", 3, board),
-            JobList.Create(_guidProvider.Create(), _dateTimeProvider.UtcNow, _userId, "Rejected", 4, board),
-        };
+            JobList.Create(_guidProvider.Create(), _dateTimeProvider.UtcNow, _userId, "Rejected", 4, board)
+        ];
         
         board.SetJobLists(defaultJobLists);
         

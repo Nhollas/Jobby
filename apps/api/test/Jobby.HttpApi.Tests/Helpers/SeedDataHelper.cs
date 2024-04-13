@@ -28,4 +28,16 @@ public static class SeedDataHelper<T> where T : class
         
         await disposeContext.SaveChangesAsync();
     }
+    
+    public static async Task RemoveByIdAsync(Guid id, JobbyDbContext disposeContext)
+    {
+        var entity = await disposeContext.Set<T>().FindAsync(id);
+
+        if (entity is not null)
+        {
+            disposeContext.Set<T>().Remove(entity);
+        }
+        
+        await disposeContext.SaveChangesAsync();
+    }
 }

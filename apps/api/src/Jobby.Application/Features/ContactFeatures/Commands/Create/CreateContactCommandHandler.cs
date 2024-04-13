@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FluentValidation.Results;
 using Jobby.Application.Abstractions.Specification;
 using Jobby.Application.Dtos;
 using Jobby.Application.Features.BoardFeatures.Specifications;
@@ -42,8 +43,8 @@ internal sealed class CreateContactCommandHandler : IRequestHandler<CreateContac
 
     public async Task<BaseResult<ContactDto, CreateContactOutcomes>> Handle(CreateContactCommand request, CancellationToken cancellationToken)
     {
-        var validator = new CreateContactCommandValidator();
-        var validationResult = await validator.ValidateAsync(request, cancellationToken);
+        CreateContactCommandValidator validator = new CreateContactCommandValidator();
+        ValidationResult validationResult = await validator.ValidateAsync(request, cancellationToken);
         
         if (!validationResult.IsValid)
         {
@@ -79,7 +80,7 @@ internal sealed class CreateContactCommandHandler : IRequestHandler<CreateContac
             }
         }
 
-        var board = boardResourceResult?.Response;
+        Board board = boardResourceResult?.Response;
         
         Contact createdContact = Contact.Create(
             _guidProvider.Create(),
@@ -102,7 +103,7 @@ internal sealed class CreateContactCommandHandler : IRequestHandler<CreateContac
 
         if (request.JobReferences.Count > 0) // only link jobs to the contact if a board was retrieved
         {
-            var jobsToLink = await _jobRepository.ListAsync(new GetJobsFromListSpecification(request.JobReferences, _userId), cancellationToken);
+            List<Job> jobsToLink = await _jobRepository.ListAsync(new GetJobsFromListSpecification(request.JobReferences, _userId), cancellationToken);
 
             createdContact.SetJobs(jobsToLink);
         }

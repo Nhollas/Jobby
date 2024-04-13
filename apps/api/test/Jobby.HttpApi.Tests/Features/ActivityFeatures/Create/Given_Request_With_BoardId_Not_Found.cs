@@ -8,11 +8,11 @@ using Jobby.HttpApi.Tests.Factories;
 namespace Jobby.HttpApi.Tests.Features.ActivityFeatures.Create;
 
 [Collection("SqlCollection")]
-public class Given_Request_With_BoardId_Not_Found
+public class GivenRequestWithBoardIdNotFound
 {
     private readonly JobbyHttpApiFactory _factory;
 
-    public Given_Request_With_BoardId_Not_Found(JobbyHttpApiFactory factory)
+    public GivenRequestWithBoardIdNotFound(JobbyHttpApiFactory factory)
     {
         _factory = factory;
     }
@@ -22,9 +22,9 @@ public class Given_Request_With_BoardId_Not_Found
     [Fact]
     public async Task Then_Returns_404_NotFound()
     {
-        var randomBoardReference = EntityReferenceProvider<Board>.CreateReference();
+        string? randomBoardReference = EntityReferenceProvider<Board>.CreateReference();
         
-        var body = new CreateActivityCommand
+        CreateActivityCommand body = new CreateActivityCommand
         {
             BoardReference = randomBoardReference,
             Title = "Test Activity",
@@ -35,8 +35,8 @@ public class Given_Request_With_BoardId_Not_Found
             Completed = false
         };
 
-        var response = await HttpClient.PostAsJsonAsync("/activity", body);
-        var responseContent = await response.Content.ReadAsStringAsync();
+        HttpResponseMessage response = await HttpClient.PostAsJsonAsync("/activity", body);
+        string responseContent = await response.Content.ReadAsStringAsync();
         
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
         responseContent.Should().Be($"The Board with Reference {body.BoardReference} could not be found.");

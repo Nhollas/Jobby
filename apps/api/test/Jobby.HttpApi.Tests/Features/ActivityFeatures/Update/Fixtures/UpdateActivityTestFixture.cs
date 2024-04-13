@@ -44,7 +44,7 @@ public class UpdateActivityTestFixture : IAsyncLifetime
 
     public async Task InitializeAsync()
     {
-        await using var initContext = new JobbyDbContext(new DbContextOptionsBuilder<JobbyDbContext>()
+        await using JobbyDbContext initContext = new JobbyDbContext(new DbContextOptionsBuilder<JobbyDbContext>()
             .UseSqlServer(_factory.DbConnectionString).Options);
         
         await SeedDataHelper<Board>.AddAsync(PreloadedBoard, initContext);
@@ -66,7 +66,7 @@ public class UpdateActivityTestFixture : IAsyncLifetime
 
     public async Task DisposeAsync()
     {
-        await using var disposeContext = new JobbyDbContext(new DbContextOptionsBuilder<JobbyDbContext>()
+        await using JobbyDbContext disposeContext = new JobbyDbContext(new DbContextOptionsBuilder<JobbyDbContext>()
             .UseSqlServer(_factory.DbConnectionString).Options);
         
         await SeedDataHelper<Board>.RemoveAsync(PreloadedBoard, disposeContext);

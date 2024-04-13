@@ -25,9 +25,9 @@ internal sealed class GetBoardContactListQueryHandler : IRequestHandler<GetBoard
 
     public async Task<List<ContactDto>> Handle(GetBoardContactListQuery request, CancellationToken cancellationToken)
     {
-        var contactSpec = new GetContactsFromBoardSpecification(request.BoardReference, _userId);
+        GetContactsFromBoardSpecification contactSpec = new GetContactsFromBoardSpecification(request.BoardReference, _userId);
 
-        var contactList = await _contactRepository.ListAsync(contactSpec, cancellationToken);
+        List<Contact> contactList = await _contactRepository.ListAsync(contactSpec, cancellationToken);
 
         return _mapper.Map<List<ContactDto>>(contactList);
     }

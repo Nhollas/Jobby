@@ -400,7 +400,7 @@ export function Kanban({ board }: Props) {
         setActiveId(null);
       }}
     >
-      <div className="flex min-h-[calc(100vh-4rem)] w-screen flex-row overflow-x-scroll border border-x-0 border-t-0 border-r-0 border-gray-200 bg-[#f5f5f4] md:w-[calc(100vw-250px)]">
+      <div className="flex min-h-[calc(100vh-4rem)] w-screen flex-row overflow-x-scroll border border-x-0 border-t-0 border-r-0 border-gray-200 bg-[#f5f5f4] xl:w-[calc(100vw-250px)]">
         <SortableContext
           items={[...containerKeys]}
           strategy={horizontalListSortingStrategy}

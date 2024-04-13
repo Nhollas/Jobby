@@ -83,13 +83,17 @@ export function CreateBoardModal() {
                 >
                   Cancel
                 </Button>
-                <Button type="submit" disabled={!isDirty || isSubmitted}>
-                  {isSubmitting ? (
-                    <RotateCw className="h-6 w-6 flex-shrink-0 animate-spin" />
-                  ) : (
-                    <Save className="h-6 w-6 flex-shrink-0" />
-                  )}
+                <Button
+                  type="submit"
+                  className="items-center gap-x-2"
+                  disabled={!isDirty || isSubmitted}
+                >
                   Submit
+                  {isSubmitting ? (
+                    <RotateCw className="h-5 w-5 flex-shrink-0 animate-spin" />
+                  ) : (
+                    <Save className="h-5 w-5 flex-shrink-0" />
+                  )}
                 </Button>
               </div>
             </form>

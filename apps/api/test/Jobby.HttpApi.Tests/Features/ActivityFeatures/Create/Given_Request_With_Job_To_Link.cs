@@ -1,6 +1,7 @@
 using System.Net;
 using Jobby.Application.Dtos;
 using Jobby.Application.Features.ActivityFeatures.Commands.Create;
+using Jobby.Domain.Entities;
 using Jobby.Domain.Static;
 using Jobby.HttpApi.Tests.Factories;
 using Jobby.HttpApi.Tests.Features.ActivityFeatures.Create.Fixtures;
@@ -10,12 +11,12 @@ using Microsoft.EntityFrameworkCore;
 namespace Jobby.HttpApi.Tests.Features.ActivityFeatures.Create;
 
 [Collection("SqlCollection")]
-public class Given_Request_With_Job_To_Link : IClassFixture<JobToLinkFixture>
+public class GivenRequestWithJobToLink : IClassFixture<JobToLinkFixture>
 {
     private readonly JobbyHttpApiFactory _factory;
     private readonly JobToLinkFixture _fixture;
 
-    public Given_Request_With_Job_To_Link(
+    public GivenRequestWithJobToLink(
         JobbyHttpApiFactory factory, 
         JobToLinkFixture fixture)
     {
@@ -42,27 +43,27 @@ public class Given_Request_With_Job_To_Link : IClassFixture<JobToLinkFixture>
         
         using (new AssertionScope())
         {
-            ReturnedActivity?.Title.Should().Be(Body.Title);
-            ReturnedActivity?.Name.Should().Be(ExpectedName);
-            ReturnedActivity?.StartDate.Should().Be(Body.StartDate);
-            ReturnedActivity?.EndDate.Should().Be(Body.EndDate);
-            ReturnedActivity?.Note.Should().Be(Body.Note);
-            ReturnedActivity?.Completed.Should().Be(Body.Completed);
-            ReturnedActivity?.BoardReference.Should().Be(Body.BoardReference);
-            ReturnedActivity?.Job.Reference.Should().Be(Body.JobReference);
-            ReturnedActivity?.Type.Should().Be((int)Body.Type);
+            ReturnedActivity.Title.Should().Be(Body.Title);
+            ReturnedActivity.Name.Should().Be(ExpectedName);
+            ReturnedActivity.StartDate.Should().Be(Body.StartDate);
+            ReturnedActivity.EndDate.Should().Be(Body.EndDate);
+            ReturnedActivity.Note.Should().Be(Body.Note);
+            ReturnedActivity.Completed.Should().Be(Body.Completed);
+            ReturnedActivity.BoardReference.Should().Be(Body.BoardReference);
+            ReturnedActivity.Job.Reference.Should().Be(Body.JobReference);
+            ReturnedActivity.Type.Should().Be((int)Body.Type);
         }
     }
     
     [Fact]
     public async Task Then_Inserts_Activity_In_Database_And_Has_Job_Linked()
     {
-        await using var updatedContext = new JobbyDbContext(new DbContextOptionsBuilder<JobbyDbContext>()
+        await using JobbyDbContext updatedContext = new JobbyDbContext(new DbContextOptionsBuilder<JobbyDbContext>()
             .UseSqlServer(_factory.DbConnectionString).Options);
         
         Assert.NotNull(ReturnedActivity);
 
-        var createdActivity = await updatedContext.Activities.Include(activity => activity.Job).FirstOrDefaultAsync(activity =>
+        Activity? createdActivity = await updatedContext.Activities.Include(activity => activity.Job).FirstOrDefaultAsync(activity =>
             activity.Reference == ReturnedActivity.Reference);
 
         createdActivity.Should().NotBeNull();

@@ -26,9 +26,9 @@ internal sealed class GetBoardListQueryHandler : IRequestHandler<GetBoardListQue
 
     public async Task<List<BoardDto>> Handle(GetBoardListQuery request, CancellationToken cancellationToken)
     {
-        var boardSpec = new GetBoardsFromUserSpecification(_userId);
+        GetBoardsFromUserSpecification boardSpec = new GetBoardsFromUserSpecification(_userId);
 
-        var boardList = await _repository.ListAsync(boardSpec, cancellationToken);
+        List<Board> boardList = await _repository.ListAsync(boardSpec, cancellationToken);
 
         return _mapper.Map<List<BoardDto>>(boardList);
     }

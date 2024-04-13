@@ -25,27 +25,27 @@ export function MobileBoardNavigation() {
   const requiredNavRoute =
     (isBoardRoute && isBoardsRoute) || isContactRoute || isContactsRoute;
 
+  console.log("requiredNavRoute", requiredNavRoute);
+
   return (
-    requiredNavRoute && (
-      <Sheet open={open} onOpenChange={setOpen}>
-        <SheetTrigger asChild>
-          <Button
-            variant="outline"
-            className="absolute top-6 right-6 z-10 h-10 w-10 bg-white p-0 text-base focus-visible:ring-0 focus-visible:ring-offset-0 md:hidden"
-          >
-            <PanelLeft className="h-5 w-5" />
-            <span className="sr-only">Toggle Menu</span>
-          </Button>
-        </SheetTrigger>
-        <MobileNavigationContent />
-      </Sheet>
-    )
+    <Sheet open={open} onOpenChange={setOpen}>
+      <SheetTrigger asChild>
+        <Button
+          variant="outline"
+          className="z-10 h-10 w-10 bg-white p-0 text-base focus-visible:ring-0 focus-visible:ring-offset-0 xl:hidden"
+        >
+          <PanelLeft className="h-5 w-5" />
+          <span className="sr-only">Toggle Menu</span>
+        </Button>
+      </SheetTrigger>
+      <MobileNavigationContent />
+    </Sheet>
   );
 }
 
 function MobileNavigationContent() {
   return (
-    <SheetContent side="left" className="p-0 py-6">
+    <SheetContent side="left" className="w-[250px] p-0 py-6">
       <div className="flex w-full flex-col gap-y-4">
         <div className="space-y-2">
           <h2 className="px-8 text-lg font-semibold tracking-tight">Track</h2>

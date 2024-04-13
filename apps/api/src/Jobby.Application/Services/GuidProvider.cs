@@ -9,7 +9,7 @@ internal class GuidProvider : IGuidProvider
     public Guid Create()
     {
         // We start with 16 bytes of cryptographically strong random data.
-        var randomBytes = new byte[10];
+        byte[] randomBytes = new byte[10];
         RandomNumberGenerator.GetBytes(randomBytes);
 
         // An alternate method: use a normally-created GUID to get our initial

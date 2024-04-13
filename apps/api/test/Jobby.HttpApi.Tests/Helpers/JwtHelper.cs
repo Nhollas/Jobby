@@ -16,12 +16,12 @@ public static class JwtHelper
         string? audience = null,
         string? secret = null)
     {
-        var claims = new List<Claim>
+        List<Claim> claims = new List<Claim>
         {
             new(JwtRegisteredClaimNames.Sub, userId),
         };
         
-        var token = new JwtSecurityToken(
+        JwtSecurityToken token = new JwtSecurityToken(
             issuer: issuer ?? "TestIssuer",
             audience: audience ?? "TestAudience",
             claims: claims,
@@ -31,7 +31,7 @@ public static class JwtHelper
                 SecurityAlgorithms.HmacSha256Signature)
             );
         
-        var tokenString = new JwtSecurityTokenHandler().WriteToken(token);
+        string? tokenString = new JwtSecurityTokenHandler().WriteToken(token);
 
         return tokenString;
     }

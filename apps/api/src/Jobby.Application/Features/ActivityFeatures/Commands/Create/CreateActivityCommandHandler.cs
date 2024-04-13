@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FluentValidation.Results;
 using Jobby.Application.Abstractions.Specification;
 using Jobby.Application.Dtos;
 using Jobby.Application.Features.BoardFeatures.Specifications;
@@ -38,8 +39,8 @@ internal sealed class CreateActivityCommandHandler : IRequestHandler<CreateActiv
 
     public async Task<BaseResult<ActivityDto, CreateActivityOutcomes>> Handle(CreateActivityCommand request, CancellationToken cancellationToken)
     {
-        var validator = new CreateActivityCommandValidator();
-        var validationResult = await validator.ValidateAsync(request, cancellationToken);
+        CreateActivityCommandValidator validator = new CreateActivityCommandValidator();
+        ValidationResult validationResult = await validator.ValidateAsync(request, cancellationToken);
         
         if (!validationResult.IsValid)
         {
@@ -50,7 +51,7 @@ internal sealed class CreateActivityCommandHandler : IRequestHandler<CreateActiv
             );
         }
         
-        var boardResourceResult = await ResourceProvider<Board>
+        ResourceResult<Board> boardResourceResult = await ResourceProvider<Board>
             .GetBySpec(_boardRepository.FirstOrDefaultAsync)
             .WithResource(request.BoardReference)
             .ApplySpecification(new GetBoardWithJobsSpecification(request.BoardReference))
@@ -69,9 +70,9 @@ internal sealed class CreateActivityCommandHandler : IRequestHandler<CreateActiv
                 ErrorMessage: boardResourceResult.ErrorMessage);
         }
         
-        var boardToLink = boardResourceResult.Response;
+        Board boardToLink = boardResourceResult.Response;
 
-        var createdActivity = Activity.Create(
+        Activity createdActivity = Activity.Create(
             _guidProvider.Create(),
             _dateTimeProvider.UtcNow,
             _userId,
@@ -94,7 +95,7 @@ internal sealed class CreateActivityCommandHandler : IRequestHandler<CreateActiv
                 );
             }
 
-            var jobToLink = boardToLink.Lists
+            Job jobToLink = boardToLink.Lists
                 .SelectMany(x => x.Jobs)
                 .First(x => x.Reference == request.JobReference);
 

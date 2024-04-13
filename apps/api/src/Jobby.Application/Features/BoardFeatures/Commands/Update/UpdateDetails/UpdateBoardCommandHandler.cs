@@ -31,7 +31,7 @@ internal sealed class UpdateBoardCommandHandler : IRequestHandler<UpdateBoardCom
 
     public async Task<BaseResult<BoardDto, UpdateBoardOutcomes>> Handle(UpdateBoardCommand request, CancellationToken cancellationToken)
     {
-        var boardResourceResult = await ResourceProvider<Board>
+        ResourceResult<Board> boardResourceResult = await ResourceProvider<Board>
             .GetByReference(_boardRepository.GetByReferenceAsync)
             .Check(_userId, request.BoardReference, cancellationToken);
         
@@ -49,7 +49,7 @@ internal sealed class UpdateBoardCommandHandler : IRequestHandler<UpdateBoardCom
             );
         }
         
-        var boardToUpdate = boardResourceResult.Response;
+        Board boardToUpdate = boardResourceResult.Response;
         
         boardToUpdate.SetBoardName(request.Name);
 

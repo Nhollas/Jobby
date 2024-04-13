@@ -28,7 +28,7 @@ internal sealed class GetContactDetailQueryHandler : IRequestHandler<GetContactD
 
     public async Task<BaseResult<ContactDto, GetContactDetailOutcomes>> Handle(GetContactDetailQuery request, CancellationToken cancellationToken)
     {
-        var contactResourceResult = await ResourceProvider<Contact>
+        ResourceResult<Contact> contactResourceResult = await ResourceProvider<Contact>
             .GetBySpec(_contactRepository.FirstOrDefaultAsync)
             .WithResource(request.ContactReference)
             .ApplySpecification(new GetContactWithRelationshipsSpecification(request.ContactReference))
