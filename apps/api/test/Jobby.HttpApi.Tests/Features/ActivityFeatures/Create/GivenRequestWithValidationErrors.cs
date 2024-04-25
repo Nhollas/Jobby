@@ -4,6 +4,7 @@ using Jobby.HttpApi.Tests.Factories;
 
 namespace Jobby.HttpApi.Tests.Features.ActivityFeatures.Create;
 
+[Collection("SqlCollection")]
 public class GivenRequestWithValidationErrors(JobbyHttpApiFactory factory)
 {
     private HttpClient HttpClient => factory.SetupClient();
@@ -19,7 +20,7 @@ public class GivenRequestWithValidationErrors(JobbyHttpApiFactory factory)
           "type": 999,
           "startDate": "2023-08-15T23:00:00.000Z",
           "endDate": "2023-08-15T23:00:00.000Z",
-          "note": "cool note"
+          "note": "Cool note"
         }
         """;
 
@@ -43,7 +44,7 @@ public class GivenRequestWithValidationErrors(JobbyHttpApiFactory factory)
           "type": 12,
           "startDate": "2023-08-15T23:00:00.000Z",
           "endDate": "2023-08-15T23:00:00.000Z",
-          "note": "jhakhsdjksad"
+          "note": "Cool note"
         }
         """;
 

@@ -34,7 +34,7 @@ public class JobbyHttpApiFactory : WebApplicationFactory<Program>, IAsyncLifetim
         
         DbConnectionString = _mssqlContainer.GetConnectionString();
         
-        await using JobbyDbContext context = new JobbyDbContext(new DbContextOptionsBuilder<JobbyDbContext>()
+        await using JobbyDbContext context = new(new DbContextOptionsBuilder<JobbyDbContext>()
             .UseSqlServer(DbConnectionString).Options);
         
         await context.Database.EnsureCreatedAsync();

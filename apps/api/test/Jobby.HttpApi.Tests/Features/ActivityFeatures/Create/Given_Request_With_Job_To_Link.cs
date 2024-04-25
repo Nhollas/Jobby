@@ -39,7 +39,7 @@ public class GivenRequestWithJobToLink : IClassFixture<JobToLinkFixture>
     [Fact]
     public void Then_Returns_Created_Activity_With_Job_Linked()
     {
-        ReturnedActivity.Should().NotBeNull();
+        Assert.NotNull(ReturnedActivity);
         
         using (new AssertionScope())
         {
@@ -58,7 +58,7 @@ public class GivenRequestWithJobToLink : IClassFixture<JobToLinkFixture>
     [Fact]
     public async Task Then_Inserts_Activity_In_Database_And_Has_Job_Linked()
     {
-        await using JobbyDbContext updatedContext = new JobbyDbContext(new DbContextOptionsBuilder<JobbyDbContext>()
+        await using JobbyDbContext updatedContext = new(new DbContextOptionsBuilder<JobbyDbContext>()
             .UseSqlServer(_factory.DbConnectionString).Options);
         
         Assert.NotNull(ReturnedActivity);

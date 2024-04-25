@@ -8,32 +8,26 @@ using Jobby.HttpApi.Tests.Factories;
 namespace Jobby.HttpApi.Tests.Features.ActivityFeatures.Create;
 
 [Collection("SqlCollection")]
-public class GivenRequestWithBoardIdNotFound
+public class GivenRequestWithBoardIdNotFound(JobbyHttpApiFactory factory)
 {
-    private readonly JobbyHttpApiFactory _factory;
-
-    public GivenRequestWithBoardIdNotFound(JobbyHttpApiFactory factory)
-    {
-        _factory = factory;
-    }
-
-    private HttpClient HttpClient => _factory.SetupClient();
+    private HttpClient HttpClient => factory.SetupClient();
     
     [Fact]
     public async Task Then_Returns_404_NotFound()
     {
-        string? randomBoardReference = EntityReferenceProvider<Board>.CreateReference();
-        
-        CreateActivityCommand body = new CreateActivityCommand
-        {
-            BoardReference = randomBoardReference,
-            Title = "Test Activity",
-            Type = ActivityConstants.Types.Apply,
-            StartDate = DateTime.UtcNow,
-            EndDate = DateTime.UtcNow.AddDays(1),
-            Note = "Test Note",
-            Completed = false
-        };
+        string randomBoardReference = EntityReferenceProvider<Board>.CreateReference();
+        string randomJobReference = EntityReferenceProvider<Job>.CreateReference();
+
+        CreateActivityCommand body = new(
+            BoardReference: randomBoardReference,
+            JobReference: randomJobReference,
+            Title: "Test Activity",
+            Type: ActivityConstants.Types.Apply,
+            StartDate: DateTime.UtcNow,
+            EndDate: DateTime.UtcNow.AddDays(1),
+            Note: "Test Note",
+            Completed: false
+        );
 
         HttpResponseMessage response = await HttpClient.PostAsJsonAsync("/activity", body);
         string responseContent = await response.Content.ReadAsStringAsync();

@@ -11,35 +11,29 @@ using Microsoft.EntityFrameworkCore;
 namespace Jobby.HttpApi.Tests.Features.ActivityFeatures.Create;
 
 [Collection("SqlCollection")]
-public class GivenRequestWithBoardIdNotOwned
+public class GivenRequestWithBoardIdNotOwned(JobbyHttpApiFactory factory)
 {
-    private readonly JobbyHttpApiFactory _factory;
-
-    public GivenRequestWithBoardIdNotOwned(JobbyHttpApiFactory factory)
-    {
-        _factory = factory;
-    }
-
-    private HttpClient HttpClient => _factory.SetupClient();
+    private HttpClient HttpClient => factory.SetupClient();
     
     [Fact]
     public async Task Then_Returns_401_Unauthorized()
     {
-        await using JobbyDbContext context = new JobbyDbContext(new DbContextOptionsBuilder<JobbyDbContext>()
-            .UseSqlServer(_factory.DbConnectionString).Options);
+        await using JobbyDbContext context = new(new DbContextOptionsBuilder<JobbyDbContext>()
+            .UseSqlServer(factory.DbConnectionString).Options);
         
         Board preLoadedBoard = await SeedDataHelper<Board>.AddAsync(Board.Create(Guid.NewGuid(), DateTime.UtcNow, "TestUser2Id", "TestBoard"), context);
+        string randomJobReference = EntityReferenceProvider<Job>.CreateReference();
         
-        CreateActivityCommand body = new CreateActivityCommand()
-        {
-            BoardReference = preLoadedBoard.Reference,
-            Title = "Test Activity",
-            Type = ActivityConstants.Types.Apply,
-            StartDate = DateTime.UtcNow,
-            EndDate = DateTime.UtcNow.AddDays(1),
-            Note = "Test Note",
-            Completed = false
-        };
+        CreateActivityCommand body = new(
+            BoardReference: preLoadedBoard.Reference,
+            JobReference: randomJobReference,
+            Title: "Test Activity",
+            Type: ActivityConstants.Types.Apply,
+            StartDate: DateTime.UtcNow,
+            EndDate: DateTime.UtcNow.AddDays(1),
+            Note: "Test Note",
+            Completed: false
+        );
 
         HttpResponseMessage response = await HttpClient.PostAsJsonAsync("/activity", body);
         string responseContent = await response.Content.ReadAsStringAsync();
