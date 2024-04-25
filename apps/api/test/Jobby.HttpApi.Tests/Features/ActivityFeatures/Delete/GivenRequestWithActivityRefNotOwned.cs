@@ -3,31 +3,22 @@ using Jobby.Domain.Entities;
 using Jobby.HttpApi.Tests.Factories;
 using Jobby.HttpApi.Tests.Helpers;
 using Jobby.Persistence.Data;
-using Microsoft.EntityFrameworkCore;
 
 namespace Jobby.HttpApi.Tests.Features.ActivityFeatures.Delete;
 
 [Collection("SqlCollection")]
-public class GivenRequestWithActivityRefNotOwned
+public class GivenRequestWithActivityRefNotOwned(JobbyHttpApiFactory factory)
 {
-    private readonly JobbyHttpApiFactory _factory;
-
-    public GivenRequestWithActivityRefNotOwned(JobbyHttpApiFactory factory)
-    {
-        _factory = factory;
-    }
-
-    private HttpClient HttpClient => _factory.SetupClient();
+    private HttpClient HttpClient => factory.SetupClient();
     
     [Fact]
-    public async Task Then_Returns_404_Unauthorized()
+    public async Task ThenReturns404Unauthorized()
     {
-        await using JobbyDbContext context = new JobbyDbContext(new DbContextOptionsBuilder<JobbyDbContext>()
-            .UseSqlServer(_factory.DbConnectionString).Options);
+        await using JobbyDbContext context = factory.GetDbContext();
         
         Board preLoadedBoard = await SeedDataHelper<Board>.AddAsync(Board.Create(Guid.NewGuid(), DateTime.UtcNow, "TestUserTwoId", "TestBoard"), context);
         
-        Activity? activityToDelete = Activity.Create(
+        Activity activityToDelete = Activity.Create(
             id: Guid.NewGuid(),
             createdDate: DateTime.UtcNow,
             ownerId: "TestUserTwoId",

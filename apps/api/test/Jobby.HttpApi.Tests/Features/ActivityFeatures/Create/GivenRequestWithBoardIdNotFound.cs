@@ -13,14 +13,12 @@ public class GivenRequestWithBoardIdNotFound(JobbyHttpApiFactory factory)
     private HttpClient HttpClient => factory.SetupClient();
     
     [Fact]
-    public async Task Then_Returns_404_NotFound()
+    public async Task ThenReturns404NotFound()
     {
         string randomBoardReference = EntityReferenceProvider<Board>.CreateReference();
-        string randomJobReference = EntityReferenceProvider<Job>.CreateReference();
 
         CreateActivityCommand body = new(
             BoardReference: randomBoardReference,
-            JobReference: randomJobReference,
             Title: "Test Activity",
             Type: ActivityConstants.Types.Apply,
             StartDate: DateTime.UtcNow,

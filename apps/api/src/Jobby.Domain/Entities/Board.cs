@@ -42,7 +42,7 @@ public class Board : Entity
         string ownerId,
         string name)
     {
-        Board board = new Board(
+        Board board = new(
             id,
             reference: EntityReferenceProvider<Board>.CreateReference(),
             createdDate,

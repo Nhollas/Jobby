@@ -9,7 +9,7 @@ using Jobby.Persistence.Data;
 
 namespace Jobby.HttpApi.Tests.Features.ActivityFeatures.Create.Fixtures;
 
-public abstract class ValidDetailsTestFixture(JobbyHttpApiFactory factory) : IAsyncLifetime
+public class ValidDetailsTestFixture(JobbyHttpApiFactory factory) : IAsyncLifetime
 {
     public HttpResponseMessage Response { get; private set; } = new();
     public ActivityDto? ReturnedActivity { get; private set; } = new();
@@ -17,8 +17,6 @@ public abstract class ValidDetailsTestFixture(JobbyHttpApiFactory factory) : IAs
     private HttpClient HttpClient => factory.SetupClient();
     
     public CreateActivityCommand Body { get; private set; } = null!;
-
-    // private const string UserId = "TestUserId";
     
     private static readonly Board SeededBoard = Board.Create(
         id: Guid.NewGuid(), 
@@ -34,7 +32,6 @@ public abstract class ValidDetailsTestFixture(JobbyHttpApiFactory factory) : IAs
 
         Body = new CreateActivityCommand(
             BoardReference: SeededBoard.Reference,
-            JobReference: EntityReferenceProvider<Job>.CreateReference(),
             Title: "Test Activity",
             Type: ActivityConstants.Types.Apply,
             StartDate: DateTime.UtcNow,

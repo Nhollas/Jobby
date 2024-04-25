@@ -13,7 +13,7 @@ public static class PersistenceServiceRegistration
     public static IServiceCollection AddPersistenceServices(this IServiceCollection services, ConfigurationManager configuration)
     {
         services.AddDbContext<JobbyDbContext>(c =>
-            c.UseSqlServer(configuration.GetConnectionString("JobbyConnection")));
+            c.UseSqlServer(configuration.GetConnectionString("Db")));
 
         services.AddScoped(typeof(IContactRepository), typeof(ContactRepository));
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));

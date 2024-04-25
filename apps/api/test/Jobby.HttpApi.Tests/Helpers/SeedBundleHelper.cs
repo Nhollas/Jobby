@@ -15,10 +15,7 @@ public static class SeedBundleHelper
         
         jobList.AddJob(job);
 
-        List<JobList> jobLists = new()
-        {
-            jobList
-        };
+        List<JobList> jobLists = [jobList];
         
         board.SetJobLists(jobLists);
         

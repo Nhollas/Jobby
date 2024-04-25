@@ -6,27 +6,18 @@ using Jobby.Domain.Static;
 using Jobby.HttpApi.Tests.Factories;
 using Jobby.HttpApi.Tests.Helpers;
 using Jobby.Persistence.Data;
-using Microsoft.EntityFrameworkCore;
 
 namespace Jobby.HttpApi.Tests.Features.ActivityFeatures.Update;
 
 [Collection("SqlCollection")]
-public class GivenRequestWithActivityNotOwned
+public class GivenRequestWithActivityNotOwned(JobbyHttpApiFactory factory)
 {
-    private readonly JobbyHttpApiFactory _factory;
-
-    public GivenRequestWithActivityNotOwned(JobbyHttpApiFactory factory)
-    {
-        _factory = factory;
-    }
-    
-    private HttpClient HttpClient => _factory.SetupClient();
+    private HttpClient HttpClient => factory.SetupClient();
     
     [Fact]
-    public async Task Then_Returns_401_Unauthorized()
+    public async Task ThenReturns401Unauthorized()
     {
-        await using JobbyDbContext context = new JobbyDbContext(new DbContextOptionsBuilder<JobbyDbContext>()
-            .UseSqlServer(_factory.DbConnectionString).Options);
+        await using JobbyDbContext context = factory.GetDbContext();
         
         Board? preLoadedBoard = Board.Create(Guid.NewGuid(), DateTime.UtcNow, "TestUserId", "TestBoard");
         
@@ -47,7 +38,7 @@ public class GivenRequestWithActivityNotOwned
         
         await SeedDataHelper<Activity>.AddAsync(preLoadedActivity, context);
         
-        UpdateActivityCommand body = new UpdateActivityCommand()
+        UpdateActivityCommand body = new()
         {
             ActivityReference = preLoadedActivity.Reference,
             Title = "Test Activity",

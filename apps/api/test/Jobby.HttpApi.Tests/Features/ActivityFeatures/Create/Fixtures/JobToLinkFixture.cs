@@ -6,30 +6,22 @@ using Jobby.Domain.Static;
 using Jobby.HttpApi.Tests.Factories;
 using Jobby.HttpApi.Tests.Helpers;
 using Jobby.Persistence.Data;
-using Microsoft.EntityFrameworkCore;
 
 namespace Jobby.HttpApi.Tests.Features.ActivityFeatures.Create.Fixtures;
 
-public class JobToLinkFixture : IAsyncLifetime
+public class JobToLinkFixture(JobbyHttpApiFactory factory) : IAsyncLifetime
 {
-    private readonly JobbyHttpApiFactory _factory;
-
-    public JobToLinkFixture(JobbyHttpApiFactory factory)
-    {
-        _factory = factory;
-    }
-    
     public HttpResponseMessage Response { get; private set; } = new();
     
     public ActivityDto? ReturnedActivity { get; private set; } = new();
     
-    private HttpClient HttpClient => _factory.SetupClient();
-    
-    public CreateActivityCommand Body { get; private set; }
+    private HttpClient HttpClient => factory.SetupClient();
+
+    public CreateActivityCommand Body { get; private set; } = null!;
     
     public async Task InitializeAsync()
     {
-        await using JobbyDbContext dbContext = _factory.GetDbContext();
+        await using JobbyDbContext dbContext = factory.GetDbContext();
 
         Board seededBoard = await SeedBundleHelper.AddBoardWithJobAsync(dbContext);
         

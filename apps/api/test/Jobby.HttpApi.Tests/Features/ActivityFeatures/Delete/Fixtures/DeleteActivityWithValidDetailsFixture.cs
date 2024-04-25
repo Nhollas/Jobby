@@ -6,29 +6,21 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Jobby.HttpApi.Tests.Features.ActivityFeatures.Delete.Fixtures;
 
-public class DeleteActivityWithValidDetailsFixture : IAsyncLifetime
+public class DeleteActivityWithValidDetailsFixture(JobbyHttpApiFactory factory) : IAsyncLifetime
 {
-    private readonly JobbyHttpApiFactory _factory;
-
-    public DeleteActivityWithValidDetailsFixture(JobbyHttpApiFactory factory)
-    {
-        _factory = factory;
-    }
-    
     public HttpResponseMessage Response { get; private set; } = new();
     
     public string ActivityReference { get; private set; } = string.Empty;
-    private HttpClient HttpClient => _factory.SetupClient();
+    private HttpClient HttpClient => factory.SetupClient();
     
     private readonly Board _preLoadedBoard = Board.Create(Guid.NewGuid(), DateTime.UtcNow, "TestUserId", "TestBoard");
 
     
     public async Task InitializeAsync()
     {
-        await using JobbyDbContext initContext = new JobbyDbContext(new DbContextOptionsBuilder<JobbyDbContext>()
-            .UseSqlServer(_factory.DbConnectionString).Options);
+        await using JobbyDbContext context = factory.GetDbContext();
         
-        await SeedDataHelper<Board>.AddAsync(_preLoadedBoard, initContext);
+        await SeedDataHelper<Board>.AddAsync(_preLoadedBoard, context);
         
         Activity? activityToDelete = Activity.Create(
             id: Guid.NewGuid(),
@@ -45,20 +37,19 @@ public class DeleteActivityWithValidDetailsFixture : IAsyncLifetime
         
         ActivityReference = activityToDelete.Reference;
         
-        Activity preLoadedActivity = await SeedDataHelper<Activity>.AddAsync(activityToDelete, initContext);
+        Activity preLoadedActivity = await SeedDataHelper<Activity>.AddAsync(activityToDelete, context);
         
         Response = await HttpClient.DeleteAsync($"/activity/{preLoadedActivity.Reference}");
     }
 
     public async Task DisposeAsync()
     {
-        await using JobbyDbContext disposeContext = new JobbyDbContext(new DbContextOptionsBuilder<JobbyDbContext>()
-            .UseSqlServer(_factory.DbConnectionString).Options);
+        await using JobbyDbContext context = factory.GetDbContext();
         
-        Board? preLoadedBoard = await disposeContext.Boards.FirstOrDefaultAsync(b => b.Reference == _preLoadedBoard.Reference);
+        Board? preLoadedBoard = await context.Boards.FirstOrDefaultAsync(b => b.Reference == _preLoadedBoard.Reference);
 
         if (preLoadedBoard is null) return;
         
-        await SeedDataHelper<Board>.RemoveAsync(preLoadedBoard, disposeContext);
+        await SeedDataHelper<Board>.RemoveAsync(preLoadedBoard, context);
     }
 }

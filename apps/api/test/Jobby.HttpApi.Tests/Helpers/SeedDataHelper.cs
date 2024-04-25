@@ -12,31 +12,10 @@ public static class SeedDataHelper<T> where T : class
         
         return entity;
     }
-    
-    public static async Task<List<T>> AddRangeAsync(List<T> entities, JobbyDbContext context)
-    {
-        await context.Set<T>().AddRangeAsync(entities);
-        
-        await context.SaveChangesAsync();
-
-        return entities;
-    }
 
     public static async Task RemoveAsync(T entity, JobbyDbContext disposeContext)
     {
         disposeContext.Set<T>().Remove(entity);
-        
-        await disposeContext.SaveChangesAsync();
-    }
-    
-    public static async Task RemoveByIdAsync(Guid id, JobbyDbContext disposeContext)
-    {
-        var entity = await disposeContext.Set<T>().FindAsync(id);
-
-        if (entity is not null)
-        {
-            disposeContext.Set<T>().Remove(entity);
-        }
         
         await disposeContext.SaveChangesAsync();
     }

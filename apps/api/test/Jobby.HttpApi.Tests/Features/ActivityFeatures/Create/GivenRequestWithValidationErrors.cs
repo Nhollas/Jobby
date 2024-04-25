@@ -48,7 +48,7 @@ public class GivenRequestWithValidationErrors(JobbyHttpApiFactory factory)
         }
         """;
 
-        StringContent body = new StringContent(withoutBoardId, Encoding.UTF8, "application/json");
+        StringContent body = new(withoutBoardId, Encoding.UTF8, "application/json");
         
         HttpResponseMessage response = await HttpClient.PostAsync("/activity", body);
         
@@ -72,7 +72,7 @@ public class GivenRequestWithValidationErrors(JobbyHttpApiFactory factory)
         }
         """;
 
-        StringContent body = new StringContent(withoutStartDate, Encoding.UTF8, "application/json");
+        StringContent body = new(withoutStartDate, Encoding.UTF8, "application/json");
         
         HttpResponseMessage response = await HttpClient.PostAsync("/activity", body);
         
