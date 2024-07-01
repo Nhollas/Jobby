@@ -1,54 +1,34 @@
 ﻿using Jobby.Application.Abstractions.Specification;
-using Jobby.Application.Interfaces.Services;
-using Jobby.Application.Responses;
-using Jobby.Application.Responses.Common;
+using Jobby.Application.Results;
 using Jobby.Application.Services;
 using Jobby.Domain.Entities;
 using MediatR;
 
 namespace Jobby.Application.Features.ActivityFeatures.Commands.Delete;
 
-internal sealed class DeleteActivityCommandHandler : IRequestHandler<DeleteActivityCommand, BaseResult<DeleteActivityResponse, DeleteActivityOutcomes>>
+internal class DeleteActivityCommandHandler(
+    IRepository<Activity> activityRepository,
+    IUserService userService)
+    : IRequestHandler<DeleteActivityCommand, IDispatchResult<DeleteActivityResponse>>
 {
-    private readonly IRepository<Activity> _activityRepository;
-    private readonly string _userId;
+    private readonly string _userId = userService.UserId();
 
-    public DeleteActivityCommandHandler(
-        IRepository<Activity> activityRepository,
-        IUserService userService)
+    public async Task<IDispatchResult<DeleteActivityResponse>> Handle(DeleteActivityCommand request, CancellationToken cancellationToken)
     {
-        _activityRepository = activityRepository;
-        _userId = userService.UserId();
-    }
-
-    public async Task<BaseResult<DeleteActivityResponse, DeleteActivityOutcomes>> Handle(DeleteActivityCommand request, CancellationToken cancellationToken)
-    {
-        ResourceResult<Activity> activityResourceResult = await ResourceProvider<Activity>
-            .GetByReference(_activityRepository.GetByReferenceAsync)
-            .Check(_userId, request.ActivityReference, cancellationToken);
-
-        if (!activityResourceResult.IsSuccess)
+        Activity? activity = await activityRepository.GetByReferenceAsync(request.ActivityReference, cancellationToken);
+        
+        if (activity is null)
         {
-            return new BaseResult<DeleteActivityResponse, DeleteActivityOutcomes>(
-                IsSuccess: false,
-                Outcome: activityResourceResult.Outcome switch
-                {
-                    Outcome.Unauthorised => DeleteActivityOutcomes.UnauthorizedActivityAccess,
-                    Outcome.NotFound => DeleteActivityOutcomes.UnknownActivity,
-                    _ => DeleteActivityOutcomes.UnknownError
-                },
-                ErrorMessage: activityResourceResult.ErrorMessage
-            );
+            return DispatchResults.NotFound<DeleteActivityResponse>(request.ActivityReference);
         }
         
-        Activity activityToDelete = activityResourceResult.Response;
-
-        await _activityRepository.DeleteAsync(activityToDelete, cancellationToken);
-
-        return new BaseResult<DeleteActivityResponse, DeleteActivityOutcomes>(
-            IsSuccess: true,
-            Outcome: DeleteActivityOutcomes.ActivityDeleted,
-            Response: new DeleteActivityResponse()
-        );
+        if (!activity.IsOwnedBy(_userId))
+        {
+            return DispatchResults.Unauthorized<DeleteActivityResponse>($"You are not authorised to access the resource {activity.Reference}.");
+        }
+        
+        await activityRepository.DeleteAsync(activity, cancellationToken);
+        
+        return DispatchResults.Ok(new DeleteActivityResponse());
     }
 }

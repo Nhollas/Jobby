@@ -2,82 +2,48 @@
 using Jobby.Application.Abstractions.Specification;
 using Jobby.Application.Dtos;
 using Jobby.Application.Features.BoardFeatures.Specifications;
-using Jobby.Application.Interfaces.Services;
-using Jobby.Application.Responses;
-using Jobby.Application.Responses.Common;
+using Jobby.Application.Results;
 using Jobby.Application.Services;
 using Jobby.Domain.Entities;
 using MediatR;
 
 namespace Jobby.Application.Features.JobFeatures.Commands.Create;
 
-internal sealed class CreateJobCommandHandler : IRequestHandler<CreateJobCommand, BaseResult<JobDto, CreateJobOutcomes>>
+internal class CreateJobCommandHandler(
+    IReadRepository<Board> boardRepository,
+    IUserService userService,
+    TimeProvider timeProvider,
+    IRepository<Job> jobRepository,
+    IMapper mapper)
+    : IRequestHandler<CreateJobCommand, IDispatchResult<JobDto>>
 {
-    private readonly IReadRepository<Board> _boardRepository;
-    private readonly IRepository<Job> _jobRepository;
-    private readonly IDateTimeProvider _dateTimeProvider;
-    private readonly IGuidProvider _guidProvider;
-    private readonly IMapper _mapper;
-    private readonly string _userId;
+    private readonly string _userId = userService.UserId();
 
-    public CreateJobCommandHandler(
-        IReadRepository<Board> boardRepository,
-        IUserService userService,
-        IDateTimeProvider dateTimeProvider,
-        IRepository<Job> jobRepository,
-        IGuidProvider guidProvider,
-        IMapper mapper)
+    public async Task<IDispatchResult<JobDto>> Handle(CreateJobCommand request, CancellationToken cancellationToken)
     {
-        _boardRepository = boardRepository;
-        _userId = userService.UserId();
-        _dateTimeProvider = dateTimeProvider;
-        _jobRepository = jobRepository;
-        _guidProvider = guidProvider;
-        _mapper = mapper;
-    }
+        Board? board = await boardRepository.FirstOrDefaultAsync(new GetBoardWithJobsSpecification(request.BoardReference), cancellationToken);
 
-    public async Task<BaseResult<JobDto, CreateJobOutcomes>> Handle(CreateJobCommand request, CancellationToken cancellationToken)
-    {
-        ResourceResult<Board> boardResourceResult = await ResourceProvider<Board>
-            .GetBySpec(_boardRepository.FirstOrDefaultAsync)
-            .WithResource(request.BoardReference)
-            .ApplySpecification(new GetBoardWithJobsSpecification(request.BoardReference))
-            .Check(_userId, cancellationToken);
-        
-        if (!boardResourceResult.IsSuccess)
+        if (board is null)
         {
-            return new BaseResult<JobDto, CreateJobOutcomes>(
-                IsSuccess: false,
-                Outcome: boardResourceResult.Outcome switch
-                {
-                    Outcome.Unauthorised => CreateJobOutcomes.UnauthorizedBoardAccess,
-                    Outcome.NotFound => CreateJobOutcomes.UnknownBoard,
-                    _ => CreateJobOutcomes.UnknownError
-                },
-                ErrorMessage: boardResourceResult.ErrorMessage
-            );
+            return DispatchResults.NotFound<JobDto>(request.BoardReference);
         }
         
-        Board board = boardResourceResult.Response;
+        if (board.OwnerId != _userId)
+        {
+            return DispatchResults.Unauthorized<JobDto>(request.BoardReference);
+        }
 
         if (!board.BoardOwnsList(request.JobListReference))
         {
-            return new BaseResult<JobDto, CreateJobOutcomes>(
-                IsSuccess: false,
-                Outcome: CreateJobOutcomes.JobListNotFound,
-                ErrorMessage: $"The Board {request.BoardReference} does not contain the JobList {request.JobListReference}."
-            );
+            return DispatchResults.BadRequest<JobDto>(request.JobListReference);
         }
 
         JobList selectedJobList = board.Lists.First(list => list.Reference == request.JobListReference);
 
-        int newIndex;
-
-        newIndex = selectedJobList.Jobs.Count == 0 ? 0 : selectedJobList.Jobs.Count;
+        int newIndex = selectedJobList.Jobs.Count == 0 ? 0 : selectedJobList.Jobs.Count;
 
         Job createdJob = Job.Create(
-            _guidProvider.Create(),
-            _dateTimeProvider.UtcNow,
+            timeProvider.GetUtcNow(),
             _userId,
             request.Company,
             request.Title,
@@ -85,13 +51,9 @@ internal sealed class CreateJobCommandHandler : IRequestHandler<CreateJobCommand
             selectedJobList,
             board);
 
-        await _jobRepository.AddAsync(createdJob, cancellationToken);
+        await jobRepository.AddAsync(createdJob, cancellationToken);
 
         
-        return new BaseResult<JobDto, CreateJobOutcomes>(
-            IsSuccess: true,
-            Outcome: CreateJobOutcomes.JobCreated,
-            Response: _mapper.Map<JobDto>(createdJob)
-        );        
+        return DispatchResults.Created(mapper.Map<JobDto>(createdJob));
     }
 }

@@ -1,102 +1,68 @@
-﻿using Jobby.Application.Abstractions.Specification;
+﻿using AutoMapper;
+using Jobby.Application.Abstractions.Specification;
 using Jobby.Application.Dtos;
-using Jobby.Application.Interfaces.Services;
-using Jobby.Application.Responses;
-using Jobby.Application.Responses.Common;
+using Jobby.Application.Results;
 using Jobby.Application.Services;
 using Jobby.Domain.Entities;
 using MediatR;
 
 namespace Jobby.Application.Features.ListFeatures.Commands.Create;
-internal sealed class CreateListCommandHandler : IRequestHandler<CreateListCommand, BaseResult<JobListDto, CreateListOutcomes>>
+internal class CreateListCommandHandler(
+    IRepository<JobList> jobListRepository,
+    IRepository<Job> jobRepository,
+    IUserService userService,
+    TimeProvider timeProvider,
+    IRepository<Board> boardRepository,
+    IMapper mapper)
+    : IRequestHandler<CreateListCommand, IDispatchResult<JobListDto>>
 {
-    private readonly IRepository<JobList> _jobListRepository;
-    private readonly IRepository<Job> _jobRepository;
-    private readonly IRepository<Board> _boardRepository;
-    private readonly IGuidProvider _guidProvider;
-    private readonly IDateTimeProvider _dateTimeProvider;
-    private readonly string _userId;
+    private readonly string _userId = userService.UserId();
 
-    public CreateListCommandHandler(
-        IRepository<JobList> jobListRepository,
-        IRepository<Job> jobRepository,
-        IUserService userService,
-        IDateTimeProvider dateTimeProvider,
-        IGuidProvider guidProvider, 
-        IRepository<Board> boardRepository)
+    public async Task<IDispatchResult<JobListDto>> Handle(CreateListCommand request, CancellationToken cancellationToken)
     {
-        _jobListRepository = jobListRepository;
-        _jobRepository = jobRepository;
-        _userId = userService.UserId();
-        _dateTimeProvider = dateTimeProvider;
-        _guidProvider = guidProvider;
-        _boardRepository = boardRepository;
-    }
-
-    public async Task<BaseResult<JobListDto, CreateListOutcomes>> Handle(CreateListCommand request, CancellationToken cancellationToken)
-    {
-        ResourceResult<Board> boardResourceResult = await ResourceProvider<Board>
-            .GetByReference(_boardRepository.GetByReferenceAsync)
-            .Check(_userId, request.BoardReference, cancellationToken);
-
-        if (!boardResourceResult.IsSuccess)
+        Board? board = await boardRepository.GetByReferenceAsync(request.BoardReference, cancellationToken);
+        
+        if (board is null)
         {
-            return new BaseResult<JobListDto, CreateListOutcomes>(
-                IsSuccess: false,
-                Outcome: boardResourceResult.Outcome switch
-                {
-                    Outcome.Unauthorised => CreateListOutcomes.UnauthorizedBoardAccess,
-                    Outcome.NotFound => CreateListOutcomes.UnknownBoard,
-                    _ => CreateListOutcomes.UnknownError
-                },
-                ErrorMessage: boardResourceResult.ErrorMessage
-            );
+            return DispatchResults.NotFound<JobListDto>(request.BoardReference);
         }
         
-        Board board = boardResourceResult.Response;
+        if (board.OwnerId != _userId)
+        {
+            return DispatchResults.Unauthorized<JobListDto>("You are not authorized to create a list on this board.");
+        }
         
         JobList createdJobList = JobList.Create(
-            _guidProvider.Create(),
-            _dateTimeProvider.UtcNow,
+            timeProvider.GetUtcNow(),
             _userId,
             request.Name,
             request.Index,
             board);
 
-        await _jobListRepository.AddAsync(createdJobList, cancellationToken);
+        await jobListRepository.AddAsync(createdJobList, cancellationToken);
 
-        if (request.JobReference != string.Empty)
+        if (request.JobReference == string.Empty)
         {
-            ResourceResult<Job> jobResourceResult = await ResourceProvider<Job>
-                .GetByReference(_jobRepository.GetByReferenceAsync)
-                .Check(_userId, request.JobReference, cancellationToken);
-            
-            if (!jobResourceResult.IsSuccess)
-            {
-                return new BaseResult<JobListDto, CreateListOutcomes>(
-                    IsSuccess: false,
-                    Outcome: jobResourceResult.Outcome switch
-                    {
-                        Outcome.Unauthorised => CreateListOutcomes.UnauthorizedJobAccess,
-                        Outcome.NotFound => CreateListOutcomes.UnknownJob,
-                        _ => CreateListOutcomes.UnknownError
-                    },
-                    ErrorMessage: jobResourceResult.ErrorMessage
-                );
-            }
-            
-            Job jobToUpdate = jobResourceResult.Response;
-
-            jobToUpdate.SetJobList(createdJobList.Id);
-            jobToUpdate.SetIndex(0);
-
-            await _jobRepository.UpdateAsync(jobToUpdate, cancellationToken);
+            return DispatchResults.Ok(mapper.Map<JobListDto>(createdJobList));
         }
         
-        return new BaseResult<JobListDto, CreateListOutcomes>(
-            IsSuccess: true,
-            Outcome: CreateListOutcomes.ListCreated,
-            Response: new JobListDto()
-        );
+        Job? job = await jobRepository.GetByReferenceAsync(request.JobReference, cancellationToken);
+        
+        if (job is null)
+        {
+            return DispatchResults.NotFound<JobListDto>(request.JobReference);
+        }
+        
+        if (job.OwnerId != _userId)
+        {
+            return DispatchResults.Unauthorized<JobListDto>("You are not authorized to add this job to a list.");
+        }
+        
+        job.SetJobList(createdJobList);
+        job.SetIndex(0);
+        
+        await jobRepository.UpdateAsync(job, cancellationToken);
+        
+        return DispatchResults.Ok(mapper.Map<JobListDto>(createdJobList));
     }
 }

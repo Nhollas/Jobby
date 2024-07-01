@@ -12,14 +12,10 @@ namespace Jobby.HttpApi.Tests.Features.ActivityFeatures.Create.Fixtures;
 public class ValidDetailsTestFixture(JobbyHttpApiFactory factory) : IAsyncLifetime
 {
     public HttpResponseMessage Response { get; private set; } = new();
-    public ActivityDto? ReturnedActivity { get; private set; } = new();
-
-    private HttpClient HttpClient => factory.SetupClient();
-    
+    public ActivityDto? ReturnedActivity { get; private set; }
     public CreateActivityCommand Body { get; private set; } = null!;
     
     private static readonly Board SeededBoard = Board.Create(
-        id: Guid.NewGuid(), 
         createdDate: DateTime.UtcNow, 
         ownerId: "TestUserId",
         name: "TestBoard");
@@ -40,7 +36,7 @@ public class ValidDetailsTestFixture(JobbyHttpApiFactory factory) : IAsyncLifeti
             Completed: false
         );
         
-        Response = await HttpClient.PostAsJsonAsync("/activity", Body);
+        Response = await factory.HttpClient.PostAsJsonAsync("/activity", Body);
         ReturnedActivity = await Response.Content.ReadFromJsonAsync<ActivityDto>();
     }
 

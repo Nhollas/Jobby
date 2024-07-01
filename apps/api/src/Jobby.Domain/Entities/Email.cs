@@ -8,14 +8,13 @@ public class Email: Entity
     private Email(){}
     
     private Email(
-        Guid id,
         string reference,
-        DateTime createdDate,
+        DateTimeOffset createdDate,
         string ownerId,
         string name,
         EmailType type,
         Contact contact)
-        : base(id, reference, createdDate, ownerId)
+        : base(reference, createdDate, ownerId)
     {
         Contact = contact;
         ContactId = contact.Id;
@@ -25,15 +24,13 @@ public class Email: Entity
     }
     
     public static Email Create(
-        Guid id,
-        DateTime createdDate,
+        DateTimeOffset createdDate,
         string ownerId,
         string name,
         EmailType type,
         Contact contact)
     {
         Email phone = new Email(
-            id,
             reference: EntityReferenceProvider<Email>.CreateReference(),
             createdDate,
             ownerId,

@@ -9,17 +9,14 @@ namespace Jobby.HttpApi.Tests.Features.ActivityFeatures.Delete;
 [Collection("SqlCollection")]
 public class GivenRequestWithActivityRefNotOwned(JobbyHttpApiFactory factory)
 {
-    private HttpClient HttpClient => factory.SetupClient();
-    
     [Fact]
     public async Task ThenReturns404Unauthorized()
     {
         await using JobbyDbContext context = factory.GetDbContext();
         
-        Board preLoadedBoard = await SeedDataHelper<Board>.AddAsync(Board.Create(Guid.NewGuid(), DateTime.UtcNow, "TestUserTwoId", "TestBoard"), context);
+        Board preLoadedBoard = await SeedDataHelper<Board>.AddAsync(Board.Create(DateTime.UtcNow, "TestUserTwoId", "TestBoard"), context);
         
         Activity activityToDelete = Activity.Create(
-            id: Guid.NewGuid(),
             createdDate: DateTime.UtcNow,
             ownerId: "TestUserTwoId",
             title: "Test Activity",
@@ -33,7 +30,7 @@ public class GivenRequestWithActivityRefNotOwned(JobbyHttpApiFactory factory)
         
         Activity preLoadedActivity = await SeedDataHelper<Activity>.AddAsync(activityToDelete, context);
         
-        HttpResponseMessage response = await HttpClient.DeleteAsync($"/activity/{preLoadedActivity.Reference}");
+        HttpResponseMessage response = await factory.HttpClient.DeleteAsync($"/activity/{preLoadedActivity.Reference}");
         string responseContent = await response.Content.ReadAsStringAsync();
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);

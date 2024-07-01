@@ -7,13 +7,12 @@ public class Company: Entity
     private Company(){}
     
     private Company(
-        Guid id,
         string reference,
-        DateTime createdDate,
+        DateTimeOffset createdDate,
         string ownerId,
         string name,
         Contact contact)
-        : base(id, reference, createdDate, ownerId)
+        : base(reference, createdDate, ownerId)
     {
         Contact = contact;
         ContactId = contact.Id;
@@ -22,14 +21,12 @@ public class Company: Entity
     }
     
     public static Company Create(
-        Guid id,
-        DateTime createdDate,
+        DateTimeOffset createdDate,
         string ownerId,
         string name,
         Contact contact)
     {
         Company company = new Company(
-            id,
             reference: EntityReferenceProvider<Company>.CreateReference(),
             createdDate,
             ownerId,

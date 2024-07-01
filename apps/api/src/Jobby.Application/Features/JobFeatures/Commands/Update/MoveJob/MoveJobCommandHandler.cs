@@ -1,60 +1,46 @@
 ﻿using Jobby.Application.Abstractions.Specification;
-using Jobby.Application.Interfaces.Services;
-using Jobby.Application.Responses;
-using Jobby.Application.Responses.Common;
+using Jobby.Application.Results;
 using Jobby.Application.Services;
 using Jobby.Domain.Entities;
 using MediatR;
 
 namespace Jobby.Application.Features.JobFeatures.Commands.Update.MoveJob;
-internal sealed class MoveJobCommandHandler : IRequestHandler<MoveJobCommand, BaseResult<MoveJobResponse, MoveJobOutcomes>>
+internal class MoveJobCommandHandler(
+    IRepository<Job> jobRepository,
+    IRepository<JobList> jobListRepository,
+    IUserService userService,
+    TimeProvider timeProvider)
+    : IRequestHandler<MoveJobCommand, IDispatchResult<MoveJobResponse>>
 {
-    private readonly IRepository<Job> _jobRepository;
-    private readonly IDateTimeProvider _timeProvider;
-    private readonly string _userId;
+    private readonly string _userId = userService.UserId();
 
-    public MoveJobCommandHandler(
-        IRepository<Job> jobRepository,
-        IUserService userService,
-        IDateTimeProvider timeProvider)
+    public async Task<IDispatchResult<MoveJobResponse>> Handle(MoveJobCommand request, CancellationToken cancellationToken)
     {
-        _jobRepository = jobRepository;
-        _userId = userService.UserId();
-        _timeProvider = timeProvider;
-    }
-
-    public async Task<BaseResult<MoveJobResponse, MoveJobOutcomes>> Handle(MoveJobCommand request, CancellationToken cancellationToken)
-    {
-        ResourceResult<Job> jobResourceResult = await ResourceProvider<Job>
-            .GetByReference(_jobRepository.GetByReferenceAsync)
-            .Check(_userId, request.JobReference, cancellationToken);
-
-        if (!jobResourceResult.IsSuccess)
+        Job? job = await jobRepository.GetByReferenceAsync(request.JobReference, cancellationToken);
+        
+        if (job is null)
         {
-            return new BaseResult<MoveJobResponse, MoveJobOutcomes>(
-                IsSuccess: false,
-                Outcome: jobResourceResult.Outcome switch
-                {
-                    Outcome.Unauthorised => MoveJobOutcomes.UnauthorizedJobAccess,
-                    Outcome.NotFound => MoveJobOutcomes.UnknownJob,
-                    _ => MoveJobOutcomes.UnknownError
-                },
-                ErrorMessage: jobResourceResult.ErrorMessage
-            );
+            return DispatchResults.NotFound<MoveJobResponse>(request.JobReference);
+        }
+        
+        if (job.OwnerId != _userId)
+        {
+            return DispatchResults.Unauthorized<MoveJobResponse>("You are not authorized to move this job");
         }
 
-        Job jobToMove = jobResourceResult.Response;
-
         // TODO: Fetch the target job list and set it on the job
-        // jobToMove.SetJobList(request.TargetJobListId);
-        jobToMove.UpdateEntity(_timeProvider.UtcNow);
+        JobList? jobList = await jobListRepository.GetByReferenceAsync(request.JobListReference, cancellationToken);
+        
+        if (jobList is null)
+        {
+            return DispatchResults.NotFound<MoveJobResponse>(request.JobListReference);
+        }
+        
+        job.SetJobList(jobList);
+        job.UpdateEntity(timeProvider.GetUtcNow());
 
-        await _jobRepository.UpdateAsync(jobToMove, cancellationToken);
+        await jobRepository.UpdateAsync(job, cancellationToken);
 
-        return new BaseResult<MoveJobResponse, MoveJobOutcomes>(
-            IsSuccess: true,
-            Outcome: MoveJobOutcomes.JobMoved,
-            Response: new MoveJobResponse()
-        );
+        return DispatchResults.Ok<MoveJobResponse>(new MoveJobResponse());
     }
 }

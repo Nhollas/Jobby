@@ -8,8 +8,6 @@ namespace Jobby.HttpApi.Tests.Features.BoardFeatures.Create;
 [Collection("SqlCollection")]
 public class GivenRequestWithValidationErrors(JobbyHttpApiFactory factory)
 {
-    private HttpClient HttpClient => factory.SetupClient();
-    
     [Fact]
     public async Task WhenNamePropertyIsMissing_ThenReturns422UnprocessableEntityAndNamePropertyValidationMessage()
     {
@@ -17,7 +15,7 @@ public class GivenRequestWithValidationErrors(JobbyHttpApiFactory factory)
 
         StringContent body = new(withoutNameProperty, Encoding.UTF8, "application/json");
         
-        HttpResponseMessage response = await HttpClient.PostAsync("/board", body);
+        HttpResponseMessage response = await factory.HttpClient.PostAsync("/board", body);
         
         var errors = await response.Content.ReadFromJsonAsync<List<ValidationError>>();
 

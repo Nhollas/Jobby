@@ -11,6 +11,11 @@ public class DispatchUnprocessableEntityResult<TResponse> : IDispatchResult<TRes
         ).ToArray();
     }
     
+    public DispatchUnprocessableEntityResult(ValidationError[] validationErrors)
+    {
+        ValidationErrors = validationErrors;
+    }
+    
     public ValidationError[]? ValidationErrors { get; set; }
 }
 

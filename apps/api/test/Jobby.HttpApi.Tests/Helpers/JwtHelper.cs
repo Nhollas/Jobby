@@ -7,7 +7,7 @@ namespace Jobby.HttpApi.Tests.Helpers;
 
 public static class JwtHelper
 {
-    public const string DefaultSigningSecret = "YVlGeptVBTTm4iIGZp9nm3xgWcczjmio";
+    public const string TestSigningKey = "YVlGeptVBTTm4iIGZp9nm3xgWcczjmio";
 
     public static string Generate(
         string userId, 
@@ -27,7 +27,7 @@ public static class JwtHelper
             claims: claims,
             expires: expires ?? DateTime.Now.AddDays(1),
             signingCredentials: new SigningCredentials(
-                new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret ?? DefaultSigningSecret)),
+                new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret ?? TestSigningKey)),
                 SecurityAlgorithms.HmacSha256Signature)
             );
         

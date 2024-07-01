@@ -5,15 +5,11 @@ namespace Jobby.Domain.Entities;
 
 public class Job : Entity
 {
-    public Job()
-    {
-
-    }
+    public Job(){}
 
     private Job(
-        Guid id,
         string reference,
-        DateTime createdDate,
+        DateTimeOffset createdDate,
         string ownerId,
         string company,
         string jobTitle,
@@ -21,7 +17,7 @@ public class Job : Entity
         JobList jobList,
         Board board
         )
-        : base(id, reference, createdDate, ownerId)
+        : base(reference, createdDate, ownerId)
 
     {
         Company = company;
@@ -39,7 +35,7 @@ public class Job : Entity
     public double Salary { get; private set; } = 0;
     public string Location { get; private set; }
     public string Description { get; private set; } = string.Empty;
-    public DateTime? Deadline { get; private set; } 
+    public DateTimeOffset? Deadline { get; private set; } 
     public int Index { get; private set; }
     public List<Note> Notes { get; } = new();
     public List<Activity> Activities { get; } = new();
@@ -57,8 +53,7 @@ public class Job : Entity
 
 
     public static Job Create(
-        Guid id,
-        DateTime createdDate,
+        DateTimeOffset createdDate,
         string ownerId,
         string company,
         string jobTitle,
@@ -66,8 +61,7 @@ public class Job : Entity
         JobList jobList,
         Board board)
     {
-        Job job = new Job(
-            id,
+        Job job = new(
             reference: EntityReferenceProvider<Job>.CreateReference(),
             createdDate,
             ownerId,
@@ -80,9 +74,11 @@ public class Job : Entity
         return job;
     }
 
-    public void SetJobList(Guid jobListId)
+    public void SetJobList(JobList jobList)
     {
-        JobListId = jobListId;
+        JobList = jobList;
+        JobListId = jobList.Id;
+        JobListReference = jobList.Reference;
     }
 
     public void SetIndex(int index)

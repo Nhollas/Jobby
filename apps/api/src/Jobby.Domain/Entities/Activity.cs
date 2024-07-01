@@ -5,25 +5,20 @@ namespace Jobby.Domain.Entities;
 
 public class Activity : Entity
 {
-    // Required by EF Core
-    private Activity()
-    {
-
-    }
+    private Activity(){}
 
     private Activity(
-        Guid id,
         string reference,
-        DateTime createdDate,
+        DateTimeOffset createdDate,
         string ownerId,
         string title,
         int type,
-        DateTime startDate,
-        DateTime endDate,
+        DateTimeOffset startDate,
+        DateTimeOffset endDate,
         string note,
         bool completed,
         Board board)
-        : base(id, reference, createdDate, ownerId)
+        : base(reference, createdDate, ownerId)
     {
         Title = title;
         Type = type;
@@ -50,8 +45,8 @@ public class Activity : Entity
         }
     }
 
-    public DateTime StartDate { get; private set; }
-    public DateTime EndDate { get; private set; }
+    public DateTimeOffset StartDate { get; private set; }
+    public DateTimeOffset EndDate { get; private set; }
     public string Note { get; private set; }
     public bool Completed { get; private set; }
 
@@ -67,19 +62,17 @@ public class Activity : Entity
 
 
     public static Activity Create(
-        Guid id,
-        DateTime createdDate,
+        DateTimeOffset createdDate,
         string ownerId,
         string title,
         int activityType,
-        DateTime startDate,
-        DateTime endDate,
+        DateTimeOffset startDate,
+        DateTimeOffset endDate,
         string note,
         bool completed, 
         Board board)
     {
         Activity activity = new(
-            id,
             reference: EntityReferenceProvider<Activity>.CreateReference(),
             createdDate,
             ownerId,
@@ -97,8 +90,8 @@ public class Activity : Entity
     public void Update(
         string title,
         int type,
-        DateTime startDate,
-        DateTime endDate,
+        DateTimeOffset startDate,
+        DateTimeOffset endDate,
         string note,
         bool completed)
     {

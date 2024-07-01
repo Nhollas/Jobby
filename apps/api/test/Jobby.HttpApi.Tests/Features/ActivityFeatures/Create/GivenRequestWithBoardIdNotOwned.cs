@@ -12,14 +12,12 @@ namespace Jobby.HttpApi.Tests.Features.ActivityFeatures.Create;
 [Collection("SqlCollection")]
 public class GivenRequestWithBoardIdNotOwned(JobbyHttpApiFactory factory)
 {
-    private HttpClient HttpClient => factory.SetupClient();
-    
     [Fact]
     public async Task ThenReturns401Unauthorized()
     {
         await using JobbyDbContext context = factory.GetDbContext();
         
-        Board preLoadedBoard = await SeedDataHelper<Board>.AddAsync(Board.Create(Guid.NewGuid(), DateTime.UtcNow, "TestUser2Id", "TestBoard"), context);
+        Board preLoadedBoard = await SeedDataHelper<Board>.AddAsync(Board.Create(DateTime.UtcNow, "TestUser2Id", "TestBoard"), context);
         
         CreateActivityCommand body = new(
             BoardReference: preLoadedBoard.Reference,
@@ -31,10 +29,11 @@ public class GivenRequestWithBoardIdNotOwned(JobbyHttpApiFactory factory)
             Completed: false
         );
 
-        HttpResponseMessage response = await HttpClient.PostAsJsonAsync("/activity", body);
+        HttpResponseMessage response = await factory.HttpClient.PostAsJsonAsync("/activity", body);
         string responseContent = await response.Content.ReadAsStringAsync();
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
-        responseContent.Should().Be("You are not authorised to access this resource.");
+        responseContent.Should().Be(
+            ResponseHelper.MessageToApiMessage($"You are not authorised to access the resource {body.BoardReference}."));
     }
 }

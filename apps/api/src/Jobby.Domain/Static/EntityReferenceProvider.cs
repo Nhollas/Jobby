@@ -26,8 +26,8 @@ public static class EntityReferenceProvider<T> where T : Entity
 
     private static string GenerateRandomChars(int length)
     {
-        string characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        Random random = new Random();
+        const string characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        Random random = new();
         char[] randomChars = new char[length];
 
         for (int i = 0; i < length; i++)

@@ -2,33 +2,24 @@
 using Jobby.Application.Abstractions.Specification;
 using Jobby.Application.Dtos;
 using Jobby.Application.Features.ContactFeatures.Specifications;
-using Jobby.Application.Interfaces.Services;
+using Jobby.Application.Results;
+using Jobby.Application.Services;
 using Jobby.Domain.Entities;
 using MediatR;
 
 namespace Jobby.Application.Features.BoardFeatures.Queries.ListContacts;
-internal sealed class GetBoardContactListQueryHandler : IRequestHandler<GetBoardContactListQuery, List<ContactDto>>
+internal class GetBoardContactListQueryHandler(
+    IReadRepository<Contact> contactRepository,
+    IUserService userService,
+    IMapper mapper)
+    : IRequestHandler<GetBoardContactListQuery, IDispatchResult<List<ContactDto>>>
 {
-    private readonly IReadRepository<Contact> _contactRepository;
-    private readonly IMapper _mapper;
-    private readonly string _userId;
+    private readonly string _userId = userService.UserId();
 
-    public GetBoardContactListQueryHandler(
-        IReadRepository<Contact> contactRepository,
-        IUserService userService,
-        IMapper mapper)
+    public async Task<IDispatchResult<List<ContactDto>>> Handle(GetBoardContactListQuery request, CancellationToken cancellationToken)
     {
-        _contactRepository = contactRepository;
-        _userId = userService.UserId();
-        _mapper = mapper;
-    }
+        List<Contact> contactList = await contactRepository.ListAsync(new GetContactsFromBoardSpecification(request.BoardReference, _userId), cancellationToken);
 
-    public async Task<List<ContactDto>> Handle(GetBoardContactListQuery request, CancellationToken cancellationToken)
-    {
-        GetContactsFromBoardSpecification contactSpec = new GetContactsFromBoardSpecification(request.BoardReference, _userId);
-
-        List<Contact> contactList = await _contactRepository.ListAsync(contactSpec, cancellationToken);
-
-        return _mapper.Map<List<ContactDto>>(contactList);
+        return DispatchResults.Ok(mapper.Map<List<ContactDto>>(contactList));
     }
 }

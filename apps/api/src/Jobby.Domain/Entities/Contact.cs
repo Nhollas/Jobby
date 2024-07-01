@@ -9,9 +9,8 @@ public class Contact : Entity
     private Contact(){}
 
     private Contact(
-        Guid id,
         string reference,
-        DateTime createdDate,
+        DateTimeOffset createdDate,
         string ownerId,
         string firstName,
         string lastName,
@@ -22,7 +21,7 @@ public class Contact : Entity
         List<string> companies,
         List<CreateEmailDto> emails,
         List<CreatePhoneDto> phones)
-        : base(id, reference, createdDate, ownerId)
+        : base(reference, createdDate, ownerId)
     {
         FirstName = firstName;
         LastName = lastName;
@@ -56,8 +55,7 @@ public class Contact : Entity
 
 
     public static Contact Create(
-        Guid id,
-        DateTime createdDate,
+        DateTimeOffset createdDate,
         string ownerId,
         string firstName,
         string lastName,
@@ -70,7 +68,6 @@ public class Contact : Entity
         List<CreatePhoneDto> phones)
     {
         Contact contact = new Contact(
-            id,
             reference: EntityReferenceProvider<Contact>.CreateReference(),
             createdDate,
             ownerId,
@@ -124,19 +121,19 @@ public class Contact : Entity
         }
     }
     
-    private List<Company> CreateCompanies(IEnumerable<string> companies, DateTime createdDate)
+    private List<Company> CreateCompanies(IEnumerable<string> companies, DateTimeOffset createdDate)
     {
-        return companies.Select(company => Company.Create(Guid.NewGuid(), createdDate, OwnerId, company, this)).ToList();
+        return companies.Select(company => Company.Create(createdDate, OwnerId, company, this)).ToList();
     }
     
-    private List<Email> CreateEmails(IEnumerable<CreateEmailDto> emails, DateTime createdDate)
+    private List<Email> CreateEmails(IEnumerable<CreateEmailDto> emails, DateTimeOffset createdDate)
     {
-        return emails.Select(email => Email.Create(Guid.NewGuid(), createdDate, OwnerId, email.Name, (ContactConstants.EmailType)email.Type, this)).ToList();
+        return emails.Select(email => Email.Create(createdDate, OwnerId, email.Name, (ContactConstants.EmailType)email.Type, this)).ToList();
     }
     
-    private List<Phone> CreatePhones(IEnumerable<CreatePhoneDto> phones, DateTime createdDate)
+    private List<Phone> CreatePhones(IEnumerable<CreatePhoneDto> phones, DateTimeOffset createdDate)
     {
-        return phones.Select(phone => Phone.Create(Guid.NewGuid(), createdDate, OwnerId, phone.Number, (ContactConstants.PhoneType)phone.Type, this)).ToList();
+        return phones.Select(phone => Phone.Create(createdDate, OwnerId, phone.Number, (ContactConstants.PhoneType)phone.Type, this)).ToList();
     }
 
     public void UpdateEmails(List<Email> emails)

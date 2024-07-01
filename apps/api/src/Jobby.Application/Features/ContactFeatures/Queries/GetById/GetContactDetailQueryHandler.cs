@@ -2,56 +2,35 @@
 using Jobby.Application.Abstractions.Specification;
 using Jobby.Application.Dtos;
 using Jobby.Application.Features.ContactFeatures.Specifications;
-using Jobby.Application.Interfaces.Services;
-using Jobby.Application.Responses;
-using Jobby.Application.Responses.Common;
+using Jobby.Application.Results;
 using Jobby.Application.Services;
 using Jobby.Domain.Entities;
 using MediatR;
 
 namespace Jobby.Application.Features.ContactFeatures.Queries.GetById;
-internal sealed class GetContactDetailQueryHandler : IRequestHandler<GetContactDetailQuery, BaseResult<ContactDto, GetContactDetailOutcomes>>
+internal class GetContactDetailQueryHandler(
+    IUserService userService,
+    IMapper mapper,
+    IReadRepository<Contact> contactRepository)
+    : IRequestHandler<GetContactDetailQuery, IDispatchResult<ContactDto>>
 {
-    private readonly IReadRepository<Contact> _contactRepository;
-    private readonly IMapper _mapper;
-    private readonly string _userId;
+    private readonly string _userId = userService.UserId();
 
-    public GetContactDetailQueryHandler(
-        IUserService userService,
-        IMapper mapper,
-        IReadRepository<Contact> contactRepository)
+    public async Task<IDispatchResult<ContactDto>> Handle(GetContactDetailQuery request, CancellationToken cancellationToken)
     {
-        _userId = userService.UserId();
-        _mapper = mapper;
-        _contactRepository = contactRepository;
-    }
-
-    public async Task<BaseResult<ContactDto, GetContactDetailOutcomes>> Handle(GetContactDetailQuery request, CancellationToken cancellationToken)
-    {
-        ResourceResult<Contact> contactResourceResult = await ResourceProvider<Contact>
-            .GetBySpec(_contactRepository.FirstOrDefaultAsync)
-            .WithResource(request.ContactReference)
-            .ApplySpecification(new GetContactWithRelationshipsSpecification(request.ContactReference))
-            .Check(_userId, cancellationToken);
-
-        if (!contactResourceResult.IsSuccess)
+        Contact? contact = await contactRepository.FirstOrDefaultAsync(new GetContactWithRelationshipsSpecification(request.ContactReference), cancellationToken);
+        
+        if (contact is null)
         {
-            return new BaseResult<ContactDto, GetContactDetailOutcomes>(
-                IsSuccess: false,
-                Outcome: contactResourceResult.Outcome switch
-                {
-                    Outcome.Unauthorised => GetContactDetailOutcomes.UnauthorizedContactAccess,
-                    Outcome.NotFound => GetContactDetailOutcomes.UnknownContact,
-                    _ => GetContactDetailOutcomes.UnknownError
-                },
-                ErrorMessage: contactResourceResult.ErrorMessage
-            );
+            return DispatchResults.NotFound<ContactDto>(request.ContactReference);
         }
 
-        return new BaseResult<ContactDto, GetContactDetailOutcomes>(
-            IsSuccess: true,
-            Outcome: GetContactDetailOutcomes.ContactFound,
-            Response: _mapper.Map<ContactDto>(contactResourceResult.Response)
-        );
+        if (contact.OwnerId != _userId)
+        {
+            return DispatchResults.Unauthorized<ContactDto>(
+                $"You are not authorised to access the resource {contact.Reference}.");
+        }
+        
+        return DispatchResults.Ok(mapper.Map<ContactDto>(contact));
     }
 }

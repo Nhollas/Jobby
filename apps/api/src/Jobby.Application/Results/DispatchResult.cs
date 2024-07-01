@@ -26,4 +26,6 @@ public static class DispatchResults
     public static DispatchUnprocessableEntityResult<TResponse> UnprocessableEntity<TResponse>(ValidationResult validationResult) where TResponse : class
         => new(validationResult);
     
+    public static DispatchUnprocessableEntityResult<TResponse> UnprocessableEntity<TResponse>(ValidationError[] validationErrors) where TResponse : class
+        => new(validationErrors);
 }

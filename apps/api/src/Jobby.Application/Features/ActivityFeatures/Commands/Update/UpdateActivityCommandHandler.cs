@@ -2,73 +2,46 @@
 using FluentValidation.Results;
 using Jobby.Application.Abstractions.Specification;
 using Jobby.Application.Dtos;
-using Jobby.Application.Interfaces.Services;
-using Jobby.Application.Responses;
-using Jobby.Application.Responses.Common;
+using Jobby.Application.Results;
 using Jobby.Application.Services;
 using Jobby.Domain.Entities;
 using MediatR;
 
 namespace Jobby.Application.Features.ActivityFeatures.Commands.Update;
 
-internal sealed class UpdateActivityCommandHandler : IRequestHandler<UpdateActivityCommand, BaseResult<ActivityDto, UpdateActivityOutcomes>>
+internal sealed class UpdateActivityCommandHandler(
+    IUserService userService,
+    IRepository<Activity> activityRepository,
+    IRepository<Job> jobRepository,
+    IMapper mapper,
+    TimeProvider timeProvider)
+    : IRequestHandler<UpdateActivityCommand, IDispatchResult<ActivityDto>>
 {
-    private readonly IRepository<Activity> _activityRepository;
-    private readonly IRepository<Job> _jobRepository;
-    private readonly IDateTimeProvider _timeProvider;
-    private readonly IMapper _mapper;
-    private readonly string _userId;
+    private readonly string _userId = userService.UserId();
 
-    public UpdateActivityCommandHandler(
-
-        IUserService userService,
-        IDateTimeProvider timeProvider,
-        IRepository<Activity> activityRepository, 
-        IRepository<Job> jobRepository, 
-        IMapper mapper)
+    public async Task<IDispatchResult<ActivityDto>> Handle(UpdateActivityCommand request, CancellationToken cancellationToken)
     {
-        _userId = userService.UserId();
-        _timeProvider = timeProvider;
-        _activityRepository = activityRepository;
-        _jobRepository = jobRepository;
-        _mapper = mapper;
-    }
-
-    public async Task<BaseResult<ActivityDto, UpdateActivityOutcomes>> Handle(UpdateActivityCommand request, CancellationToken cancellationToken)
-    {
-        UpdateActivityCommandValidator validator = new UpdateActivityCommandValidator();
+        UpdateActivityCommandValidator validator = new();
         ValidationResult validationResult = await validator.ValidateAsync(request, cancellationToken);
         
         if (!validationResult.IsValid)
         {
-            return new BaseResult<ActivityDto, UpdateActivityOutcomes>(
-                IsSuccess: false,
-                Outcome: UpdateActivityOutcomes.ValidationFailure,
-                ValidationResult: validationResult
-            );
+            return DispatchResults.UnprocessableEntity<ActivityDto>(validationResult);
         }
         
-        ResourceResult<Activity> activityResourceResult = await ResourceProvider<Activity>
-            .GetByReference(_activityRepository.GetByReferenceAsync)
-            .Check(_userId, request.ActivityReference, cancellationToken);
-
-        if (!activityResourceResult.IsSuccess)
+        Activity? activity = await activityRepository.GetByReferenceAsync(request.ActivityReference, cancellationToken);
+        
+        if (activity is null)
         {
-            return new BaseResult<ActivityDto, UpdateActivityOutcomes>(
-                IsSuccess: false,
-                Outcome: activityResourceResult.Outcome switch
-                {
-                    Outcome.Unauthorised => UpdateActivityOutcomes.UnauthorizedActivityAccess,
-                    Outcome.NotFound => UpdateActivityOutcomes.UnknownActivity,
-                    _ => UpdateActivityOutcomes.UnknownError
-                },
-                ErrorMessage: activityResourceResult.ErrorMessage
-            );
+            return DispatchResults.NotFound<ActivityDto>(request.ActivityReference);
         }
         
-        Activity activityToUpdate = activityResourceResult.Response;
+        if (!activity.IsOwnedBy(_userId))
+        {
+            return DispatchResults.Unauthorized<ActivityDto>($"You are not authorised to access the resource {activity.Reference}.");
+        }
         
-        activityToUpdate.Update(
+        activity.Update(
             request.Title,
             request.Type,
             request.StartDate,
@@ -76,48 +49,33 @@ internal sealed class UpdateActivityCommandHandler : IRequestHandler<UpdateActiv
             request.Note,
             request.Completed);
         
-        if (request.JobReference != string.Empty && request.JobReference != activityToUpdate.JobReference)
+        if (request.JobReference != string.Empty && request.JobReference != activity.JobReference)
         {
-            ResourceResult<Job> jobResourceResult = await ResourceProvider<Job>
-                .GetByReference(_jobRepository.GetByReferenceAsync)
-                .Check(_userId, request.JobReference, cancellationToken);
+            Job? job = await jobRepository.GetByReferenceAsync(request.JobReference, cancellationToken);
             
-            if (!jobResourceResult.IsSuccess)
+            if (job is null)
             {
-                return new BaseResult<ActivityDto, UpdateActivityOutcomes>(
-                    IsSuccess: false,
-                    Outcome: jobResourceResult.Outcome switch
-                    {
-                        Outcome.Unauthorised => UpdateActivityOutcomes.UnauthorizedJobAccess,
-                        Outcome.NotFound => UpdateActivityOutcomes.UnknownJob,
-                        _ => UpdateActivityOutcomes.UnknownError
-                    },
-                    ErrorMessage: jobResourceResult.ErrorMessage
-                );
+                return DispatchResults.NotFound<ActivityDto>(request.JobReference);
             }
             
-            Job jobToLink = jobResourceResult.Response;
-
-            if (jobToLink.BoardId != activityToUpdate.BoardId)
+            if (job.OwnerId != _userId)
             {
-                return new BaseResult<ActivityDto, UpdateActivityOutcomes>(
-                    IsSuccess: false,
-                    Outcome: UpdateActivityOutcomes.JobDoesNotBelongToBoard,
-                    ErrorMessage: $"The {nameof(Job)} you wanted to link doesn't have the same Board as the {nameof(Activity)} you provided."
-                );
+                return DispatchResults.Unauthorized<ActivityDto>($"You are not authorised to access the resource {job.Reference}.");
+            }
+            
+            if (!(job.BoardId == activity.BoardId))
+            {
+                return DispatchResults.BadRequest<ActivityDto>(
+                    $"The {nameof(Job)} {request.JobReference} you wanted to link doesn't have the same Board as the {nameof(Activity)} you provided.");
             }
 
-            activityToUpdate.SetJob(jobToLink);  
+            activity.SetJob(job);  
         }
 
-        activityToUpdate.UpdateEntity(_timeProvider.UtcNow);
+        activity.UpdateEntity(timeProvider.GetUtcNow());
 
-        await _activityRepository.UpdateAsync(activityToUpdate, cancellationToken);
-
-        return new BaseResult<ActivityDto, UpdateActivityOutcomes>(
-            IsSuccess: true,
-            Outcome: UpdateActivityOutcomes.ActivityUpdated,
-            Response: _mapper.Map<ActivityDto>(activityToUpdate)
-        );
+        await activityRepository.UpdateAsync(activity, cancellationToken);
+        
+        return DispatchResults.Ok(mapper.Map<ActivityDto>(activity));
     }
 }

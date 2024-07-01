@@ -12,11 +12,7 @@ namespace Jobby.HttpApi.Tests.Features.ActivityFeatures.Create.Fixtures;
 public class JobToLinkFixture(JobbyHttpApiFactory factory) : IAsyncLifetime
 {
     public HttpResponseMessage Response { get; private set; } = new();
-    
-    public ActivityDto? ReturnedActivity { get; private set; } = new();
-    
-    private HttpClient HttpClient => factory.SetupClient();
-
+    public ActivityDto? ReturnedActivity { get; private set; }
     public CreateActivityCommand Body { get; private set; } = null!;
     
     public async Task InitializeAsync()
@@ -38,7 +34,7 @@ public class JobToLinkFixture(JobbyHttpApiFactory factory) : IAsyncLifetime
             JobReference: seededJob.Reference
         );
         
-        Response = await HttpClient.PostAsJsonAsync("/activity", Body);
+        Response = await factory.CreateClient().PostAsJsonAsync("/activity", Body);
         ReturnedActivity = await Response.Content.ReadFromJsonAsync<ActivityDto>();
     }
 

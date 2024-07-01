@@ -1,65 +1,41 @@
 ﻿using AutoMapper;
 using Jobby.Application.Abstractions.Specification;
 using Jobby.Application.Dtos;
-using Jobby.Application.Interfaces.Services;
-using Jobby.Application.Responses;
-using Jobby.Application.Responses.Common;
+using Jobby.Application.Results;
 using Jobby.Application.Services;
 using Jobby.Domain.Entities;
 using MediatR;
 
 namespace Jobby.Application.Features.JobFeatures.Commands.Update.UpdateDetails;
-internal sealed class UpdateJobCommandHandler : IRequestHandler<UpdateJobCommand, BaseResult<JobDto, UpdateJobOutcomes>>
+internal class UpdateJobCommandHandler(
+    IRepository<Job> jobRepository,
+    IUserService userService,
+    IMapper mapper,
+    TimeProvider timeProvider)
+    : IRequestHandler<UpdateJobCommand, IDispatchResult<JobDto>>
 {
-    private readonly IRepository<Job> _jobRepository;
-    private readonly IDateTimeProvider _timeProvider;
-    private readonly IMapper _mapper;
-    private readonly string _userId;
+    private readonly string _userId = userService.UserId();
 
-    public UpdateJobCommandHandler(
-        IRepository<Job> jobRepository,
-        IUserService userService,
-        IMapper mapper,
-        IDateTimeProvider timeProvider)
+    public async Task<IDispatchResult<JobDto>> Handle(UpdateJobCommand request, CancellationToken cancellationToken)
     {
-        _jobRepository = jobRepository;
-        _userId = userService.UserId();
-        _mapper = mapper;
-        _timeProvider = timeProvider;
-    }
+        Job? job = await jobRepository.GetByReferenceAsync(request.JobReference, cancellationToken);
 
-    public async Task<BaseResult<JobDto, UpdateJobOutcomes>> Handle(UpdateJobCommand request, CancellationToken cancellationToken)
-    {
-        ResourceResult<Job> jobResourceResult = await ResourceProvider<Job>
-            .GetByReference(_jobRepository.GetByReferenceAsync)
-            .Check(_userId, request.JobReference, cancellationToken);
-
-        if (!jobResourceResult.IsSuccess)
+        if (job is null)
         {
-            return new BaseResult<JobDto, UpdateJobOutcomes>(
-                IsSuccess: false,
-                Outcome: jobResourceResult.Outcome switch
-                {
-                    Outcome.Unauthorised => UpdateJobOutcomes.UnauthorizedJobAccess,
-                    Outcome.NotFound => UpdateJobOutcomes.UnknownJob,
-                    _ => UpdateJobOutcomes.UnknownError
-                },
-                ErrorMessage: jobResourceResult.ErrorMessage
-            );
+            return DispatchResults.NotFound<JobDto>(request.JobReference);
         }
         
-        Job jobToUpdate = jobResourceResult.Response;
+        if (job.OwnerId != _userId)
+        {
+            return DispatchResults.Unauthorized<JobDto>("You are not authorized to update this job");
+        }
 
-        _mapper.Map(request, jobToUpdate, typeof(UpdateJobCommand), typeof(Job));
+        mapper.Map(request, job, typeof(UpdateJobCommand), typeof(Job));
 
-        jobToUpdate.UpdateEntity(_timeProvider.UtcNow);
+        job.UpdateEntity(timeProvider.GetUtcNow());
 
-        await _jobRepository.UpdateAsync(jobToUpdate, cancellationToken);
+        await jobRepository.UpdateAsync(job, cancellationToken);
         
-        return new BaseResult<JobDto, UpdateJobOutcomes>(
-            IsSuccess: true,
-            Outcome: UpdateJobOutcomes.JobUpdated,
-            Response: new JobDto()
-        );
+        return DispatchResults.Ok(new JobDto());
     }
 }

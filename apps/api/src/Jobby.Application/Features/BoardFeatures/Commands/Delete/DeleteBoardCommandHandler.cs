@@ -1,60 +1,37 @@
 ﻿using Jobby.Application.Abstractions.Specification;
 using Jobby.Application.Interfaces.Repositories;
-using Jobby.Application.Interfaces.Services;
-using Jobby.Application.Responses;
-using Jobby.Application.Responses.Common;
+using Jobby.Application.Results;
 using Jobby.Application.Services;
 using Jobby.Domain.Entities;
 using MediatR;
 
 namespace Jobby.Application.Features.BoardFeatures.Commands.Delete;
 
-internal sealed class DeleteBoardCommandHandler : IRequestHandler<DeleteBoardCommand, BaseResult<DeleteBoardResponse, DeleteBoardOutcomes>>
+internal class DeleteBoardCommandHandler(
+    IRepository<Board> boardRepository,
+    IContactRepository contactRepository,
+    IUserService userService)
+    : IRequestHandler<DeleteBoardCommand, IDispatchResult<DeleteBoardResponse>>
 {
-    private readonly IRepository<Board> _boardRepository;
-    private readonly IContactRepository _contactRepository;
-    private readonly string _userId;
+    private readonly string _userId = userService.UserId();
 
-    public DeleteBoardCommandHandler(
-        IRepository<Board> boardRepository,
-        IContactRepository contactRepository,
-        IUserService userService)
+    public async Task<IDispatchResult<DeleteBoardResponse>> Handle(DeleteBoardCommand request, CancellationToken cancellationToken)
     {
-        _boardRepository = boardRepository;
-        _contactRepository = contactRepository;
-        _userId = userService.UserId();
-    }
-
-    public async Task<BaseResult<DeleteBoardResponse, DeleteBoardOutcomes>> Handle(DeleteBoardCommand request, CancellationToken cancellationToken)
-    {
-        ResourceResult<Board> boardResourceResult = await ResourceProvider<Board>
-            .GetByReference(_boardRepository.GetByReferenceAsync)
-            .Check(_userId, request.BoardReference, cancellationToken);
+        Board? board = await boardRepository.GetByReferenceAsync(request.BoardReference, cancellationToken);
         
-        if (!boardResourceResult.IsSuccess)
+        if (board is null)
         {
-            return new BaseResult<DeleteBoardResponse, DeleteBoardOutcomes>(
-                IsSuccess: false,
-                Outcome: boardResourceResult.Outcome switch
-                {
-                    Outcome.Unauthorised => DeleteBoardOutcomes.UnauthorizedBoardAccess,
-                    Outcome.NotFound => DeleteBoardOutcomes.UnknownBoard,
-                    _ => DeleteBoardOutcomes.UnknownError
-                },
-                ErrorMessage: boardResourceResult.ErrorMessage
-            );
+            return DispatchResults.NotFound<DeleteBoardResponse>(request.BoardReference);
+        }
+        
+        if (board.OwnerId != _userId)
+        {
+            return DispatchResults.Unauthorized<DeleteBoardResponse>($"You are not authorised to access the resource {board.Reference}.");
         }
 
-        await _contactRepository.ClearBoardsAsync(request.BoardReference, cancellationToken);
-        
-        Board boardToDelete = boardResourceResult.Response;
-        
-        await _boardRepository.DeleteAsync(boardToDelete, cancellationToken);
+        await contactRepository.ClearBoardsAsync(board.Reference, cancellationToken);
+        await boardRepository.DeleteAsync(board, cancellationToken);
 
-        return new BaseResult<DeleteBoardResponse, DeleteBoardOutcomes>(
-            IsSuccess: true,
-            Outcome: DeleteBoardOutcomes.BoardDeleted,
-            Response: new DeleteBoardResponse()
-        );
+        return DispatchResults.Ok(new DeleteBoardResponse());
     }
 }

@@ -7,8 +7,6 @@ namespace Jobby.HttpApi.Tests.Features.ActivityFeatures.Create;
 [Collection("SqlCollection")]
 public class GivenRequestWithValidationErrors(JobbyHttpApiFactory factory)
 {
-    private HttpClient HttpClient => factory.SetupClient();
-
     [Fact]
     public async Task WhenTypePropertyIsInvalid_ThenReturns422UnprocessableEntityWithValidationMessage()
     {
@@ -26,7 +24,7 @@ public class GivenRequestWithValidationErrors(JobbyHttpApiFactory factory)
 
         StringContent body = new(invalidType, Encoding.UTF8, "application/json");
         
-        HttpResponseMessage response = await HttpClient.PostAsync("/activity", body);
+        HttpResponseMessage response = await factory.HttpClient.PostAsync("/activity", body);
         
         string content = await response.Content.ReadAsStringAsync();
 
@@ -50,7 +48,7 @@ public class GivenRequestWithValidationErrors(JobbyHttpApiFactory factory)
 
         StringContent body = new(withoutBoardId, Encoding.UTF8, "application/json");
         
-        HttpResponseMessage response = await HttpClient.PostAsync("/activity", body);
+        HttpResponseMessage response = await factory.HttpClient.PostAsync("/activity", body);
         
         string content = await response.Content.ReadAsStringAsync();
         
@@ -74,7 +72,7 @@ public class GivenRequestWithValidationErrors(JobbyHttpApiFactory factory)
 
         StringContent body = new(withoutStartDate, Encoding.UTF8, "application/json");
         
-        HttpResponseMessage response = await HttpClient.PostAsync("/activity", body);
+        HttpResponseMessage response = await factory.HttpClient.PostAsync("/activity", body);
         
         string content = await response.Content.ReadAsStringAsync();
 

@@ -17,7 +17,6 @@ public class GivenRequestWithJobToLink(
     private HttpResponseMessage Response => fixture.Response;
     private CreateActivityCommand Body => fixture.Body;
     private ActivityDto ReturnedActivity => fixture.ReturnedActivity!;
-    
     private static string ExpectedName => "Apply";
     
     [Fact]

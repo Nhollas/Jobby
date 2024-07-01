@@ -4,14 +4,13 @@ using Jobby.Application.Features.ActivityFeatures.Commands.Create;
 using Jobby.Domain.Entities;
 using Jobby.Domain.Static;
 using Jobby.HttpApi.Tests.Factories;
+using Jobby.HttpApi.Tests.Helpers;
 
 namespace Jobby.HttpApi.Tests.Features.ActivityFeatures.Create;
 
 [Collection("SqlCollection")]
 public class GivenRequestWithBoardIdNotFound(JobbyHttpApiFactory factory)
 {
-    private HttpClient HttpClient => factory.SetupClient();
-    
     [Fact]
     public async Task ThenReturns404NotFound()
     {
@@ -27,10 +26,11 @@ public class GivenRequestWithBoardIdNotFound(JobbyHttpApiFactory factory)
             Completed: false
         );
 
-        HttpResponseMessage response = await HttpClient.PostAsJsonAsync("/activity", body);
+        HttpResponseMessage response = await factory.HttpClient.PostAsJsonAsync("/activity", body);
         string responseContent = await response.Content.ReadAsStringAsync();
         
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
-        responseContent.Should().Be($"The Board with Reference {body.BoardReference} could not be found.");
+        responseContent.Should().Be(
+            ResponseHelper.MessageToApiMessage(body.BoardReference));
     }
 }

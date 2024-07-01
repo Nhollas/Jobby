@@ -1,54 +1,33 @@
 ﻿using Jobby.Application.Abstractions.Specification;
-using Jobby.Application.Interfaces.Services;
-using Jobby.Application.Responses;
-using Jobby.Application.Responses.Common;
+using Jobby.Application.Results;
 using Jobby.Application.Services;
 using Jobby.Domain.Entities;
 using MediatR;
 
 namespace Jobby.Application.Features.ListFeatures.Commands.Delete;
-internal sealed class DeleteListCommandHandler : IRequestHandler<DeleteListCommand, BaseResult<DeleteListResponse, DeleteListOutcomes>>
+internal class DeleteListCommandHandler(
+    IRepository<JobList> jobListRepository,
+    IUserService userService)
+    : IRequestHandler<DeleteListCommand, IDispatchResult<DeleteListResponse>>
 {
-    private readonly IRepository<JobList> _jobListRepository;
-    private readonly string _userId;
+    private readonly string _userId = userService.UserId();
 
-    public DeleteListCommandHandler(
-        IRepository<JobList> jobListRepository,
-        IUserService userService)
+    public async Task<IDispatchResult<DeleteListResponse>> Handle(DeleteListCommand request, CancellationToken cancellationToken)
     {
-        _jobListRepository = jobListRepository;
-        _userId = userService.UserId();
-    }
-
-    public async Task<BaseResult<DeleteListResponse, DeleteListOutcomes>> Handle(DeleteListCommand request, CancellationToken cancellationToken)
-    {
-        ResourceResult<JobList> listResourceResult = await ResourceProvider<JobList>
-            .GetByReference(_jobListRepository.GetByReferenceAsync)
-            .Check(_userId, request.ListReference, cancellationToken);
-
-        if (!listResourceResult.IsSuccess)
+        JobList? list = await jobListRepository.GetByReferenceAsync(request.ListReference, cancellationToken);
+        
+        if (list is null)
         {
-            return new BaseResult<DeleteListResponse, DeleteListOutcomes>(
-                IsSuccess: false,
-                Outcome: listResourceResult.Outcome switch
-                {
-                    Outcome.Unauthorised => DeleteListOutcomes.UnauthorizedListAccess,
-                    Outcome.NotFound => DeleteListOutcomes.UnknownList,
-                    _ => DeleteListOutcomes.UnknownError
-                },
-                ErrorMessage: listResourceResult.ErrorMessage
-            );
+            return DispatchResults.NotFound<DeleteListResponse>(request.ListReference);
         }
         
-        JobList jobListToDelete = listResourceResult.Response;
-        
+        if (list.OwnerId != _userId)
+        {
+            return DispatchResults.Unauthorized<DeleteListResponse>("You are not authorized to delete this list.");
+        }
 
-        await _jobListRepository.DeleteAsync(jobListToDelete, cancellationToken);
+        await jobListRepository.DeleteAsync(list, cancellationToken);
         
-        return new BaseResult<DeleteListResponse, DeleteListOutcomes>(
-            IsSuccess: true,
-            Outcome: DeleteListOutcomes.ListDeleted,
-            Response: new DeleteListResponse()
-        );
+        return DispatchResults.Ok(new DeleteListResponse());
     }
 }

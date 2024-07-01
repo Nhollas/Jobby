@@ -2,34 +2,25 @@
 using Jobby.Application.Abstractions.Specification;
 using Jobby.Application.Dtos;
 using Jobby.Application.Features.BoardFeatures.Specifications;
-using Jobby.Application.Interfaces.Services;
+using Jobby.Application.Results;
+using Jobby.Application.Services;
 using Jobby.Domain.Entities;
 using MediatR;
 
 namespace Jobby.Application.Features.BoardFeatures.Queries.GetList;
 
-internal sealed class GetBoardListQueryHandler : IRequestHandler<GetBoardListQuery, List<BoardDto>>
+internal class GetBoardListQueryHandler(
+    IReadRepository<Board> boardRepository,
+    IUserService userService,
+    IMapper mapper)
+    : IRequestHandler<GetBoardListQuery, IDispatchResult<List<BoardDto>>>
 {
-    private readonly IReadRepository<Board> _repository;
-    private readonly IMapper _mapper;
-    private readonly string _userId;
+    private readonly string _userId = userService.UserId();
 
-    public GetBoardListQueryHandler(
-        IReadRepository<Board> repository,
-        IUserService userService,
-        IMapper mapper)
+    public async Task<IDispatchResult<List<BoardDto>>> Handle(GetBoardListQuery request, CancellationToken cancellationToken)
     {
-        _repository = repository;
-        _mapper = mapper;
-        _userId = userService.UserId();
-    }
+        List<Board> boardList = await boardRepository.ListAsync(new GetBoardsFromUserSpecification(_userId), cancellationToken);
 
-    public async Task<List<BoardDto>> Handle(GetBoardListQuery request, CancellationToken cancellationToken)
-    {
-        GetBoardsFromUserSpecification boardSpec = new GetBoardsFromUserSpecification(_userId);
-
-        List<Board> boardList = await _repository.ListAsync(boardSpec, cancellationToken);
-
-        return _mapper.Map<List<BoardDto>>(boardList);
+        return DispatchResults.Ok(mapper.Map<List<BoardDto>>(boardList));
     }
 }

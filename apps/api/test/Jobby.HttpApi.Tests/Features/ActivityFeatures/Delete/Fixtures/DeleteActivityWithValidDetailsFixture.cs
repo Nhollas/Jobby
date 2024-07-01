@@ -9,11 +9,9 @@ namespace Jobby.HttpApi.Tests.Features.ActivityFeatures.Delete.Fixtures;
 public class DeleteActivityWithValidDetailsFixture(JobbyHttpApiFactory factory) : IAsyncLifetime
 {
     public HttpResponseMessage Response { get; private set; } = new();
-    
     public string ActivityReference { get; private set; } = string.Empty;
-    private HttpClient HttpClient => factory.SetupClient();
     
-    private readonly Board _preLoadedBoard = Board.Create(Guid.NewGuid(), DateTime.UtcNow, "TestUserId", "TestBoard");
+    private readonly Board _preLoadedBoard = Board.Create(DateTime.UtcNow, "TestUserId", "TestBoard");
 
     
     public async Task InitializeAsync()
@@ -23,7 +21,6 @@ public class DeleteActivityWithValidDetailsFixture(JobbyHttpApiFactory factory) 
         await SeedDataHelper<Board>.AddAsync(_preLoadedBoard, context);
         
         Activity? activityToDelete = Activity.Create(
-            id: Guid.NewGuid(),
             createdDate: DateTime.UtcNow,
             ownerId: "TestUserId",
             title: "Test Activity",
@@ -39,7 +36,7 @@ public class DeleteActivityWithValidDetailsFixture(JobbyHttpApiFactory factory) 
         
         Activity preLoadedActivity = await SeedDataHelper<Activity>.AddAsync(activityToDelete, context);
         
-        Response = await HttpClient.DeleteAsync($"/activity/{preLoadedActivity.Reference}");
+        Response = await factory.HttpClient.DeleteAsync($"/activity/{preLoadedActivity.Reference}");
     }
 
     public async Task DisposeAsync()

@@ -1,6 +1,7 @@
 ﻿using Jobby.Application.Dtos;
+using Jobby.Application.Results;
 using MediatR;
 
 namespace Jobby.Application.Features.BoardFeatures.Queries.GetList;
 
-public sealed record GetBoardListQuery : IRequest<List<BoardDto>>;
+public record GetBoardListQuery : IRequest<IDispatchResult<List<BoardDto>>>;

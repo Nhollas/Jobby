@@ -2,58 +2,35 @@
 using Jobby.Application.Abstractions.Specification;
 using Jobby.Application.Dtos;
 using Jobby.Application.Features.BoardFeatures.Specifications;
-using Jobby.Application.Interfaces.Services;
-using Jobby.Application.Responses;
-using Jobby.Application.Responses.Common;
+using Jobby.Application.Results;
 using Jobby.Application.Services;
 using Jobby.Domain.Entities;
 using MediatR;
 
 namespace Jobby.Application.Features.BoardFeatures.Queries.GetById;
 
-internal sealed class GetBoardDetailQueryHandler : IRequestHandler<GetBoardDetailQuery, BaseResult<BoardDto, GetBoardDetailOutcomes>>
+internal class GetBoardDetailQueryHandler(
+    IRepository<Board> boardRepository,
+    IUserService userService,
+    IMapper mapper)
+    : IRequestHandler<GetBoardDetailQuery, IDispatchResult<BoardDto>>
 {
-    private readonly IReadRepository<Board> _repository;
-    private readonly IMapper _mapper;
-    private readonly string _userId;
+    private readonly string _userId = userService.UserId();
 
-    public GetBoardDetailQueryHandler(
-        IReadRepository<Board> repository,
-        IUserService userService,
-        IMapper mapper)
+    public async Task<IDispatchResult<BoardDto>> Handle(GetBoardDetailQuery request, CancellationToken cancellationToken)
     {
-        _repository = repository;
-        _userId = userService.UserId();
-        _mapper = mapper;
-    }
-
-    public async Task<BaseResult<BoardDto, GetBoardDetailOutcomes>> Handle(GetBoardDetailQuery request, CancellationToken cancellationToken)
-    {
-        ResourceResult<Board> boardResourceResult = await ResourceProvider<Board>
-            .GetBySpec(_repository.FirstOrDefaultAsync)
-            .WithResource(request.BoardReference)
-            .ApplySpecification(new GetBoardWithRelationshipsSpecification(request.BoardReference))
-            .Check(_userId, cancellationToken);
+        Board? board = await boardRepository.FirstOrDefaultAsync(new GetBoardWithRelationshipsSpecification(request.BoardReference), cancellationToken);
         
-        if (!boardResourceResult.IsSuccess)
+        if (board is null)
         {
-            return new BaseResult<BoardDto, GetBoardDetailOutcomes>(
-                IsSuccess: false,
-                Outcome: boardResourceResult.Outcome switch
-                {
-                    Outcome.Unauthorised => GetBoardDetailOutcomes.UnauthorizedBoardAccess,
-                    Outcome.NotFound => GetBoardDetailOutcomes.UnknownBoard,
-                    _ => GetBoardDetailOutcomes.UnknownError
-                },
-                ErrorMessage: boardResourceResult.ErrorMessage
-            );
+            return DispatchResults.NotFound<BoardDto>(request.BoardReference);
         }
         
-        return new BaseResult<BoardDto, GetBoardDetailOutcomes>(
-            IsSuccess: true,
-            Outcome: GetBoardDetailOutcomes.BoardFound,
-            Response: _mapper.Map<BoardDto>(boardResourceResult.Response)
-        );
-
+        if (board.OwnerId != _userId)
+        {
+            return DispatchResults.Unauthorized<BoardDto>($"You are not authorised to access the resource {board.Reference}.");
+        }
+        
+        return DispatchResults.Ok(mapper.Map<BoardDto>(board));
     }
 }

@@ -7,20 +7,16 @@ public class JobList : Entity
 {
     private readonly List<Job> _jobs = new();
 
-    private JobList()
-    {
-        // required by EF
-    }
+    private JobList(){}
 
     private JobList(
-        Guid id,
         string reference,
-        DateTime createdDate,
+        DateTimeOffset createdDate,
         string ownerId,
         string listName, 
         int index,
         Board board = null)
-        : base(id, reference, createdDate, ownerId)
+        : base(reference, createdDate, ownerId)
     {
         Name = listName;
         Index = index;
@@ -42,15 +38,13 @@ public class JobList : Entity
 
 
     public static JobList Create(
-        Guid id,
-        DateTime createdDate,
+        DateTimeOffset createdDate,
         string ownerId,
         string name,
         int index,
         Board board = null)
     {
         return new JobList(
-            id,
             reference: EntityReferenceProvider<JobList>.CreateReference(),
             createdDate,
             ownerId,

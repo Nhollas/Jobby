@@ -1,5 +1,5 @@
-﻿using Jobby.Application.Responses.Common;
+﻿using Jobby.Application.Results;
 using MediatR;
 
 namespace Jobby.Application.Features.ListFeatures.Commands.Delete;
-public sealed record DeleteListCommand(string ListReference) : IRequest<BaseResult<DeleteListResponse, DeleteListOutcomes>>;
+public record DeleteListCommand(string ListReference) : IRequest<IDispatchResult<DeleteListResponse>>;

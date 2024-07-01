@@ -15,22 +15,27 @@ namespace Jobby.HttpApi.Tests.Factories;
 
 public class JobbyHttpApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
-    public string DbConnectionString { get; private set; } = string.Empty;
-    
+    private string _dbConnectionString = string.Empty;
     private readonly MsSqlContainer _mssqlContainer = new MsSqlBuilder()
         .WithImage("mcr.microsoft.com/mssql/server:latest")
         .WithCleanUp(true)
         .WithName("JobbyTestContainer")
         .Build();
 
+    public HttpClient HttpClient { get; private set; }
+
+    public JobbyHttpApiFactory()
+    {
+        HttpClient = SetupClient();
+    }
+
     public async Task InitializeAsync()
     {
         await _mssqlContainer.StartAsync();
         
-        DbConnectionString = _mssqlContainer.GetConnectionString();
+        _dbConnectionString = _mssqlContainer.GetConnectionString();
         
-        await using JobbyDbContext context = new(new DbContextOptionsBuilder<JobbyDbContext>()
-            .UseSqlServer(DbConnectionString).Options);
+        await using JobbyDbContext context = GetDbContext();
         
         await context.Database.EnsureCreatedAsync();
     }
@@ -38,7 +43,7 @@ public class JobbyHttpApiFactory : WebApplicationFactory<Program>, IAsyncLifetim
     public JobbyDbContext GetDbContext()
     {
         return new JobbyDbContext(new DbContextOptionsBuilder<JobbyDbContext>()
-            .UseSqlServer(DbConnectionString).Options);
+            .UseSqlServer(_dbConnectionString).Options);
     }
 
     public new async Task DisposeAsync()
@@ -46,10 +51,21 @@ public class JobbyHttpApiFactory : WebApplicationFactory<Program>, IAsyncLifetim
         await _mssqlContainer.DisposeAsync();
     }
 
-    public HttpClient SetupClient(string? token = null)
+    public HttpClient SetupClient(string token)
     {
         HttpClient client = CreateClient();
-        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token ?? JwtHelper.Generate("TestUserId"));
+        client.DefaultRequestHeaders.Authorization = 
+            new AuthenticationHeaderValue("Bearer", token);
+        
+        return client;
+    }
+
+    private HttpClient SetupClient()
+    {
+        HttpClient client = CreateClient();
+        
+        client.DefaultRequestHeaders.Authorization = 
+            new AuthenticationHeaderValue("Bearer",  JwtHelper.Generate("TestUserId"));
         
         return client;
     }
@@ -60,7 +76,7 @@ public class JobbyHttpApiFactory : WebApplicationFactory<Program>, IAsyncLifetim
         {
             services.Configure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme, options =>
                 {
-                    SecurityKey issuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtHelper.DefaultSigningSecret));
+                    SecurityKey issuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtHelper.TestSigningKey));
 
                     options.TokenValidationParameters = new TokenValidationParameters
                     {

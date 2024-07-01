@@ -1,54 +1,34 @@
 ﻿using Jobby.Application.Abstractions.Specification;
-using Jobby.Application.Interfaces.Services;
-using Jobby.Application.Responses;
-using Jobby.Application.Responses.Common;
+using Jobby.Application.Results;
 using Jobby.Application.Services;
 using Jobby.Domain.Entities;
 using MediatR;
 
 namespace Jobby.Application.Features.ContactFeatures.Commands.Delete;
 
-internal sealed class DeleteContactCommandHandler : IRequestHandler<DeleteContactCommand, BaseResult<DeleteContactResponse, DeleteContactOutcomes>>
+internal sealed class DeleteContactCommandHandler(
+    IRepository<Contact> contactRepository,
+    IUserService userService)
+    : IRequestHandler<DeleteContactCommand, IDispatchResult<DeleteContactResponse>>
 {
-    private readonly IRepository<Contact> _contactRepository;
-    private readonly string _userId;
+    private readonly string _userId = userService.UserId();
 
-    public DeleteContactCommandHandler(
-        IRepository<Contact> contactRepository,
-        IUserService userService)
+    public async Task<IDispatchResult<DeleteContactResponse>> Handle(DeleteContactCommand request, CancellationToken cancellationToken)
     {
-        _contactRepository = contactRepository;
-        _userId = userService.UserId();
-    }
-
-    public async Task<BaseResult<DeleteContactResponse, DeleteContactOutcomes>> Handle(DeleteContactCommand request, CancellationToken cancellationToken)
-    {
-        ResourceResult<Contact> contactResourceResult = await ResourceProvider<Contact>
-            .GetByReference(_contactRepository.GetByReferenceAsync)
-            .Check(_userId, request.ContactReference, cancellationToken);
-
-        if (!contactResourceResult.IsSuccess)
+        Contact? contact = await contactRepository.GetByReferenceAsync(request.ContactReference, cancellationToken);
+        
+        if (contact is null)
         {
-            return new BaseResult<DeleteContactResponse, DeleteContactOutcomes>(
-                IsSuccess: false,
-                Outcome: contactResourceResult.Outcome switch
-                {
-                    Outcome.Unauthorised => DeleteContactOutcomes.UnauthorizedContactAccess,
-                    Outcome.NotFound => DeleteContactOutcomes.UnknownContact,
-                    _ => DeleteContactOutcomes.UnknownError
-                },
-                ErrorMessage: contactResourceResult.ErrorMessage
-            );
+            return DispatchResults.NotFound<DeleteContactResponse>(request.ContactReference);
         }
         
-        Contact contactToDelete = contactResourceResult.Response;
+        if (contact.OwnerId != _userId)
+        {
+            return DispatchResults.Unauthorized<DeleteContactResponse>("You do not have access to this contact.");
+        }
+        
+        await contactRepository.DeleteAsync(contact, cancellationToken);
 
-        await _contactRepository.DeleteAsync(contactToDelete, cancellationToken);
-
-        return new BaseResult<DeleteContactResponse, DeleteContactOutcomes>(
-            IsSuccess: true,
-            Outcome: DeleteContactOutcomes.ContactDeleted,
-            Response: new DeleteContactResponse()
-        );
+        return DispatchResults.Ok(new DeleteContactResponse());
     }
 }

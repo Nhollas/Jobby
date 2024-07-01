@@ -1,8 +1,8 @@
 ﻿using Jobby.Application.Dtos;
-using Jobby.Application.Responses.Common;
+using Jobby.Application.Results;
 using MediatR;
 
 namespace Jobby.Application.Features.BoardFeatures.Commands.Update.UpdateDetails;
 
-public sealed record UpdateBoardCommand
-    (string BoardReference, string Name) : IRequest<BaseResult<BoardDto, UpdateBoardOutcomes>>;
+public record UpdateBoardCommand
+    (string BoardReference, string Name) : IRequest<IDispatchResult<BoardDto>>;

@@ -1,6 +1,6 @@
-﻿using Jobby.Application.Responses.Common;
+﻿using Jobby.Application.Results;
 using MediatR;
 
 namespace Jobby.Application.Features.ActivityFeatures.Commands.Delete;
 
-public sealed record DeleteActivityCommand(string ActivityReference) : IRequest<BaseResult<DeleteActivityResponse, DeleteActivityOutcomes>>;
+public record DeleteActivityCommand(string ActivityReference) : IRequest<IDispatchResult<DeleteActivityResponse>>;

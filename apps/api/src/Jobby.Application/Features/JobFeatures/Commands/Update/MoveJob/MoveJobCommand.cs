@@ -1,9 +1,8 @@
-﻿using Jobby.Application.Responses.Common;
+﻿using Jobby.Application.Results;
 using MediatR;
 
 namespace Jobby.Application.Features.JobFeatures.Commands.Update.MoveJob;
-public sealed record MoveJobCommand : IRequest<BaseResult<MoveJobResponse, MoveJobOutcomes>>
-{
-    public string JobReference { get; set; }
-    public string JobListReference { get; set; }
-}
+public record MoveJobCommand(
+    string JobReference, 
+    string JobListReference) 
+    : IRequest<IDispatchResult<MoveJobResponse>>;

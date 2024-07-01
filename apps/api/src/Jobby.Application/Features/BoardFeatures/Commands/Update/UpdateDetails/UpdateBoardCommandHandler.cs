@@ -1,66 +1,42 @@
 ﻿using AutoMapper;
 using Jobby.Application.Abstractions.Specification;
 using Jobby.Application.Dtos;
-using Jobby.Application.Interfaces.Services;
-using Jobby.Application.Responses;
-using Jobby.Application.Responses.Common;
+using Jobby.Application.Results;
 using Jobby.Application.Services;
 using Jobby.Domain.Entities;
 using MediatR;
 
 namespace Jobby.Application.Features.BoardFeatures.Commands.Update.UpdateDetails;
 
-internal sealed class UpdateBoardCommandHandler : IRequestHandler<UpdateBoardCommand, BaseResult<BoardDto, UpdateBoardOutcomes>>
+internal class UpdateBoardCommandHandler(
+    IRepository<Board> boardRepository,
+    IUserService userService,
+    TimeProvider timeProvider,
+    IMapper mapper)
+    : IRequestHandler<UpdateBoardCommand, IDispatchResult<BoardDto>>
 {
-    private readonly IRepository<Board> _boardRepository;
-    private readonly IDateTimeProvider _timeProvider;
-    private readonly IMapper _mapper;
-    private readonly string _userId;
+    private readonly string _userId = userService.UserId();
 
-    public UpdateBoardCommandHandler(
-        IRepository<Board> boardRepository,
-        IUserService userService,
-        IDateTimeProvider timeProvider, 
-        IMapper mapper)
+    public async Task<IDispatchResult<BoardDto>> Handle(UpdateBoardCommand request, CancellationToken cancellationToken)
     {
-        _boardRepository = boardRepository;
-        _userId = userService.UserId();
-        _timeProvider = timeProvider;
-        _mapper = mapper;
-    }
-
-    public async Task<BaseResult<BoardDto, UpdateBoardOutcomes>> Handle(UpdateBoardCommand request, CancellationToken cancellationToken)
-    {
-        ResourceResult<Board> boardResourceResult = await ResourceProvider<Board>
-            .GetByReference(_boardRepository.GetByReferenceAsync)
-            .Check(_userId, request.BoardReference, cancellationToken);
+        Board? board = await boardRepository.GetByReferenceAsync(request.BoardReference, cancellationToken);
         
-        if (!boardResourceResult.IsSuccess)
+        if (board is null)
         {
-            return new BaseResult<BoardDto, UpdateBoardOutcomes>(
-                IsSuccess: false,
-                Outcome: boardResourceResult.Outcome switch
-                {
-                    Outcome.Unauthorised => UpdateBoardOutcomes.UnauthorizedBoardAccess,
-                    Outcome.NotFound => UpdateBoardOutcomes.UnknownBoard,
-                    _ => UpdateBoardOutcomes.UnknownError
-                },
-                ErrorMessage: boardResourceResult.ErrorMessage
-            );
+            return DispatchResults.NotFound<BoardDto>(request.BoardReference);
         }
         
-        Board boardToUpdate = boardResourceResult.Response;
+        if (board.OwnerId != _userId)
+        {
+            return DispatchResults.Unauthorized<BoardDto>($"You are not authorised to access the resource {board.Reference}.");
+        }
         
-        boardToUpdate.SetBoardName(request.Name);
+        board.SetBoardName(request.Name);
 
-        boardToUpdate.UpdateEntity(_timeProvider.UtcNow);
+        board.UpdateEntity(timeProvider.GetUtcNow());
 
-        await _boardRepository.UpdateAsync(boardToUpdate, cancellationToken);
-
-        return new BaseResult<BoardDto, UpdateBoardOutcomes>(
-            IsSuccess: true,
-            Outcome: UpdateBoardOutcomes.BoardUpdated,
-            Response: _mapper.Map<BoardDto>(boardToUpdate)
-        );
+        await boardRepository.UpdateAsync(board, cancellationToken);
+        
+        return DispatchResults.Ok(mapper.Map<BoardDto>(board));
     }
 }

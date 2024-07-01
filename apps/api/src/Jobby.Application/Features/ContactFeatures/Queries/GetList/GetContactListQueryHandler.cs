@@ -2,34 +2,26 @@ using AutoMapper;
 using Jobby.Application.Abstractions.Specification;
 using Jobby.Application.Dtos;
 using Jobby.Application.Features.ContactFeatures.Specifications;
-using Jobby.Application.Interfaces.Services;
+using Jobby.Application.Results;
+using Jobby.Application.Services;
 using Jobby.Domain.Entities;
 using MediatR;
 
 namespace Jobby.Application.Features.ContactFeatures.Queries.GetList;
 
-internal sealed class GetContactListQueryHandler : IRequestHandler<GetContactListQuery, List<ContactDto>>
+internal class GetContactListQueryHandler(
+    IUserService userService,
+    IMapper mapper,
+    IReadRepository<Contact> contactRepository)
+    : IRequestHandler<GetContactListQuery, IDispatchResult<List<ContactDto>>>
 {
-    private readonly IReadRepository<Contact> _contactRepository;
-    private readonly IMapper _mapper;
-    private readonly string _userId;
+    private readonly string _userId = userService.UserId();
 
-    public GetContactListQueryHandler(
-        IUserService userService,
-        IMapper mapper,
-        IReadRepository<Contact> contactRepository)
+    public async Task<IDispatchResult<List<ContactDto>>> Handle(GetContactListQuery request, CancellationToken cancellationToken)
     {
-        _userId = userService.UserId();
-        _mapper = mapper;
-        _contactRepository = contactRepository;
-    }
+        GetUsersContactsSpecification contactSpec = new(_userId);
+        List<Contact> contacts = await contactRepository.ListAsync(contactSpec, cancellationToken);
 
-    public async Task<List<ContactDto>> Handle(GetContactListQuery request, CancellationToken cancellationToken)
-    {
-        GetUsersContactsSpecification contactSpec = new GetUsersContactsSpecification(_userId);
-
-        List<Contact> contacts = await _contactRepository.ListAsync(contactSpec, cancellationToken);
-
-        return _mapper.Map<List<ContactDto>>(contacts);
+        return DispatchResults.Ok(mapper.Map<List<ContactDto>>(contacts));
     }
 }

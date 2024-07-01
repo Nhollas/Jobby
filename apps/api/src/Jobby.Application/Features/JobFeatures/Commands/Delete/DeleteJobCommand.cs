@@ -1,6 +1,6 @@
-﻿using Jobby.Application.Responses.Common;
+﻿using Jobby.Application.Results;
 using MediatR;
 
 namespace Jobby.Application.Features.JobFeatures.Commands.Delete;
 
-public sealed record DeleteJobCommand(string JobReference) : IRequest<BaseResult<DeleteJobResponse, DeleteJobOutcomes>>;
+public record DeleteJobCommand(string JobReference) : IRequest<IDispatchResult<DeleteJobResponse>>;

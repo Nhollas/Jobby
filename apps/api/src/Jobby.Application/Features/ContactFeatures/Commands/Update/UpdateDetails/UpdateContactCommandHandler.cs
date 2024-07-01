@@ -3,9 +3,7 @@ using Jobby.Application.Abstractions.Specification;
 using Jobby.Application.Dtos;
 using Jobby.Application.Features.ContactFeatures.Specifications;
 using Jobby.Application.Features.JobFeatures.Specifications;
-using Jobby.Application.Interfaces.Services;
-using Jobby.Application.Responses;
-using Jobby.Application.Responses.Common;
+using Jobby.Application.Results;
 using Jobby.Application.Services;
 using Jobby.Domain.Entities;
 using MediatR;
@@ -13,56 +11,33 @@ using static Jobby.Domain.Static.ContactConstants;
 
 namespace Jobby.Application.Features.ContactFeatures.Commands.Update.UpdateDetails;
 
-internal sealed class UpdateContactCommandHandler : IRequestHandler<UpdateContactCommand, BaseResult<ContactDto, UpdateContactOutcomes>>
+internal class UpdateContactCommandHandler(
+    IUserService userService,
+    TimeProvider timeProvider,
+    IRepository<Contact> contactRepository,
+    IRepository<Board> boardRepository,
+    IRepository<Job> jobRepository,
+    IMapper mapper)
+    : IRequestHandler<UpdateContactCommand, IDispatchResult<ContactDto>>
 {
-    private readonly IRepository<Contact> _contactRepository;
-    private readonly IRepository<Board> _boardRepository;
-    private readonly IRepository<Job> _jobRepository;
-    private readonly IDateTimeProvider _timeProvider;
-    private readonly string _userId;
-    private readonly IMapper _mapper;
+    private readonly string _userId = userService.UserId();
 
-    public UpdateContactCommandHandler(
-        IUserService userService,
-        IDateTimeProvider timeProvider,
-        IRepository<Contact> contactRepository,
-        IRepository<Board> boardRepository,
-        IRepository<Job> jobRepository,
-        IMapper mapper)
+    public async Task<IDispatchResult<ContactDto>> Handle(UpdateContactCommand request, CancellationToken cancellationToken)
     {
-        _userId = userService.UserId();
-        _timeProvider = timeProvider;
-        _contactRepository = contactRepository;
-        _boardRepository = boardRepository;
-        _jobRepository = jobRepository;
-        _mapper = mapper;
-    }
-
-    public async Task<BaseResult<ContactDto, UpdateContactOutcomes>> Handle(UpdateContactCommand request, CancellationToken cancellationToken)
-    {
-        ResourceResult<Contact> contactResourceResult = await ResourceProvider<Contact>
-            .GetBySpec(_contactRepository.FirstOrDefaultAsync)
-            .WithResource(request.ContactReference)
-            .ApplySpecification(new GetContactWithSocialsSpecification(request.ContactReference))
-            .Check(_userId, cancellationToken);
-
-        if (!contactResourceResult.IsSuccess)
+        Contact? contact = await contactRepository.FirstOrDefaultAsync(new GetContactWithSocialsSpecification(request.ContactReference), cancellationToken);
+        
+        if (contact is null)
         {
-            return new BaseResult<ContactDto, UpdateContactOutcomes>(
-                IsSuccess: false,
-                Outcome: contactResourceResult.Outcome switch
-                {
-                    Outcome.Unauthorised => UpdateContactOutcomes.UnauthorizedContactAccess,
-                    Outcome.NotFound => UpdateContactOutcomes.UnknownContact,
-                    _ => UpdateContactOutcomes.UnknownError
-                },
-                ErrorMessage: contactResourceResult.ErrorMessage
-            );
+            return DispatchResults.NotFound<ContactDto>(request.ContactReference);
+        }
+
+        if (contact.OwnerId != _userId)
+        {
+            return DispatchResults.Unauthorized<ContactDto>(
+                $"You are not authorised to access the resource {contact.Reference}.");
         }
         
-        Contact contactToUpdate = contactResourceResult.Response;
-
-        contactToUpdate.Update(
+        contact.Update(
             request.FirstName,
             request.LastName,
             request.JobTitle,
@@ -73,75 +48,64 @@ internal sealed class UpdateContactCommandHandler : IRequestHandler<UpdateContac
                 request.Socials.LinkedInUrl,
                 request.Socials.GithubUrl));
         
-        if (request.BoardReference != string.Empty && request.BoardReference != contactToUpdate.BoardReference)
+        if (request.BoardReference != string.Empty && request.BoardReference != contact.BoardReference)
         {
-            ResourceResult<Board> boardResourceResult = await ResourceProvider<Board>
-                .GetByReference(_boardRepository.GetByReferenceAsync)
-                .Check(_userId, request.BoardReference, cancellationToken);
+            Board? board = await boardRepository.GetByReferenceAsync(request.BoardReference, cancellationToken);
             
-            if (!boardResourceResult.IsSuccess)
+            if (board is null)
             {
-                return new BaseResult<ContactDto, UpdateContactOutcomes>(
-                    IsSuccess: false,
-                    Outcome: boardResourceResult.Outcome switch
-                    {
-                        Outcome.Unauthorised => UpdateContactOutcomes.UnauthorizedBoardAccess,
-                        Outcome.NotFound => UpdateContactOutcomes.UnknownBoard,
-                        _ => UpdateContactOutcomes.UnknownError
-                    },
-                    ErrorMessage: boardResourceResult.ErrorMessage
-                );
+                return DispatchResults.NotFound<ContactDto>(request.BoardReference);
             }
             
-            Board newBoard = boardResourceResult.Response;
+            if (board.OwnerId != _userId)
+            {
+                return DispatchResults.Unauthorized<ContactDto>(
+                    $"You are not authorised to access the resource {board.Reference}.");
+            }
             
-            contactToUpdate.SetBoard(newBoard);
+            contact.SetBoard(board);
         }
 
-        List<string> contactJobIds = contactToUpdate.JobContacts.Select(x => x.Job.Reference).ToList();
+        List<string> contactJobIds = contact.JobContacts.Select(x => x.Job.Reference).ToList();
         
         if (request.JobReferences.Count > 0 && !contactJobIds.SequenceEqual(request.JobReferences))
         {
-            List<Job> jobsToLink = await _jobRepository.ListAsync(new GetJobsFromIdsSpecification(request.JobReferences, _userId), cancellationToken);
+            List<Job> jobsToLink = await jobRepository.ListAsync(new GetJobsFromIdsSpecification(request.JobReferences, _userId), cancellationToken);
 
-            contactToUpdate.SetJobs(jobsToLink);
+            contact.SetJobs(jobsToLink);
         }
 
         if (request.Companies.Count > 0)
         {
             List<Company> updatedCompanies = request.Companies
-                .Select(x => Company.Create(Guid.NewGuid(), _timeProvider.UtcNow, _userId, x.Name, contactToUpdate))
+                .Select(x => Company.Create(timeProvider.GetUtcNow(), _userId, x.Name, contact))
                 .ToList();
 
-            contactToUpdate.UpdateCompanies(updatedCompanies);
+            contact.UpdateCompanies(updatedCompanies);
         }
 
         if (request.Emails.Count > 0)
         {
             List<Email> updatedEmails = request.Emails
-                .Select(x => Email.Create(Guid.NewGuid(), _timeProvider.UtcNow, _userId, x.Name, (EmailType)x.Type, contactToUpdate))
+                .Select(x => Email.Create(timeProvider.GetUtcNow(), _userId, x.Name, (EmailType)x.Type, contact))
                 .ToList();
 
-            contactToUpdate.UpdateEmails(updatedEmails);
+            contact.UpdateEmails(updatedEmails);
         }
 
         if (request.Phones.Count > 0)
         {
             List<Phone> updatedPhones = request.Phones
-                .Select(x => Phone.Create(Guid.NewGuid(), _timeProvider.UtcNow, _userId, x.Number, (PhoneType)x.Type, contactToUpdate))
+                .Select(x => Phone.Create(timeProvider.GetUtcNow(), _userId, x.Number, (PhoneType)x.Type, contact))
                 .ToList();
 
-            contactToUpdate.UpdatePhones(updatedPhones);
+            contact.UpdatePhones(updatedPhones);
         }
 
-        contactToUpdate.UpdateEntity(_timeProvider.UtcNow);
+        contact.UpdateEntity(timeProvider.GetUtcNow());
 
-        await _contactRepository.SaveChangesAsync(cancellationToken);
+        await contactRepository.SaveChangesAsync(cancellationToken);
         
-        return new BaseResult<ContactDto, UpdateContactOutcomes>(
-            IsSuccess: true,
-            Outcome: UpdateContactOutcomes.ContactUpdated,
-            Response: _mapper.Map<ContactDto>(contactToUpdate)
-        );
+        return DispatchResults.Ok(mapper.Map<ContactDto>(contact));
     }
 }

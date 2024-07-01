@@ -2,34 +2,27 @@
 using Jobby.Application.Abstractions.Specification;
 using Jobby.Application.Dtos;
 using Jobby.Application.Features.JobFeatures.Specifications;
-using Jobby.Application.Interfaces.Services;
+using Jobby.Application.Results;
+using Jobby.Application.Services;
 using Jobby.Domain.Entities;
 using MediatR;
 
 namespace Jobby.Application.Features.JobFeatures.Queries.ListContacts;
 
-internal sealed class GetJobContactListQueryHandler : IRequestHandler<GetJobContactListQuery, List<ContactDto>>
+internal class GetJobContactListQueryHandler(
+    IUserService userService,
+    IMapper mapper,
+    IReadRepository<Contact> contactRepository)
+    : IRequestHandler<GetJobContactListQuery, IDispatchResult<List<ContactDto>>>
 {
-    private readonly IReadRepository<Contact> _contactRepository;
-    private readonly IMapper _mapper;
-    private readonly string _userId;
-    
-    public GetJobContactListQueryHandler(
-        IUserService userService,
-        IMapper mapper,
-        IReadRepository<Contact> contactRepository)
+    private readonly string _userId = userService.UserId();
+
+    public async Task<IDispatchResult<List<ContactDto>>> Handle(GetJobContactListQuery request, CancellationToken cancellationToken)
     {
-        _userId = userService.UserId();
-        _mapper = mapper;
-        _contactRepository = contactRepository;
-    }
+        GetJobContactsSpecification contactSpec = new(request.JobReference, _userId);
 
-    public async Task<List<ContactDto>> Handle(GetJobContactListQuery request, CancellationToken cancellationToken)
-    {
-        GetJobContactsSpecification contactSpec = new GetJobContactsSpecification(request.JobReference, _userId);
+        List<Contact> contacts = await contactRepository.ListAsync(contactSpec, cancellationToken);
 
-        List<Contact> contacts = await _contactRepository.ListAsync(contactSpec, cancellationToken);
-
-        return _mapper.Map<List<ContactDto>>(contacts);
+        return DispatchResults.Ok(mapper.Map<List<ContactDto>>(contacts));
     }
 }

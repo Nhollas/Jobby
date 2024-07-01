@@ -8,14 +8,13 @@ public class Phone: Entity
     private Phone(){}
 
     private Phone(
-        Guid id,
         string reference,
-        DateTime createdDate,
+        DateTimeOffset createdDate,
         string ownerId,
         string number,
         PhoneType type,
         Contact contact)
-        : base(id, reference, createdDate, ownerId)
+        : base(reference, createdDate, ownerId)
     {
         Contact = contact;
         ContactId = contact.Id;
@@ -25,15 +24,13 @@ public class Phone: Entity
     }
     
     public static Phone Create(
-        Guid id,
-        DateTime createdDate,
+        DateTimeOffset createdDate,
         string ownerId,
         string number,
         PhoneType type,
         Contact contact)
     {
         Phone phone = new Phone(
-            id,
             reference: EntityReferenceProvider<Phone>.CreateReference(),
             createdDate,
             ownerId,

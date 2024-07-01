@@ -1,54 +1,34 @@
 ﻿using AutoMapper;
 using Jobby.Application.Abstractions.Specification;
 using Jobby.Application.Dtos;
-using Jobby.Application.Interfaces.Services;
-using Jobby.Application.Responses;
-using Jobby.Application.Responses.Common;
+using Jobby.Application.Results;
 using Jobby.Application.Services;
 using Jobby.Domain.Entities;
 using MediatR;
 
 namespace Jobby.Application.Features.JobFeatures.Queries.GetById;
-internal sealed class GetJobDetailQueryHandler : IRequestHandler<GetJobDetailQuery, BaseResult<JobDto, GetJobDetailOutcomes>>
+internal class GetJobDetailQueryHandler(
+    IUserService userService,
+    IMapper mapper,
+    IReadRepository<Job> jobRepository)
+    : IRequestHandler<GetJobDetailQuery, IDispatchResult<JobDto>>
 {
-    private readonly IReadRepository<Job> _jobRepository;
-    private readonly IMapper _mapper;
-    private readonly string _userId;
+    private readonly string _userId = userService.UserId();
 
-    public GetJobDetailQueryHandler(
-        IUserService userService,
-        IMapper mapper,
-        IReadRepository<Job> jobRepository)
+    public async Task<IDispatchResult<JobDto>> Handle(GetJobDetailQuery request, CancellationToken cancellationToken)
     {
-        _userId = userService.UserId();
-        _mapper = mapper;
-        _jobRepository = jobRepository;
-    }
+        Job? job = await jobRepository.GetByReferenceAsync(request.JobReference, cancellationToken);
 
-    public async Task<BaseResult<JobDto, GetJobDetailOutcomes>> Handle(GetJobDetailQuery request, CancellationToken cancellationToken)
-    {
-        ResourceResult<Job> jobResourceResult = await ResourceProvider<Job>
-            .GetByReference(_jobRepository.GetByReferenceAsync)
-            .Check(_userId, request.JobReference, cancellationToken);
-
-        if (!jobResourceResult.IsSuccess)
+        if (job is null)
         {
-            return new BaseResult<JobDto, GetJobDetailOutcomes>(
-                IsSuccess: false,
-                Outcome: jobResourceResult.Outcome switch
-                {
-                    Outcome.Unauthorised => GetJobDetailOutcomes.UnauthorizedJobAccess,
-                    Outcome.NotFound => GetJobDetailOutcomes.UnknownJob,
-                    _ => GetJobDetailOutcomes.UnknownError
-                },
-                ErrorMessage: jobResourceResult.ErrorMessage
-            );
+            return DispatchResults.NotFound<JobDto>(request.JobReference);
         }
         
-        return new BaseResult<JobDto, GetJobDetailOutcomes>(
-            IsSuccess: true,
-            Outcome: GetJobDetailOutcomes.JobFound,
-            Response: _mapper.Map<JobDto>(jobResourceResult.Response)
-        );
+        if (job.OwnerId != _userId)
+        {
+            return DispatchResults.Unauthorized<JobDto>("You are not authorized to view this job.");
+        }
+        
+        return DispatchResults.Ok(mapper.Map<JobDto>(job));
     }
 }

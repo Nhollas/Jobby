@@ -1,11 +1,11 @@
 ﻿using Jobby.Application.Dtos;
-using Jobby.Application.Responses.Common;
+using Jobby.Application.Results;
 using Jobby.Domain.Static;
 using MediatR;
 
 namespace Jobby.Application.Features.ActivityFeatures.Commands.Create;
 
-public sealed record CreateActivityCommand(
+public record CreateActivityCommand(
     string BoardReference,
     string Title,
     ActivityConstants.Types Type,
@@ -14,4 +14,4 @@ public sealed record CreateActivityCommand(
     string Note,
     bool Completed,
     string JobReference = "")
-    : IRequest<BaseResult<ActivityDto, CreateActivityOutcomes>>;
+    : IRequest<IDispatchResult<ActivityDto>>;

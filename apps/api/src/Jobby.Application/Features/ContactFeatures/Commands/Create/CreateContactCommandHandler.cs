@@ -4,87 +4,48 @@ using Jobby.Application.Abstractions.Specification;
 using Jobby.Application.Dtos;
 using Jobby.Application.Features.BoardFeatures.Specifications;
 using Jobby.Application.Features.ContactFeatures.Specifications;
-using Jobby.Application.Interfaces.Services;
-using Jobby.Application.Responses;
-using Jobby.Application.Responses.Common;
+using Jobby.Application.Results;
 using Jobby.Application.Services;
 using Jobby.Domain.Entities;
 using MediatR;
 
 namespace Jobby.Application.Features.ContactFeatures.Commands.Create;
 
-internal sealed class CreateContactCommandHandler : IRequestHandler<CreateContactCommand, BaseResult<ContactDto, CreateContactOutcomes>>
-{
-    private readonly IDateTimeProvider _dateTimeProvider;
-    private readonly IGuidProvider _guidProvider;
-    private readonly IRepository<Board> _boardRepository;
-    private readonly IRepository<Job> _jobRepository;
-    private readonly IRepository<Contact> _contactRepository;
-    private readonly IMapper _mapper;
-    private readonly string _userId;
-
-    public CreateContactCommandHandler(
+internal sealed class CreateContactCommandHandler(
     IUserService userService,
     IRepository<Board> boardRepository,
-    IDateTimeProvider dateTimeProvider,
+    TimeProvider timeProvider,
     IRepository<Contact> contactRepository,
     IRepository<Job> jobRepository,
-    IGuidProvider guidProvider,
     IMapper mapper)
-    {
-        _userId = userService.UserId();
-        _boardRepository = boardRepository;
-        _dateTimeProvider = dateTimeProvider;
-        _contactRepository = contactRepository;
-        _jobRepository = jobRepository;
-        _guidProvider = guidProvider;
-        _mapper = mapper;
-    }
+    : IRequestHandler<CreateContactCommand, IDispatchResult<ContactDto>>
+{
+    private readonly string _userId = userService.UserId();
 
-    public async Task<BaseResult<ContactDto, CreateContactOutcomes>> Handle(CreateContactCommand request, CancellationToken cancellationToken)
+    public async Task<IDispatchResult<ContactDto>> Handle(CreateContactCommand request, CancellationToken cancellationToken)
     {
-        CreateContactCommandValidator validator = new CreateContactCommandValidator();
+        CreateContactCommandValidator validator = new();
         ValidationResult validationResult = await validator.ValidateAsync(request, cancellationToken);
         
         if (!validationResult.IsValid)
         {
-            return new BaseResult<ContactDto, CreateContactOutcomes>(
-                IsSuccess: false,
-                Outcome: CreateContactOutcomes.ValidationFailure,
-                ValidationResult: validationResult
-            );
+            return DispatchResults.UnprocessableEntity<ContactDto>(validationResult);
         }
         
-        ResourceResult<Board> boardResourceResult = null; // initialize board to null
-
-        if (request.BoardReference != null)
+        Board? board = await boardRepository.FirstOrDefaultAsync(new GetBoardWithJobsSpecification(request.BoardReference), cancellationToken);
+        
+        if (board is null)
         {
-            boardResourceResult = await ResourceProvider<Board>
-                .GetBySpec(_boardRepository.FirstOrDefaultAsync)
-                .WithResource(request.BoardReference)
-                .ApplySpecification(new GetBoardWithJobsSpecification(request.BoardReference))
-                .Check(_userId, cancellationToken);
-
-            if (!boardResourceResult.IsSuccess)
-            {
-                return new BaseResult<ContactDto, CreateContactOutcomes>(
-                    IsSuccess: false,
-                    Outcome: boardResourceResult.Outcome switch
-                    {
-                        Outcome.Unauthorised => CreateContactOutcomes.UnauthorizedBoardAccess,
-                        Outcome.NotFound => CreateContactOutcomes.UnknownBoard,
-                        _ => CreateContactOutcomes.UnknownError
-                    },
-                    ErrorMessage: boardResourceResult.ErrorMessage
-                );
-            }
+            return DispatchResults.NotFound<ContactDto>(request.BoardReference);
         }
-
-        Board board = boardResourceResult?.Response;
+        
+        if (board.OwnerId != _userId)
+        {
+            return DispatchResults.Unauthorized<ContactDto>("You do not have access to this board.");
+        }
         
         Contact createdContact = Contact.Create(
-            _guidProvider.Create(),
-            _dateTimeProvider.UtcNow,
+            timeProvider.GetUtcNow(),
             _userId,
             request.FirstName,
             request.LastName,
@@ -103,17 +64,13 @@ internal sealed class CreateContactCommandHandler : IRequestHandler<CreateContac
 
         if (request.JobReferences.Count > 0) // only link jobs to the contact if a board was retrieved
         {
-            List<Job> jobsToLink = await _jobRepository.ListAsync(new GetJobsFromListSpecification(request.JobReferences, _userId), cancellationToken);
+            List<Job> jobsToLink = await jobRepository.ListAsync(new GetJobsFromListSpecification(request.JobReferences, _userId), cancellationToken);
 
             createdContact.SetJobs(jobsToLink);
         }
 
-        await _contactRepository.AddAsync(createdContact, cancellationToken);
-
-        return new BaseResult<ContactDto, CreateContactOutcomes>(
-            IsSuccess: true,
-            Outcome: CreateContactOutcomes.ContactCreated,
-            Response: _mapper.Map<ContactDto>(createdContact)
-        );
+        await contactRepository.AddAsync(createdContact, cancellationToken);
+        
+        return DispatchResults.Ok(mapper.Map<ContactDto>(createdContact));
     }
 }

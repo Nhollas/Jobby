@@ -2,33 +2,24 @@
 using Jobby.Application.Abstractions.Specification;
 using Jobby.Application.Dtos;
 using Jobby.Application.Features.BoardFeatures.Specifications;
-using Jobby.Application.Interfaces.Services;
+using Jobby.Application.Results;
+using Jobby.Application.Services;
 using Jobby.Domain.Entities;
 using MediatR;
 
 namespace Jobby.Application.Features.BoardFeatures.Queries.ListActivities;
-internal sealed class GetBoardActivityListQueryHandler : IRequestHandler<GetBoardActivityListQuery, List<ActivityDto>>
+internal class GetBoardActivityListQueryHandler(
+    IReadRepository<Activity> activityRepository,
+    IUserService userService,
+    IMapper mapper)
+    : IRequestHandler<GetBoardActivityListQuery, IDispatchResult<List<ActivityDto>>>
 {
-    private readonly IReadRepository<Activity> _repository;
-    private readonly IMapper _mapper;
-    private readonly string _userId;
+    private readonly string _userId = userService.UserId();
 
-    public GetBoardActivityListQueryHandler(
-        IReadRepository<Activity> repository,
-        IUserService userService,
-        IMapper mapper)
+    public async Task<IDispatchResult<List<ActivityDto>>> Handle(GetBoardActivityListQuery request, CancellationToken cancellationToken)
     {
-        _repository = repository;
-        _userId = userService.UserId();
-        _mapper = mapper;
-    }
+        List<Activity> activityList = await activityRepository.ListAsync(new GetActivitiesFromBoardSpecification(request.BoardReference, _userId), cancellationToken);
 
-    public async Task<List<ActivityDto>> Handle(GetBoardActivityListQuery request, CancellationToken cancellationToken)
-    {
-        GetActivitiesFromBoardSpecification activitySpec = new GetActivitiesFromBoardSpecification(request.BoardReference, _userId);
-
-        List<Activity> activityList = await _repository.ListAsync(activitySpec, cancellationToken);
-
-        return _mapper.Map<List<ActivityDto>>(activityList);
+        return DispatchResults.Ok(mapper.Map<List<ActivityDto>>(activityList));
     }
 }

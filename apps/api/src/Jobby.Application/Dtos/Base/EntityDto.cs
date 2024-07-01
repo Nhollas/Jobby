@@ -3,6 +3,6 @@
 public record EntityDto
 {
     public string Reference { get; set; }
-    public DateTime CreatedDate { get; set; }
-    public DateTime LastUpdated { get; set; }
+    public DateTimeOffset CreatedDate { get; set; }
+    public DateTimeOffset LastUpdated { get; set; }
 }

@@ -1,55 +1,34 @@
 ﻿using Jobby.Application.Abstractions.Specification;
-using Jobby.Application.Interfaces.Services;
-using Jobby.Application.Responses;
-using Jobby.Application.Responses.Common;
+using Jobby.Application.Results;
 using Jobby.Application.Services;
 using Jobby.Domain.Entities;
 using MediatR;
 
 namespace Jobby.Application.Features.JobFeatures.Commands.Delete;
 
-internal sealed class DeleteJobCommandHandler : IRequestHandler<DeleteJobCommand, BaseResult<DeleteJobResponse, DeleteJobOutcomes>>
+internal class DeleteJobCommandHandler(
+    IRepository<Job> jobRepository,
+    IUserService userService)
+    : IRequestHandler<DeleteJobCommand, IDispatchResult<DeleteJobResponse>>
 {
-    private readonly IRepository<Job> _jobRepository;
-    private readonly string _userId;
+    private readonly string _userId = userService.UserId();
 
-    public DeleteJobCommandHandler(
-        IRepository<Job> jobRepository,
-        IUserService userService)
+    public async Task<IDispatchResult<DeleteJobResponse>> Handle(DeleteJobCommand request, CancellationToken cancellationToken)
     {
-        _jobRepository = jobRepository;
-        _userId = userService.UserId();
-    }
-
-    public async Task<BaseResult<DeleteJobResponse, DeleteJobOutcomes>> Handle(DeleteJobCommand request, CancellationToken cancellationToken)
-    {
-        ResourceResult<Job> jobResourceResult = await ResourceProvider<Job>
-            .GetByReference(_jobRepository.GetByReferenceAsync)
-            .Check(_userId, request.JobReference, cancellationToken);
+        Job? job = await jobRepository.GetByReferenceAsync(request.JobReference, cancellationToken);
         
-        if (!jobResourceResult.IsSuccess)
+        if (job is null)
         {
-            return new BaseResult<DeleteJobResponse, DeleteJobOutcomes>(
-                IsSuccess: false,
-                Outcome: jobResourceResult.Outcome switch
-                {
-                    Outcome.Unauthorised => DeleteJobOutcomes.UnauthorizedJobAccess,
-                    Outcome.NotFound => DeleteJobOutcomes.UnknownJob,
-                    _ => DeleteJobOutcomes.UnknownError
-                },
-                ErrorMessage: jobResourceResult.ErrorMessage
-            );
+            return DispatchResults.NotFound<DeleteJobResponse>(request.JobReference);
         }
         
-        Job jobToDelete = jobResourceResult.Response;
-        
+        if (job.OwnerId != _userId)
+        {
+            return DispatchResults.Unauthorized<DeleteJobResponse>("You are not authorized to delete this job");
+        }
 
-        await _jobRepository.DeleteAsync(jobToDelete, cancellationToken);
+        await jobRepository.DeleteAsync(job, cancellationToken);
 
-        return new BaseResult<DeleteJobResponse, DeleteJobOutcomes>(
-            IsSuccess: true,
-            Outcome: DeleteJobOutcomes.JobDeleted,
-            Response: new DeleteJobResponse()
-        );
+        return DispatchResults.Ok(new DeleteJobResponse());
     }
 }

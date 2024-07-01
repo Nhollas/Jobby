@@ -2,34 +2,27 @@
 using Jobby.Application.Abstractions.Specification;
 using Jobby.Application.Dtos;
 using Jobby.Application.Features.JobFeatures.Specifications;
-using Jobby.Application.Interfaces.Services;
+using Jobby.Application.Results;
+using Jobby.Application.Services;
 using Jobby.Domain.Entities;
 using MediatR;
 
 namespace Jobby.Application.Features.JobFeatures.Queries.ListActivities;
 
-internal sealed class GetJobActivityListQueryHandler : IRequestHandler<GetJobActivityListQuery, List<ActivityDto>>
+internal class GetJobActivityListQueryHandler(
+    IUserService userService,
+    IMapper mapper,
+    IReadRepository<Activity> activityRepository)
+    : IRequestHandler<GetJobActivityListQuery, IDispatchResult<List<ActivityDto>>>
 {
-    private readonly IReadRepository<Activity> _activityRepository;
-    private readonly IMapper _mapper;
-    private readonly string _userId;
-    
-    public GetJobActivityListQueryHandler(
-        IUserService userService,
-        IMapper mapper,
-        IReadRepository<Activity> activityRepository)
+    private readonly string _userId = userService.UserId();
+
+    public async Task<IDispatchResult<List<ActivityDto>>> Handle(GetJobActivityListQuery request, CancellationToken cancellationToken)
     {
-        _userId = userService.UserId();
-        _mapper = mapper;
-        _activityRepository = activityRepository;
-    }
+        GetJobActivitiesSpecification jobSpec = new(request.JobReference, _userId);
 
-    public async Task<List<ActivityDto>> Handle(GetJobActivityListQuery request, CancellationToken cancellationToken)
-    {
-        GetJobActivitiesSpecification jobSpec = new GetJobActivitiesSpecification(request.JobReference, _userId);
+        List<Activity> activities = await activityRepository.ListAsync(jobSpec, cancellationToken);
 
-        List<Activity> activities = await _activityRepository.ListAsync(jobSpec, cancellationToken);
-
-        return _mapper.Map<List<ActivityDto>>(activities);
+        return DispatchResults.Ok(mapper.Map<List<ActivityDto>>(activities));
     }
 }

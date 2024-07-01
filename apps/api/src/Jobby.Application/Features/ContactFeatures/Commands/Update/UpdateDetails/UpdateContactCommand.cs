@@ -1,10 +1,10 @@
 ﻿using Jobby.Application.Dtos;
-using Jobby.Application.Responses.Common;
+using Jobby.Application.Results;
 using MediatR;
 
 namespace Jobby.Application.Features.ContactFeatures.Commands.Update.UpdateDetails;
 
-public sealed record UpdateContactCommand : IRequest<BaseResult<ContactDto, UpdateContactOutcomes>>
+public record UpdateContactCommand : IRequest<IDispatchResult<ContactDto>>
 {
     public string ContactReference { get; set; }
     public string FirstName { get; set; }

@@ -1,17 +1,15 @@
 ﻿using Jobby.Application.Dtos;
-using Jobby.Application.Responses.Common;
+using Jobby.Application.Results;
 using MediatR;
 
 namespace Jobby.Application.Features.ActivityFeatures.Commands.Update;
 
-public sealed record UpdateActivityCommand : IRequest<BaseResult<ActivityDto, UpdateActivityOutcomes>>
-{
-    public string ActivityReference { get; set; }
-    public string Title { get; set; }
-    public string JobReference { get; set; } = string.Empty;
-    public int Type { get; set; }
-    public DateTime StartDate { get; set; }
-    public DateTime EndDate { get; set; }
-    public string Note { get; set; }
-    public bool Completed { get; set; }
-}
+public record UpdateActivityCommand(
+    string ActivityReference,
+    string Title,
+    int Type,
+    DateTimeOffset StartDate,
+    DateTimeOffset EndDate,
+    string Note,
+    bool Completed,
+    string JobReference = "") : IRequest<IDispatchResult<ActivityDto>>;

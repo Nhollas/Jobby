@@ -1,6 +1,6 @@
-﻿using Jobby.Application.Responses.Common;
+﻿using Jobby.Application.Results;
 using MediatR;
 
 namespace Jobby.Application.Features.ContactFeatures.Commands.Delete;
 
-public sealed record DeleteContactCommand(string ContactReference) : IRequest<BaseResult<DeleteContactResponse, DeleteContactOutcomes>>;
+public record DeleteContactCommand(string ContactReference) : IRequest<IDispatchResult<DeleteContactResponse>>;
