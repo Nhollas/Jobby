@@ -17,7 +17,7 @@ public class GivenRequestWithBoardIdNotOwned(JobbyHttpApiFactory factory)
     {
         await using JobbyDbContext context = factory.GetDbContext();
         
-        Board preLoadedBoard = await SeedDataHelper<Board>.AddAsync(Board.Create(DateTime.UtcNow, "TestUser2Id", "TestBoard"), context);
+        Board preLoadedBoard = await SeedDataHelper.AddAsync(Board.Create(DateTime.UtcNow, "TestUser2Id", "TestBoard"), context);
         
         CreateActivityCommand body = new(
             BoardReference: preLoadedBoard.Reference,

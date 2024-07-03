@@ -2,30 +2,28 @@ using FluentValidation.Results;
 
 namespace Jobby.Application.Results;
 
-public interface IDispatchResult<TResponse> where TResponse : class {}
-
-public abstract class DispatchResult<TResponse>: IDispatchResult<TResponse> where TResponse : class {}
+public interface IDispatchResult<out TResponse>;
 
 public static class DispatchResults
 {
     public static DispatchOkResult<TResponse> Ok<TResponse>(TResponse response) where TResponse : class
-        => new(response);
+        => new DispatchOkResult<TResponse>(response);
     
     public static DispatchCreatedResult<TResponse> Created<TResponse>(TResponse response) where TResponse : class
-        => new(response);
+        => new DispatchCreatedResult<TResponse>(response);
     
     public static DispatchUnauthorizedResult<TResponse> Unauthorized<TResponse>(string errorMessage) where TResponse : class
-        => new(errorMessage);
+        => new DispatchUnauthorizedResult<TResponse>(errorMessage);
     
     public static DispatchNotFoundResult<TResponse> NotFound<TResponse>(string errorMessage) where TResponse : class
-        => new(errorMessage);
+        => new DispatchNotFoundResult<TResponse>(errorMessage);
     
-    public static DispatchBadRequestResult<TResponse> BadRequest<TResponse>(ValidationError[] validationErrors) where TResponse : class
-        => new(validationErrors);
+    public static DispatchBadRequestResult<TResponse> BadRequest<TResponse>(string errorMessage) where TResponse : class
+        => new DispatchBadRequestResult<TResponse>(errorMessage);
     
     public static DispatchUnprocessableEntityResult<TResponse> UnprocessableEntity<TResponse>(ValidationResult validationResult) where TResponse : class
-        => new(validationResult);
+        => new DispatchUnprocessableEntityResult<TResponse>(validationResult);
     
     public static DispatchUnprocessableEntityResult<TResponse> UnprocessableEntity<TResponse>(ValidationError[] validationErrors) where TResponse : class
-        => new(validationErrors);
+        => new DispatchUnprocessableEntityResult<TResponse>(validationErrors);
 }

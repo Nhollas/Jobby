@@ -1,4 +1,5 @@
-﻿using Jobby.Application.Dtos.Base;
+﻿using System.Text.Json.Serialization;
+using Jobby.Application.Dtos.Base;
 
 namespace Jobby.Application.Dtos;
 
@@ -17,5 +18,6 @@ public sealed record JobDto : EntityDto
     public string JobListReference { get; set; }
     public List<NoteDto> Notes { get; set; }
     public List<ContactDto> Contacts { get; set; }
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public List<ActivityDto> Activities { get; set; }
 }

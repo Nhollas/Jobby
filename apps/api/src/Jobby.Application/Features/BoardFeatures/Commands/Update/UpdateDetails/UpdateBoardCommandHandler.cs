@@ -32,7 +32,6 @@ internal class UpdateBoardCommandHandler(
         }
         
         board.SetBoardName(request.Name);
-
         board.UpdateEntity(timeProvider.GetUtcNow());
 
         await boardRepository.UpdateAsync(board, cancellationToken);

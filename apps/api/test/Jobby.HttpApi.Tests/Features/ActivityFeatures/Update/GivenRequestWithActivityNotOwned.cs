@@ -19,7 +19,7 @@ public class GivenRequestWithActivityNotOwned(JobbyHttpApiFactory factory)
         
         Board? preLoadedBoard = Board.Create(DateTime.UtcNow, "TestUserId", "TestBoard");
         
-        await SeedDataHelper<Board>.AddAsync(preLoadedBoard, context);
+        await SeedDataHelper.AddAsync(preLoadedBoard, context);
 
         Activity? preLoadedActivity = Activity.Create(
             DateTime.UtcNow,
@@ -33,7 +33,7 @@ public class GivenRequestWithActivityNotOwned(JobbyHttpApiFactory factory)
             preLoadedBoard
         );
         
-        await SeedDataHelper<Activity>.AddAsync(preLoadedActivity, context);
+        await SeedDataHelper.AddAsync(preLoadedActivity, context);
 
         UpdateActivityCommand body = new(
             ActivityReference: preLoadedActivity.Reference,
@@ -48,6 +48,6 @@ public class GivenRequestWithActivityNotOwned(JobbyHttpApiFactory factory)
         string responseContent = await response.Content.ReadAsStringAsync();
         
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
-        responseContent.Should().Be("You are not authorised to access this resource.");
+        responseContent.Should().Be(ResponseHelper.MessageToApiMessage($"You are not authorised to access the resource {preLoadedActivity.Reference}."));
     }
 }

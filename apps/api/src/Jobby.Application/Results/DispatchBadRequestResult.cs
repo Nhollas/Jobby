@@ -1,11 +1,16 @@
 namespace Jobby.Application.Results;
 
-public class DispatchBadRequestResult<TResponse> : DispatchResult<TResponse> where TResponse : class
+public interface IDispatchBadRequestResult<out TResponse> : IDispatchResult<TResponse>
 {
-    public ValidationError[] ValidationErrors { get; }
+    string ErrorMessage { get; }
+}
 
-    public DispatchBadRequestResult(ValidationError[] validationErrors)
+public class DispatchBadRequestResult<TResponse> : IDispatchBadRequestResult<TResponse>
+{
+    public string ErrorMessage { get; }
+
+    public DispatchBadRequestResult(string errorMessage)
     {
-        ValidationErrors = validationErrors ?? throw new ArgumentNullException(nameof(validationErrors));
+        ErrorMessage = errorMessage ?? throw new ArgumentNullException(nameof(errorMessage));
     }
 }

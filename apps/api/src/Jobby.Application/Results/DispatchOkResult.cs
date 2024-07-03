@@ -1,6 +1,11 @@
 namespace Jobby.Application.Results;
 
-public class DispatchOkResult<TResponse> : IDispatchResult<TResponse> where TResponse : class
+public interface IDispatchOkResult<out TResponse> : IDispatchResult<TResponse>
+{
+    TResponse Response { get; }
+}
+
+public class DispatchOkResult<TResponse> : IDispatchOkResult<TResponse>
 {
     public TResponse Response { get; }
 

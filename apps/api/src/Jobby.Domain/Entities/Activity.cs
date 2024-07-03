@@ -55,9 +55,9 @@ public class Activity : Entity
     public Board Board { get; set; }    
     public string BoardReference { get; set; }
     public Guid BoardId { get; set; }
-    
-    public Job Job { get; set; }
-    public string JobReference { get; set; }
+
+    public Job Job { get; set; } = null!;
+    public string? JobReference { get; set; }
     public Guid? JobId { get; set; }
 
 

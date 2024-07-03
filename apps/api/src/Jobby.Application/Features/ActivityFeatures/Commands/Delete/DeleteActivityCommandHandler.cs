@@ -19,7 +19,8 @@ internal class DeleteActivityCommandHandler(
         
         if (activity is null)
         {
-            return DispatchResults.NotFound<DeleteActivityResponse>(request.ActivityReference);
+            return DispatchResults.NotFound<DeleteActivityResponse>(
+                $"The Activity with Reference {request.ActivityReference} could not be found.");
         }
         
         if (!activity.IsOwnedBy(_userId))

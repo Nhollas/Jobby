@@ -1,6 +1,11 @@
 namespace Jobby.Application.Results;
 
-public class DispatchUnauthorizedResult<TResponse> : IDispatchResult<TResponse> where TResponse : class
+public interface IDispatchUnauthorizedResult<out TResponse> : IDispatchResult<TResponse>
+{
+    string ErrorMessage { get; }
+}
+
+public class DispatchUnauthorizedResult<TResponse> : IDispatchUnauthorizedResult<TResponse>
 {
     public string ErrorMessage { get; }
     

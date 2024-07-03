@@ -13,5 +13,5 @@ public record CreateActivityCommand(
     DateTime EndDate,
     string Note,
     bool Completed,
-    string JobReference = "")
+    string? JobReference = null)
     : IRequest<IDispatchResult<ActivityDto>>;

@@ -1,10 +1,11 @@
+using FluentValidation;
 using MediatR;
 
 namespace Jobby.Application.Results;
 
 public interface IDispatcher
 {
-    Task<DispatchResult<TResponse>> Dispatch<TResponse>(IRequest<DispatchResult<TResponse>> request, CancellationToken cancellationToken = default)
+    Task<IDispatchResult<TResponse>> Dispatch<TResponse>(IRequest<IDispatchResult<TResponse>> request, CancellationToken cancellationToken = default)
         where TResponse : class;
 }
 
@@ -17,8 +18,20 @@ public class Dispatcher : IDispatcher
         _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
     }
 
-    public async Task<DispatchResult<TResponse>> Dispatch<TResponse>(IRequest<DispatchResult<TResponse>> request, CancellationToken cancellationToken = default) where TResponse : class
+    public async Task<IDispatchResult<TResponse>> Dispatch<TResponse>(IRequest<IDispatchResult<TResponse>> request, CancellationToken cancellationToken = default) where TResponse : class
     {
-        return await _mediator.Send(request, cancellationToken);
+        try
+        {
+            return await _mediator.Send(request, cancellationToken);
+        }
+        catch (ValidationException validationException)
+        {
+            return DispatchResults.UnprocessableEntity<TResponse>(validationException.Errors
+                .Select(x => new ValidationError(x.PropertyName, x.ErrorMessage)).ToArray());
+        }
+        catch (InvalidOperationException invalidOperationException)
+        {
+            return DispatchResults.BadRequest<TResponse>(invalidOperationException.Message);
+        }
     }
 }

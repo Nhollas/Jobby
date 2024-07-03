@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using FluentValidation.Results;
 using Jobby.Application.Abstractions.Specification;
 using Jobby.Application.Dtos;
 using Jobby.Application.Features.BoardFeatures.Specifications;
@@ -22,12 +21,6 @@ internal class CreateActivityCommandHandler(
 
     public async Task<IDispatchResult<ActivityDto>> Handle(CreateActivityCommand request, CancellationToken cancellationToken)
     {
-        CreateActivityCommandValidator validator = new();
-        ValidationResult validationResult = await validator.ValidateAsync(request, cancellationToken);
-        
-        if (!validationResult.IsValid)
-            return DispatchResults.UnprocessableEntity<ActivityDto>(validationResult);
-
         Board? board = await repository.SingleOrDefaultAsync(new GetBoardWithJobsSpecification(request.BoardReference), cancellationToken);
 
         if (board is null)
@@ -38,7 +31,6 @@ internal class CreateActivityCommandHandler(
         
         Activity createdActivity = board.CreateActivity(
             timeProvider.GetUtcNow(),
-            _userId,
             request.Title,
             (int)request.Type,
             request.StartDate,

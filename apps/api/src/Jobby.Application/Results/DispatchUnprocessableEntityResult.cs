@@ -2,7 +2,13 @@ using FluentValidation.Results;
 
 namespace Jobby.Application.Results;
 
-public class DispatchUnprocessableEntityResult<TResponse> : IDispatchResult<TResponse> where TResponse : class
+
+public interface IDispatchUnprocessableEntityResult<out TResponse> : IDispatchResult<TResponse>
+{
+    ValidationError[] ValidationErrors { get; }
+}
+
+public class DispatchUnprocessableEntityResult<TResponse> : IDispatchUnprocessableEntityResult<TResponse>
 {
     public DispatchUnprocessableEntityResult(ValidationResult  validationResult)
     {
@@ -21,12 +27,12 @@ public class DispatchUnprocessableEntityResult<TResponse> : IDispatchResult<TRes
 
 public class ValidationError
 {
-    public ValidationError(string propertyName, string errorMessage)
+    public ValidationError(string propertyName, string message)
     {
         PropertyName = propertyName;
-        ErrorMessage = errorMessage;
+        Message = message;
     }
 
     public string PropertyName { get; }
-    public string ErrorMessage { get; }
+    public string Message { get; }
 }

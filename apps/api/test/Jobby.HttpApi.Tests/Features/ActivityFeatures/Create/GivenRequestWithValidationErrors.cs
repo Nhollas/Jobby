@@ -8,7 +8,7 @@ namespace Jobby.HttpApi.Tests.Features.ActivityFeatures.Create;
 public class GivenRequestWithValidationErrors(JobbyHttpApiFactory factory)
 {
     [Fact]
-    public async Task WhenTypePropertyIsInvalid_ThenReturns422UnprocessableEntityWithValidationMessage()
+    public async Task WhenTypePropertyIsOutOfRange_ThenReturns422UnprocessableEntityWithValidationMessage()
     {
         const string invalidType = 
         """

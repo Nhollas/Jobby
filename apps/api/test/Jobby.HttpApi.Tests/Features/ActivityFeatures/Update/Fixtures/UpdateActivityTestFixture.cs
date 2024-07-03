@@ -36,8 +36,8 @@ public class UpdateActivityTestFixture(JobbyHttpApiFactory factory) : IAsyncLife
     {
         await using JobbyDbContext context = factory.GetDbContext();
         
-        await SeedDataHelper<Board>.AddAsync(PreloadedBoard, context);
-        await SeedDataHelper<Activity>.AddAsync(PreloadedActivity, context);
+        await SeedDataHelper.AddAsync(PreloadedBoard, context);
+        await SeedDataHelper.AddAsync(PreloadedActivity, context);
 
         Body = new UpdateActivityCommand(
             ActivityReference: PreloadedActivity.Reference,
@@ -56,6 +56,6 @@ public class UpdateActivityTestFixture(JobbyHttpApiFactory factory) : IAsyncLife
     {
         await using JobbyDbContext context = factory.GetDbContext();
         
-        await SeedDataHelper<Board>.RemoveAsync(PreloadedBoard, context);
+        await SeedDataHelper.RemoveAsync(PreloadedBoard, context);
     }
 }

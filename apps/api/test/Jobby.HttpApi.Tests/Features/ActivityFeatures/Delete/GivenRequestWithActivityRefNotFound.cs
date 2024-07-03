@@ -1,5 +1,6 @@
 using System.Net;
 using Jobby.HttpApi.Tests.Factories;
+using Jobby.HttpApi.Tests.Helpers;
 
 namespace Jobby.HttpApi.Tests.Features.ActivityFeatures.Delete;
 
@@ -15,6 +16,6 @@ public class GivenRequestWithActivityRefNotFound(JobbyHttpApiFactory factory)
         string responseContent = await response.Content.ReadAsStringAsync();
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
-        responseContent.Should().Be($"The Activity with Reference {randomActivityRef} could not be found.");
+        responseContent.Should().Be(ResponseHelper.MessageToApiMessage($"The Activity with Reference {randomActivityRef} could not be found."));
     }
 }

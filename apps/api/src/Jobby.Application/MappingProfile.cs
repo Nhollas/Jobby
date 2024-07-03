@@ -16,7 +16,8 @@ public class MappingProfile : Profile
         CreateMap<JobList, JobListDto>();
 
         // Job Maps
-        CreateMap<Job, JobDto>();
+        CreateMap<Job, JobDto>()
+            .ForMember(dest => dest.Activities, opt => opt.Ignore());
         CreateMap<Note, NoteDto>();
 
         // Activity Maps

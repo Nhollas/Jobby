@@ -20,7 +20,7 @@ public class Board : Entity
         Name = name ?? throw new ArgumentNullException(nameof(name));
     }
 
-    public string Name { get; private set; }
+    public string Name { get; private set; } = string.Empty;
     public IReadOnlyCollection<JobList> Lists => _lists;
     public IReadOnlyCollection<Activity> Activities => _activities;
     public IReadOnlyCollection<Job> Jobs { get; init; }
@@ -69,32 +69,31 @@ public class Board : Entity
     }
     
     public Activity CreateActivity(
-        DateTimeOffset createdDate, 
-        string userId, 
+        DateTimeOffset createdDate,
         string title, 
         int type, 
         DateTimeOffset startDate, 
         DateTimeOffset endDate, 
         string note, 
         bool completed, 
-        string jobReference)
+        string? jobReference = null)
     {
-        Activity activity = Activity.Create(createdDate, userId, title, type, startDate, endDate, note, completed, this);
+        Activity activity = Activity.Create(createdDate, OwnerId, title, type, startDate, endDate, note, completed, this);
 
-        switch (string.IsNullOrEmpty(jobReference))
+        if (string.IsNullOrEmpty(jobReference)) return activity;
+        
+        if (!TryGetJobFromBoard(jobReference, out Job? jobToLink))
         {
-            case false when TryGetJobFromBoard(jobReference, out Job jobToLink):
-                activity.SetJob(jobToLink);
-                _activities.Add(activity);
-                break;
-            case false:
-                throw new InvalidOperationException($"The {nameof(Job)} {jobReference} you wanted to link doesn't exist in the Board {Reference}.");
+            throw new InvalidOperationException($"The {nameof(Job)} {jobReference} you wanted to link doesn't exist in the Board {Reference}.");
         }
+            
+        activity.SetJob(jobToLink!);
+        _activities.Add(activity);
 
         return activity;
     }
-    
-    private bool TryGetJobFromBoard(string jobReference, out Job job)
+
+    private bool TryGetJobFromBoard(string jobReference, out Job? job)
     {
         job = _lists
             .SelectMany(list => list.Jobs

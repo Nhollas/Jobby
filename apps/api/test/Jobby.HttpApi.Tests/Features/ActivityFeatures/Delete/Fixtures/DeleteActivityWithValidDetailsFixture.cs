@@ -18,7 +18,7 @@ public class DeleteActivityWithValidDetailsFixture(JobbyHttpApiFactory factory) 
     {
         await using JobbyDbContext context = factory.GetDbContext();
         
-        await SeedDataHelper<Board>.AddAsync(_preLoadedBoard, context);
+        await SeedDataHelper.AddAsync(_preLoadedBoard, context);
         
         Activity? activityToDelete = Activity.Create(
             createdDate: DateTime.UtcNow,
@@ -34,7 +34,7 @@ public class DeleteActivityWithValidDetailsFixture(JobbyHttpApiFactory factory) 
         
         ActivityReference = activityToDelete.Reference;
         
-        Activity preLoadedActivity = await SeedDataHelper<Activity>.AddAsync(activityToDelete, context);
+        Activity preLoadedActivity = await SeedDataHelper.AddAsync(activityToDelete, context);
         
         Response = await factory.HttpClient.DeleteAsync($"/activity/{preLoadedActivity.Reference}");
     }
@@ -47,6 +47,6 @@ public class DeleteActivityWithValidDetailsFixture(JobbyHttpApiFactory factory) 
 
         if (preLoadedBoard is null) return;
         
-        await SeedDataHelper<Board>.RemoveAsync(preLoadedBoard, context);
+        await SeedDataHelper.RemoveAsync(preLoadedBoard, context);
     }
 }

@@ -14,26 +14,24 @@ public class GivenRequestWithActivityRefNotOwned(JobbyHttpApiFactory factory)
     {
         await using JobbyDbContext context = factory.GetDbContext();
         
-        Board preLoadedBoard = await SeedDataHelper<Board>.AddAsync(Board.Create(DateTime.UtcNow, "TestUserTwoId", "TestBoard"), context);
+        Board preLoadedBoard = await SeedDataHelper.AddAsync(Board.Create(DateTime.UtcNow, "TestUserTwoId", "TestBoard"), context);
         
-        Activity activityToDelete = Activity.Create(
+        Activity activityToDelete = preLoadedBoard.CreateActivity(
             createdDate: DateTime.UtcNow,
-            ownerId: "TestUserTwoId",
             title: "Test Activity",
-            activityType: 1,
+            type: 1,
             startDate: DateTime.UtcNow,
             endDate: DateTime.UtcNow,
             note: "Test Note",
-            completed: false,
-            board: preLoadedBoard
-        );
+            completed: false);
         
-        Activity preLoadedActivity = await SeedDataHelper<Activity>.AddAsync(activityToDelete, context);
+        Activity preLoadedActivity = await SeedDataHelper.AddAsync(activityToDelete, context);
         
         HttpResponseMessage response = await factory.HttpClient.DeleteAsync($"/activity/{preLoadedActivity.Reference}");
         string responseContent = await response.Content.ReadAsStringAsync();
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
-        responseContent.Should().Be("You are not authorised to access this resource.");
+        responseContent.Should()
+            .Be(ResponseHelper.MessageToApiMessage($"You are not authorised to access the resource {activityToDelete.Reference}."));
     }
 }

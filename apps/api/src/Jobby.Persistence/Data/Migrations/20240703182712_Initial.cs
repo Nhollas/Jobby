@@ -17,10 +17,10 @@ namespace Jobby.Persistence.Data.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Reference = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastUpdated = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    OwnerId = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    LastUpdated = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    OwnerId = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -33,19 +33,19 @@ namespace Jobby.Persistence.Data.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Reference = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    JobTitle = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Location = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Socials_TwitterUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Socials_FacebookUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Socials_LinkedInUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Socials_GithubUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    BoardReference = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    JobTitle = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Location = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Socials_TwitterUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Socials_FacebookUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Socials_LinkedInUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Socials_GithubUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    BoardReference = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     BoardId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastUpdated = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    OwnerId = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    LastUpdated = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    OwnerId = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -63,13 +63,13 @@ namespace Jobby.Persistence.Data.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Reference = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Index = table.Column<int>(type: "int", nullable: false),
                     BoardId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    BoardReference = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastUpdated = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    OwnerId = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    BoardReference = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    LastUpdated = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    OwnerId = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -88,12 +88,12 @@ namespace Jobby.Persistence.Data.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Reference = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ContactId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ContactReference = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastUpdated = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    OwnerId = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    ContactReference = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    LastUpdated = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    OwnerId = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -112,13 +112,13 @@ namespace Jobby.Persistence.Data.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Reference = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Type = table.Column<int>(type: "int", nullable: false),
                     ContactId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ContactReference = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastUpdated = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    OwnerId = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    ContactReference = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    LastUpdated = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    OwnerId = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -137,13 +137,13 @@ namespace Jobby.Persistence.Data.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Reference = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Number = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Number = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Type = table.Column<int>(type: "int", nullable: false),
                     ContactId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ContactReference = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastUpdated = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    OwnerId = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    ContactReference = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    LastUpdated = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    OwnerId = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -162,21 +162,21 @@ namespace Jobby.Persistence.Data.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Reference = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Company = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PostUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Company = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PostUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Salary = table.Column<double>(type: "float", nullable: false),
-                    Location = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Deadline = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Location = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Deadline = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
                     Index = table.Column<int>(type: "int", nullable: false),
                     JobListId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    JobListReference = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    BoardReference = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    JobListReference = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    BoardReference = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     BoardId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastUpdated = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    OwnerId = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    LastUpdated = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    OwnerId = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -200,19 +200,19 @@ namespace Jobby.Persistence.Data.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Reference = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Type = table.Column<int>(type: "int", nullable: false),
-                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Note = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    StartDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    EndDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    Note = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Completed = table.Column<bool>(type: "bit", nullable: false),
                     BoardReference = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     BoardId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     JobReference = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     JobId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastUpdated = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    OwnerId = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    LastUpdated = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    OwnerId = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -261,8 +261,8 @@ namespace Jobby.Persistence.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     JobReference = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     JobId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },

@@ -41,16 +41,11 @@ public class ResponseFormattingFilter : IEndpointFilter
  
     private static IResult UnprocessableEntity(IDispatchUnprocessableEntityResult<object> badRequest)
     {
-        var validationErrors = badRequest.ValidationErrors
-            .Select(x => (x.ErrorMessage, x.PropertyName))
-            .GroupBy(x => x.PropertyName, x => x.ErrorMessage)
-            .ToDictionary(x => x.Key, x => x.ToArray());
-        
-        return Results.UnprocessableEntity(validationErrors);
+        return Results.UnprocessableEntity(badRequest.ValidationErrors);
     }
 
     private static IResult NotFound(IDispatchNotFoundResult<object> notFound)
-        => Results.NotFound(new ApiMessage(notFound.ResourceReference));
+        => Results.NotFound(new ApiMessage(notFound.ErrorMessage));
 
     private static IResult BadRequest(IDispatchBadRequestResult<object> badRequest)
         => Results.BadRequest(new ApiMessage(badRequest.ErrorMessage));

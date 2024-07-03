@@ -1,6 +1,11 @@
 namespace Jobby.Application.Results;
 
-public class DispatchNotFoundResult<TResponse> : IDispatchResult<TResponse> where TResponse : class
+public interface IDispatchNotFoundResult<out TResponse> : IDispatchResult<TResponse>
+{
+    string ErrorMessage { get; }
+}
+
+public class DispatchNotFoundResult<TResponse> : IDispatchNotFoundResult<TResponse>
 {
     public string ErrorMessage { get; }
 
