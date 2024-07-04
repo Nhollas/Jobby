@@ -26,9 +26,9 @@ internal class GetBoardDetailQueryHandler(
             return DispatchResults.NotFound<BoardDto>(request.BoardReference);
         }
         
-        if (board.OwnerId != _userId)
+        if (!board.IsOwnedBy(_userId))
         {
-            return DispatchResults.Unauthorized<BoardDto>($"You are not authorised to access the resource {board.Reference}.");
+            return DispatchResults.Unauthorized<BoardDto>(board.Reference);
         }
         
         return DispatchResults.Ok(mapper.Map<BoardDto>(board));

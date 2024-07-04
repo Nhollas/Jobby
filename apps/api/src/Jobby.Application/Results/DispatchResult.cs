@@ -12,8 +12,8 @@ public static class DispatchResults
     public static DispatchCreatedResult<TResponse> Created<TResponse>(TResponse response) where TResponse : class
         => new DispatchCreatedResult<TResponse>(response);
     
-    public static DispatchUnauthorizedResult<TResponse> Unauthorized<TResponse>(string errorMessage) where TResponse : class
-        => new DispatchUnauthorizedResult<TResponse>(errorMessage);
+    public static DispatchUnauthorizedResult<TResponse> Unauthorized<TResponse>(string resource) where TResponse : class
+        => new DispatchUnauthorizedResult<TResponse>(resource);
     
     public static DispatchNotFoundResult<TResponse> NotFound<TResponse>(string errorMessage) where TResponse : class
         => new DispatchNotFoundResult<TResponse>(errorMessage);

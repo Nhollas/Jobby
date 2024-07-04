@@ -7,6 +7,7 @@ using Jobby.Domain.Entities;
 using MediatR;
 
 namespace Jobby.Application.Features.ListFeatures.Commands.Create;
+
 internal class CreateListCommandHandler(
     IRepository<JobList> jobListRepository,
     IRepository<Job> jobRepository,
@@ -27,17 +28,14 @@ internal class CreateListCommandHandler(
             return DispatchResults.NotFound<JobListDto>(request.BoardReference);
         }
         
-        if (board.OwnerId != _userId)
+        if (!board.IsOwnedBy(_userId))
         {
-            return DispatchResults.Unauthorized<JobListDto>("You are not authorized to create a list on this board.");
+            return DispatchResults.Unauthorized<JobListDto>(board.Reference);
         }
         
-        JobList createdJobList = JobList.Create(
+        JobList createdJobList = board.AddJobList(
             timeProvider.GetUtcNow(),
-            _userId,
-            request.Name,
-            request.Index,
-            board);
+            request.Name);
 
         await jobListRepository.AddAsync(createdJobList, cancellationToken);
 
@@ -53,7 +51,7 @@ internal class CreateListCommandHandler(
             return DispatchResults.NotFound<JobListDto>(request.JobReference);
         }
         
-        if (job.OwnerId != _userId)
+        if (!job.IsOwnedBy(_userId))
         {
             return DispatchResults.Unauthorized<JobListDto>("You are not authorized to add this job to a list.");
         }

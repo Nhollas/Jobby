@@ -5,7 +5,7 @@ namespace Jobby.Domain.Entities;
 
 public class JobList : Entity
 {
-    private readonly List<Job> _jobs = new();
+    private readonly List<Job> _jobs = [];
 
     private JobList(){}
 
@@ -14,63 +14,47 @@ public class JobList : Entity
         DateTimeOffset createdDate,
         string ownerId,
         string listName, 
-        int index,
-        Board board = null)
+        int position,
+        Board board)
         : base(reference, createdDate, ownerId)
     {
         Name = listName;
-        Index = index;
-        if (board is null) return;
+        Position = position;
         BoardId = board.Id;
         Board = board;
         BoardReference = board.Reference;
     }
 
     public string Name { get; set; }
-    public int Index { get; set; }
+    public int Position { get; set; }
     public IReadOnlyCollection<Job> Jobs => _jobs;
-    
-
-    // Database Relationship Properties
     public Board Board { get; set; }
     public Guid BoardId { get; set; }
     public string BoardReference { get; set; }
 
 
-    public static JobList Create(
+    internal static JobList Create(
         DateTimeOffset createdDate,
         string ownerId,
         string name,
-        int index,
-        Board board = null)
+        int position,
+        Board board)
     {
         return new JobList(
             reference: EntityReferenceProvider<JobList>.CreateReference(),
             createdDate,
             ownerId,
             name,
-            index,
+            position,
             board);
     }
 
-    public void ArrangeJobs(Dictionary<Guid, int> jobIndexes)
+    public Job CreateJob(DateTimeOffset createdDate, string company, string jobTitle)
     {
-        foreach (Job job in _jobs)
-        {
-            if (jobIndexes.ContainsKey(job.Id))
-            {
-                job.SetIndex(jobIndexes[job.Id]);
-            }
-        }
-    }
+        Job createdJob = Job.Create(createdDate, OwnerId, company, jobTitle, _jobs.Count, this, Board);
 
-    public void SetIndex(int index)
-    {
-        Index = index;
-    }
-    
-    public void AddJob(Job job)
-    {
-        _jobs.Add(job);
+        _jobs.Add(createdJob);
+        
+        return createdJob;
     }
 }

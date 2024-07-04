@@ -5,12 +5,7 @@ public interface IDispatchUnauthorizedResult<out TResponse> : IDispatchResult<TR
     string ErrorMessage { get; }
 }
 
-public class DispatchUnauthorizedResult<TResponse> : IDispatchUnauthorizedResult<TResponse>
+public class DispatchUnauthorizedResult<TResponse>(string resource) : IDispatchUnauthorizedResult<TResponse>
 {
-    public string ErrorMessage { get; }
-    
-    public DispatchUnauthorizedResult(string errorMessage)
-    {
-        ErrorMessage = errorMessage ?? throw new ArgumentNullException(nameof(errorMessage));
-    }
+    public string ErrorMessage { get; } = $"You are not authorised to access the resource {resource}.";
 }

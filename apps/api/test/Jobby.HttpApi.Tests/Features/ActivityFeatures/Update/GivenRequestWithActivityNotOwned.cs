@@ -48,6 +48,7 @@ public class GivenRequestWithActivityNotOwned(JobbyHttpApiFactory factory)
         string responseContent = await response.Content.ReadAsStringAsync();
         
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
-        responseContent.Should().Be(ResponseHelper.MessageToApiMessage($"You are not authorised to access the resource {preLoadedActivity.Reference}."));
+        responseContent.Should().Be(ResponseHelper.MessageToApiMessage(
+            $"You are not authorised to access the resource {preLoadedActivity.Reference}."));
     }
 }

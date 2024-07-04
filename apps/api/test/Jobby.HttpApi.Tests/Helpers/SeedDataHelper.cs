@@ -23,20 +23,11 @@ public static class SeedDataHelper
     
     public static async Task<(Board, Job)> CreateBoardWithJobAsync(JobbyDbContext context, string? userId = null)
     {
-        Board board = Board.Create(DateTime.UtcNow, userId ?? "TestUserId", "TestBoard");
-        
-        JobList jobList = JobList.Create(DateTime.UtcNow, userId ?? "TestUserId", "TestJobList", 0);
-        
-        Job job = Job.Create(DateTime.UtcNow, userId ?? "TestUserId", "TestJob", "TestTitle", 0, jobList, board);
-        
-        jobList.AddJob(job);
-
-        List<JobList> jobLists = [jobList];
-        
-        board.SetJobLists(jobLists);
+        Board board = Board.Create(DateTime.UtcNow, userId ?? "TestUserId", "BoardName");
+        JobList jobList = board.AddJobList(DateTime.UtcNow, "JobListName");
+        Job job = jobList.CreateJob(DateTime.UtcNow, "JobCompany", "JobTitle");
         
         await context.Boards.AddAsync(board);
-    
         await context.SaveChangesAsync();
         
         return (board, job);

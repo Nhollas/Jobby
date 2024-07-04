@@ -34,6 +34,6 @@ public class GivenRequestWithBoardIdNotOwned(JobbyHttpApiFactory factory)
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
         responseContent.Should().Be(
-            ResponseHelper.MessageToApiMessage($"You are not authorised to access the resource {body.BoardReference}."));
+            ResponseHelper.MessageToApiMessage($"You are not authorised to access the resource {preLoadedBoard.Reference}."));
     }
 }

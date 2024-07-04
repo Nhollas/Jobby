@@ -13,7 +13,7 @@ public class Job : Entity
         string ownerId,
         string company,
         string jobTitle,
-        int index,
+        int position,
         JobList jobList,
         Board board
         )
@@ -22,7 +22,7 @@ public class Job : Entity
     {
         Company = company;
         Title = jobTitle;
-        Index = index;
+        Position = position;
         JobList = jobList;
         Board = board;
         BoardReference = board.Reference;
@@ -32,17 +32,14 @@ public class Job : Entity
     public string Company { get; private set; }
     public string Title { get; private set; }
     public string PostUrl { get; private set; } = string.Empty;
-    public double Salary { get; private set; } = 0;
-    public string Location { get; private set; }
+    public double Salary { get; private set; }
+    public string Location { get; private set; } = string.Empty;
     public string Description { get; private set; } = string.Empty;
     public DateTimeOffset? Deadline { get; private set; } 
-    public int Index { get; private set; }
-    public List<Note> Notes { get; } = new();
-    public List<Activity> Activities { get; } = new();
-    public List<Contact> Contacts { get; } = new();
-
-
-    // Database Relationship Properties
+    public int Position { get; private set; }
+    public List<Note> Notes { get; init; } = new();
+    public List<Activity> Activities { get; init; } = new();
+    public List<Contact> Contacts { get; init; } = new();
     public JobList JobList { get; set; }
     public List<JobContact> JobContacts { get; } = new();
     public Guid JobListId { get; set; }
@@ -52,7 +49,7 @@ public class Job : Entity
     public Guid BoardId { get; private set; }
 
 
-    public static Job Create(
+    internal static Job Create(
         DateTimeOffset createdDate,
         string ownerId,
         string company,
@@ -83,6 +80,6 @@ public class Job : Entity
 
     public void SetIndex(int index)
     {
-        Index = index;
+        Position = index;
     }
 }

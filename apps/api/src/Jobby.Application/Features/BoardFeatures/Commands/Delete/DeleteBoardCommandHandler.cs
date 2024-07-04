@@ -23,10 +23,10 @@ internal class DeleteBoardCommandHandler(
         {
             return DispatchResults.NotFound<DeleteBoardResponse>(request.BoardReference);
         }
-        
-        if (board.OwnerId != _userId)
+
+        if (!board.IsOwnedBy(_userId))
         {
-            return DispatchResults.Unauthorized<DeleteBoardResponse>($"You are not authorised to access the resource {board.Reference}.");
+            return DispatchResults.Unauthorized<DeleteBoardResponse>(board.Reference);
         }
 
         await contactRepository.ClearBoardsAsync(board.Reference, cancellationToken);

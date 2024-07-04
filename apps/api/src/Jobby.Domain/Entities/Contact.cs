@@ -50,7 +50,7 @@ public class Contact : Entity
     public List<JobContact> JobContacts { get; } = new();
     public Board Board { get; private set; }
     
-    public string BoardReference { get; private set; }
+    public string? BoardReference { get; private set; }
     public Guid? BoardId { get; private set; }
 
 

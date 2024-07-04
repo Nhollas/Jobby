@@ -31,10 +31,9 @@ internal class UpdateContactCommandHandler(
             return DispatchResults.NotFound<ContactDto>(request.ContactReference);
         }
 
-        if (contact.OwnerId != _userId)
+        if (!contact.IsOwnedBy(_userId))
         {
-            return DispatchResults.Unauthorized<ContactDto>(
-                $"You are not authorised to access the resource {contact.Reference}.");
+            return DispatchResults.Unauthorized<ContactDto>(contact.Reference);
         }
         
         contact.Update(
@@ -57,10 +56,10 @@ internal class UpdateContactCommandHandler(
                 return DispatchResults.NotFound<ContactDto>(request.BoardReference);
             }
             
-            if (board.OwnerId != _userId)
+            if (!board.IsOwnedBy(_userId))
             {
                 return DispatchResults.Unauthorized<ContactDto>(
-                    $"You are not authorised to access the resource {board.Reference}.");
+                    board.Reference);
             }
             
             contact.SetBoard(board);

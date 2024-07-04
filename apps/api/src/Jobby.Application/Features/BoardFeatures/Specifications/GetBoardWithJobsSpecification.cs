@@ -10,10 +10,10 @@ public sealed class GetBoardWithJobsSpecification : SingleResultSpecification<Bo
         Query
             .Where(b => b.Reference == boardReference)
             .Include(x => x.Lists
-                .OrderBy(list => list.Index)
+                .OrderBy(list => list.Position)
                 )
                 .ThenInclude(x => x.Jobs
-                    .OrderBy(job => job.Index)
+                    .OrderBy(job => job.Position)
                     );
     }
 }

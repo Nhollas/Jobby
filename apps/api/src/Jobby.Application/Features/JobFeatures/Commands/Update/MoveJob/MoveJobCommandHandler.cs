@@ -23,7 +23,7 @@ internal class MoveJobCommandHandler(
             return DispatchResults.NotFound<MoveJobResponse>(request.JobReference);
         }
         
-        if (job.OwnerId != _userId)
+        if (!job.IsOwnedBy(_userId))
         {
             return DispatchResults.Unauthorized<MoveJobResponse>("You are not authorized to move this job");
         }

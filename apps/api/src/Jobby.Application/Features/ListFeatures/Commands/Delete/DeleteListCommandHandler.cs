@@ -21,7 +21,7 @@ internal class DeleteListCommandHandler(
             return DispatchResults.NotFound<DeleteListResponse>(request.ListReference);
         }
         
-        if (list.OwnerId != _userId)
+        if (!list.IsOwnedBy(_userId))
         {
             return DispatchResults.Unauthorized<DeleteListResponse>("You are not authorized to delete this list.");
         }

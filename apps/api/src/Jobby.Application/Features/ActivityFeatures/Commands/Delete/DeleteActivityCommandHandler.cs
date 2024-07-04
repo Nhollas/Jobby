@@ -25,7 +25,7 @@ internal class DeleteActivityCommandHandler(
         
         if (!activity.IsOwnedBy(_userId))
         {
-            return DispatchResults.Unauthorized<DeleteActivityResponse>($"You are not authorised to access the resource {activity.Reference}.");
+            return DispatchResults.Unauthorized<DeleteActivityResponse>(activity.Reference);
         }
         
         await activityRepository.DeleteAsync(activity, cancellationToken);

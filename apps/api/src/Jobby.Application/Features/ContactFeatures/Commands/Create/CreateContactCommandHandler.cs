@@ -39,7 +39,7 @@ internal sealed class CreateContactCommandHandler(
             return DispatchResults.NotFound<ContactDto>(request.BoardReference);
         }
         
-        if (board.OwnerId != _userId)
+        if (!board.IsOwnedBy(_userId))
         {
             return DispatchResults.Unauthorized<ContactDto>("You do not have access to this board.");
         }
@@ -57,12 +57,12 @@ internal sealed class CreateContactCommandHandler(
                 request.Socials.LinkedInUrl,
                 request.Socials.GithubUrl
             ),
-            board, // pass in the board if it's not null
+            board,
             request.Companies,
             request.Emails,
             request.Phones);
 
-        if (request.JobReferences.Count > 0) // only link jobs to the contact if a board was retrieved
+        if (request.JobReferences.Count > 0)
         {
             List<Job> jobsToLink = await jobRepository.ListAsync(new GetJobsFromListSpecification(request.JobReferences, _userId), cancellationToken);
 

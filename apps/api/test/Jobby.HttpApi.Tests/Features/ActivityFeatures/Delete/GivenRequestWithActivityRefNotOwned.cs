@@ -16,7 +16,7 @@ public class GivenRequestWithActivityRefNotOwned(JobbyHttpApiFactory factory)
         
         Board preLoadedBoard = await SeedDataHelper.AddAsync(Board.Create(DateTime.UtcNow, "TestUserTwoId", "TestBoard"), context);
         
-        Activity activityToDelete = preLoadedBoard.CreateActivity(
+        Activity activityToDelete = preLoadedBoard.AddActivity(
             createdDate: DateTime.UtcNow,
             title: "Test Activity",
             type: 1,
@@ -32,6 +32,8 @@ public class GivenRequestWithActivityRefNotOwned(JobbyHttpApiFactory factory)
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
         responseContent.Should()
-            .Be(ResponseHelper.MessageToApiMessage($"You are not authorised to access the resource {activityToDelete.Reference}."));
+            .Be(ResponseHelper.MessageToApiMessage(
+                $"You are not authorised to access the resource {preLoadedActivity.Reference}."));
+
     }
 }

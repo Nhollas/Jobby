@@ -22,9 +22,9 @@ internal sealed class DeleteContactCommandHandler(
             return DispatchResults.NotFound<DeleteContactResponse>(request.ContactReference);
         }
         
-        if (contact.OwnerId != _userId)
+        if (!contact.IsOwnedBy(_userId))
         {
-            return DispatchResults.Unauthorized<DeleteContactResponse>("You do not have access to this contact.");
+            return DispatchResults.Unauthorized<DeleteContactResponse>(contact.Reference);
         }
         
         await contactRepository.DeleteAsync(contact, cancellationToken);

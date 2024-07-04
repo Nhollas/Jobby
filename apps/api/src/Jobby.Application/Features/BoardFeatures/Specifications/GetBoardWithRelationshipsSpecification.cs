@@ -9,11 +9,11 @@ public sealed class GetBoardWithRelationshipsSpecification : Specification<Board
     {
         Query
             .Include(board => board.Lists
-                .OrderBy(list => list.Index)
+                .OrderBy(list => list.Position)
                 )
                 .ThenInclude(
                     jobList => jobList.Jobs
-                    .OrderBy(job => job.Index)
+                    .OrderBy(job => job.Position)
                 )
             .Include(board => board.Contacts)
             .Include(board => board.Activities)

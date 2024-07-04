@@ -28,7 +28,7 @@ internal class CreateJobCommandHandler(
             return DispatchResults.NotFound<JobDto>(request.BoardReference);
         }
         
-        if (board.OwnerId != _userId)
+        if (!board.IsOwnedBy(_userId))
         {
             return DispatchResults.Unauthorized<JobDto>(request.BoardReference);
         }
@@ -42,14 +42,10 @@ internal class CreateJobCommandHandler(
 
         int newIndex = selectedJobList.Jobs.Count == 0 ? 0 : selectedJobList.Jobs.Count;
 
-        Job createdJob = Job.Create(
+        Job createdJob = selectedJobList.CreateJob(
             timeProvider.GetUtcNow(),
-            _userId,
             request.Company,
-            request.Title,
-            newIndex,
-            selectedJobList,
-            board);
+            request.Title);
 
         await jobRepository.AddAsync(createdJob, cancellationToken);
 

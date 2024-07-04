@@ -27,9 +27,9 @@ internal class CreateActivityCommandHandler(
             return DispatchResults.NotFound<ActivityDto>(request.BoardReference);
         
         if (!board.IsOwnedBy(_userId))
-            return DispatchResults.Unauthorized<ActivityDto>($"You are not authorised to access the resource {board.Reference}.");
+            return DispatchResults.Unauthorized<ActivityDto>(board.Reference);
         
-        Activity createdActivity = board.CreateActivity(
+        Activity createdActivity = board.AddActivity(
             timeProvider.GetUtcNow(),
             request.Title,
             (int)request.Type,

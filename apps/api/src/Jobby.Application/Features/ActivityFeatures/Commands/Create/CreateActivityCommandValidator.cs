@@ -8,7 +8,7 @@ public sealed class CreateActivityCommandValidator : AbstractValidator<CreateAct
         RuleFor(command => command.Title)
             .NotNull().WithMessage("This property is required.");
         RuleFor(command => command.Title)
-            .NotEmpty().WithMessage("This property cannot be empty.").When(command => command.Title != null);
+            .NotEmpty().WithMessage("This property cannot be empty.").When(command => string.IsNullOrEmpty(command.Title) );
 
         RuleFor(command => command.Type)
             .NotNull().WithMessage("This property is required.")

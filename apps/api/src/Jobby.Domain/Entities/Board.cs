@@ -23,8 +23,8 @@ public class Board : Entity
     public string Name { get; private set; } = string.Empty;
     public IReadOnlyCollection<JobList> Lists => _lists;
     public IReadOnlyCollection<Activity> Activities => _activities;
-    public IReadOnlyCollection<Job> Jobs { get; init; }
-    public IReadOnlyCollection<Contact> Contacts { get; init; }
+    public IReadOnlyCollection<Job> Jobs { get; init; } = new List<Job>();
+    public IReadOnlyCollection<Contact> Contacts { get; init; } = new List<Contact>();
 
     public static Board Create(
         DateTimeOffset createdDate,
@@ -37,18 +37,30 @@ public class Board : Entity
             ownerId,
             name);
         
-        List<JobList> defaultJobLists =
-        [
-            JobList.Create(createdDate, ownerId, "Applied", 0, board),
-            JobList.Create(createdDate, ownerId, "Wishlist", 1, board),
-            JobList.Create(createdDate, ownerId, "Interview", 2, board),
-            JobList.Create(createdDate, ownerId, "Offer", 3, board),
-            JobList.Create(createdDate, ownerId, "Rejected", 4, board)
-        ];
-        
-        board.SetJobLists(defaultJobLists);
+        string[] defaultJobListNames = ["Applied", "Wishlist", "Interview", "Offer", "Rejected"];
+
+        foreach (string jobListName in defaultJobListNames)
+        {   
+            board.AddJobList(createdDate, jobListName);
+        }
 
         return board;
+    }
+    
+    public JobList AddJobList(
+        DateTimeOffset createdDate,
+        string name)
+    {
+        JobList createdJobList = JobList.Create(
+            createdDate,
+            OwnerId,
+            name,
+            position: _lists.Count + 1,
+            this);
+        
+        _lists.Add(createdJobList);
+        
+        return createdJobList;
     }
 
     public void SetBoardName(string name)
@@ -56,19 +68,12 @@ public class Board : Entity
         Name = name;
     }
 
-    public bool BoardOwnsList(string jobListReference)
-    {
-        return _lists
-            .Select(list => list.Reference == jobListReference)
-            .Any();
-    }
-
-    public void SetJobLists(List<JobList> jobLists)
-    {
-        _lists.AddRange(jobLists);
-    }
+    public bool BoardOwnsList(string jobListReference) => 
+        _lists
+        .Select(list => list.Reference == jobListReference)
+        .Any();
     
-    public Activity CreateActivity(
+    public Activity AddActivity(
         DateTimeOffset createdDate,
         string title, 
         int type, 
@@ -81,7 +86,6 @@ public class Board : Entity
         Activity activity = Activity.Create(createdDate, OwnerId, title, type, startDate, endDate, note, completed, this);
 
         if (string.IsNullOrEmpty(jobReference)) return activity;
-        
         if (!TryGetJobFromBoard(jobReference, out Job? jobToLink))
         {
             throw new InvalidOperationException($"The {nameof(Job)} {jobReference} you wanted to link doesn't exist in the Board {Reference}.");

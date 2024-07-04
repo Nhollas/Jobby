@@ -22,7 +22,7 @@ internal class DeleteJobCommandHandler(
             return DispatchResults.NotFound<DeleteJobResponse>(request.JobReference);
         }
         
-        if (job.OwnerId != _userId)
+        if (!job.IsOwnedBy(_userId))
         {
             return DispatchResults.Unauthorized<DeleteJobResponse>("You are not authorized to delete this job");
         }

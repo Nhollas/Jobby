@@ -24,7 +24,7 @@ internal class GetJobDetailQueryHandler(
             return DispatchResults.NotFound<JobDto>(request.JobReference);
         }
         
-        if (job.OwnerId != _userId)
+        if (!job.IsOwnedBy(_userId))
         {
             return DispatchResults.Unauthorized<JobDto>("You are not authorized to view this job.");
         }

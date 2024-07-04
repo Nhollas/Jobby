@@ -38,7 +38,7 @@ internal sealed class UpdateActivityCommandHandler(
         
         if (!activity.IsOwnedBy(_userId))
         {
-            return DispatchResults.Unauthorized<ActivityDto>($"You are not authorised to access the resource {activity.Reference}.");
+            return DispatchResults.Unauthorized<ActivityDto>(activity.Reference);
         }
         
         activity.Update(
@@ -58,9 +58,9 @@ internal sealed class UpdateActivityCommandHandler(
                 return DispatchResults.NotFound<ActivityDto>(request.JobReference);
             }
             
-            if (job.OwnerId != _userId)
+            if (!job.IsOwnedBy(_userId))
             {
-                return DispatchResults.Unauthorized<ActivityDto>($"You are not authorised to access the resource {job.Reference}.");
+                return DispatchResults.Unauthorized<ActivityDto>(job.Reference);
             }
             
             if (!(job.BoardId == activity.BoardId))

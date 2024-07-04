@@ -10,12 +10,12 @@ public sealed class JobbyDbContext : DbContext
     {
     }
 
-    public DbSet<Board> Boards { get; set; }
-    public DbSet<JobList> JobLists { get; set; }
-    public DbSet<Job> Jobs { get; set; }
-    public DbSet<JobContact> JobContacts { get; set; }
-    public DbSet<Contact> Contacts { get; set; }
-    public DbSet<Activity> Activities { get; set; }
+    public DbSet<Board> Boards { get; init; }
+    public DbSet<JobList> JobLists { get; init; }
+    public DbSet<Job> Jobs { get; init; }
+    public DbSet<JobContact> JobContacts { get; init; }
+    public DbSet<Contact> Contacts { get; init; }
+    public DbSet<Activity> Activities { get; init; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
