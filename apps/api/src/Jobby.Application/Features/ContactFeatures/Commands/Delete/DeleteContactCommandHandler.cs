@@ -1,4 +1,5 @@
 ﻿using Jobby.Application.Abstractions.Specification;
+using Jobby.Application.Interfaces.Repositories;
 using Jobby.Application.Results;
 using Jobby.Application.Services;
 using Jobby.Domain.Entities;
@@ -6,8 +7,9 @@ using MediatR;
 
 namespace Jobby.Application.Features.ContactFeatures.Commands.Delete;
 
-internal sealed class DeleteContactCommandHandler(
+internal  class DeleteContactCommandHandler(
     IRepository<Contact> contactRepository,
+    IContactRepository specificContactRepository,
     IUserService userService)
     : IRequestHandler<DeleteContactCommand, IDispatchResult<DeleteContactResponse>>
 {
@@ -28,6 +30,7 @@ internal sealed class DeleteContactCommandHandler(
         }
         
         await contactRepository.DeleteAsync(contact, cancellationToken);
+        await specificContactRepository.ClearJobsAsync(contact, cancellationToken);
 
         return DispatchResults.Ok(new DeleteContactResponse());
     }

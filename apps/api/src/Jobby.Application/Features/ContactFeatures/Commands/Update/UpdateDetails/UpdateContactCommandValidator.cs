@@ -2,7 +2,7 @@ using FluentValidation;
 
 namespace Jobby.Application.Features.ContactFeatures.Commands.Update.UpdateDetails;
 
-public sealed class UpdateContactCommandValidator : AbstractValidator<UpdateContactCommand>
+public  class UpdateContactCommandValidator : AbstractValidator<UpdateContactCommand>
 {
     public UpdateContactCommandValidator()
     {

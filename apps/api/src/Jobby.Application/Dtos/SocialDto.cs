@@ -1,5 +1,5 @@
 ﻿namespace Jobby.Application.Dtos;
-public sealed record SocialDto(
+public  record SocialDto(
     string TwitterUrl,
     string FacebookUrl,
     string LinkedInUrl,

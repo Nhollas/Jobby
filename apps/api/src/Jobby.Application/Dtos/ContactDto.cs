@@ -2,7 +2,7 @@
 
 namespace Jobby.Application.Dtos;
 
-public sealed record ContactDto : EntityDto
+public  record ContactDto : EntityDto
 {
     public string FirstName { get; set; }
     public string LastName { get; set; }

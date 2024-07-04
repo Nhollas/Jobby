@@ -20,6 +20,7 @@ public class UserService : IUserService
 
     public string UserId()
     {
-        return _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new InvalidOperationException();
+        return _httpContextAccessor.HttpContext.User
+            .FindFirstValue(ClaimTypes.NameIdentifier) ?? throw new InvalidOperationException();
     }
 }

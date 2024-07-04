@@ -20,7 +20,6 @@ public class ResponseFormattingFilter : IEndpointFilter
                 IDispatchUnauthorizedResult<object> unauthorized => Unauthorized(unauthorized),
                 IDispatchUnprocessableEntityResult<object> unprocessableEntity => UnprocessableEntity(unprocessableEntity),
                 IDispatchNotFoundResult<object> notFound => NotFound(notFound),
-                IDispatchResult<object> => throw new NotImplementedException(response.GetType().FullName),
                 _ => response
             };
         }

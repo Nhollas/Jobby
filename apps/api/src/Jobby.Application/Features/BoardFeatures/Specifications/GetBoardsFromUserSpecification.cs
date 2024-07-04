@@ -2,7 +2,7 @@
 using Jobby.Domain.Entities;
 
 namespace Jobby.Application.Features.BoardFeatures.Specifications;
-public sealed class GetBoardsFromUserSpecification : Specification<Board>
+public  class GetBoardsFromUserSpecification : Specification<Board>
 {
     public GetBoardsFromUserSpecification(string userId)
     {

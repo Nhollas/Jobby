@@ -3,7 +3,7 @@ using Jobby.Domain.Entities;
 
 namespace Jobby.Application.Features.ContactFeatures.Specifications;
 
-public sealed class GetContactWithSocialsSpecification : Specification<Contact>
+public  class GetContactWithSocialsSpecification : Specification<Contact>
 {
 	public GetContactWithSocialsSpecification(string contactReference)
 	{

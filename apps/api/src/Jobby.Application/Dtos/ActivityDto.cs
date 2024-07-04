@@ -2,7 +2,7 @@
 
 namespace Jobby.Application.Dtos;
 
-public sealed record ActivityDto(
+public  record ActivityDto(
     string Title,
     string Name,
     int Type,

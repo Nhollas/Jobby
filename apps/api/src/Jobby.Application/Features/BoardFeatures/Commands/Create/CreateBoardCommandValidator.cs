@@ -2,7 +2,7 @@
 
 namespace Jobby.Application.Features.BoardFeatures.Commands.Create;
 
-public sealed class CreateBoardCommandValidator : AbstractValidator<CreateBoardCommand>
+public  class CreateBoardCommandValidator : AbstractValidator<CreateBoardCommand>
 {
     public CreateBoardCommandValidator()
     {

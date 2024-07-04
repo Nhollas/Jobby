@@ -3,7 +3,7 @@ using Jobby.Domain.Entities;
 
 namespace Jobby.Application.Features.ContactFeatures.Specifications;
 
-public sealed class GetJobsFromListSpecification : Specification<Job>
+public  class GetJobsFromListSpecification : Specification<Job>
 {
     public GetJobsFromListSpecification(ICollection<string> jobReferences, string userId)
     {

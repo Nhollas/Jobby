@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace Jobby.Persistence.Data;
 
-public sealed class JobbyDbContext : DbContext
+public  class JobbyDbContext : DbContext
 {
     public JobbyDbContext(DbContextOptions<JobbyDbContext> options) : base(options)
     {

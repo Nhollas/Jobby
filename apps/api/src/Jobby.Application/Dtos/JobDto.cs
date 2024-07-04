@@ -3,7 +3,7 @@ using Jobby.Application.Dtos.Base;
 
 namespace Jobby.Application.Dtos;
 
-public sealed record JobDto : EntityDto
+public  record JobDto : EntityDto
 {
     public string Company { get; set; }
     public string Title { get; set; }
