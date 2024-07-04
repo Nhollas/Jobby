@@ -5,12 +5,7 @@ public interface IDispatchNotFoundResult<out TResponse> : IDispatchResult<TRespo
     string ErrorMessage { get; }
 }
 
-public class DispatchNotFoundResult<TResponse> : IDispatchNotFoundResult<TResponse>
+public class DispatchNotFoundResult<TResponse>(string? errorMessage) : IDispatchNotFoundResult<TResponse>
 {
-    public string ErrorMessage { get; }
-
-    public DispatchNotFoundResult(string? errorMessage)
-    {
-        ErrorMessage = errorMessage ?? throw new ArgumentNullException(nameof(errorMessage));
-    }
+    public string ErrorMessage { get; } = errorMessage ?? throw new ArgumentNullException(nameof(errorMessage));
 }

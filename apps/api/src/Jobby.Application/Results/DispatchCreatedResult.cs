@@ -5,12 +5,7 @@ public interface IDispatchCreatedResult<out TResponse> : IDispatchResult<TRespon
     TResponse Response { get; }
 }
 
-public class DispatchCreatedResult<TResponse> : IDispatchCreatedResult<TResponse>
+public class DispatchCreatedResult<TResponse>(TResponse response) : IDispatchCreatedResult<TResponse>
 {
-    public TResponse Response { get; }
-
-    public DispatchCreatedResult(TResponse response)
-    {
-        Response = response ?? throw new ArgumentNullException(nameof(response));
-    }
+    public TResponse Response { get; } = response ?? throw new ArgumentNullException(nameof(response));
 }

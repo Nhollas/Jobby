@@ -5,12 +5,7 @@ public interface IDispatchBadRequestResult<out TResponse> : IDispatchResult<TRes
     string ErrorMessage { get; }
 }
 
-public class DispatchBadRequestResult<TResponse> : IDispatchBadRequestResult<TResponse>
+public class DispatchBadRequestResult<TResponse>(string errorMessage) : IDispatchBadRequestResult<TResponse>
 {
-    public string ErrorMessage { get; }
-
-    public DispatchBadRequestResult(string errorMessage)
-    {
-        ErrorMessage = errorMessage ?? throw new ArgumentNullException(nameof(errorMessage));
-    }
+    public string ErrorMessage { get; } = errorMessage ?? throw new ArgumentNullException(nameof(errorMessage));
 }

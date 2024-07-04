@@ -9,20 +9,13 @@ public interface IDispatcher
         where TResponse : class;
 }
 
-public class Dispatcher : IDispatcher
+public class Dispatcher(IMediator mediator) : IDispatcher
 {
-    private readonly IMediator _mediator;
-
-    public Dispatcher(IMediator mediator)
-    {
-        _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
-    }
-
     public async Task<IDispatchResult<TResponse>> Dispatch<TResponse>(IRequest<IDispatchResult<TResponse>> request, CancellationToken cancellationToken = default) where TResponse : class
     {
         try
         {
-            return await _mediator.Send(request, cancellationToken);
+            return await mediator.Send(request, cancellationToken);
         }
         catch (ValidationException validationException)
         {
