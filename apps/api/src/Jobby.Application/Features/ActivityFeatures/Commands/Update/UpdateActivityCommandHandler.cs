@@ -9,7 +9,7 @@ using MediatR;
 
 namespace Jobby.Application.Features.ActivityFeatures.Commands.Update;
 
-internal  class UpdateActivityCommandHandler(
+internal class UpdateActivityCommandHandler(
     IUserService userService,
     IRepository<Activity> activityRepository,
     IRepository<Job> jobRepository,

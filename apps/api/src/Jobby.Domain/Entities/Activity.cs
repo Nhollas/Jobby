@@ -5,6 +5,7 @@ namespace Jobby.Domain.Entities;
 
 public class Activity : Entity
 {
+    #pragma warning disable CS8618 // Required by Entity Framework
     private Activity(){}
 
     private Activity(
@@ -37,7 +38,7 @@ public class Activity : Entity
     {
         get
         {
-            if (!ActivityConstants.TypesDictionary.TryGetValue(Type, out string name))
+            if (!ActivityConstants.TypesDictionary.TryGetValue(Type, out var name))
             {
                 name = ActivityConstants.TypesDictionary[0];
             }
@@ -49,14 +50,10 @@ public class Activity : Entity
     public DateTimeOffset EndDate { get; private set; }
     public string Note { get; private set; }
     public bool Completed { get; private set; }
-
-
-    // Database Relationship Properties
     public Board Board { get; set; }    
     public string BoardReference { get; set; }
     public Guid BoardId { get; set; }
-
-    public Job Job { get; set; } = null!;
+    public Job? Job { get; set; } = null;
     public string? JobReference { get; set; }
     public Guid? JobId { get; set; }
 
@@ -65,7 +62,7 @@ public class Activity : Entity
         DateTimeOffset createdDate,
         string ownerId,
         string title,
-        int activityType,
+        int type,
         DateTimeOffset startDate,
         DateTimeOffset endDate,
         string note,
@@ -77,7 +74,7 @@ public class Activity : Entity
             createdDate,
             ownerId,
             title,
-            activityType,
+            type,
             startDate,
             endDate,
             note,

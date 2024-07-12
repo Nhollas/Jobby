@@ -1,15 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="Entities\Common\**" />
-    <EmbeddedResource Remove="Entities\Common\**" />
-    <None Remove="Entities\Common\**" />
-  </ItemGroup>
-
 </Project>

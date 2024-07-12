@@ -7,6 +7,7 @@ public class JobList : Entity
 {
     private readonly List<Job> _jobs = [];
 
+    #pragma warning disable CS8618 // Required by Entity Framework
     private JobList(){}
 
     private JobList(
@@ -32,7 +33,6 @@ public class JobList : Entity
     public Guid BoardId { get; set; }
     public string BoardReference { get; set; }
 
-
     internal static JobList Create(
         DateTimeOffset createdDate,
         string ownerId,
@@ -49,9 +49,9 @@ public class JobList : Entity
             board);
     }
 
-    public Job CreateJob(DateTimeOffset createdDate, string company, string jobTitle)
+    public Job CreateJob(TimeProvider timeProvider, string company, string jobTitle)
     {
-        Job createdJob = Job.Create(createdDate, OwnerId, company, jobTitle, _jobs.Count, this, Board);
+        Job createdJob = Job.Create(createdDate: timeProvider.GetUtcNow(), OwnerId, company, jobTitle, _jobs.Count, this, Board);
 
         _jobs.Add(createdJob);
         

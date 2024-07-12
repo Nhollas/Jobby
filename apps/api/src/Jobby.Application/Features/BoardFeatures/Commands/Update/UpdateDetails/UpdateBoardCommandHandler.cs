@@ -31,7 +31,7 @@ internal class UpdateBoardCommandHandler(
             return DispatchResults.Unauthorized<BoardDto>(board.Reference);
         }
         
-        board.SetBoardName(request.Name);
+        board.UpdateBoardName(request.Name);
         board.UpdateEntity(timeProvider.GetUtcNow());
 
         await boardRepository.UpdateAsync(board, cancellationToken);

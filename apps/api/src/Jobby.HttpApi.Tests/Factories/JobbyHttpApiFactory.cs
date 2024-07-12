@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Time.Testing;
 using Microsoft.IdentityModel.Tokens;
 using Testcontainers.MsSql;
 
@@ -23,6 +24,7 @@ public class JobbyHttpApiFactory : WebApplicationFactory<Program>, IAsyncLifetim
         .Build();
 
     public HttpClient HttpClient { get; private set; }
+    public FakeTimeProvider TimeProvider { get; } = new();
 
     public JobbyHttpApiFactory()
     {

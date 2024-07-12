@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jobby.Persistence", "src\Jo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jobby.Domain", "src\Jobby.Domain\Jobby.Domain.csproj", "{ED126B06-B724-4871-9039-3E994EB55AC4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jobby.HttpApi.Tests", "test\Jobby.HttpApi.Tests\Jobby.HttpApi.Tests.csproj", "{4F9B36CE-272E-4DFB-83E1-4D4A66033D85}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jobby.HttpApi.Tests", "src\Jobby.HttpApi.Tests\Jobby.HttpApi.Tests.csproj", "{4F9B36CE-272E-4DFB-83E1-4D4A66033D85}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

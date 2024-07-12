@@ -27,7 +27,7 @@ internal class UpdateJobCommandHandler(
         
         if (!job.IsOwnedBy(_userId))
         {
-            return DispatchResults.Unauthorized<JobDto>("You are not authorized to update this job");
+            return DispatchResults.Unauthorized<JobDto>(job.Reference);
         }
 
         mapper.Map(request, job, typeof(UpdateJobCommand), typeof(Job));

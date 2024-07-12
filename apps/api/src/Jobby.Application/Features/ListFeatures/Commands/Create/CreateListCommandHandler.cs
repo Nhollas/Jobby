@@ -34,7 +34,7 @@ internal class CreateListCommandHandler(
         }
         
         JobList createdJobList = board.AddJobList(
-            timeProvider.GetUtcNow(),
+            timeProvider,
             request.Name);
 
         await jobListRepository.AddAsync(createdJobList, cancellationToken);
@@ -53,7 +53,7 @@ internal class CreateListCommandHandler(
         
         if (!job.IsOwnedBy(_userId))
         {
-            return DispatchResults.Unauthorized<JobListDto>("You are not authorized to add this job to a list.");
+            return DispatchResults.Unauthorized<JobListDto>(job.Reference);
         }
         
         job.SetJobList(createdJobList);

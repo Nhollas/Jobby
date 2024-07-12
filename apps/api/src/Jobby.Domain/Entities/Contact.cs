@@ -6,6 +6,7 @@ namespace Jobby.Domain.Entities;
 
 public class Contact : Entity
 {
+    #pragma warning disable CS8618 // Required by Entity Framework
     private Contact(){}
 
     private Contact(
@@ -18,9 +19,9 @@ public class Contact : Entity
         string location,
         Social socials,
         Board board,
-        List<string> companies,
-        List<CreateEmailDto> emails,
-        List<CreatePhoneDto> phones)
+        IEnumerable<string> companies,
+        IEnumerable<CreateEmailDto> emails,
+        IEnumerable<CreatePhoneDto> phones)
         : base(reference, createdDate, ownerId)
     {
         FirstName = firstName;
@@ -40,18 +41,16 @@ public class Contact : Entity
     public string JobTitle { get; private set; }
     public string Location { get; private set; }
     public Social Socials { get; private set; }
-    public List<Job> Jobs { get; } = new();
-    public List<Company> Companies { get; } = new();
-    public List<Email> Emails { get; } = new();
-    public List<Phone> Phones { get; } = new();
+    public List<Job> Jobs { get; } = [];
+    public List<Company> Companies { get; } = [];
+    public List<Email> Emails { get; } = [];
+    public List<Phone> Phones { get; } = [];
 
 
-    // Database Relationship Properties
-    public List<JobContact> JobContacts { get; } = new();
-    public Board Board { get; private set; }
-    
-    public string? BoardReference { get; private set; }
-    public Guid? BoardId { get; private set; }
+    public List<JobContact> JobContacts { get; } = [];
+    public Board? Board { get; private set; } = null;
+    public string? BoardReference { get; private set; } = null;
+    public Guid? BoardId { get; private set; } = null;
 
 
     public static Contact Create(
@@ -63,11 +62,11 @@ public class Contact : Entity
         string location,
         Social socials,
         Board board,
-        List<string> companies,
-        List<CreateEmailDto> emails,
-        List<CreatePhoneDto> phones)
+        IEnumerable<string> companies,
+        IEnumerable<CreateEmailDto> emails,
+        IEnumerable<CreatePhoneDto> phones) 
     {
-        Contact contact = new Contact(
+        Contact contact = new(
             reference: EntityReferenceProvider<Contact>.CreateReference(),
             createdDate,
             ownerId,
@@ -111,7 +110,7 @@ public class Contact : Entity
         Jobs.Clear();
     }
 
-    public void UpdateCompanies(List<Company> companies)
+    public void ReplaceCompanies(List<Company> companies)
     {
         Companies.Clear();
 
@@ -136,7 +135,7 @@ public class Contact : Entity
         return phones.Select(phone => Phone.Create(createdDate, OwnerId, phone.Number, (ContactConstants.PhoneType)phone.Type, this)).ToList();
     }
 
-    public void UpdateEmails(List<Email> emails)
+    public void ReplaceEmails(List<Email> emails)
     {
         Emails.Clear();
 
@@ -146,7 +145,7 @@ public class Contact : Entity
         }
     }
 
-    public void UpdatePhones(List<Phone> phones)
+    public void ReplacePhones(List<Phone> phones)
     {
         Phones.Clear();
 

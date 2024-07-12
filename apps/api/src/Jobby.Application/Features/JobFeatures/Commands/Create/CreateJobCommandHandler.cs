@@ -33,7 +33,7 @@ internal class CreateJobCommandHandler(
             return DispatchResults.Unauthorized<JobDto>(request.BoardReference);
         }
 
-        if (!board.BoardOwnsList(request.JobListReference))
+        if (!board.DoesBoardOwnList(request.JobListReference))
         {
             return DispatchResults.BadRequest<JobDto>(request.JobListReference);
         }
@@ -43,7 +43,7 @@ internal class CreateJobCommandHandler(
         int newIndex = selectedJobList.Jobs.Count == 0 ? 0 : selectedJobList.Jobs.Count;
 
         Job createdJob = selectedJobList.CreateJob(
-            timeProvider.GetUtcNow(),
+            timeProvider,
             request.Company,
             request.Title);
 

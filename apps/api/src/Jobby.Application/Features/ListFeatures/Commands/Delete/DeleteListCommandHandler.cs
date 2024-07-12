@@ -23,7 +23,7 @@ internal class DeleteListCommandHandler(
         
         if (!list.IsOwnedBy(_userId))
         {
-            return DispatchResults.Unauthorized<DeleteListResponse>("You are not authorized to delete this list.");
+            return DispatchResults.Unauthorized<DeleteListResponse>(list.Reference);
         }
 
         await jobListRepository.DeleteAsync(list, cancellationToken);

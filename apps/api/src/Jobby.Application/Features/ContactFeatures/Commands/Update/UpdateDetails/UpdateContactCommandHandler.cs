@@ -80,7 +80,7 @@ internal class UpdateContactCommandHandler(
                 .Select(x => Company.Create(timeProvider.GetUtcNow(), _userId, x.Name, contact))
                 .ToList();
 
-            contact.UpdateCompanies(updatedCompanies);
+            contact.ReplaceCompanies(updatedCompanies);
         }
 
         if (request.Emails.Count > 0)
@@ -89,7 +89,7 @@ internal class UpdateContactCommandHandler(
                 .Select(x => Email.Create(timeProvider.GetUtcNow(), _userId, x.Name, (EmailType)x.Type, contact))
                 .ToList();
 
-            contact.UpdateEmails(updatedEmails);
+            contact.ReplaceEmails(updatedEmails);
         }
 
         if (request.Phones.Count > 0)
@@ -98,7 +98,7 @@ internal class UpdateContactCommandHandler(
                 .Select(x => Phone.Create(timeProvider.GetUtcNow(), _userId, x.Number, (PhoneType)x.Type, contact))
                 .ToList();
 
-            contact.UpdatePhones(updatedPhones);
+            contact.ReplacePhones(updatedPhones);
         }
 
         contact.UpdateEntity(timeProvider.GetUtcNow());

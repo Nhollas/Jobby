@@ -29,7 +29,7 @@ internal class CreateBoardCommandHandler(
         }
         
         Board board = Board.Create(
-            timeProvider.GetUtcNow(),
+            timeProvider,
             _userId,
             request.Name);
 

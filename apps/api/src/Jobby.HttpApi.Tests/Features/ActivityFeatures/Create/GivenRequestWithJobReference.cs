@@ -21,7 +21,7 @@ public class GivenRequestWithJobReferenceFixture(JobbyHttpApiFactory factory) : 
     public async Task InitializeAsync()
     {
         await using JobbyDbContext dbContext = factory.GetDbContext();
-        (Board board, Job job) = await SeedDataHelper.CreateBoardWithJobAsync(dbContext);
+        (Board board, Job job) = await SeedDataHelper.CreateBoardWithJobAsync(factory);
         
         Body = new CreateActivityCommand(
             BoardReference: board.Reference,
@@ -95,6 +95,6 @@ public class GivenRequestWithJobReference(GivenRequestWithJobReferenceFixture fi
     [Fact]
     public void ThenStoredActivityHasJobLinked()
     {
-        fixture.StoredActivity.Job.Reference.Should().Be(Body.JobReference);
+        fixture.StoredActivity.Job!.Reference.Should().Be(Body.JobReference);
     }
 }

@@ -13,31 +13,14 @@ public class UpdateActivityTestFixture(JobbyHttpApiFactory factory) : IAsyncLife
 {
     public HttpResponseMessage Response { get; private set; } = new();
     public ActivityDto? ReturnedActivity { get; private set; }
-    private const string UserId = "TestUserId";
-
-    private static readonly Board PreloadedBoard = Board.Create(DateTime.UtcNow, UserId, "TestBoard");
-
     public UpdateActivityCommand Body { get; private set; } = null!;
-    
-    public readonly Activity PreloadedActivity = Activity.Create(
-        DateTime.UtcNow,
-        UserId,
-        "TestActivity",
-        (int)ActivityConstants.Types.Apply,
-        DateTime.UtcNow,
-        DateTime.UtcNow.AddDays(1),
-        "Test Note",
-        false,
-        PreloadedBoard
-    );
+    public Activity PreloadedActivity { get; private set; } = null!;
 
 
     public async Task InitializeAsync()
     {
-        await using JobbyDbContext context = factory.GetDbContext();
-        
-        await SeedDataHelper.AddAsync(PreloadedBoard, context);
-        await SeedDataHelper.AddAsync(PreloadedActivity, context);
+        (_, Activity preloadedActivity) = await SeedDataHelper.CreateBoardWithActivityAsync(factory);
+        PreloadedActivity = preloadedActivity;
 
         Body = new UpdateActivityCommand(
             ActivityReference: PreloadedActivity.Reference,
@@ -52,10 +35,5 @@ public class UpdateActivityTestFixture(JobbyHttpApiFactory factory) : IAsyncLife
         ReturnedActivity = await Response.Content.ReadFromJsonAsync<ActivityDto>();
     }
 
-    public async Task DisposeAsync()
-    {
-        await using JobbyDbContext context = factory.GetDbContext();
-        
-        await SeedDataHelper.RemoveAsync(PreloadedBoard, context);
-    }
+    public Task DisposeAsync() => Task.CompletedTask;
 }

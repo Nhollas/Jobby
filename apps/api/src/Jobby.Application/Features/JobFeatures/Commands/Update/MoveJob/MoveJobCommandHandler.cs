@@ -25,7 +25,7 @@ internal class MoveJobCommandHandler(
         
         if (!job.IsOwnedBy(_userId))
         {
-            return DispatchResults.Unauthorized<MoveJobResponse>("You are not authorized to move this job");
+            return DispatchResults.Unauthorized<MoveJobResponse>(job.Reference);
         }
 
         // TODO: Fetch the target job list and set it on the job

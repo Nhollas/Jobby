@@ -30,7 +30,7 @@ internal class CreateActivityCommandHandler(
             return DispatchResults.Unauthorized<ActivityDto>(board.Reference);
         
         Activity createdActivity = board.AddActivity(
-            timeProvider.GetUtcNow(),
+            timeProvider,
             request.Title,
             (int)request.Type,
             request.StartDate,

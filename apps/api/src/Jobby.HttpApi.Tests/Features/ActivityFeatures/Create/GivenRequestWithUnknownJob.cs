@@ -5,7 +5,6 @@ using Jobby.Domain.Entities;
 using Jobby.Domain.Static;
 using Jobby.HttpApi.Tests.Factories;
 using Jobby.HttpApi.Tests.Helpers;
-using Jobby.Persistence.Data;
 
 namespace Jobby.HttpApi.Tests.Features.ActivityFeatures.Create;
 
@@ -15,9 +14,7 @@ public class GivenRequestWithUnknownJob(JobbyHttpApiFactory factory)
     [Fact]
     public async Task ThenReturns400BadRequest()
     {
-        await using JobbyDbContext context = factory.GetDbContext();
-        
-        Board preLoadedBoard = await SeedDataHelper.AddAsync(Board.Create(DateTime.UtcNow, "TestUserId", "TestBoard"), context);
+        (Board preLoadedBoard, _) = await SeedDataHelper.CreateBoardWithJobAsync(factory);
         
         CreateActivityCommand body = new(
             BoardReference: preLoadedBoard.Reference,

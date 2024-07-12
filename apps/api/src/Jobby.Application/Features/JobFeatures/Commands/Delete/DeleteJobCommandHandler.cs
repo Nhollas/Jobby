@@ -24,7 +24,7 @@ internal class DeleteJobCommandHandler(
         
         if (!job.IsOwnedBy(_userId))
         {
-            return DispatchResults.Unauthorized<DeleteJobResponse>("You are not authorized to delete this job");
+            return DispatchResults.Unauthorized<DeleteJobResponse>(job.Reference);
         }
 
         await jobRepository.DeleteAsync(job, cancellationToken);

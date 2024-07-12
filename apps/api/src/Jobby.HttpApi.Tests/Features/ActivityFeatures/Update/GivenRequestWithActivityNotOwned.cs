@@ -15,26 +15,8 @@ public class GivenRequestWithActivityNotOwned(JobbyHttpApiFactory factory)
     [Fact]
     public async Task ThenReturns401Unauthorized()
     {
-        await using JobbyDbContext context = factory.GetDbContext();
+        (_, Activity preLoadedActivity) = await SeedDataHelper.CreateBoardWithActivityAsync(factory, "RandomUserId");
         
-        Board? preLoadedBoard = Board.Create(DateTime.UtcNow, "TestUserId", "TestBoard");
-        
-        await SeedDataHelper.AddAsync(preLoadedBoard, context);
-
-        Activity? preLoadedActivity = Activity.Create(
-            DateTime.UtcNow,
-            "TestUser2Id",
-            "TestActivity",
-            (int)ActivityConstants.Types.Apply,
-            DateTime.UtcNow,
-            DateTime.UtcNow.AddDays(1),
-            "Test Note",
-            false,
-            preLoadedBoard
-        );
-        
-        await SeedDataHelper.AddAsync(preLoadedActivity, context);
-
         UpdateActivityCommand body = new(
             ActivityReference: preLoadedActivity.Reference,
             Title: "Test Activity",

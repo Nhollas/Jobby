@@ -11,7 +11,7 @@ using MediatR;
 
 namespace Jobby.Application.Features.ContactFeatures.Commands.Create;
 
-internal  class CreateContactCommandHandler(
+internal class CreateContactCommandHandler(
     IUserService userService,
     IRepository<Board> boardRepository,
     TimeProvider timeProvider,
