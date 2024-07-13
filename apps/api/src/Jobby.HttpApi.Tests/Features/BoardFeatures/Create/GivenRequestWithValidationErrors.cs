@@ -1,7 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using System.Text;
-using Jobby.HttpApi.Tests.Factories;
+using Jobby.HttpApi.Tests.Setup;
 
 namespace Jobby.HttpApi.Tests.Features.BoardFeatures.Create;
 

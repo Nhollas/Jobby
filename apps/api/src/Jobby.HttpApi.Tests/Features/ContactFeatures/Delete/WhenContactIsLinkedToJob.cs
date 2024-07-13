@@ -1,7 +1,7 @@
 using System.Net;
 using Jobby.Domain.Entities;
-using Jobby.HttpApi.Tests.Factories;
 using Jobby.HttpApi.Tests.Helpers;
+using Jobby.HttpApi.Tests.Setup;
 using Jobby.Persistence.Data;
 using Microsoft.EntityFrameworkCore;
 

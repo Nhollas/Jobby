@@ -3,8 +3,8 @@ using Jobby.Application.Dtos;
 using Jobby.Application.Features.ActivityFeatures.Commands.Update;
 using Jobby.Domain.Entities;
 using Jobby.Domain.Static;
-using Jobby.HttpApi.Tests.Factories;
 using Jobby.HttpApi.Tests.Helpers;
+using Jobby.HttpApi.Tests.Setup;
 
 namespace Jobby.HttpApi.Tests.Features.ActivityFeatures.Update.Fixtures;
 

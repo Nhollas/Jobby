@@ -9,20 +9,23 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Time.Testing;
 using Testcontainers.MsSql;
+using Respawn;
 
-namespace Jobby.HttpApi.Tests.Factories;
+namespace Jobby.HttpApi.Tests.Setup;
 
 public class JobbyHttpApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
     private string _dbConnectionString = null!;
+    private Respawner _respawner = null!;
     private readonly MsSqlContainer _mssqlContainer = new MsSqlBuilder()
         .WithImage("mcr.microsoft.com/mssql/server:latest")
         .WithReuse(true)
         .WithName("JobbyTestContainer")
         .Build();
-
+    public string UserId = "TestUserId";
     public HttpClient HttpClient { get; private set; }
     public FakeTimeProvider TimeProvider { get; } = new();
+
 
     public JobbyHttpApiFactory()
     {
@@ -32,24 +35,28 @@ public class JobbyHttpApiFactory : WebApplicationFactory<Program>, IAsyncLifetim
     public async Task InitializeAsync()
     {
         await _mssqlContainer.StartAsync();
-        
+
         _dbConnectionString = _mssqlContainer.GetConnectionString();
-        
-        await using JobbyDbContext context = GetDbContext();
-        
-        await context.Database.EnsureCreatedAsync();
+
+        JobbyDbContext dbContext = GetDbContext();
+        await dbContext.Database.EnsureCreatedAsync();
+
+        _respawner = await Respawner.CreateAsync(_dbConnectionString, new RespawnerOptions
+        {
+            DbAdapter = DbAdapter.SqlServer
+        });
     }
-    
+
     public JobbyDbContext GetDbContext() => new(new DbContextOptionsBuilder<JobbyDbContext>()
         .UseSqlServer(_dbConnectionString).Options);
 
-    Task IAsyncLifetime.DisposeAsync() => DisposeAsync().AsTask();
+    async Task IAsyncLifetime.DisposeAsync() => await _respawner.ResetAsync(_dbConnectionString);
 
     protected override void ConfigureClient(HttpClient client)
     {
         base.ConfigureClient(client);
-        client.DefaultRequestHeaders.Authorization = 
-            new AuthenticationHeaderValue("Bearer", JwtHelper.Generate("TestUserId"));
+        client.DefaultRequestHeaders.Authorization =
+            new AuthenticationHeaderValue("Bearer", JwtHelper.Generate(UserId));
     }
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
@@ -62,7 +69,6 @@ public class JobbyHttpApiFactory : WebApplicationFactory<Program>, IAsyncLifetim
         builder.ConfigureTestServices(services =>
         {
             services.RemoveDbContext<JobbyDbContext>();
-            
             services.AddDbContext<JobbyDbContext>(options =>
             {
                 options.UseSqlServer(_mssqlContainer.GetConnectionString());

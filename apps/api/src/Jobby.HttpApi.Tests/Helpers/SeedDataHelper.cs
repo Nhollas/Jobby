@@ -1,5 +1,5 @@
 using Jobby.Domain.Entities;
-using Jobby.HttpApi.Tests.Factories;
+using Jobby.HttpApi.Tests.Setup;
 using Jobby.Persistence.Data;
 
 namespace Jobby.HttpApi.Tests.Helpers;
@@ -10,7 +10,7 @@ public static class SeedDataHelper
     {
         await using JobbyDbContext context = factory.GetDbContext();
         
-        Board board = Board.Create(factory.TimeProvider, userId ?? "TestUserId", "BoardName");
+        Board board = Board.Create(factory.TimeProvider, userId ?? factory.UserId, "BoardName");
         JobList jobList = board.AddJobList(factory.TimeProvider, "JobListName");
         Job job = jobList.CreateJob(factory.TimeProvider, "JobCompany", "JobTitle");
         
@@ -24,7 +24,7 @@ public static class SeedDataHelper
     {
         await using JobbyDbContext context = factory.GetDbContext();
         
-        Board board = Board.Create(factory.TimeProvider, userId ?? "TestUserId", "BoardName");
+        Board board = Board.Create(factory.TimeProvider, userId ?? factory.UserId, "BoardName");
         Activity activity = board.AddActivity(factory.TimeProvider, "ActivityTitle", 1, DateTime.UtcNow, DateTime.UtcNow, "ActivityNote", false);
         
         await context.Boards.AddAsync(board);
@@ -39,7 +39,7 @@ public static class SeedDataHelper
 
         Board board = Board.Create(
             factory.TimeProvider,
-            ownerId: userId ?? "TestUserId",
+            ownerId: userId ?? factory.UserId,
             name: "BoardName");
         
         Contact contact = board.AddContact(factory.TimeProvider, "ContactName", "ContactLastName", "ContactTitle", "Location",

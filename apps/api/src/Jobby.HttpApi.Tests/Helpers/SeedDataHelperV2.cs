@@ -1,5 +1,5 @@
 ﻿using Jobby.Domain.Entities;
-using Jobby.HttpApi.Tests.Factories;
+using Jobby.HttpApi.Tests.Setup;
 using Jobby.Persistence.Data;
 
 namespace Jobby.HttpApi.Tests.Helpers;

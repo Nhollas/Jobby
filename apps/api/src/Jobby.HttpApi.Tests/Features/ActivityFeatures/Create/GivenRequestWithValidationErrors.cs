@@ -1,6 +1,6 @@
 using System.Net;
 using System.Text;
-using Jobby.HttpApi.Tests.Factories;
+using Jobby.HttpApi.Tests.Setup;
 
 namespace Jobby.HttpApi.Tests.Features.ActivityFeatures.Create;
 

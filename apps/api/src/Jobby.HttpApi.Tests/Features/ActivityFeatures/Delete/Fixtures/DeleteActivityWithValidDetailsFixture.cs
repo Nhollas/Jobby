@@ -1,6 +1,6 @@
 using Jobby.Domain.Entities;
-using Jobby.HttpApi.Tests.Factories;
 using Jobby.HttpApi.Tests.Helpers;
+using Jobby.HttpApi.Tests.Setup;
 
 namespace Jobby.HttpApi.Tests.Features.ActivityFeatures.Delete.Fixtures;
 
@@ -12,7 +12,7 @@ public class DeleteActivityWithValidDetailsFixture(JobbyHttpApiFactory factory) 
     
     public async Task InitializeAsync()
     {
-        (Board preLoadedBoard, Activity activityToDelete) = await SeedDataHelper.CreateBoardWithActivityAsync(factory, "TestUserId");
+        (Board preLoadedBoard, Activity activityToDelete) = await SeedDataHelper.CreateBoardWithActivityAsync(factory);
         PreLoadedBoard = preLoadedBoard;
         
         ActivityReference = activityToDelete.Reference;

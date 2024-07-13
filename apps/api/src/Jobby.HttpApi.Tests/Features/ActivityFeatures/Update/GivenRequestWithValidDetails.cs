@@ -2,8 +2,8 @@ using System.Net;
 using Jobby.Application.Dtos;
 using Jobby.Application.Features.ActivityFeatures.Commands.Update;
 using Jobby.Domain.Entities;
-using Jobby.HttpApi.Tests.Factories;
 using Jobby.HttpApi.Tests.Features.ActivityFeatures.Update.Fixtures;
+using Jobby.HttpApi.Tests.Setup;
 using Jobby.Persistence.Data;
 using Microsoft.EntityFrameworkCore;
 
