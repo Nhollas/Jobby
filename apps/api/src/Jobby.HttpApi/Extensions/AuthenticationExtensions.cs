@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Cryptography;
 
@@ -9,11 +8,7 @@ public static class AuthenticationExtensions
 {
     public static AuthenticationBuilder AddClerkAuthentication(this IServiceCollection services, IConfiguration config)
     {
-        return services.AddAuthentication(options =>
-        {
-            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        })
+        return services.AddAuthentication()
         .AddJwtBearer(options =>
         {
             IConfigurationSection clerkConfig = config.GetSection("Clerk");
