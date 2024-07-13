@@ -17,7 +17,7 @@ public class JobbyHttpApiFactory : WebApplicationFactory<Program>, IAsyncLifetim
     private string _dbConnectionString = null!;
     private readonly MsSqlContainer _mssqlContainer = new MsSqlBuilder()
         .WithImage("mcr.microsoft.com/mssql/server:latest")
-        .WithCleanUp(true)
+        .WithReuse(true)
         .WithName("JobbyTestContainer")
         .Build();
 
@@ -43,10 +43,7 @@ public class JobbyHttpApiFactory : WebApplicationFactory<Program>, IAsyncLifetim
     public JobbyDbContext GetDbContext() => new(new DbContextOptionsBuilder<JobbyDbContext>()
         .UseSqlServer(_dbConnectionString).Options);
 
-    public new async Task DisposeAsync()
-    {
-        await _mssqlContainer.DisposeAsync();
-    }
+    Task IAsyncLifetime.DisposeAsync() => DisposeAsync().AsTask();
 
     protected override void ConfigureClient(HttpClient client)
     {

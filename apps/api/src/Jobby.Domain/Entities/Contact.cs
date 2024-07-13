@@ -31,6 +31,7 @@ public class Contact : Entity
         Socials = socials;
         Board = board;
         BoardReference = board.Reference;
+        BoardId = board.Id;
         Companies = CreateCompanies(companies, createdDate);
         Emails = CreateEmails(emails, createdDate);
         Phones = CreatePhones(phones, createdDate);
