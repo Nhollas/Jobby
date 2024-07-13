@@ -1,5 +1,4 @@
-﻿using System.Collections.Immutable;
-using Jobby.Domain.Dtos.Contact;
+﻿using Jobby.Domain.Dtos.Contact;
 using Jobby.Domain.Primitives;
 using Jobby.Domain.Static;
 
@@ -10,8 +9,6 @@ public class Board : Entity
     private readonly List<JobList> _lists = [];
     private readonly List<Activity> _activities = [];
     private readonly List<Contact> _contacts = [];
-
-    #pragma warning disable CS8618 // Required by Entity Framework
     private Board(){}
 
     private Board(

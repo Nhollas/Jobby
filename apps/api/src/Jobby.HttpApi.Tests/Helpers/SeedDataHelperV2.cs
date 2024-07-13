@@ -2,7 +2,7 @@
 using Jobby.HttpApi.Tests.Factories;
 using Jobby.Persistence.Data;
 
-namespace Jobby.HttpApi.Tests;
+namespace Jobby.HttpApi.Tests.Helpers;
 
 public class TestDataBuilder
 {

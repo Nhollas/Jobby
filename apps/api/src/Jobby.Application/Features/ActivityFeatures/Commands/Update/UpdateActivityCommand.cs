@@ -12,4 +12,4 @@ public record UpdateActivityCommand(
     DateTimeOffset EndDate,
     string Note,
     bool Completed,
-    string JobReference = "") : IRequest<IDispatchResult<ActivityDto>>;
+    string? JobReference = null) : IRequest<IDispatchResult<ActivityDto>>;

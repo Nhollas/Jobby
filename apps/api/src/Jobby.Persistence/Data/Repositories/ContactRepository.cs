@@ -6,10 +6,10 @@ namespace Jobby.Persistence.Data.Repositories;
 
 public class ContactRepository(JobbyDbContext context) : IContactRepository
 {
-    public async Task ClearBoardsAsync(string boardReference, CancellationToken cancellationToken)
+    public async Task ClearBoardsAsync(Guid boardId, CancellationToken cancellationToken)
     {
         await context.Contacts
-            .Where(contact => contact.BoardReference == boardReference)
+            .Where(contact => contact.BoardId == boardId)
             .ExecuteUpdateAsync(p => p.SetProperty(x => x.BoardId,  x => null).SetProperty(x => x.BoardReference, x => null), cancellationToken);
     }
 

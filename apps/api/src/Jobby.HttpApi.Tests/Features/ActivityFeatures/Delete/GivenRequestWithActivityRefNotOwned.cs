@@ -2,7 +2,6 @@ using System.Net;
 using Jobby.Domain.Entities;
 using Jobby.HttpApi.Tests.Factories;
 using Jobby.HttpApi.Tests.Helpers;
-using Jobby.Persistence.Data;
 
 namespace Jobby.HttpApi.Tests.Features.ActivityFeatures.Delete;
 

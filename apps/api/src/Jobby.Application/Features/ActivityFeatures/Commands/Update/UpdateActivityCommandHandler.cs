@@ -49,7 +49,7 @@ internal class UpdateActivityCommandHandler(
             request.Note,
             request.Completed);
         
-        if (request.JobReference != string.Empty && request.JobReference != activity.JobReference)
+        if (request.JobReference is not null && activity.HasDifferentJobReference(request.JobReference))
         {
             Job? job = await jobRepository.GetByReferenceAsync(request.JobReference, cancellationToken);
             
@@ -63,7 +63,7 @@ internal class UpdateActivityCommandHandler(
                 return DispatchResults.Unauthorized<ActivityDto>(job.Reference);
             }
             
-            if (!(job.BoardId == activity.BoardId))
+            if (job.BoardId != activity.BoardId)
             {
                 return DispatchResults.BadRequest<ActivityDto>(
                     $"The {nameof(Job)} {request.JobReference} you wanted to link doesn't have the same Board as the {nameof(Activity)} you provided.");

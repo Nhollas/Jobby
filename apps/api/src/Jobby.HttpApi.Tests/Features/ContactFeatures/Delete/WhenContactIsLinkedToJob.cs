@@ -1,5 +1,4 @@
 using System.Net;
-using System.Security.Cryptography;
 using Jobby.Domain.Entities;
 using Jobby.HttpApi.Tests.Factories;
 using Jobby.HttpApi.Tests.Helpers;

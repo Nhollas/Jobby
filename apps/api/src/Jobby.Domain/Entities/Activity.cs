@@ -106,4 +106,9 @@ public class Activity : Entity
         JobReference = job.Reference;
         JobId = job.Id;
     }
+
+    public bool HasDifferentJobReference(string jobReference)
+    {
+        return JobReference != jobReference;
+    }
 }

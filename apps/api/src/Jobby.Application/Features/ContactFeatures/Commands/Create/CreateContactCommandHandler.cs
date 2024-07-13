@@ -41,12 +41,11 @@ internal class CreateContactCommandHandler(
         
         if (!board.IsOwnedBy(_userId))
         {
-            return DispatchResults.Unauthorized<ContactDto>("You do not have access to this board.");
+            return DispatchResults.Unauthorized<ContactDto>(board.Reference);
         }
         
-        Contact createdContact = Contact.Create(
-            timeProvider.GetUtcNow(),
-            _userId,
+        Contact createdContact = board.AddContact(
+            timeProvider,
             request.FirstName,
             request.LastName,
             request.JobTitle,
@@ -57,7 +56,6 @@ internal class CreateContactCommandHandler(
                 request.Socials.LinkedInUrl,
                 request.Socials.GithubUrl
             ),
-            board,
             request.Companies,
             request.Emails,
             request.Phones);

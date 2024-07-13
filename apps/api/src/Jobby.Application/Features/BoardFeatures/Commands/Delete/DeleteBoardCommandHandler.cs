@@ -29,7 +29,7 @@ internal class DeleteBoardCommandHandler(
             return DispatchResults.Unauthorized<DeleteBoardResponse>(board.Reference);
         }
 
-        await contactRepository.ClearBoardsAsync(board.Reference, cancellationToken);
+        await contactRepository.ClearBoardsAsync(board.Id, cancellationToken);
         await boardRepository.DeleteAsync(board, cancellationToken);
 
         return DispatchResults.Ok(new DeleteBoardResponse());

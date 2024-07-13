@@ -5,7 +5,6 @@ using Jobby.Domain.Entities;
 using Jobby.Domain.Static;
 using Jobby.HttpApi.Tests.Factories;
 using Jobby.HttpApi.Tests.Helpers;
-using Jobby.Persistence.Data;
 
 namespace Jobby.HttpApi.Tests.Features.ActivityFeatures.Update;
 
