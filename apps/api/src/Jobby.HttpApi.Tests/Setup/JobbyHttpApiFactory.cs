@@ -22,10 +22,10 @@ public class JobbyHttpApiFactory : WebApplicationFactory<Program>, IAsyncLifetim
         .WithReuse(true)
         .WithName("JobbyTestContainer")
         .Build();
-    public string UserId = "TestUserId";
+
+    public string UserId { get; private set; } = "TestUserId";
     public HttpClient HttpClient { get; private set; }
     public FakeTimeProvider TimeProvider { get; } = new();
-
 
     public JobbyHttpApiFactory()
     {
