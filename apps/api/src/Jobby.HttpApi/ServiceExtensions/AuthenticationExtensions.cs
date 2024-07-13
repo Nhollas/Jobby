@@ -2,7 +2,7 @@
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Cryptography;
 
-namespace Jobby.HttpApi.Extensions;
+namespace Jobby.HttpApi.ServiceExtensions;
 
 public static class AuthenticationExtensions
 {
