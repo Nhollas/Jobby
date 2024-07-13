@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using Jobby.Application.Abstractions.Specification;
 using Jobby.Application.Dtos;
+using Jobby.Application.Interfaces.Repositories;
 using Jobby.Application.Results;
 using Jobby.Application.Services;
 using Jobby.Domain.Entities;

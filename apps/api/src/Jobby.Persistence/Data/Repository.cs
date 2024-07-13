@@ -1,5 +1,5 @@
 using Ardalis.Specification.EntityFrameworkCore;
-using Jobby.Application.Abstractions.Specification;
+using Jobby.Application.Interfaces.Repositories;
 using Jobby.Domain.Primitives;
 using Microsoft.EntityFrameworkCore;
 

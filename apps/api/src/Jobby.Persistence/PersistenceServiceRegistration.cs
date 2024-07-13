@@ -1,5 +1,4 @@
-﻿using Jobby.Application.Abstractions.Specification;
-using Jobby.Application.Interfaces.Repositories;
+﻿using Jobby.Application.Interfaces.Repositories;
 using Jobby.Persistence.Data;
 using Jobby.Persistence.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
