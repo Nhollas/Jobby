@@ -1,13 +1,9 @@
-using System.Security.Cryptography;
 using Jobby.Application;
 using Jobby.Persistence;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using System.Text.Json.Serialization;
-using System.Text.RegularExpressions;
 using Jobby.HttpApi.Endpoints;
 using Jobby.HttpApi.Filters;
+using Jobby.HttpApi.Extensions;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 ConfigurationManager config = builder.Configuration;
@@ -15,17 +11,7 @@ ConfigurationManager config = builder.Configuration;
 builder.Services.AddApplicationServices();
 builder.Services.AddPersistenceServices(config);
 
-builder.Services.AddControllers()
-    .AddJsonOptions(options =>
-    {
-        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-        options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-    });
-
-builder.Services.AddCors();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddRouting(options => options.LowercaseUrls = true);
-
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo
@@ -34,13 +20,16 @@ builder.Services.AddSwaggerGen(c =>
         Version = "v1"
     });
 
-    c.AddSecurityDefinition(name: "Bearer", securityScheme: new OpenApiSecurityScheme
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Name = "Authorization",
         In = ParameterLocation.Header,
         Type = SecuritySchemeType.Http,
-        Scheme = "Bearer"
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        Description = "Please enter JWT token only. (without 'Bearer')"
     });
+
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
     {
         {
@@ -50,53 +39,32 @@ builder.Services.AddSwaggerGen(c =>
                 {
                     Type = ReferenceType.SecurityScheme,
                     Id = "Bearer"
-                }
+                },
+                Scheme = "oauth2",
+                Name = "Bearer",
+                In = ParameterLocation.Header,
+                
             },
-            Array.Empty<string>()
+            new List<string>()
         }
     });
 });
 
-builder.Services.AddAuthentication(options =>
-    {
-        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    })
-    .AddJwtBearer(options =>
-        {
-            IConfigurationSection jwtConfig = config.GetSection("Jwt");
-
-            string pem = jwtConfig["SignatureKey"] ?? throw new Exception("SignatureKey is missing from Jwt configuration.");
-            string[] splitPem = Regex.Matches(pem, ".{1,64}").Select(m => m.Value).ToArray();
-            string publicKey = "-----BEGIN PUBLIC KEY-----\n" + string.Join("\n", splitPem) + "\n-----END PUBLIC KEY-----";
-            RSA rsa = RSA.Create();
-            rsa.ImportFromPem(publicKey);
-            SecurityKey issuerSigningKey = new RsaSecurityKey(rsa);
-
-            options.TokenValidationParameters = new TokenValidationParameters
-            {
-                ValidIssuer = jwtConfig["Issuer"],
-                ValidateIssuer = true,
-                ValidateLifetime = true,
-                ValidateAudience = false,
-                ValidateIssuerSigningKey = true,
-                ClockSkew = TimeSpan.Zero,
-                IssuerSigningKey = issuerSigningKey
-            };
-        }
-    );
+builder.Services.AddClerkAuthentication(config);
+builder.Services.AddAuthorization();
 
 WebApplication app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c => {
+        c.EnablePersistAuthorization();
+    });
     app.UseDeveloperExceptionPage();
 }
 
 app.UseHttpsRedirection();
-app.UseRouting();
 
 RouteGroupBuilder api = app
     .MapGroup("/")
@@ -109,13 +77,8 @@ api.MapBoardEndpoints();
 api.MapJobEndpoints();
 api.MapListEndpoints();
 
-app.UseCors(x =>
-    x.AllowAnyHeader()
-        .AllowAnyMethod());
-
 app.UseAuthentication();
 app.UseAuthorization();
-app.MapControllers();
 app.Run();
 
 public partial class Program;

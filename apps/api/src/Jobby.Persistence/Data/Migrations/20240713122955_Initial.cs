@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -40,7 +41,7 @@ namespace Jobby.Persistence.Data.Migrations
                     Socials_FacebookUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Socials_LinkedInUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Socials_GithubUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    BoardReference = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    BoardReference = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     BoardId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     LastUpdated = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
@@ -63,7 +64,7 @@ namespace Jobby.Persistence.Data.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Reference = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Index = table.Column<int>(type: "int", nullable: false),
+                    Position = table.Column<int>(type: "int", nullable: false),
                     BoardId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     BoardReference = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     CreatedDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
@@ -168,7 +169,7 @@ namespace Jobby.Persistence.Data.Migrations
                     Location = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Deadline = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    Index = table.Column<int>(type: "int", nullable: false),
+                    Position = table.Column<int>(type: "int", nullable: false),
                     JobListId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     JobListReference = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     BoardReference = table.Column<string>(type: "nvarchar(450)", nullable: false),

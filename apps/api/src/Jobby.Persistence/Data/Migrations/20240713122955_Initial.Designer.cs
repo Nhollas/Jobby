@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Jobby.Persistence.Data.Migrations
 {
     [DbContext(typeof(JobbyDbContext))]
-    [Migration("20240703182712_Initial")]
+    [Migration("20240713122955_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -160,7 +160,6 @@ namespace Jobby.Persistence.Data.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("BoardReference")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTimeOffset>("CreatedDate")
@@ -264,9 +263,6 @@ namespace Jobby.Persistence.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Index")
-                        .HasColumnType("int");
-
                     b.Property<Guid>("JobListId")
                         .HasColumnType("uniqueidentifier");
 
@@ -284,6 +280,9 @@ namespace Jobby.Persistence.Data.Migrations
                     b.Property<string>("OwnerId")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Position")
+                        .HasColumnType("int");
 
                     b.Property<string>("PostUrl")
                         .IsRequired()
@@ -348,9 +347,6 @@ namespace Jobby.Persistence.Data.Migrations
                     b.Property<DateTimeOffset>("CreatedDate")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<int>("Index")
-                        .HasColumnType("int");
-
                     b.Property<DateTimeOffset>("LastUpdated")
                         .HasColumnType("datetimeoffset");
 
@@ -361,6 +357,9 @@ namespace Jobby.Persistence.Data.Migrations
                     b.Property<string>("OwnerId")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Position")
+                        .HasColumnType("int");
 
                     b.HasKey("Id", "Reference");
 
