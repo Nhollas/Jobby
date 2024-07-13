@@ -10,8 +10,7 @@ bin/
 **/bin/*
 **/obj/*
 **/node_modules/*
-**/appsettings.json
-**/appsettings.Development.json
+**/appsettings*.json
 **/.next
 .DS_Store
 

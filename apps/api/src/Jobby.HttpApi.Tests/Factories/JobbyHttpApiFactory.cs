@@ -78,7 +78,7 @@ public class JobbyHttpApiFactory : WebApplicationFactory<Program>, IAsyncLifetim
         configuration.AddInMemoryCollection(new Dictionary<string, string>
         {
             {"Clerk:Issuer", "TestIssuer"},
-            {"Clerk:PEM-Key", JwtHelper.TestPemPublicKey}
+            {"Clerk:PEM-Key", JwtHelper.MockTestPemPublicKey}
         }!);
     }
 }
