@@ -48,9 +48,9 @@ public class Contact : Entity
 
 
     public List<JobContact> JobContacts { get; } = [];
-    public Board? Board { get; private set; } = null;
-    public string? BoardReference { get; private set; } = null;
-    public Guid? BoardId { get; private set; } = null;
+    public Board? Board { get; private set; }
+    public string? BoardReference { get; private set; }
+    public Guid? BoardId { get; private set; }
 
 
     public static Contact Create(

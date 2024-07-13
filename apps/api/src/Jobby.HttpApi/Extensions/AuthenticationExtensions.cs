@@ -13,7 +13,7 @@ public static class AuthenticationExtensions
         {
             IConfigurationSection clerkConfig = config.GetSection("Clerk");
 
-            string pem = clerkConfig["SignatureKey"] ?? throw new Exception("SignatureKey is missing from Jwt configuration.");
+            string pem = clerkConfig["PEM-Key"] ?? throw new Exception("'PEM-Key' is missing from Jwt configuration.");
             RSA rsa = RSA.Create();
             rsa.ImportFromPem(pem.ToCharArray());
             SecurityKey issuerSigningKey = new RsaSecurityKey(rsa);
