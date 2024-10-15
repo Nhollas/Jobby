@@ -16,8 +16,14 @@ public class MappingProfile : Profile
         CreateMap<JobList, JobListDto>();
 
         // Job Maps
+        // TODO: For ignored members these need to be populated when a Job is created.
         CreateMap<Job, JobDto>()
-            .ForMember(dest => dest.Activities, opt => opt.Ignore());
+            .MaxDepth(1)
+            .ForMember(dest => dest.Index, opt => opt.MapFrom(x => x.Position))
+            .ForMember(dest => dest.Colour, opt => opt.Ignore())
+            .ForMember(dest => dest.City, opt => opt.Ignore())
+            .ForMember(dest => dest.Deadline, opt => opt.Ignore());
+            
         CreateMap<Note, NoteDto>();
 
         // Activity Maps

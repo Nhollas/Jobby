@@ -1,7 +1,5 @@
-﻿using Jobby.Application.Dtos.Base;
-
-namespace Jobby.Application.Dtos;
-public  record NoteDto : EntityDto
+﻿namespace Jobby.Application.Dtos;
+public record NoteDto
 {
     public string Title { get; set; } 
     public string Description { get; set; } 

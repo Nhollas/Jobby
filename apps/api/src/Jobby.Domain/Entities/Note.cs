@@ -7,4 +7,5 @@ public class Note
 
     public Job Job { get; set; }
     public Guid JobId { get; set; }
+    public string JobReference { get; set; }
 }

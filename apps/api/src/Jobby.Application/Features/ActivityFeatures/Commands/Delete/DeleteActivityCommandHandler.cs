@@ -18,15 +18,11 @@ internal class DeleteActivityCommandHandler(
         Activity? activity = await activityRepository.GetByReferenceAsync(request.ActivityReference, cancellationToken);
         
         if (activity is null)
-        {
             return DispatchResults.NotFound<DeleteActivityResponse>(
                 $"The Activity with Reference {request.ActivityReference} could not be found.");
-        }
         
         if (!activity.IsOwnedBy(_userId))
-        {
             return DispatchResults.Unauthorized<DeleteActivityResponse>(activity.Reference);
-        }
         
         await activityRepository.DeleteAsync(activity, cancellationToken);
         

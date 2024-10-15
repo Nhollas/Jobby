@@ -18,6 +18,5 @@ public  record JobDto : EntityDto
     public string JobListReference { get; set; }
     public List<NoteDto> Notes { get; set; }
     public List<ContactDto> Contacts { get; set; }
-    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public List<ActivityDto> Activities { get; set; }
 }

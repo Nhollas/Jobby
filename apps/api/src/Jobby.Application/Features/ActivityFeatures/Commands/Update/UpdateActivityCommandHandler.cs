@@ -18,7 +18,6 @@ internal class UpdateActivityCommandHandler(
     : IRequestHandler<UpdateActivityCommand, IDispatchResult<ActivityDto>>
 {
     private readonly string _userId = userService.UserId();
-
     public async Task<IDispatchResult<ActivityDto>> Handle(UpdateActivityCommand request, CancellationToken cancellationToken)
     {
         UpdateActivityCommandValidator validator = new();
@@ -32,14 +31,10 @@ internal class UpdateActivityCommandHandler(
         Activity? activity = await activityRepository.GetByReferenceAsync(request.ActivityReference, cancellationToken);
         
         if (activity is null)
-        {
             return DispatchResults.NotFound<ActivityDto>(request.ActivityReference);
-        }
         
         if (!activity.IsOwnedBy(_userId))
-        {
             return DispatchResults.Unauthorized<ActivityDto>(activity.Reference);
-        }
         
         activity.Update(
             request.Title,
@@ -54,20 +49,14 @@ internal class UpdateActivityCommandHandler(
             Job? job = await jobRepository.GetByReferenceAsync(request.JobReference, cancellationToken);
             
             if (job is null)
-            {
                 return DispatchResults.NotFound<ActivityDto>(request.JobReference);
-            }
             
             if (!job.IsOwnedBy(_userId))
-            {
                 return DispatchResults.Unauthorized<ActivityDto>(job.Reference);
-            }
             
             if (job.BoardId != activity.BoardId)
-            {
                 return DispatchResults.BadRequest<ActivityDto>(
                     $"The {nameof(Job)} {request.JobReference} you wanted to link doesn't have the same Board as the {nameof(Activity)} you provided.");
-            }
 
             activity.SetJob(job);  
         }

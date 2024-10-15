@@ -35,6 +35,7 @@ public class GivenRequestWithJobReferenceFixture(JobbyHttpApiFactory factory) : 
         );
         
         Response = await factory.HttpClient.PostAsJsonAsync("/activity", Body); 
+        var test = await Response.Content.ReadAsStringAsync();
         ReturnedActivity = (await Response.Content.ReadFromJsonAsync<ActivityDto>())!;
         StoredActivity = await dbContext.Activities
             .Include(activity => activity.Job)

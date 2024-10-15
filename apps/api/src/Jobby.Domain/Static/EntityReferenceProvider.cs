@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using Jobby.Domain.Entities;
 using Jobby.Domain.Primitives;
 
@@ -9,9 +10,8 @@ public static class EntityReferenceProvider<T> where T : Entity
     {
         string entityTypeName = typeof(T).Name;
         
-        
         string abbreviation = Abbreviations[entityTypeName];
-        string randomChars = GenerateRandomChars(10);
+        string randomChars = GenerateRandomChars(12);
         return $"{abbreviation}_{randomChars}";
     }
 
@@ -27,14 +27,17 @@ public static class EntityReferenceProvider<T> where T : Entity
     private static string GenerateRandomChars(int length)
     {
         const string characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        Random random = new();
+        using RandomNumberGenerator rng = RandomNumberGenerator.Create();
+        
+        byte[] data = new byte[length];
         char[] randomChars = new char[length];
+        rng.GetBytes(data);
 
         for (int i = 0; i < length; i++)
         {
-            randomChars[i] = characters[random.Next(characters.Length)];
+            randomChars[i] = characters[data[i] % characters.Length];
         }
-
+        
         return new string(randomChars);
     }
 }

@@ -28,6 +28,11 @@ internal class CreateActivityCommandHandler(
         
         if (!board.IsOwnedBy(_userId))
             return DispatchResults.Unauthorized<ActivityDto>(board.Reference);
+
+        string[] names = ["Nick", "John", "Sam"];
+        Task[] tasks = [.. names.Select(name => Task.Run(() => Console.WriteLine(name)))];
+
+        await Task.WhenAll(tasks);
         
         Activity createdActivity = board.AddActivity(
             timeProvider,

@@ -29,7 +29,7 @@ public static class JobEndpoints
                 (IDispatcher dispatcher, [FromBody] UpdateJobCommand command) => dispatcher.Dispatch(command));
         routeGroup
             .MapPut(
-                "job/List",
+                "job/list",
                 (IDispatcher dispatcher, [FromBody] MoveJobCommand command) => dispatcher.Dispatch(command));
         routeGroup
             .MapGet(
