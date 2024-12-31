@@ -18,9 +18,9 @@ public class WhenContactIsLinkedToJobFixture(JobbyHttpApiFactory factory) : IAsy
         await using JobbyDbContext dbContext = factory.GetDbContext();
         Board board = await new TestDataBuilder(factory)
             .CreateBoard()
-                .WithContact()
-                .WithJob()
-                .BuildAsync();
+            .WithContact()
+            .WithJob()
+            .BuildAsync();
 
         Contact contact = board.Contacts.First();
 

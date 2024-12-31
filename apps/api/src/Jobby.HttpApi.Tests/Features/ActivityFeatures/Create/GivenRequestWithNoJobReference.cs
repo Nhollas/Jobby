@@ -21,10 +21,12 @@ public class GivenRequestWithNoJobReferenceFixture(JobbyHttpApiFactory factory) 
     public async Task InitializeAsync()
     {
         await using JobbyDbContext dbContext = factory.GetDbContext();
-        (Board seededBoard, _) = await SeedDataHelper.CreateBoardWithJobAsync(factory);
+        Board board = await new TestDataBuilder(factory)
+            .CreateBoard()
+            .BuildAsync();
 
         Body = new CreateActivityCommand(
-            BoardReference: seededBoard.Reference,
+            BoardReference: board.Reference,
             Title: "Test Activity",
             Type: ActivityConstants.Types.Apply,
             StartDate: DateTime.UtcNow,

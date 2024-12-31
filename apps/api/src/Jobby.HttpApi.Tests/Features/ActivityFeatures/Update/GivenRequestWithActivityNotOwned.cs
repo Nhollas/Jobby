@@ -14,10 +14,15 @@ public class GivenRequestWithActivityNotOwned(JobbyHttpApiFactory factory)
     [Fact]
     public async Task ThenReturns401Unauthorized()
     {
-        (_, Activity preLoadedActivity) = await SeedDataHelper.CreateBoardWithActivityAsync(factory, "RandomUserId");
+        Board board = await new TestDataBuilder(factory)
+            .CreateBoard(userId: "TestUser2Id")
+            .WithActivity()
+            .BuildAsync();
+        
+        Activity activity = board.Activities.First();
         
         UpdateActivityCommand body = new(
-            ActivityReference: preLoadedActivity.Reference,
+            ActivityReference: activity.Reference,
             Title: "Test Activity",
             Type: (int)ActivityConstants.Types.Apply,
             StartDate: DateTime.UtcNow,
@@ -30,6 +35,6 @@ public class GivenRequestWithActivityNotOwned(JobbyHttpApiFactory factory)
         
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
         responseContent.Should().Be(ResponseHelper.MessageToApiMessage(
-            $"You are not authorised to access the resource {preLoadedActivity.Reference}."));
+            $"You are not authorised to access the resource {activity.Reference}."));
     }
 }

@@ -12,11 +12,14 @@ public class DeleteActivityWithValidDetailsFixture(JobbyHttpApiFactory factory) 
     
     public async Task InitializeAsync()
     {
-        (Board preLoadedBoard, Activity activityToDelete) = await SeedDataHelper.CreateBoardWithActivityAsync(factory);
-        PreLoadedBoard = preLoadedBoard;
+        Board board = await new TestDataBuilder(factory)
+            .CreateBoard()
+            .WithActivity()
+            .BuildAsync();
+        PreLoadedBoard = board;
         
-        ActivityReference = activityToDelete.Reference;
-        Response = await factory.HttpClient.DeleteAsync($"/activity/{activityToDelete.Reference}");
+        ActivityReference = board.Activities.First().Reference;
+        Response = await factory.HttpClient.DeleteAsync($"/activity/{ActivityReference}");
     }
 
     public Task DisposeAsync() => Task.CompletedTask;

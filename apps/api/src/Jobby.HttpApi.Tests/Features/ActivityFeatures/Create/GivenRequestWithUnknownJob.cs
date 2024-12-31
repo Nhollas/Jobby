@@ -14,10 +14,13 @@ public class GivenRequestWithUnknownJob(JobbyHttpApiFactory factory)
     [Fact]
     public async Task ThenReturns400BadRequest()
     {
-        (Board preLoadedBoard, _) = await SeedDataHelper.CreateBoardWithJobAsync(factory);
+        Board board = await new TestDataBuilder(factory)
+            .CreateBoard()
+            .WithJob()
+            .BuildAsync();
         
         CreateActivityCommand body = new(
-            BoardReference: preLoadedBoard.Reference,
+            BoardReference: board.Reference,
             Title: "Test Activity",
             Type: ActivityConstants.Types.Apply,
             StartDate: DateTime.UtcNow,

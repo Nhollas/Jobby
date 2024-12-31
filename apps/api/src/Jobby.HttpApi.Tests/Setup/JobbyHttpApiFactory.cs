@@ -55,6 +55,7 @@ public class JobbyHttpApiFactory : WebApplicationFactory<Program>, IAsyncLifetim
     protected override void ConfigureClient(HttpClient client)
     {
         base.ConfigureClient(client);
+        
         client.DefaultRequestHeaders.Authorization =
             new AuthenticationHeaderValue("Bearer", JwtHelper.Generate(UserId));
     }

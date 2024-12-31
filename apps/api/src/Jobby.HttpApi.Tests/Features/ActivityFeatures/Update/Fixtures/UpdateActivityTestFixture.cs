@@ -18,8 +18,12 @@ public class UpdateActivityTestFixture(JobbyHttpApiFactory factory) : IAsyncLife
 
     public async Task InitializeAsync()
     {
-        (_, Activity preloadedActivity) = await SeedDataHelper.CreateBoardWithActivityAsync(factory);
-        PreloadedActivity = preloadedActivity;
+        Board board = await new TestDataBuilder(factory)
+            .CreateBoard()
+            .WithActivity()
+            .BuildAsync();
+        
+        PreloadedActivity = board.Activities.First();
 
         Body = new UpdateActivityCommand(
             ActivityReference: PreloadedActivity.Reference,

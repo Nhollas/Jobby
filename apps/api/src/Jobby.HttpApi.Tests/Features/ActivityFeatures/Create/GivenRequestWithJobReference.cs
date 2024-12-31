@@ -21,7 +21,12 @@ public class GivenRequestWithJobReferenceFixture(JobbyHttpApiFactory factory) : 
     public async Task InitializeAsync()
     {
         await using JobbyDbContext dbContext = factory.GetDbContext();
-        (Board board, Job job) = await SeedDataHelper.CreateBoardWithJobAsync(factory);
+        Board board = await new TestDataBuilder(factory)
+            .CreateBoard()
+            .WithJob()
+            .BuildAsync();
+        
+        Job job = board.Jobs.First();
         
         Body = new CreateActivityCommand(
             BoardReference: board.Reference,
@@ -35,7 +40,6 @@ public class GivenRequestWithJobReferenceFixture(JobbyHttpApiFactory factory) : 
         );
         
         Response = await factory.HttpClient.PostAsJsonAsync("/activity", Body); 
-        var test = await Response.Content.ReadAsStringAsync();
         ReturnedActivity = (await Response.Content.ReadFromJsonAsync<ActivityDto>())!;
         StoredActivity = await dbContext.Activities
             .Include(activity => activity.Job)
