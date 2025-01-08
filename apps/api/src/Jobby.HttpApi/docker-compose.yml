@@ -1,0 +1,15 @@
+services:
+  azure-sql-edge:
+    image: mcr.microsoft.com/azure-sql-edge:latest
+    container_name: jobby.http.api.sql
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=${MSSQL_SA_PASSWORD}
+      - MSSQL_PID=Developer
+    ports:
+      - "1433:1433"
+    volumes:
+      - azure-sql-edge-data:/var/opt/mssql
+
+volumes:
+  azure-sql-edge-data:
