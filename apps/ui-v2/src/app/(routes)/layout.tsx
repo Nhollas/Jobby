@@ -1,10 +1,10 @@
 import type { Metadata } from "next"
-import { Inter } from "next/font/google"
+import localFont from "next/font/local"
 
 import "./globals.css"
 import FrontendTracerProvider from "@/app/providers/frontend-tracer-provider"
 
-const inter = Inter({ subsets: ["latin"] })
+const inter = localFont({ src: "./inter-variable-font.ttf" })
 
 export const metadata: Metadata = {
   title: "Create Nhollas App",
