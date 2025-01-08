@@ -1,6 +1,7 @@
 import { FileCode2 } from "lucide-react"
 import { Button } from "@/app/components/ui/button"
 import Image from "next/image"
+import Link from "next/link"
 
 export default function Home() {
   return (
@@ -57,13 +58,19 @@ export default function Home() {
               <div className="flex justify-center gap-4">
                 <Button
                   size="lg"
+                  asChild
                   className="group relative h-12 w-full max-w-xs bg-white text-black hover:bg-white/90 focus:ring-2 focus:ring-blue-600/75 focus:ring-offset-2 focus:ring-offset-black focus-visible:ring-2 focus-visible:ring-blue-600/75 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-blue-500/30 via-violet-500/30 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
-                  <span className="relative flex items-center text-base">
-                    <FileCode2 className="mr-2 size-6" />
-                    Read the docs
-                  </span>
+                  <Link
+                    href="https://github.com/Nhollas/create-nhollas-app"
+                    target="_blank"
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-r from-blue-500/30 via-violet-500/30 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
+                    <span className="relative flex items-center text-base">
+                      <FileCode2 className="mr-2 size-6" />
+                      Read the docs
+                    </span>
+                  </Link>
                 </Button>
               </div>
 
