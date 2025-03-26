@@ -21,7 +21,7 @@ public class UpdateActivityTestFixture(JobbyHttpApiFactory factory) : IAsyncLife
         Board board = await new TestDataBuilder(factory)
             .CreateBoard()
             .WithActivity()
-            .BuildAsync();
+            .SeedAsync();
         
         PreloadedActivity = board.Activities.First();
 

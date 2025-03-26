@@ -23,7 +23,7 @@ public class GivenRequestWithNoJobReferenceFixture(JobbyHttpApiFactory factory) 
         await using JobbyDbContext dbContext = factory.GetDbContext();
         Board board = await new TestDataBuilder(factory)
             .CreateBoard()
-            .BuildAsync();
+            .SeedAsync();
 
         Body = new CreateActivityCommand(
             BoardReference: board.Reference,

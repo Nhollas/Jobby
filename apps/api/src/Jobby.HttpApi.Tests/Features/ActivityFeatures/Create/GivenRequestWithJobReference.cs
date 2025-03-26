@@ -24,7 +24,7 @@ public class GivenRequestWithJobReferenceFixture(JobbyHttpApiFactory factory) : 
         Board board = await new TestDataBuilder(factory)
             .CreateBoard()
             .WithJob()
-            .BuildAsync();
+            .SeedAsync();
         
         Job job = board.Jobs.First();
         

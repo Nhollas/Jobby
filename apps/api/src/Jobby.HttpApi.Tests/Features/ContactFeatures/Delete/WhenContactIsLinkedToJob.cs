@@ -20,7 +20,7 @@ public class WhenContactIsLinkedToJobFixture(JobbyHttpApiFactory factory) : IAsy
             .CreateBoard()
             .WithContact()
             .WithJob()
-            .BuildAsync();
+            .SeedAsync();
 
         Contact contact = board.Contacts.First();
 

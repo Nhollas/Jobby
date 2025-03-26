@@ -1,4 +1,4 @@
-version: "3.8"
+name: jobby-ui
 services:
   jaeger-all-in-one:
     image: jaegertracing/all-in-one:latest

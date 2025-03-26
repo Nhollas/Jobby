@@ -18,7 +18,7 @@ public class WhenBoardIsLinkedToContactFixture(JobbyHttpApiFactory factory) : IA
         Board board = await new TestDataBuilder(factory)
             .CreateBoard()
             .WithContact()
-            .BuildAsync();
+            .SeedAsync();
 
         BoardReference = board.Reference;
         ContactReference = board.Contacts.First().Reference;

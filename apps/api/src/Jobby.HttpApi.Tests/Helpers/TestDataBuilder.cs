@@ -77,7 +77,7 @@ public class TestDataBuilder
         return this;
     }
 
-    public async Task<Board> BuildAsync()
+    public async Task<Board> SeedAsync()
     {
         await _context.SaveChangesAsync();
         return _board;

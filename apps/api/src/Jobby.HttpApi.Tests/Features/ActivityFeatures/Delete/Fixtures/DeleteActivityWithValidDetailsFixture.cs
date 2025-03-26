@@ -15,7 +15,7 @@ public class DeleteActivityWithValidDetailsFixture(JobbyHttpApiFactory factory) 
         Board board = await new TestDataBuilder(factory)
             .CreateBoard()
             .WithActivity()
-            .BuildAsync();
+            .SeedAsync();
         PreLoadedBoard = board;
         
         ActivityReference = board.Activities.First().Reference;

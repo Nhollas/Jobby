@@ -17,7 +17,7 @@ public class GivenRequestWithActivityNotOwned(JobbyHttpApiFactory factory)
         Board board = await new TestDataBuilder(factory)
             .CreateBoard(userId: "TestUser2Id")
             .WithActivity()
-            .BuildAsync();
+            .SeedAsync();
         
         Activity activity = board.Activities.First();
         

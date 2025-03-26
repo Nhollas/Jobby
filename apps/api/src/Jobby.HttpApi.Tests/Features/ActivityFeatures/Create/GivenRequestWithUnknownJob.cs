@@ -17,7 +17,7 @@ public class GivenRequestWithUnknownJob(JobbyHttpApiFactory factory)
         Board board = await new TestDataBuilder(factory)
             .CreateBoard()
             .WithJob()
-            .BuildAsync();
+            .SeedAsync();
         
         CreateActivityCommand body = new(
             BoardReference: board.Reference,
