@@ -9,7 +9,7 @@ using Jobby.HttpApi.Tests.Setup;
 namespace Jobby.HttpApi.Tests.Features.ActivityFeatures.Create;
 
 [Collection("SqlCollection")]
-public class GivenRequestWithUnknownBoard(JobbyHttpApiFactory factory)
+public class GivenRequestWithUnknownBoardWhenCreatingActivity(JobbyHttpApiFactory factory)
 {
     [Fact]
     public async Task ThenReturns404NotFound()

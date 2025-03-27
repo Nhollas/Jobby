@@ -29,7 +29,7 @@ public class WhenBoardIsLinkedToContactFixture(JobbyHttpApiFactory factory) : IA
 }
 
 [Collection("SqlCollection")]
-public class WhenBoardIsLinkedToContact(JobbyHttpApiFactory factory, WhenBoardIsLinkedToContactFixture fixture) : IClassFixture<WhenBoardIsLinkedToContactFixture>
+public class GivenRequestWithBoardIsLinkedToContactWhenDeletingBoard(JobbyHttpApiFactory factory, WhenBoardIsLinkedToContactFixture fixture) : IClassFixture<WhenBoardIsLinkedToContactFixture>
 {
     [Fact]
     public void ThenReturns200Ok()

@@ -9,13 +9,14 @@ using Jobby.HttpApi.Tests.Setup;
 namespace Jobby.HttpApi.Tests.Features.ActivityFeatures.Create;
 
 [Collection("SqlCollection")]
-public class GivenBoardNotOwnedWhenCreatingActivity(JobbyHttpApiFactory factory)
+public class GivenRequestWithUnknownJobWhenCreatingActivity(JobbyHttpApiFactory factory)
 {
     [Fact]
-    public async Task ThenReturns401Unauthorized()
+    public async Task ThenReturns400BadRequest()
     {
         Board board = await new TestDataBuilder(factory)
-            .CreateBoard(userId: "TestUser2Id")
+            .CreateBoard()
+            .WithJob()
             .SeedAsync();
         
         CreateActivityCommand body = new(
@@ -25,14 +26,15 @@ public class GivenBoardNotOwnedWhenCreatingActivity(JobbyHttpApiFactory factory)
             StartDate: DateTime.UtcNow,
             EndDate: DateTime.UtcNow.AddDays(1),
             Note: "Test Note",
+            JobReference: "UnknownJobReference",
             Completed: false
         );
 
         HttpResponseMessage response = await factory.HttpClient.PostAsJsonAsync("/activity", body);
         string responseContent = await response.Content.ReadAsStringAsync();
 
-        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         responseContent.Should().Be(
-            ResponseHelper.MessageToApiMessage($"You are not authorised to access the resource {board.Reference}."));
+            ResponseHelper.MessageToApiMessage($"The Job '{body.JobReference}' you wanted to link doesn't exist in the Board '{body.BoardReference}'."));
     }
 }

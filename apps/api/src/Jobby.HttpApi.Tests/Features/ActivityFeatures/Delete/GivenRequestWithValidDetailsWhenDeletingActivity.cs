@@ -8,10 +8,10 @@ using Microsoft.EntityFrameworkCore;
 namespace Jobby.HttpApi.Tests.Features.ActivityFeatures.Delete;
 
 [Collection("SqlCollection")]
-public class GivenRequestWithValidDetails(
+public class GivenRequestWithValidDetailsWhenDeletingActivity(
     JobbyHttpApiFactory factory,
-    DeleteActivityWithValidDetailsFixture fixture)
-    : IClassFixture<DeleteActivityWithValidDetailsFixture>
+    GivenRequestWithValidDetailsWhenDeletingActivityFixture fixture)
+    : IClassFixture<GivenRequestWithValidDetailsWhenDeletingActivityFixture>
 {
     private HttpResponseMessage Response => fixture.Response;
     private string ActivityReference => fixture.ActivityReference;

@@ -6,7 +6,7 @@ using Jobby.HttpApi.Tests.Setup;
 namespace Jobby.HttpApi.Tests.Features.BoardFeatures.Create;
 
 [Collection("SqlCollection")]
-public class GivenRequestWithValidationErrors(JobbyHttpApiFactory factory)
+public class GivenRequestWithValidationErrorsWhenCreatingBoard(JobbyHttpApiFactory factory)
 {
     [Fact]
     public async Task WhenNamePropertyIsMissing_ThenReturns422UnprocessableEntityAndNamePropertyValidationMessage()

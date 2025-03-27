@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Jobby.HttpApi.Tests.Features.ActivityFeatures.Create;
 
-public class GivenRequestWithJobReferenceFixture(JobbyHttpApiFactory factory) : IAsyncLifetime
+public class GivenRequestWithJobReferenceWhenCreatingActivityFixture(JobbyHttpApiFactory factory) : IAsyncLifetime
 {
     public HttpResponseMessage Response { get; private set; } = new();
     public ActivityDto ReturnedActivity { get; private set; } = null!;
@@ -50,7 +50,7 @@ public class GivenRequestWithJobReferenceFixture(JobbyHttpApiFactory factory) : 
 }
 
 [Collection("SqlCollection")]
-public class GivenRequestWithJobReference(GivenRequestWithJobReferenceFixture fixture) : IClassFixture<GivenRequestWithJobReferenceFixture>
+public class GivenRequestWithJobReferenceWhenCreatingActivity(GivenRequestWithJobReferenceWhenCreatingActivityFixture fixture) : IClassFixture<GivenRequestWithJobReferenceWhenCreatingActivityFixture>
 {
     private CreateActivityCommand Body => fixture.Body;
     private static string ExpectedName => "Apply";

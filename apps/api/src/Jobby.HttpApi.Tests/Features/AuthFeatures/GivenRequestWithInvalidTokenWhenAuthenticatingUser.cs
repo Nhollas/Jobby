@@ -6,7 +6,7 @@ using Jobby.HttpApi.Tests.Setup;
 namespace Jobby.HttpApi.Tests.Features.AuthFeatures;
 
 [Collection("SqlCollection")]
-public class GivenRequestWithInvalidToken(JobbyHttpApiFactory factory)
+public class GivenRequestWithInvalidTokenWhenAuthenticatingUser(JobbyHttpApiFactory factory)
 {
     [Fact]
     public async Task WhenTokenHasExpired_ThenReturns401Unauthorized()

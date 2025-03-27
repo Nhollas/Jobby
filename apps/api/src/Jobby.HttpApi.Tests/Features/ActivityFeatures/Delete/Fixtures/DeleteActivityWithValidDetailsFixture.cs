@@ -4,7 +4,7 @@ using Jobby.HttpApi.Tests.Setup;
 
 namespace Jobby.HttpApi.Tests.Features.ActivityFeatures.Delete.Fixtures;
 
-public class DeleteActivityWithValidDetailsFixture(JobbyHttpApiFactory factory) : IAsyncLifetime
+public class GivenRequestWithValidDetailsWhenDeletingActivityFixture(JobbyHttpApiFactory factory) : IAsyncLifetime
 {
     public HttpResponseMessage Response { get; private set; } = new();
     public string ActivityReference { get; private set; } = string.Empty;

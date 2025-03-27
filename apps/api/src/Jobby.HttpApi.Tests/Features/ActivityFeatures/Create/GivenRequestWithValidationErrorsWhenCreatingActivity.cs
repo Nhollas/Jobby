@@ -5,7 +5,7 @@ using Jobby.HttpApi.Tests.Setup;
 namespace Jobby.HttpApi.Tests.Features.ActivityFeatures.Create;
 
 [Collection("SqlCollection")]
-public class GivenRequestWithValidationErrors(JobbyHttpApiFactory factory)
+public class GivenRequestWithValidationErrorsWhenCreatingActivity(JobbyHttpApiFactory factory)
 {
     [Fact]
     public async Task WhenTypePropertyIsOutOfRange_ThenReturns422UnprocessableEntityWithValidationMessage()

@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Jobby.HttpApi.Tests.Features.ActivityFeatures.Update;
 
 [Collection("SqlCollection")]
-public class GivenRequestWithValidDetails(
+public class GivenRequestWithValidDetailsWhenUpdatingActivity(
     UpdateActivityTestFixture fixture,
     JobbyHttpApiFactory factory)
     : IClassFixture<UpdateActivityTestFixture>

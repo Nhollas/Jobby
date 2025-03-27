@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Jobby.HttpApi.Tests.Features.ContactFeatures.Delete;
 
-public class WhenContactIsLinkedToJobFixture(JobbyHttpApiFactory factory) : IAsyncLifetime
+public class GivenContactLinkedToJobWhenDeletingContactFixture(JobbyHttpApiFactory factory) : IAsyncLifetime
 {
     public HttpResponseMessage Response { get; private set; } = new();
     public string ContactReference { get; private set; } = null!;
@@ -39,7 +39,7 @@ public class WhenContactIsLinkedToJobFixture(JobbyHttpApiFactory factory) : IAsy
 }
 
 [Collection("SqlCollection")]
-public class WhenContactIsLinkedToJob(JobbyHttpApiFactory factory, WhenContactIsLinkedToJobFixture fixture) : IClassFixture<WhenContactIsLinkedToJobFixture>
+public class GivenContactLinkedToJobWhenDeletingContact(JobbyHttpApiFactory factory, GivenContactLinkedToJobWhenDeletingContactFixture fixture) : IClassFixture<GivenContactLinkedToJobWhenDeletingContactFixture>
 {
 
     [Fact]
