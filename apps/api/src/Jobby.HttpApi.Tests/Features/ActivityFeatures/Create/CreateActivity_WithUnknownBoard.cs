@@ -9,32 +9,28 @@ using Jobby.HttpApi.Tests.Setup;
 namespace Jobby.HttpApi.Tests.Features.ActivityFeatures.Create;
 
 [Collection("SqlCollection")]
-public class GivenRequestWithUnknownJobWhenCreatingActivity(JobbyHttpApiFactory factory)
+public class CreateActivity_WithUnknownBoard(JobbyHttpApiFactory factory)
 {
     [Fact]
-    public async Task ThenReturns400BadRequest()
+    public async Task ThenReturns404NotFound()
     {
-        Board board = await new TestDataBuilder(factory)
-            .CreateBoard()
-            .WithJob()
-            .SeedAsync();
-        
+        string randomBoardReference = EntityReferenceProvider<Board>.CreateReference();
+
         CreateActivityCommand body = new(
-            BoardReference: board.Reference,
+            BoardReference: randomBoardReference,
             Title: "Test Activity",
             Type: ActivityConstants.Types.Apply,
             StartDate: DateTime.UtcNow,
             EndDate: DateTime.UtcNow.AddDays(1),
             Note: "Test Note",
-            JobReference: "UnknownJobReference",
             Completed: false
         );
 
         HttpResponseMessage response = await factory.HttpClient.PostAsJsonAsync("/activity", body);
         string responseContent = await response.Content.ReadAsStringAsync();
-
-        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
         responseContent.Should().Be(
-            ResponseHelper.MessageToApiMessage($"The Job '{body.JobReference}' you wanted to link doesn't exist in the Board '{body.BoardReference}'."));
+            ResponseHelper.MessageToApiMessage(randomBoardReference));
     }
 }

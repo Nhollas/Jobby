@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Jobby.HttpApi.Tests.Features.ActivityFeatures.Create;
 
-public class GivenRequestWithNoJobReferenceWhenCreatingActivityFixture(JobbyHttpApiFactory factory) : IAsyncLifetime
+public class CreateActivity_WithNoJobReference_Fixture(JobbyHttpApiFactory factory) : IAsyncLifetime
 {
     public HttpResponseMessage Response { get; private set; } = new();
     public ActivityDto ReturnedActivity { get; private set; } = null!;
@@ -47,7 +47,7 @@ public class GivenRequestWithNoJobReferenceWhenCreatingActivityFixture(JobbyHttp
 }
 
 [Collection("SqlCollection")]
-public class GivenRequestWithNoJobReferenceWhenCreatingActivity(GivenRequestWithNoJobReferenceWhenCreatingActivityFixture fixture) : IClassFixture<GivenRequestWithNoJobReferenceWhenCreatingActivityFixture>
+public class CreateActivity_WithNoJobReference(CreateActivity_WithNoJobReference_Fixture fixture) : IClassFixture<CreateActivity_WithNoJobReference_Fixture>
 {
     private const string ExpectedActivityName = "Apply";
     

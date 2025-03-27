@@ -6,7 +6,7 @@ using Jobby.HttpApi.Tests.Setup;
 namespace Jobby.HttpApi.Tests.Features.ActivityFeatures.Delete;
 
 [Collection("SqlCollection")]
-public class GivenRequestWithActivityNotOwnedWhenDeletingActivity(JobbyHttpApiFactory factory)
+public class DeleteActivity_WithUnownedActivity(JobbyHttpApiFactory factory)
 {
     [Fact]
     public async Task ThenReturns404Unauthorized()

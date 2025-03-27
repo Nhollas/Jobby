@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Jobby.HttpApi.Tests.Features.BoardFeatures.Delete;
 
-public class WhenBoardIsLinkedToContactFixture(JobbyHttpApiFactory factory) : IAsyncLifetime
+public class DeleteBoard_WithContactLinks_Fixture(JobbyHttpApiFactory factory) : IAsyncLifetime
 {
     public HttpResponseMessage Response { get; private set; } = new();
     public string BoardReference { get; private set; } = null!;
@@ -29,7 +29,7 @@ public class WhenBoardIsLinkedToContactFixture(JobbyHttpApiFactory factory) : IA
 }
 
 [Collection("SqlCollection")]
-public class GivenRequestWithBoardIsLinkedToContactWhenDeletingBoard(JobbyHttpApiFactory factory, WhenBoardIsLinkedToContactFixture fixture) : IClassFixture<WhenBoardIsLinkedToContactFixture>
+public class DeleteBoard_WithContactLinks(JobbyHttpApiFactory factory, DeleteBoard_WithContactLinks_Fixture fixture) : IClassFixture<DeleteBoard_WithContactLinks_Fixture>
 {
     [Fact]
     public void ThenReturns200Ok()

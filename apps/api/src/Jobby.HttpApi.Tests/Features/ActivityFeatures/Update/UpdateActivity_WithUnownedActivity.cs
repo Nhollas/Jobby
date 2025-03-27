@@ -9,7 +9,7 @@ using Jobby.HttpApi.Tests.Setup;
 namespace Jobby.HttpApi.Tests.Features.ActivityFeatures.Update;
 
 [Collection("SqlCollection")]
-public class GivenRequestWithActivityNotOwnedWhenUpdatingActivity(JobbyHttpApiFactory factory)
+public class UpdateActivity_WithUnownedActivity(JobbyHttpApiFactory factory)
 {
     [Fact]
     public async Task ThenReturns401Unauthorized()

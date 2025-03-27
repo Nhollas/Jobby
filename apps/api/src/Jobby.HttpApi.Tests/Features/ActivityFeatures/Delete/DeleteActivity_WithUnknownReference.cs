@@ -5,7 +5,7 @@ using Jobby.HttpApi.Tests.Setup;
 namespace Jobby.HttpApi.Tests.Features.ActivityFeatures.Delete;
 
 [Collection("SqlCollection")]
-public class GivenRequestWithUnknownActivityWhenDeletingActivity(JobbyHttpApiFactory factory)
+public class DeleteActivity_WithUnknownReference(JobbyHttpApiFactory factory)
 {
     [Fact]
     public async Task ThenReturns404NotFound()
