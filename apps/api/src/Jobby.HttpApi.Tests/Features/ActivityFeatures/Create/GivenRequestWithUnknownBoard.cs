@@ -9,17 +9,15 @@ using Jobby.HttpApi.Tests.Setup;
 namespace Jobby.HttpApi.Tests.Features.ActivityFeatures.Create;
 
 [Collection("SqlCollection")]
-public class GivenRequestWithBoardIdNotOwned(JobbyHttpApiFactory factory)
+public class GivenRequestWithUnknownBoard(JobbyHttpApiFactory factory)
 {
     [Fact]
-    public async Task ThenReturns401Unauthorized()
+    public async Task ThenReturns404NotFound()
     {
-        Board board = await new TestDataBuilder(factory)
-            .CreateBoard(userId: "TestUser2Id")
-            .SeedAsync();
-        
+        string randomBoardReference = EntityReferenceProvider<Board>.CreateReference();
+
         CreateActivityCommand body = new(
-            BoardReference: board.Reference,
+            BoardReference: randomBoardReference,
             Title: "Test Activity",
             Type: ActivityConstants.Types.Apply,
             StartDate: DateTime.UtcNow,
@@ -30,9 +28,9 @@ public class GivenRequestWithBoardIdNotOwned(JobbyHttpApiFactory factory)
 
         HttpResponseMessage response = await factory.HttpClient.PostAsJsonAsync("/activity", body);
         string responseContent = await response.Content.ReadAsStringAsync();
-
-        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
         responseContent.Should().Be(
-            ResponseHelper.MessageToApiMessage($"You are not authorised to access the resource {board.Reference}."));
+            ResponseHelper.MessageToApiMessage($"Board with reference '{randomBoardReference}' not found."));
     }
 }

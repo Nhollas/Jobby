@@ -35,6 +35,6 @@ public class GivenRequestWithUnknownJob(JobbyHttpApiFactory factory)
 
         response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         responseContent.Should().Be(
-            ResponseHelper.MessageToApiMessage($"The Job {body.JobReference} you wanted to link doesn't exist in the Board {body.BoardReference}."));
+            ResponseHelper.MessageToApiMessage($"The Job '{body.JobReference}' you wanted to link doesn't exist in the Board '{body.BoardReference}'."));
     }
 }

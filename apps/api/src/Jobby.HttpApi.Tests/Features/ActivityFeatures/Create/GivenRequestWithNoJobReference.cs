@@ -21,6 +21,7 @@ public class GivenRequestWithNoJobReferenceFixture(JobbyHttpApiFactory factory) 
     public async Task InitializeAsync()
     {
         await using JobbyDbContext dbContext = factory.GetDbContext();
+        
         Board board = await new TestDataBuilder(factory)
             .CreateBoard()
             .SeedAsync();
@@ -48,7 +49,7 @@ public class GivenRequestWithNoJobReferenceFixture(JobbyHttpApiFactory factory) 
 [Collection("SqlCollection")]
 public class GivenRequestWithNoJobReference(GivenRequestWithNoJobReferenceFixture fixture) : IClassFixture<GivenRequestWithNoJobReferenceFixture>
 {
-    private const string ExpectedName = "Apply";
+    private const string ExpectedActivityName = "Apply";
     
     [Fact]
     public void ThenReturns201Created() => 
@@ -60,7 +61,7 @@ public class GivenRequestWithNoJobReference(GivenRequestWithNoJobReferenceFixtur
         using AssertionScope _ = new();
         
         fixture.ReturnedActivity.Title.Should().Be(fixture.Body.Title);
-        fixture.ReturnedActivity.Name.Should().Be(ExpectedName);
+        fixture.ReturnedActivity.Name.Should().Be(ExpectedActivityName);
         fixture.ReturnedActivity.StartDate.Should().Be(fixture.Body.StartDate);
         fixture.ReturnedActivity.EndDate.Should().Be(fixture.Body.EndDate);
         fixture.ReturnedActivity.Note.Should().Be(fixture.Body.Note);
@@ -79,7 +80,7 @@ public class GivenRequestWithNoJobReference(GivenRequestWithNoJobReferenceFixtur
         using AssertionScope _ = new();
         
         fixture.StoredActivity.Title.Should().Be(fixture.Body.Title);
-        fixture.StoredActivity.Name.Should().Be(ExpectedName);
+        fixture.StoredActivity.Name.Should().Be(ExpectedActivityName);
         fixture.StoredActivity.StartDate.Should().Be(fixture.Body.StartDate);
         fixture.StoredActivity.EndDate.Should().Be(fixture.Body.EndDate);
         fixture.StoredActivity.Note.Should().Be(fixture.Body.Note);
