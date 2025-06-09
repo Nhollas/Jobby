@@ -9,22 +9,23 @@ node_modules/
 .env.test.local
 .env.production.local
 
-# IDE
+# IDE - Global
 .vscode/
 .idea/
 .run/
+*.code-workspace
+*.sublime-*
+*.swp
+*.swo
 
-# Build
-dist/
-build/
-.next/
-out/
-
-# OS
+# OS - Global
 .DS_Store
 Thumbs.db
+*.tmp
+*.temp
+desktop.ini
 
-# Misc
+# Misc - Global
 *.log
 .git/
 
