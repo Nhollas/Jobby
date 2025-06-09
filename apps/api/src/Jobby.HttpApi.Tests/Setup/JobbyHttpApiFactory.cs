@@ -18,7 +18,7 @@ public class JobbyHttpApiFactory : WebApplicationFactory<Program>, IAsyncLifetim
     private string _dbConnectionString = null!;
     private Respawner _respawner = null!;
     private readonly MsSqlContainer _mssqlContainer = new MsSqlBuilder()
-        .WithImage("mcr.microsoft.com/mssql/server:latest")
+        .WithImage("mcr.microsoft.com/mssql/server:2022-CU13-ubuntu-22.04")
         .WithReuse(true)
         .WithName("JobbyTestContainer")
         .Build();
@@ -55,7 +55,7 @@ public class JobbyHttpApiFactory : WebApplicationFactory<Program>, IAsyncLifetim
     protected override void ConfigureClient(HttpClient client)
     {
         base.ConfigureClient(client);
-        
+
         client.DefaultRequestHeaders.Authorization =
             new AuthenticationHeaderValue("Bearer", JwtHelper.Generate(UserId));
     }

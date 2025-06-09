@@ -1,33 +1,3 @@
-# Dependencies
-node_modules/
-**/node_modules/*
-
-# Environment
-**/.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-# IDE
-.vscode/
-.idea/
-.run/
-
-# Build
-dist/
-build/
-.next/
-out/
-
-# OS
-.DS_Store
-Thumbs.db
-
-# Misc
-*.log
-.git/
-
 # .NET specific
 *.user
 *.userosscache
@@ -52,7 +22,6 @@ bld/
 
 # Visual Studio / Rider
 .vs/
-.idea/
 *.suo
 *.ntvs*
 *.njsproj.user
@@ -71,3 +40,9 @@ artifacts/
 *.nuget.props
 *.nuget.targets
 
+# Test Results
+TestResults/
+
+# Configuration
+appsettings.*.json
+!appsettings.json 
