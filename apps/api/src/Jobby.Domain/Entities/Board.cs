@@ -92,7 +92,7 @@ public class Board : Entity
         if (!TryGetJobFromBoard(jobReference, out Job? jobToLink))
         {
             throw new InvalidOperationException(
-                $"The Job {jobReference} you wanted to link doesn't exist in the Board {Reference}."
+                $"The Job '{jobReference}' you wanted to link doesn't exist in the Board '{Reference}'."
             );
         }
             
