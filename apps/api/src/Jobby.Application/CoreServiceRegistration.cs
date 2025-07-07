@@ -14,7 +14,7 @@ public static class CoreServiceRegistration
     {
         Assembly applicationAssembly = typeof(AssemblyReference).Assembly;
 
-        services.AddAutoMapper(applicationAssembly);
+        services.AddAutoMapper(cfg => cfg.AddMaps(applicationAssembly));
         services.AddScoped<IUserService, UserService>();
         services.AddHttpContextAccessor();
 

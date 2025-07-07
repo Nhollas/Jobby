@@ -1,9 +1,8 @@
 using Jobby.Application;
+using Microsoft.Extensions.Logging;
+using AutoMapper;
 
 namespace Jobby.HttpApi.Tests;
-
-using AutoMapper;
-using Xunit;
 
 public class MappingProfileTests
 {
@@ -13,7 +12,7 @@ public class MappingProfileTests
         MapperConfiguration configuration = new(cfg =>
         {
             cfg.AddProfile(new MappingProfile());
-        });
+        }, new LoggerFactory());
 
         configuration.AssertConfigurationIsValid();
     }
