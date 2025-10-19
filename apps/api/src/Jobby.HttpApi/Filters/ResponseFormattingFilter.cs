@@ -11,15 +11,21 @@ public class ResponseFormattingFilter : IEndpointFilter
     {
         try
         {
-            object? response = await next(context);
+            var response = await next(context);
             return response switch
             {
-                IDispatchOkResult<object> ok => Ok(ok),
-                IDispatchCreatedResult<object> created => Created(created),
-                IDispatchBadRequestResult<object> badRequest => BadRequest(badRequest),
-                IDispatchUnauthorizedResult<object> unauthorized => Unauthorized(unauthorized),
-                IDispatchUnprocessableEntityResult<object> unprocessableEntity => UnprocessableEntity(unprocessableEntity),
-                IDispatchNotFoundResult<object> notFound => NotFound(notFound),
+                IDispatchOkResult<object> result => 
+                    Results.Ok(result.Response),
+                IDispatchCreatedResult<object> result => 
+                    Results.Created(),
+                IDispatchBadRequestResult<object> result => 
+                    Results.BadRequest(new ApiMessage(result.ErrorMessage)),
+                IDispatchUnauthorizedResult<object> result => 
+                    Results.Unauthorized(),
+                IDispatchUnprocessableEntityResult<object> result =>  
+                    Results.UnprocessableEntity(result.ValidationErrors),
+                IDispatchNotFoundResult<object> result => 
+                    Results.NotFound(new ApiMessage(result.ErrorMessage)),
                 _ => response
             };
         }
@@ -28,24 +34,4 @@ public class ResponseFormattingFilter : IEndpointFilter
             return TypedResults.Problem(statusCode: (int)HttpStatusCode.BadGateway, title: ex.Message);
         }
     }
-
-    private static IResult Ok(IDispatchOkResult<object> ok)
-        => Results.Ok(ok.Response);
-    
-    private static IResult Unauthorized(IDispatchUnauthorizedResult<object> unauthorized)
-        => Results.Json(new ApiMessage(unauthorized.ErrorMessage), statusCode: 401);
- 
-    private static IResult Created(IDispatchCreatedResult<object> created) =>
-        Results.Json(created.Response, statusCode: 201);
- 
-    private static IResult UnprocessableEntity(IDispatchUnprocessableEntityResult<object> badRequest)
-    {
-        return Results.UnprocessableEntity(badRequest.ValidationErrors);
-    }
-
-    private static IResult NotFound(IDispatchNotFoundResult<object> notFound)
-        => Results.NotFound(new ApiMessage(notFound.ErrorMessage));
-
-    private static IResult BadRequest(IDispatchBadRequestResult<object> badRequest)
-        => Results.BadRequest(new ApiMessage(badRequest.ErrorMessage));
 }

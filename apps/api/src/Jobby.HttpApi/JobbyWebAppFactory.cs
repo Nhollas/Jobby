@@ -19,8 +19,7 @@ public class JobbyWebAppFactory
         builder.Services.AddApplicationServices();
         builder.Services.AddPersistenceServices(config);
 
-        builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerDocumentation();
+        builder.Services.AddOpenApi();
         builder.Services.AddClerkAuthentication(config);
         builder.Services.AddAuthorization();
 
@@ -29,7 +28,7 @@ public class JobbyWebAppFactory
 
         if (app.Environment.IsDevelopment())
         {
-            app.UseSwagger();
+            app.MapOpenApi();
             app.UseSwaggerUI(c => { c.EnablePersistAuthorization(); });
             app.UseDeveloperExceptionPage();
         }
